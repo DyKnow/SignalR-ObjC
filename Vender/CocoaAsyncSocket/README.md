@@ -1,21 +1,7 @@
-# SignalR 
-Async signaling library for ASP.NET to help build real-time, multi-user interactive web applications
-for the official SignalR Library for ASP.NET see the [SignalR Repository](https://github.com/SignalR/SignalR/wiki)
+# CocoaAysncSocket
+CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries for Mac and iOS. The classes are described below.
+[Robbie Hanson CocoaAsyncSocket on GitHub](https://github.com/robbiehanson/CocoaAsyncSocket)
 
-# SignalR Objective-C
-Extends the reach of the main SignalR project by providing a client that is written in Objective-C and is compaitible
-with iOS and Mac
-
-## What can it be used for?
-Pushing data from the server to the client (not just browser clients) has always been a tough problem. SignalR makes 
-it dead easy and handles all the heavy lifting for you.
-
-
-## Documentation
-See the [documentation](https://github.com/DyKnow/DyKnowMe/wiki)
-	
-## LICENSE
-[MIT License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
-
-## Questions?
-The SignalR team hangs out in the **signalr** room at http://chatapp.apphb.com.
+## What is it for?
+CocoaAysncSocket will be used with the WebsocketsTransport when supported
+* Including this project is optional if the longpollingTransport is used (currently only supported transport)
