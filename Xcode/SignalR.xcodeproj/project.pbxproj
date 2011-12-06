@@ -35,8 +35,12 @@
 		39571AA4148E86200010DC77 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A82148E86200010DC77 /* SRNegotiationResponse.m */; };
 		39571AA5148E86200010DC77 /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A86148E86200010DC77 /* SRLongPollingTransport.m */; };
 		39571AB1148E8C4B0010DC77 /* SRWebSocketsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AB0148E8C4B0010DC77 /* SRWebSocketsTransport.m */; };
-		39571AB8148E8C5C0010DC77 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AB5148E8C5C0010DC77 /* AsyncSocket.m */; };
 		39571AB9148E8C5C0010DC77 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AB7148E8C5C0010DC77 /* SRWebSocket.m */; };
+		39571AC4148E8DC30010DC77 /* Documentation.html in Resources */ = {isa = PBXBuildFile; fileRef = 39571ABB148E8DC30010DC77 /* Documentation.html */; };
+		39571AC5148E8DC30010DC77 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571ABD148E8DC30010DC77 /* GCDAsyncSocket.m */; };
+		39571AC6148E8DC30010DC77 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AC0148E8DC30010DC77 /* AsyncSocket.m */; };
+		39571AC7148E8DC30010DC77 /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AC2148E8DC30010DC77 /* AsyncUdpSocket.m */; };
+		39571AC8148E8DC30010DC77 /* Documentation.html in Resources */ = {isa = PBXBuildFile; fileRef = 39571AC3148E8DC30010DC77 /* Documentation.html */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
@@ -129,10 +133,16 @@
 		39571A86148E86200010DC77 /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
 		39571AAF148E8C4B0010DC77 /* SRWebSocketsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketsTransport.h; sourceTree = "<group>"; };
 		39571AB0148E8C4B0010DC77 /* SRWebSocketsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketsTransport.m; sourceTree = "<group>"; };
-		39571AB4148E8C5C0010DC77 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
-		39571AB5148E8C5C0010DC77 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
 		39571AB6148E8C5C0010DC77 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
 		39571AB7148E8C5C0010DC77 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
+		39571ABB148E8DC30010DC77 /* Documentation.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Documentation.html; sourceTree = "<group>"; };
+		39571ABC148E8DC30010DC77 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
+		39571ABD148E8DC30010DC77 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
+		39571ABF148E8DC30010DC77 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
+		39571AC0148E8DC30010DC77 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
+		39571AC1148E8DC30010DC77 /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncUdpSocket.h; sourceTree = "<group>"; };
+		39571AC2148E8DC30010DC77 /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncUdpSocket.m; sourceTree = "<group>"; };
+		39571AC3148E8DC30010DC77 /* Documentation.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Documentation.html; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -296,12 +306,34 @@
 		39571AB3148E8C5C0010DC77 /* Websockets */ = {
 			isa = PBXGroup;
 			children = (
-				39571AB4148E8C5C0010DC77 /* AsyncSocket.h */,
-				39571AB5148E8C5C0010DC77 /* AsyncSocket.m */,
+				39571ABA148E8DC30010DC77 /* GCD */,
+				39571ABE148E8DC30010DC77 /* RunLoop */,
 				39571AB6148E8C5C0010DC77 /* SRWebSocket.h */,
 				39571AB7148E8C5C0010DC77 /* SRWebSocket.m */,
 			);
 			path = Websockets;
+			sourceTree = "<group>";
+		};
+		39571ABA148E8DC30010DC77 /* GCD */ = {
+			isa = PBXGroup;
+			children = (
+				39571ABB148E8DC30010DC77 /* Documentation.html */,
+				39571ABC148E8DC30010DC77 /* GCDAsyncSocket.h */,
+				39571ABD148E8DC30010DC77 /* GCDAsyncSocket.m */,
+			);
+			path = GCD;
+			sourceTree = "<group>";
+		};
+		39571ABE148E8DC30010DC77 /* RunLoop */ = {
+			isa = PBXGroup;
+			children = (
+				39571ABF148E8DC30010DC77 /* AsyncSocket.h */,
+				39571AC0148E8DC30010DC77 /* AsyncSocket.m */,
+				39571AC1148E8DC30010DC77 /* AsyncUdpSocket.h */,
+				39571AC2148E8DC30010DC77 /* AsyncUdpSocket.m */,
+				39571AC3148E8DC30010DC77 /* Documentation.html */,
+			);
+			path = RunLoop;
 			sourceTree = "<group>";
 		};
 		39FE4E3A1468164200B111BF = {
@@ -463,6 +495,8 @@
 			files = (
 				39FE4E541468164300B111BF /* InfoPlist.strings in Resources */,
 				39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */,
+				39571AC4148E8DC30010DC77 /* Documentation.html in Resources */,
+				39571AC8148E8DC30010DC77 /* Documentation.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,8 +568,10 @@
 				39571AA4148E86200010DC77 /* SRNegotiationResponse.m in Sources */,
 				39571AA5148E86200010DC77 /* SRLongPollingTransport.m in Sources */,
 				39571AB1148E8C4B0010DC77 /* SRWebSocketsTransport.m in Sources */,
-				39571AB8148E8C5C0010DC77 /* AsyncSocket.m in Sources */,
 				39571AB9148E8C5C0010DC77 /* SRWebSocket.m in Sources */,
+				39571AC5148E8DC30010DC77 /* GCDAsyncSocket.m in Sources */,
+				39571AC6148E8DC30010DC77 /* AsyncSocket.m in Sources */,
+				39571AC7148E8DC30010DC77 /* AsyncUdpSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

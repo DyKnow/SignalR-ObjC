@@ -26,12 +26,12 @@
         url = [url stringByAppendingFormat:@"?"];
         url = [url stringByAppendingFormat:@"%@=%@&",kConnectionData,connection.data];
         url = [url stringByAppendingFormat:@"%@=%@&",kTransport,kWebSocketsTransport];
-        url = [url stringByAppendingFormat:@"%@=%@",kClientId,connection.clientId];
+        url = [url stringByAppendingFormat:@"%@=%@",kConnectionId,connection.connectionId];
     }
     else{
         url = [url stringByAppendingFormat:@"?"];
         url = [url stringByAppendingFormat:@"%@=%@&",kTransport,kWebSocketsTransport];
-        url = [url stringByAppendingFormat:@"%@=%@",kClientId,connection.clientId];
+        url = [url stringByAppendingFormat:@"%@=%@",kConnectionId,connection.connectionId];
     }
     
 #if DEBUG
