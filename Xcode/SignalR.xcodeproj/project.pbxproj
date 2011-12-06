@@ -34,6 +34,9 @@
 		39571AA3148E86200010DC77 /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A80148E86200010DC77 /* SRConnection.m */; };
 		39571AA4148E86200010DC77 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A82148E86200010DC77 /* SRNegotiationResponse.m */; };
 		39571AA5148E86200010DC77 /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A86148E86200010DC77 /* SRLongPollingTransport.m */; };
+		39571AB1148E8C4B0010DC77 /* SRWebSocketsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AB0148E8C4B0010DC77 /* SRWebSocketsTransport.m */; };
+		39571AB8148E8C5C0010DC77 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AB5148E8C5C0010DC77 /* AsyncSocket.m */; };
+		39571AB9148E8C5C0010DC77 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571AB7148E8C5C0010DC77 /* SRWebSocket.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
@@ -124,6 +127,12 @@
 		39571A84148E86200010DC77 /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransport.h; sourceTree = "<group>"; };
 		39571A85148E86200010DC77 /* SRLongPollingTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRLongPollingTransport.h; sourceTree = "<group>"; };
 		39571A86148E86200010DC77 /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
+		39571AAF148E8C4B0010DC77 /* SRWebSocketsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketsTransport.h; sourceTree = "<group>"; };
+		39571AB0148E8C4B0010DC77 /* SRWebSocketsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketsTransport.m; sourceTree = "<group>"; };
+		39571AB4148E8C5C0010DC77 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
+		39571AB5148E8C5C0010DC77 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
+		39571AB6148E8C5C0010DC77 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
+		39571AB7148E8C5C0010DC77 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -233,6 +242,7 @@
 				39571A5D148E86200010DC77 /* NSString+Url.h */,
 				39571A5E148E86200010DC77 /* NSString+Url.m */,
 				39571A5F148E86200010DC77 /* SBJSON */,
+				39571AB3148E8C5C0010DC77 /* Websockets */,
 			);
 			name = Infrastructure;
 			path = ../SignalR.Client/Infrastructure;
@@ -276,9 +286,22 @@
 				39571A84148E86200010DC77 /* SRClientTransport.h */,
 				39571A85148E86200010DC77 /* SRLongPollingTransport.h */,
 				39571A86148E86200010DC77 /* SRLongPollingTransport.m */,
+				39571AAF148E8C4B0010DC77 /* SRWebSocketsTransport.h */,
+				39571AB0148E8C4B0010DC77 /* SRWebSocketsTransport.m */,
 			);
 			name = Transports;
 			path = ../SignalR.Client/Transports;
+			sourceTree = "<group>";
+		};
+		39571AB3148E8C5C0010DC77 /* Websockets */ = {
+			isa = PBXGroup;
+			children = (
+				39571AB4148E8C5C0010DC77 /* AsyncSocket.h */,
+				39571AB5148E8C5C0010DC77 /* AsyncSocket.m */,
+				39571AB6148E8C5C0010DC77 /* SRWebSocket.h */,
+				39571AB7148E8C5C0010DC77 /* SRWebSocket.m */,
+			);
+			path = Websockets;
 			sourceTree = "<group>";
 		};
 		39FE4E3A1468164200B111BF = {
@@ -510,6 +533,9 @@
 				39571AA3148E86200010DC77 /* SRConnection.m in Sources */,
 				39571AA4148E86200010DC77 /* SRNegotiationResponse.m in Sources */,
 				39571AA5148E86200010DC77 /* SRLongPollingTransport.m in Sources */,
+				39571AB1148E8C4B0010DC77 /* SRWebSocketsTransport.m in Sources */,
+				39571AB8148E8C5C0010DC77 /* AsyncSocket.m in Sources */,
+				39571AB9148E8C5C0010DC77 /* SRWebSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

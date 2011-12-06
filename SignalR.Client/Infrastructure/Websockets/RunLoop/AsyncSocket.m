@@ -28,19 +28,28 @@
 #define READALL_CHUNKSIZE	256         // Incremental increase in buffer size
 #define WRITE_CHUNKSIZE    (1024 * 4)   // Limit on size of each write pass
 
+// AsyncSocket is RunLoop based, and is thus not thread-safe.
+// You must always access your AsyncSocket instance from the thread/runloop in which the instance is running.
+// You can use methods such as performSelectorOnThread to accomplish this.
+// Failure to comply with these thread-safety rules may result in errors.
+// You can enable this option to help diagnose where you are incorrectly accessing your socket.
+#if DEBUG
+  #define DEBUG_THREAD_SAFETY 1
+#else
+  #define DEBUG_THREAD_SAFETY 0
+#endif
+// 
+// If you constantly need to access your socket from multiple threads
+// then you may consider using GCDAsyncSocket instead, which is thread-safe.
+
 NSString *const AsyncSocketException = @"AsyncSocketException";
 NSString *const AsyncSocketErrorDomain = @"AsyncSocketErrorDomain";
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-// Mutex lock used by all instances of AsyncSocket, to protect getaddrinfo.
-// Prior to Mac OS X 10.5 this method was not thread-safe.
-static NSString *getaddrinfoLock = @"lock";
-#endif
 
 enum AsyncSocketFlags
 {
 	kEnablePreBuffering      = 1 <<  0,  // If set, pre-buffering is enabled
-	kDidPassConnectMethod    = 1 <<  1,  // If set, disconnection results in delegate call
+	kDidStartDelegate        = 1 <<  1,  // If set, disconnection results in delegate call
 	kDidCompleteOpenForRead  = 1 <<  2,  // If set, open callback has been called for read stream
 	kDidCompleteOpenForWrite = 1 <<  3,  // If set, open callback has been called for write stream
 	kStartingReadTLS         = 1 <<  4,  // If set, we're waiting for TLS negotiation to complete
@@ -60,10 +69,12 @@ enum AsyncSocketFlags
 // Connecting
 - (void)startConnectTimeout:(NSTimeInterval)timeout;
 - (void)endConnectTimeout;
+- (void)doConnectTimeout:(NSTimer *)timer;
 
 // Socket Implementation
 - (CFSocketRef)newAcceptSocketForAddress:(NSData *)addr error:(NSError **)errPtr;
 - (BOOL)createSocketForAddress:(NSData *)remoteAddr error:(NSError **)errPtr;
+- (BOOL)bindSocketToAddress:(NSData *)interfaceAddr error:(NSError **)errPtr;
 - (BOOL)attachSocketsToRunLoop:(NSRunLoop *)runLoop error:(NSError **)errPtr;
 - (BOOL)configureSocketAndReturnError:(NSError **)errPtr;
 - (BOOL)connectSocketToAddress:(NSData *)remoteAddr error:(NSError **)errPtr;
@@ -97,14 +108,28 @@ enum AsyncSocketFlags
 - (NSError *)errorFromCFStreamError:(CFStreamError)err;
 
 // Diagnostics
-- (BOOL)isSocketConnected;
+- (BOOL)isDisconnected;
 - (BOOL)areStreamsConnected;
-- (NSString *)connectedHost:(CFSocketRef)socket;
-- (UInt16)connectedPort:(CFSocketRef)socket;
-- (NSString *)localHost:(CFSocketRef)socket;
-- (UInt16)localPort:(CFSocketRef)socket;
-- (NSString *)addressHost:(CFDataRef)cfaddr;
-- (UInt16)addressPort:(CFDataRef)cfaddr;
+- (NSString *)connectedHostFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket;
+- (NSString *)connectedHostFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket;
+- (NSString *)connectedHostFromCFSocket4:(CFSocketRef)socket;
+- (NSString *)connectedHostFromCFSocket6:(CFSocketRef)socket;
+- (UInt16)connectedPortFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket;
+- (UInt16)connectedPortFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket;
+- (UInt16)connectedPortFromCFSocket4:(CFSocketRef)socket;
+- (UInt16)connectedPortFromCFSocket6:(CFSocketRef)socket;
+- (NSString *)localHostFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket;
+- (NSString *)localHostFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket;
+- (NSString *)localHostFromCFSocket4:(CFSocketRef)socket;
+- (NSString *)localHostFromCFSocket6:(CFSocketRef)socket;
+- (UInt16)localPortFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket;
+- (UInt16)localPortFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket;
+- (UInt16)localPortFromCFSocket4:(CFSocketRef)socket;
+- (UInt16)localPortFromCFSocket6:(CFSocketRef)socket;
+- (NSString *)hostFromAddress4:(struct sockaddr_in *)pSockaddr4;
+- (NSString *)hostFromAddress6:(struct sockaddr_in6 *)pSockaddr6;
+- (UInt16)portFromAddress4:(struct sockaddr_in *)pSockaddr4;
+- (UInt16)portFromAddress6:(struct sockaddr_in6 *)pSockaddr6;
 
 // Reading
 - (void)doBytesAvailable;
@@ -136,7 +161,8 @@ enum AsyncSocketFlags
 - (void)onTLSHandshakeSuccessful;
 
 // Callbacks
-- (void)doCFCallback:(CFSocketCallBackType)type forSocket:(CFSocketRef)sock withAddress:(NSData *)address withData:(const void *)pData;
+- (void)doCFCallback:(CFSocketCallBackType)type
+           forSocket:(CFSocketRef)sock withAddress:(NSData *)address withData:(const void *)pData;
 - (void)doCFReadStreamCallback:(CFStreamEventType)type forStream:(CFReadStreamRef)stream;
 - (void)doCFWriteStreamCallback:(CFStreamEventType)type forStream:(CFWriteStreamRef)stream;
 
@@ -161,84 +187,171 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 {
   @public
 	NSMutableData *buffer;
-	CFIndex bytesDone;
+	NSUInteger startOffset;
+	NSUInteger bytesDone;
+	NSUInteger maxLength;
 	NSTimeInterval timeout;
-	CFIndex maxLength;
-	long tag;
+	NSUInteger readLength;
 	NSData *term;
-	BOOL readAllAvailableData;
+	BOOL bufferOwner;
+	NSUInteger originalBufferLength;
+	long tag;
 }
 - (id)initWithData:(NSMutableData *)d
-		   timeout:(NSTimeInterval)t
-			   tag:(long)i
-  readAllAvailable:(BOOL)a
-		terminator:(NSData *)e
-	  	 maxLength:(CFIndex)m;
+       startOffset:(NSUInteger)s
+         maxLength:(NSUInteger)m
+           timeout:(NSTimeInterval)t
+        readLength:(NSUInteger)l
+        terminator:(NSData *)e
+               tag:(long)i;
 
-- (unsigned)readLengthForTerm;
+- (NSUInteger)readLengthForNonTerm;
+- (NSUInteger)readLengthForTerm;
+- (NSUInteger)readLengthForTermWithPreBuffer:(NSData *)preBuffer found:(BOOL *)foundPtr;
 
-- (unsigned)prebufferReadLengthForTerm;
-- (CFIndex)searchForTermAfterPreBuffering:(CFIndex)numBytes;
+- (NSUInteger)prebufferReadLengthForTerm;
+- (NSInteger)searchForTermAfterPreBuffering:(NSUInteger)numBytes;
 @end
 
 @implementation AsyncReadPacket
 
 - (id)initWithData:(NSMutableData *)d
-		   timeout:(NSTimeInterval)t
-			   tag:(long)i
-  readAllAvailable:(BOOL)a
-		terminator:(NSData *)e
-         maxLength:(CFIndex)m
+       startOffset:(NSUInteger)s
+         maxLength:(NSUInteger)m
+           timeout:(NSTimeInterval)t
+        readLength:(NSUInteger)l
+        terminator:(NSData *)e
+               tag:(long)i
 {
 	if((self = [super init]))
 	{
-		buffer = [d retain];
-		timeout = t;
-		tag = i;
-		readAllAvailableData = a;
-		term = [e copy];
+		if (d)
+		{
+			buffer = [d retain];
+			startOffset = s;
+			bufferOwner = NO;
+			originalBufferLength = [d length];
+		}
+		else
+		{
+			if (readLength > 0)
+				buffer = [[NSMutableData alloc] initWithLength:readLength];
+			else
+				buffer = [[NSMutableData alloc] initWithLength:0];
+			
+			startOffset = 0;
+			bufferOwner = YES;
+			originalBufferLength = 0;
+		}
+		
 		bytesDone = 0;
 		maxLength = m;
+		timeout = t;
+		readLength = l;
+		term = [e copy];
+		tag = i;
 	}
 	return self;
 }
 
 /**
+ * For read packets without a set terminator, returns the safe length of data that can be read
+ * without exceeding the maxLength, or forcing a resize of the buffer if at all possible.
+**/
+- (NSUInteger)readLengthForNonTerm
+{
+	NSAssert(term == nil, @"This method does not apply to term reads");
+	
+	if (readLength > 0)
+	{
+		// Read a specific length of data
+		
+		return readLength - bytesDone;
+		
+		// No need to avoid resizing the buffer.
+		// It should be resized if the buffer space is less than the requested read length.
+	}
+	else
+	{
+		// Read all available data
+		
+		NSUInteger result = READALL_CHUNKSIZE;
+		
+		if (maxLength > 0)
+		{
+			result = MIN(result, (maxLength - bytesDone));
+		}
+		
+		if (!bufferOwner)
+		{
+			// We did NOT create the buffer.
+			// It is owned by the caller.
+			// Avoid resizing the buffer if at all possible.
+			
+			if ([buffer length] == originalBufferLength)
+			{
+				NSUInteger buffSize = [buffer length];
+				NSUInteger buffSpace = buffSize - startOffset - bytesDone;
+				
+				if (buffSpace > 0)
+				{
+					result = MIN(result, buffSpace);
+				}
+			}
+		}
+		
+		return result;
+	}
+}
+
+/**
  * For read packets with a set terminator, returns the safe length of data that can be read
- * without going over a terminator, or the maxLength.
+ * without going over a terminator, or the maxLength, or forcing a resize of the buffer if at all possible.
  * 
  * It is assumed the terminator has not already been read.
 **/
-- (unsigned)readLengthForTerm
+- (NSUInteger)readLengthForTerm
 {
-	NSAssert(term != nil, @"Searching for term in data when there is no term.");
+	NSAssert(term != nil, @"This method does not apply to non-term reads");
 	
 	// What we're going to do is look for a partial sequence of the terminator at the end of the buffer.
 	// If a partial sequence occurs, then we must assume the next bytes to arrive will be the rest of the term,
 	// and we can only read that amount.
 	// Otherwise, we're safe to read the entire length of the term.
 	
-	unsigned result = [term length];
+	NSUInteger termLength = [term length];
 	
-	// Shortcut when term is a single byte
-	if(result == 1) return result;
+	// Shortcuts
+	if (bytesDone == 0) return termLength;
+	if (termLength == 1) return termLength;
 	
 	// i = index within buffer at which to check data
 	// j = length of term to check against
 	
-	// Note: Beware of implicit casting rules
-	// This could give you -1: MAX(0, (0 - [term length] + 1));
-	
-	CFIndex i = MAX(0, (CFIndex)(bytesDone - [term length] + 1));
-	CFIndex j = MIN([term length] - 1, bytesDone);
-	
-	while(i < bytesDone)
+	NSUInteger i, j;
+	if (bytesDone >= termLength)
 	{
-		const void *subBuffer = [buffer bytes] + i;
+		i = bytesDone - termLength + 1;
+		j = termLength - 1;
+	}
+	else
+	{
+		i = 0;
+		j = bytesDone;
+	}
+	
+	NSUInteger result = termLength;
+	
+	void *buf = [buffer mutableBytes];
+	const void *termBuf = [term bytes];
+	
+	while (i < bytesDone)
+	{
+		void *subbuf = buf + startOffset + i;
 		
-		if(memcmp(subBuffer, [term bytes], j) == 0)
+		if (memcmp(subbuf, termBuf, j) == 0)
 		{
-			result = [term length] - j;
+			result = termLength - j;
 			break;
 		}
 		
@@ -246,22 +359,191 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 		j--;
 	}
 	
-	if(maxLength > 0)
-		return MIN(result, (maxLength - bytesDone));
-	else
-		return result;
+	if (maxLength > 0)
+	{
+		result = MIN(result, (maxLength - bytesDone));
+	}
+	
+	if (!bufferOwner)
+	{
+		// We did NOT create the buffer.
+		// It is owned by the caller.
+		// Avoid resizing the buffer if at all possible.
+		
+		if ([buffer length] == originalBufferLength)
+		{
+			NSUInteger buffSize = [buffer length];
+			NSUInteger buffSpace = buffSize - startOffset - bytesDone;
+			
+			if (buffSpace > 0)
+			{
+				result = MIN(result, buffSpace);
+			}
+		}
+	}
+	
+	return result;
+}
+
+/**
+ * For read packets with a set terminator,
+ * returns the safe length of data that can be read from the given preBuffer,
+ * without going over a terminator or the maxLength.
+ * 
+ * It is assumed the terminator has not already been read.
+**/
+- (NSUInteger)readLengthForTermWithPreBuffer:(NSData *)preBuffer found:(BOOL *)foundPtr
+{
+	NSAssert(term != nil, @"This method does not apply to non-term reads");
+	NSAssert([preBuffer length] > 0, @"Invoked with empty pre buffer!");
+	
+	// We know that the terminator, as a whole, doesn't exist in our own buffer.
+	// But it is possible that a portion of it exists in our buffer.
+	// So we're going to look for the terminator starting with a portion of our own buffer.
+	// 
+	// Example:
+	// 
+	// term length      = 3 bytes
+	// bytesDone        = 5 bytes
+	// preBuffer length = 5 bytes
+	// 
+	// If we append the preBuffer to our buffer,
+	// it would look like this:
+	// 
+	// ---------------------
+	// |B|B|B|B|B|P|P|P|P|P|
+	// ---------------------
+	// 
+	// So we start our search here:
+	// 
+	// ---------------------
+	// |B|B|B|B|B|P|P|P|P|P|
+	// -------^-^-^---------
+	// 
+	// And move forwards...
+	// 
+	// ---------------------
+	// |B|B|B|B|B|P|P|P|P|P|
+	// ---------^-^-^-------
+	// 
+	// Until we find the terminator or reach the end.
+	// 
+	// ---------------------
+	// |B|B|B|B|B|P|P|P|P|P|
+	// ---------------^-^-^-
+	
+	BOOL found = NO;
+	
+	NSUInteger termLength = [term length];
+	NSUInteger preBufferLength = [preBuffer length];
+	
+	if ((bytesDone + preBufferLength) < termLength)
+	{
+		// Not enough data for a full term sequence yet
+		return preBufferLength;
+	}
+	
+	NSUInteger maxPreBufferLength;
+	if (maxLength > 0) {
+		maxPreBufferLength = MIN(preBufferLength, (maxLength - bytesDone));
+		
+		// Note: maxLength >= termLength
+	}
+	else {
+		maxPreBufferLength = preBufferLength;
+	}
+	
+	Byte seq[termLength];
+	const void *termBuf = [term bytes];
+	
+	NSUInteger bufLen = MIN(bytesDone, (termLength - 1));
+	void *buf = [buffer mutableBytes] + startOffset + bytesDone - bufLen;
+	
+	NSUInteger preLen = termLength - bufLen;
+	void *pre = (void *)[preBuffer bytes];
+	
+	NSUInteger loopCount = bufLen + maxPreBufferLength - termLength + 1; // Plus one. See example above.
+	
+	NSUInteger result = preBufferLength;
+	
+	NSUInteger i;
+	for (i = 0; i < loopCount; i++)
+	{
+		if (bufLen > 0)
+		{
+			// Combining bytes from buffer and preBuffer
+			
+			memcpy(seq, buf, bufLen);
+			memcpy(seq + bufLen, pre, preLen);
+			
+			if (memcmp(seq, termBuf, termLength) == 0)
+			{
+				result = preLen;
+				found = YES;
+				break;
+			}
+			
+			buf++;
+			bufLen--;
+			preLen++;
+		}
+		else
+		{
+			// Comparing directly from preBuffer
+			
+			if (memcmp(pre, termBuf, termLength) == 0)
+			{
+				NSUInteger preOffset = pre - [preBuffer bytes]; // pointer arithmetic
+				
+				result = preOffset + termLength;
+				found = YES;
+				break;
+			}
+			
+			pre++;
+		}
+	}
+	
+	// There is no need to avoid resizing the buffer in this particular situation.
+	
+	if (foundPtr) *foundPtr = found;
+	return result;
 }
 
 /**
  * Assuming pre-buffering is enabled, returns the amount of data that can be read
  * without going over the maxLength.
 **/
-- (unsigned)prebufferReadLengthForTerm
+- (NSUInteger)prebufferReadLengthForTerm
 {
-	if(maxLength > 0)
-		return MIN(READALL_CHUNKSIZE, (maxLength - bytesDone));
-	else
-		return READALL_CHUNKSIZE;
+	NSAssert(term != nil, @"This method does not apply to non-term reads");
+	
+	NSUInteger result = READALL_CHUNKSIZE;
+	
+	if (maxLength > 0)
+	{
+		result = MIN(result, (maxLength - bytesDone));
+	}
+	
+	if (!bufferOwner)
+	{
+		// We did NOT create the buffer.
+		// It is owned by the caller.
+		// Avoid resizing the buffer if at all possible.
+		
+		if ([buffer length] == originalBufferLength)
+		{
+			NSUInteger buffSize = [buffer length];
+			NSUInteger buffSpace = buffSize - startOffset - bytesDone;
+			
+			if (buffSpace > 0)
+			{
+				result = MIN(result, buffSpace);
+			}
+		}
+	}
+	
+	return result;
 }
 
 /**
@@ -273,25 +555,34 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
  * 
  * Note: A return value of zero means the term was found at the very end.
 **/
-- (CFIndex)searchForTermAfterPreBuffering:(CFIndex)numBytes
+- (NSInteger)searchForTermAfterPreBuffering:(NSUInteger)numBytes
 {
-	NSAssert(term != nil, @"Searching for term in data when there is no term.");
+	NSAssert(term != nil, @"This method does not apply to non-term reads");
+	NSAssert(bytesDone >= numBytes, @"Invoked with invalid numBytes!");
 	
 	// We try to start the search such that the first new byte read matches up with the last byte of the term.
 	// We continue searching forward after this until the term no longer fits into the buffer.
 	
-	// Note: Beware of implicit casting rules
-	// This could give you -1: MAX(0, 1 - 1 - [term length] + 1);
+	NSUInteger termLength = [term length];
+	const void *termBuffer = [term bytes];
 	
-	CFIndex i = MAX(0, (CFIndex)(bytesDone - numBytes - [term length] + 1));
+	// Remember: This method is called after the bytesDone variable has been updated.
 	
-	while(i + [term length] <= bytesDone)
+	NSUInteger prevBytesDone = bytesDone - numBytes;
+	
+	NSUInteger i;
+	if (prevBytesDone >= termLength)
+		i = prevBytesDone - termLength + 1;
+	else
+		i = 0;
+	
+	while ((i + termLength) <= bytesDone)
 	{
-		const void *subBuffer = [buffer bytes] + i;
+		void *subBuffer = [buffer mutableBytes] + startOffset + i;
 		
-		if(memcmp(subBuffer, [term bytes], [term length]) == 0)
+		if(memcmp(subBuffer, termBuffer, termLength) == 0)
 		{
-			return bytesDone - (i + [term length]);
+			return bytesDone - (i + termLength);
 		}
 		
 		i++;
@@ -320,7 +611,7 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 {
   @public
 	NSData *buffer;
-	CFIndex bytesDone;
+	NSUInteger bytesDone;
 	long tag;
 	NSTimeInterval timeout;
 }
@@ -409,10 +700,15 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 		theDelegate = delegate;
 		theUserData = userData;
 		
+		theNativeSocket4 = 0;
+		theNativeSocket6 = 0;
+		
 		theSocket4 = NULL;
 		theSource4 = NULL;
+		
 		theSocket6 = NULL;
 		theSource6 = NULL;
+		
 		theRunLoop = NULL;
 		theReadStream = NULL;
 		theWriteStream = NULL;
@@ -456,36 +752,88 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Thread-Safety
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)checkForThreadSafety
+{
+	if (theRunLoop && (theRunLoop != CFRunLoopGetCurrent()))
+	{
+		// AsyncSocket is RunLoop based.
+		// It is designed to be run and accessed from a particular thread/runloop.
+		// As such, it is faster as it does not have the overhead of locks/synchronization.
+		// 
+		// However, this places a minimal requirement on the developer to maintain thread-safety.
+		// If you are seeing errors or crashes in AsyncSocket,
+		// it is very likely that thread-safety has been broken.
+		// This method may be enabled via the DEBUG_THREAD_SAFETY macro,
+		// and will allow you to discover the place in your code where thread-safety is being broken.
+		// 
+		// Note:
+		// 
+		// If you find you constantly need to access your socket from various threads,
+		// you may prefer to use GCDAsyncSocket which is thread-safe.
+		
+		[NSException raise:AsyncSocketException
+		            format:@"Attempting to access AsyncSocket instance from incorrect thread."];
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Accessors
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (long)userData
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	return theUserData;
 }
 
 - (void)setUserData:(long)userData
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	theUserData = userData;
 }
 
 - (id)delegate
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	return theDelegate;
 }
 
 - (void)setDelegate:(id)delegate
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	theDelegate = delegate;
 }
 
 - (BOOL)canSafelySetDelegate
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	return ([theReadQueue count] == 0 && [theWriteQueue count] == 0 && theCurrentRead == nil && theCurrentWrite == nil);
 }
 
 - (CFSocketRef)getCFSocket
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if(theSocket4)
 		return theSocket4;
 	else
@@ -494,11 +842,19 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 
 - (CFReadStreamRef)getCFReadStream
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	return theReadStream;
 }
 
 - (CFWriteStreamRef)getCFWriteStream
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	return theWriteStream;
 }
 
@@ -506,38 +862,65 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 #pragma mark Progress
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (float)progressOfReadReturningTag:(long *)tag bytesDone:(CFIndex *)done total:(CFIndex *)total
+- (float)progressOfReadReturningTag:(long *)tag bytesDone:(NSUInteger *)done total:(NSUInteger *)total
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	// Check to make sure we're actually reading something right now,
 	// and that the read packet isn't an AsyncSpecialPacket (upgrade to TLS).
-	if (!theCurrentRead || ![theCurrentRead isKindOfClass:[AsyncReadPacket class]]) return NAN;
+	if (!theCurrentRead || ![theCurrentRead isKindOfClass:[AsyncReadPacket class]])
+	{
+		if (tag != NULL)   *tag = 0;
+		if (done != NULL)  *done = 0;
+		if (total != NULL) *total = 0;
+		
+		return NAN;
+	}
 	
-	// It's only possible to know the progress of our read if we're reading to a certain length
-	// If we're reading to data, we of course have no idea when the data will arrive
+	// It's only possible to know the progress of our read if we're reading to a certain length.
+	// If we're reading to data, we of course have no idea when the data will arrive.
 	// If we're reading to timeout, then we have no idea when the next chunk of data will arrive.
-	BOOL hasTotal = (theCurrentRead->readAllAvailableData == NO && theCurrentRead->term == nil);
 	
-	CFIndex d = theCurrentRead->bytesDone;
-	CFIndex t = hasTotal ? [theCurrentRead->buffer length] : 0;
+	NSUInteger d = theCurrentRead->bytesDone;
+	NSUInteger t = theCurrentRead->readLength;
+	
 	if (tag != NULL)   *tag = theCurrentRead->tag;
 	if (done != NULL)  *done = d;
 	if (total != NULL) *total = t;
-	float ratio = (float)d/(float)t;
-	return isnan(ratio) ? 1.0F : ratio; // 0 of 0 bytes is 100% done.
+	
+	if (t > 0.0)
+		return (float)d / (float)t;
+	else
+		return 1.0F;
 }
 
-- (float)progressOfWriteReturningTag:(long *)tag bytesDone:(CFIndex *)done total:(CFIndex *)total
+- (float)progressOfWriteReturningTag:(long *)tag bytesDone:(NSUInteger *)done total:(NSUInteger *)total
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	// Check to make sure we're actually writing something right now,
 	// and that the write packet isn't an AsyncSpecialPacket (upgrade to TLS).
-	if (!theCurrentWrite || ![theCurrentWrite isKindOfClass:[AsyncWritePacket class]]) return NAN;
+	if (!theCurrentWrite || ![theCurrentWrite isKindOfClass:[AsyncWritePacket class]])
+	{
+		if (tag != NULL)   *tag = 0;
+		if (done != NULL)  *done = 0;
+		if (total != NULL) *total = 0;
+		
+		return NAN;
+	}
 	
-	CFIndex d = theCurrentWrite->bytesDone;
-	CFIndex t = [theCurrentWrite->buffer length];
+	NSUInteger d = theCurrentWrite->bytesDone;
+	NSUInteger t = [theCurrentWrite->buffer length];
+	
 	if (tag != NULL)   *tag = theCurrentWrite->tag;
 	if (done != NULL)  *done = d;
 	if (total != NULL) *total = t;
-	return (float)d/(float)t;
+	
+	return (float)d / (float)t;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -546,62 +929,70 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 
 - (void)runLoopAddSource:(CFRunLoopSourceRef)source
 {
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)
+	for (NSString *runLoopMode in theRunLoopModes)
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFRunLoopAddSource(theRunLoop, source, runLoopMode);
+		CFRunLoopAddSource(theRunLoop, source, (CFStringRef)runLoopMode);
 	}
 }
 
 - (void)runLoopRemoveSource:(CFRunLoopSourceRef)source
 {
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)
+	for (NSString *runLoopMode in theRunLoopModes)
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFRunLoopRemoveSource(theRunLoop, source, runLoopMode);
+		CFRunLoopRemoveSource(theRunLoop, source, (CFStringRef)runLoopMode);
 	}
+}
+
+- (void)runLoopAddSource:(CFRunLoopSourceRef)source mode:(NSString *)runLoopMode
+{
+	CFRunLoopAddSource(theRunLoop, source, (CFStringRef)runLoopMode);
+}
+
+- (void)runLoopRemoveSource:(CFRunLoopSourceRef)source mode:(NSString *)runLoopMode
+{
+	CFRunLoopRemoveSource(theRunLoop, source, (CFStringRef)runLoopMode);
 }
 
 - (void)runLoopAddTimer:(NSTimer *)timer
 {
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)
+	for (NSString *runLoopMode in theRunLoopModes)
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFRunLoopAddTimer(theRunLoop, (CFRunLoopTimerRef)timer, runLoopMode);
+		CFRunLoopAddTimer(theRunLoop, (CFRunLoopTimerRef)timer, (CFStringRef)runLoopMode);
 	}
 }
 
 - (void)runLoopRemoveTimer:(NSTimer *)timer
 {
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)		
+	for (NSString *runLoopMode in theRunLoopModes)		
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFRunLoopRemoveTimer(theRunLoop, (CFRunLoopTimerRef)timer, runLoopMode);
+		CFRunLoopRemoveTimer(theRunLoop, (CFRunLoopTimerRef)timer, (CFStringRef)runLoopMode);
 	}
+}
+
+- (void)runLoopAddTimer:(NSTimer *)timer mode:(NSString *)runLoopMode
+{
+	CFRunLoopAddTimer(theRunLoop, (CFRunLoopTimerRef)timer, (CFStringRef)runLoopMode);
+}
+
+- (void)runLoopRemoveTimer:(NSTimer *)timer mode:(NSString *)runLoopMode
+{
+	CFRunLoopRemoveTimer(theRunLoop, (CFRunLoopTimerRef)timer, (CFStringRef)runLoopMode);
 }
 
 - (void)runLoopUnscheduleReadStream
 {
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)
+	for (NSString *runLoopMode in theRunLoopModes)
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFReadStreamUnscheduleFromRunLoop(theReadStream, theRunLoop, runLoopMode);
+		CFReadStreamUnscheduleFromRunLoop(theReadStream, theRunLoop, (CFStringRef)runLoopMode);
 	}
 	CFReadStreamSetClient(theReadStream, kCFStreamEventNone, NULL, NULL);
 }
 
 - (void)runLoopUnscheduleWriteStream
 {
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)
+	for (NSString *runLoopMode in theRunLoopModes)
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFWriteStreamUnscheduleFromRunLoop(theWriteStream, theRunLoop, runLoopMode);
+		CFWriteStreamUnscheduleFromRunLoop(theWriteStream, theRunLoop, (CFStringRef)runLoopMode);
 	}
 	CFWriteStreamSetClient(theWriteStream, kCFStreamEventNone, NULL, NULL);
 }
@@ -616,6 +1007,10 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 **/
 - (void)enablePreBuffering
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	theFlags |= kEnablePreBuffering;
 }
 
@@ -754,8 +1149,101 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 	return YES;
 }
 
+- (BOOL)addRunLoopMode:(NSString *)runLoopMode
+{
+	NSAssert((theRunLoop == NULL) || (theRunLoop == CFRunLoopGetCurrent()),
+			 @"addRunLoopMode must be called from within the current RunLoop!");
+	
+	if(runLoopMode == nil)
+	{
+		return NO;
+	}
+	if([theRunLoopModes containsObject:runLoopMode])
+	{
+		return YES;
+	}
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+	theFlags &= ~kDequeueReadScheduled;
+	theFlags &= ~kDequeueWriteScheduled;
+    
+	NSArray *newRunLoopModes = [theRunLoopModes arrayByAddingObject:runLoopMode];
+	[theRunLoopModes release];
+	theRunLoopModes = [newRunLoopModes retain];
+	
+	if(theReadTimer)  [self runLoopAddTimer:theReadTimer  mode:runLoopMode];
+	if(theWriteTimer) [self runLoopAddTimer:theWriteTimer mode:runLoopMode];
+	
+	if(theSource4) [self runLoopAddSource:theSource4 mode:runLoopMode];
+	if(theSource6) [self runLoopAddSource:theSource6 mode:runLoopMode];
+    
+	if(theReadStream && theWriteStream)
+	{
+		CFReadStreamScheduleWithRunLoop(theReadStream, CFRunLoopGetCurrent(), (CFStringRef)runLoopMode);
+		CFWriteStreamScheduleWithRunLoop(theWriteStream, CFRunLoopGetCurrent(), (CFStringRef)runLoopMode);
+	}
+	
+	[self performSelector:@selector(maybeDequeueRead) withObject:nil afterDelay:0 inModes:theRunLoopModes];
+	[self performSelector:@selector(maybeDequeueWrite) withObject:nil afterDelay:0 inModes:theRunLoopModes];
+	[self performSelector:@selector(maybeScheduleDisconnect) withObject:nil afterDelay:0 inModes:theRunLoopModes];
+	
+	return YES;
+}
+
+- (BOOL)removeRunLoopMode:(NSString *)runLoopMode
+{
+	NSAssert((theRunLoop == NULL) || (theRunLoop == CFRunLoopGetCurrent()),
+			 @"addRunLoopMode must be called from within the current RunLoop!");
+	
+	if(runLoopMode == nil)
+	{
+		return NO;
+	}
+	if(![theRunLoopModes containsObject:runLoopMode])
+	{
+		return YES;
+	}
+	
+	NSMutableArray *newRunLoopModes = [[theRunLoopModes mutableCopy] autorelease];
+	[newRunLoopModes removeObject:runLoopMode];
+	
+	if([newRunLoopModes count] == 0)
+	{
+		return NO;
+	}
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+	theFlags &= ~kDequeueReadScheduled;
+	theFlags &= ~kDequeueWriteScheduled;
+	
+	[theRunLoopModes release];
+	theRunLoopModes = [newRunLoopModes copy];
+	
+	if(theReadTimer)  [self runLoopRemoveTimer:theReadTimer  mode:runLoopMode];
+	if(theWriteTimer) [self runLoopRemoveTimer:theWriteTimer mode:runLoopMode];
+	
+	if(theSource4) [self runLoopRemoveSource:theSource4 mode:runLoopMode];
+	if(theSource6) [self runLoopRemoveSource:theSource6 mode:runLoopMode];
+    
+	if(theReadStream && theWriteStream)
+	{
+		CFReadStreamScheduleWithRunLoop(theReadStream, CFRunLoopGetCurrent(), (CFStringRef)runLoopMode);
+		CFWriteStreamScheduleWithRunLoop(theWriteStream, CFRunLoopGetCurrent(), (CFStringRef)runLoopMode);
+	}
+	
+	[self performSelector:@selector(maybeDequeueRead) withObject:nil afterDelay:0 inModes:theRunLoopModes];
+	[self performSelector:@selector(maybeDequeueWrite) withObject:nil afterDelay:0 inModes:theRunLoopModes];
+	[self performSelector:@selector(maybeScheduleDisconnect) withObject:nil afterDelay:0 inModes:theRunLoopModes];
+	
+	return YES;
+}
+
 - (NSArray *)runLoopModes
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	return [[theRunLoopModes retain] autorelease];
 }
 
@@ -781,11 +1269,14 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 		            format:@"Attempting to accept without a delegate. Set a delegate first."];
     }
 	
-	if (theSocket4 != NULL || theSocket6 != NULL)
+	if (![self isDisconnected])
     {
 		[NSException raise:AsyncSocketException
 		            format:@"Attempting to accept while connected or accepting connections. Disconnect first."];
     }
+	
+	// Clear queues (spurious read/write requests post disconnect)
+	[self emptyQueues];
 
 	// Set up the listen sockaddr structs if needed.
 	
@@ -838,40 +1329,37 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 	{
 		NSString *portStr = [NSString stringWithFormat:@"%hu", port];
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-		@synchronized (getaddrinfoLock)
-#endif
+		struct addrinfo hints, *res, *res0;
+		
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family   = PF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = IPPROTO_TCP;
+		hints.ai_flags    = AI_PASSIVE;
+		
+		int error = getaddrinfo([interface UTF8String], [portStr UTF8String], &hints, &res0);
+		
+		if (error)
 		{
-			struct addrinfo hints, *res, *res0;
-			
-			memset(&hints, 0, sizeof(hints));
-			hints.ai_family   = PF_UNSPEC;
-			hints.ai_socktype = SOCK_STREAM;
-			hints.ai_protocol = IPPROTO_TCP;
-			hints.ai_flags    = AI_PASSIVE;
-			
-			int error = getaddrinfo([interface UTF8String], [portStr UTF8String], &hints, &res0);
-			
-			if(error)
+			if (errPtr)
 			{
-				if(errPtr)
-				{
-					NSString *errMsg = [NSString stringWithCString:gai_strerror(error) encoding:NSASCIIStringEncoding];
-					NSDictionary *info = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
-					
-					*errPtr = [NSError errorWithDomain:@"kCFStreamErrorDomainNetDB" code:error userInfo:info];
-				}
+				NSString *errMsg = [NSString stringWithCString:gai_strerror(error) encoding:NSASCIIStringEncoding];
+				NSDictionary *info = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
+				
+				*errPtr = [NSError errorWithDomain:@"kCFStreamErrorDomainNetDB" code:error userInfo:info];
 			}
-			
-			for(res = res0; res; res = res->ai_next)
+		}
+		else
+		{
+			for (res = res0; res; res = res->ai_next)
 			{
-				if(!address4 && (res->ai_family == AF_INET))
+				if (!address4 && (res->ai_family == AF_INET))
 				{
 					// Found IPv4 address
 					// Wrap the native address structures for CFSocketSetAddress.
 					address4 = [NSData dataWithBytes:res->ai_addr length:res->ai_addrlen];
 				}
-				else if(!address6 && (res->ai_family == AF_INET6))
+				else if (!address6 && (res->ai_family == AF_INET6))
 				{
 					// Found IPv6 address
 					// Wrap the native address structures for CFSocketSetAddress.
@@ -918,10 +1406,10 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 	CFSocketError err;
 	if (theSocket4)
 	{
-		err = CFSocketSetAddress (theSocket4, (CFDataRef)address4);
+		err = CFSocketSetAddress(theSocket4, (CFDataRef)address4);
 		if (err != kCFSocketSuccess) goto Failed;
 		
-		//NSLog(@"theSocket4: %hu", [self localPort:theSocket4]);
+		//NSLog(@"theSocket4: %hu", [self localPortFromCFSocket4:theSocket4]);
 	}
 	
 	if(port == 0 && theSocket4 && theSocket6)
@@ -929,21 +1417,24 @@ static void MyCFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType t
 		// The user has passed in port 0, which means he wants to allow the kernel to choose the port for them
 		// However, the kernel will choose a different port for both theSocket4 and theSocket6
 		// So we grab the port the kernel choose for theSocket4, and set it as the port for theSocket6
-		UInt16 chosenPort = [self localPort:theSocket4];
+		UInt16 chosenPort = [self localPortFromCFSocket4:theSocket4];
 		
 		struct sockaddr_in6 *pSockAddr6 = (struct sockaddr_in6 *)[address6 bytes];
-		pSockAddr6->sin6_port = htons(chosenPort);
+		if (pSockAddr6) // If statement to quiet the static analyzer
+		{
+			pSockAddr6->sin6_port = htons(chosenPort);
+		}
     }
 	
 	if (theSocket6)
 	{
-		err = CFSocketSetAddress (theSocket6, (CFDataRef)address6);
+		err = CFSocketSetAddress(theSocket6, (CFDataRef)address6);
 		if (err != kCFSocketSuccess) goto Failed;
 		
-		//NSLog(@"theSocket6: %hu", [self localPort:theSocket6]);
+		//NSLog(@"theSocket6: %hu", [self localPortFromCFSocket6:theSocket6]);
 	}
 
-	theFlags |= kDidPassConnectMethod;
+	theFlags |= kDidStartDelegate;
 	return YES;
 	
 Failed:
@@ -984,17 +1475,20 @@ Failed:
 		  withTimeout:(NSTimeInterval)timeout
 				error:(NSError **)errPtr
 {
-	if(theDelegate == NULL)
+	if (theDelegate == NULL)
 	{
 		[NSException raise:AsyncSocketException
 		            format:@"Attempting to connect without a delegate. Set a delegate first."];
 	}
 
-	if(theSocket4 != NULL || theSocket6 != NULL)
+	if (![self isDisconnected])
 	{
 		[NSException raise:AsyncSocketException
 		            format:@"Attempting to connect while connected or accepting connections. Disconnect first."];
 	}
+	
+	// Clear queues (spurious read/write requests post disconnect)
+	[self emptyQueues];
 	
 	if(![self createStreamsToHost:hostname onPort:port error:errPtr]) goto Failed;
 	if(![self attachStreamsToRunLoop:nil error:errPtr])               goto Failed;
@@ -1002,7 +1496,7 @@ Failed:
 	if(![self openStreamsAndReturnError:errPtr])                      goto Failed;
 	
 	[self startConnectTimeout:timeout];
-	theFlags |= kDidPassConnectMethod;
+	theFlags |= kDidStartDelegate;
 	
 	return YES;
 	
@@ -1013,7 +1507,7 @@ Failed:
 
 - (BOOL)connectToAddress:(NSData *)remoteAddr error:(NSError **)errPtr
 {
-	return [self connectToAddress:remoteAddr withTimeout:-1 error:errPtr];
+	return [self connectToAddress:remoteAddr viaInterfaceAddress:nil withTimeout:-1 error:errPtr];
 }
 
 /**
@@ -1032,25 +1526,41 @@ Failed:
 **/
 - (BOOL)connectToAddress:(NSData *)remoteAddr withTimeout:(NSTimeInterval)timeout error:(NSError **)errPtr
 {
+	return [self connectToAddress:remoteAddr viaInterfaceAddress:nil withTimeout:timeout error:errPtr];
+}
+
+/**
+ * This method is similar to the one above, but allows you to specify which socket interface
+ * the connection should run over. E.g. ethernet, wifi, bluetooth, etc.
+**/
+- (BOOL)connectToAddress:(NSData *)remoteAddr
+     viaInterfaceAddress:(NSData *)interfaceAddr
+             withTimeout:(NSTimeInterval)timeout
+                   error:(NSError **)errPtr
+{
 	if (theDelegate == NULL)
 	{
 		[NSException raise:AsyncSocketException
 		            format:@"Attempting to connect without a delegate. Set a delegate first."];
 	}
 	
-	if (theSocket4 != NULL || theSocket6 != NULL)
+	if (![self isDisconnected])
 	{
 		[NSException raise:AsyncSocketException
 		            format:@"Attempting to connect while connected or accepting connections. Disconnect first."];
 	}
 	
+	// Clear queues (spurious read/write requests post disconnect)
+	[self emptyQueues];
+	
 	if(![self createSocketForAddress:remoteAddr error:errPtr])   goto Failed;
+	if(![self bindSocketToAddress:interfaceAddr error:errPtr])   goto Failed;
 	if(![self attachSocketsToRunLoop:nil error:errPtr])          goto Failed;
 	if(![self configureSocketAndReturnError:errPtr])             goto Failed;
 	if(![self connectSocketToAddress:remoteAddr error:errPtr])   goto Failed;
 	
 	[self startConnectTimeout:timeout];
-	theFlags |= kDidPassConnectMethod;
+	theFlags |= kDidStartDelegate;
 	
 	return YES;
 	
@@ -1080,6 +1590,8 @@ Failed:
 
 - (void)doConnectTimeout:(NSTimer *)timer
 {
+	#pragma unused(timer)
+	
 	[self endConnectTimeout];
 	[self closeWithError:[self getConnectTimeoutError]];
 }
@@ -1152,7 +1664,48 @@ Failed:
 	}
 	else
 	{
-		if (errPtr) *errPtr = [self getSocketError];
+		if (errPtr)
+		{
+			NSString *errMsg = @"Remote address is not IPv4 or IPv6";
+			NSDictionary *info = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
+			
+			*errPtr = [NSError errorWithDomain:AsyncSocketErrorDomain code:AsyncSocketCFSocketError userInfo:info];
+		}
+		return NO;
+	}
+	
+	return YES;
+}
+
+- (BOOL)bindSocketToAddress:(NSData *)interfaceAddr error:(NSError **)errPtr
+{
+	if (interfaceAddr == nil) return YES;
+	
+	struct sockaddr *pSockAddr = (struct sockaddr *)[interfaceAddr bytes];
+	
+	CFSocketRef theSocket = (theSocket4 != NULL) ? theSocket4 : theSocket6;
+	NSAssert((theSocket != NULL), @"bindSocketToAddress called without valid socket");
+	
+	CFSocketNativeHandle nativeSocket = CFSocketGetNative(theSocket);
+	
+	if (pSockAddr->sa_family == AF_INET || pSockAddr->sa_family == AF_INET6)
+	{
+		int result = bind(nativeSocket, pSockAddr, (socklen_t)[interfaceAddr length]);
+		if (result != 0)
+		{
+			if (errPtr) *errPtr = [self getErrnoError];
+			return NO;
+		}
+	}
+	else
+	{
+		if (errPtr)
+		{
+			NSString *errMsg = @"Interface address is not IPv4 or IPv6";
+			NSDictionary *info = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
+			
+			*errPtr = [NSError errorWithDomain:AsyncSocketErrorDomain code:AsyncSocketCFSocketError userInfo:info];
+		}
 		return NO;
 	}
 	
@@ -1163,7 +1716,9 @@ Failed:
  * Adds the CFSocket's to the run-loop so that callbacks will work properly.
 **/
 - (BOOL)attachSocketsToRunLoop:(NSRunLoop *)runLoop error:(NSError **)errPtr
-{	
+{
+	#pragma unused(errPtr)
+	
 	// Get the CFRunLoop to which the socket should be attached.
 	theRunLoop = (runLoop == nil) ? CFRunLoopGetCurrent() : [runLoop getCFRunLoop];
 	
@@ -1230,41 +1785,48 @@ Failed:
  * Attempt to make the new socket.
  * If an error occurs, ignore this event.
 **/
-- (void)doAcceptWithSocket:(CFSocketNativeHandle)newNative
+- (void)doAcceptFromSocket:(CFSocketRef)parentSocket withNewNativeSocket:(CFSocketNativeHandle)newNativeSocket
 {
-	// New socket inherits same delegate and run loop modes.
-	// Note: We use [self class] to support subclassing AsyncSocket.
-	AsyncSocket *newSocket = [[[[self class] alloc] initWithDelegate:theDelegate] autorelease];
-	[newSocket setRunLoopModes:theRunLoopModes];
-	
-	if(newSocket)
+	if(newNativeSocket)
 	{
+		// New socket inherits same delegate and run loop modes.
+		// Note: We use [self class] to support subclassing AsyncSocket.
+		AsyncSocket *newSocket = [[[[self class] alloc] initWithDelegate:theDelegate] autorelease];
+		[newSocket setRunLoopModes:theRunLoopModes];
+		
+		if(![newSocket createStreamsFromNative:newNativeSocket error:nil])
+			goto Failed;
+		
+		if (parentSocket == theSocket4)
+			newSocket->theNativeSocket4 = newNativeSocket;
+		else
+			newSocket->theNativeSocket6 = newNativeSocket;
+		
 		if ([theDelegate respondsToSelector:@selector(onSocket:didAcceptNewSocket:)])
 			[theDelegate onSocket:self didAcceptNewSocket:newSocket];
 		
+		newSocket->theFlags |= kDidStartDelegate;
+		
 		NSRunLoop *runLoop = nil;
 		if ([theDelegate respondsToSelector:@selector(onSocket:wantsRunLoopForNewSocket:)])
+		{
 			runLoop = [theDelegate onSocket:self wantsRunLoopForNewSocket:newSocket];
-		
-		BOOL pass = YES;
-		
-		if(pass && ![newSocket createStreamsFromNative:newNative error:nil]) pass = NO;
-		if(pass && ![newSocket attachStreamsToRunLoop:runLoop error:nil])    pass = NO;
-		if(pass && ![newSocket configureStreamsAndReturnError:nil])          pass = NO;
-		if(pass && ![newSocket openStreamsAndReturnError:nil])               pass = NO;
-		
-		if(pass)
-			newSocket->theFlags |= kDidPassConnectMethod;
-		else {
-			// No NSError, but errors will still get logged from the above functions.
-			[newSocket close];
 		}
 		
+		if(![newSocket attachStreamsToRunLoop:runLoop error:nil]) goto Failed;
+		if(![newSocket configureStreamsAndReturnError:nil])       goto Failed;
+		if(![newSocket openStreamsAndReturnError:nil])            goto Failed;
+		
+		return;
+		
+	Failed:
+		[newSocket close];
 	}
 }
 
 /**
- * Description forthcoming...
+ * This method is called as a result of connectToAddress:withTimeout:error:.
+ * At this point we have an open CFSocket from which we need to create our read and write stream.
 **/
 - (void)doSocketOpen:(CFSocketRef)sock withCFSocketError:(CFSocketError)socketError
 {
@@ -1279,15 +1841,33 @@ Failed:
 	// Get the underlying native (BSD) socket
 	CFSocketNativeHandle nativeSocket = CFSocketGetNative(sock);
 	
-	// Setup the socket so that invalidating the socket will not close the native socket
+	// Store a reference to it
+	if (sock == theSocket4)
+		theNativeSocket4 = nativeSocket;
+	else
+		theNativeSocket6 = nativeSocket;
+	
+	// Setup the CFSocket so that invalidating it will not close the underlying native socket
 	CFSocketSetSocketFlags(sock, 0);
 	
-	// Invalidate and release the CFSocket - All we need from here on out is the nativeSocket
-	// Note: If we don't invalidate the socket (leaving the native socket open)
+	// Invalidate and release the CFSocket - All we need from here on out is the nativeSocket.
+	// Note: If we don't invalidate the CFSocket (leaving the native socket open)
 	// then theReadStream and theWriteStream won't function properly.
 	// Specifically, their callbacks won't work, with the exception of kCFStreamEventOpenCompleted.
-	// I'm not entirely sure why this is, but I'm guessing that events on the socket fire to the CFSocket we created,
-	// as opposed to the CFReadStream/CFWriteStream.
+	// 
+	// This is likely due to the mixture of the CFSocketCreateWithNative method,
+	// along with the CFStreamCreatePairWithSocket method.
+	// The documentation for CFSocketCreateWithNative states:
+	//   
+	//   If a CFSocket object already exists for sock,
+	//   the function returns the pre-existing object instead of creating a new object;
+	//   the context, callout, and callBackTypes parameters are ignored in this case.
+	// 
+	// So the CFStreamCreateWithNative method invokes the CFSocketCreateWithNative method,
+	// thinking that is creating a new underlying CFSocket for it's own purposes.
+	// When it does this, it uses the context/callout/callbackTypes parameters to setup everything appropriately.
+	// However, if a CFSocket already exists for the native socket,
+	// then it is returned (as per the documentation), which in turn screws up the CFStreams.
 	
 	CFSocketInvalidate(sock);
 	CFRelease(sock);
@@ -1325,7 +1905,7 @@ Failed:
 	{
 		NSError *err = [self getStreamError];
 		
-		NSLog (@"AsyncSocket %p couldn't create streams from accepted socket: %@", self, err);
+		NSLog(@"AsyncSocket %p couldn't create streams from accepted socket: %@", self, err);
 		
 		if (errPtr) *errPtr = err;
 		return NO;
@@ -1408,12 +1988,10 @@ Failed:
 	
 	// Add read and write streams to run loop
 	
-	unsigned i, count = [theRunLoopModes count];
-	for(i = 0; i < count; i++)
+	for (NSString *runLoopMode in theRunLoopModes)
 	{
-		CFStringRef runLoopMode = (CFStringRef)[theRunLoopModes objectAtIndex:i];
-		CFReadStreamScheduleWithRunLoop(theReadStream, theRunLoop, runLoopMode);
-		CFWriteStreamScheduleWithRunLoop(theWriteStream, theRunLoop, runLoopMode);
+		CFReadStreamScheduleWithRunLoop(theReadStream, theRunLoop, (CFStringRef)runLoopMode);
+		CFWriteStreamScheduleWithRunLoop(theWriteStream, theRunLoop, (CFStringRef)runLoopMode);
 	}
 	
 	return YES;
@@ -1421,7 +1999,9 @@ Failed:
 
 /**
  * Allows the delegate method to configure the CFReadStream and/or CFWriteStream as desired before we connect.
- * Note that the CFSocket and CFNativeSocket will not be available until after the connection is opened.
+ * 
+ * If being called from a connect method,
+ * the CFSocket and CFNativeSocket will not be available until after the connection is opened.
 **/
 - (BOOL)configureStreamsAndReturnError:(NSError **)errPtr
 {
@@ -1441,13 +2021,13 @@ Failed:
 {
 	BOOL pass = YES;
 	
-	if(pass && !CFReadStreamOpen (theReadStream))
+	if(pass && !CFReadStreamOpen(theReadStream))
 	{
 		NSLog (@"AsyncSocket %p couldn't open read stream,", self);
 		pass = NO;
 	}
 	
-	if(pass && !CFWriteStreamOpen (theWriteStream))
+	if(pass && !CFWriteStreamOpen(theWriteStream))
 	{
 		NSLog (@"AsyncSocket %p couldn't open write stream,", self);
 		pass = NO;
@@ -1467,10 +2047,11 @@ Failed:
 **/
 - (void)doStreamOpen
 {
-	NSError *err = nil;
 	if ((theFlags & kDidCompleteOpenForRead) && (theFlags & kDidCompleteOpenForWrite))
 	{
-		// Get the socket.
+		NSError *err = nil;
+		
+		// Get the socket
 		if (![self setSocketFromStreamsAndReturnError: &err])
 		{
 			NSLog (@"AsyncSocket %p couldn't get socket from streams, %@. Disconnecting.", self, err);
@@ -1503,7 +2084,12 @@ Failed:
 		return NO;
 	}
 	
-	CFDataGetBytes(nativeProp, CFRangeMake(0, CFDataGetLength(nativeProp)), (UInt8 *)&native);
+	CFIndex nativePropLen = CFDataGetLength(nativeProp);
+	CFIndex nativeLen = (CFIndex)sizeof(native);
+	
+	CFIndex len = MIN(nativePropLen, nativeLen);
+	
+	CFDataGetBytes(nativeProp, CFRangeMake(0, len), (UInt8 *)&native);
 	CFRelease(nativeProp);
 	
 	CFSocketRef theSocket = CFSocketCreateWithNative(kCFAllocatorDefault, native, 0, NULL, NULL);
@@ -1513,7 +2099,22 @@ Failed:
 		return NO;
 	}
 	
-	// Determine whether the connection was IPv4 or IPv6
+	// Determine whether the connection was IPv4 or IPv6.
+	// We may already know if this was an accepted socket,
+	// or if the connectToAddress method was used.
+	// In either of the above two cases, the native socket variable would already be set.
+	
+	if (theNativeSocket4 > 0)
+	{
+		theSocket4 = theSocket;
+		return YES;
+	}
+	if (theNativeSocket6 > 0)
+	{
+		theSocket6 = theSocket;
+		return YES;
+	}
+	
 	CFDataRef peeraddr = CFSocketCopyPeerAddress(theSocket);
 	if(peeraddr == NULL)
 	{
@@ -1529,10 +2130,12 @@ Failed:
 	if(sa->sa_family == AF_INET)
 	{
 		theSocket4 = theSocket;
+		theNativeSocket4 = native;
 	}
 	else
 	{
 		theSocket6 = theSocket;
+		theNativeSocket6 = native;
 	}
 	
 	CFRelease(peeraddr);
@@ -1549,7 +2152,7 @@ Failed:
 {
 	theFlags |= kClosingWithError;
 	
-	if (theFlags & kDidPassConnectMethod)
+	if (theFlags & kDidStartDelegate)
 	{
 		// Try to salvage what data we can.
 		[self recoverUnreadData];
@@ -1575,8 +2178,10 @@ Failed:
 		{
 			// We need to move its data into the front of the partial read buffer.
 			
+			void *buffer = [theCurrentRead->buffer mutableBytes] + theCurrentRead->startOffset;
+			
 			[partialReadBuffer replaceBytesInRange:NSMakeRange(0, 0)
-										 withBytes:[theCurrentRead->buffer bytes]
+										 withBytes:buffer
 											length:theCurrentRead->bytesDone];
 		}
 	}
@@ -1647,6 +2252,12 @@ Failed:
 		CFRelease (theSocket6);
 		theSocket6 = NULL;
 	}
+	
+	// Closing the streams or sockets resulted in closing the underlying native socket
+	theNativeSocket4 = 0;
+	theNativeSocket6 = 0;
+	
+	// Remove run loop sources
     if (theSource4 != NULL) 
     {
         [self runLoopRemoveSource:theSource4];
@@ -1663,7 +2274,7 @@ Failed:
 	
 	// If the client has passed the connect/accept method, then the connection has at least begun.
 	// Notify delegate that it is now ending.
-	BOOL shouldCallDelegate = (theFlags & kDidPassConnectMethod);
+	BOOL shouldCallDelegate = (theFlags & kDidStartDelegate);
 	
 	// Clear all flags (except the pre-buffering flag, which should remain as is)
 	theFlags &= kEnablePreBuffering;
@@ -1685,6 +2296,10 @@ Failed:
 **/
 - (void)disconnect
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	[self close];
 }
 
@@ -1693,6 +2308,10 @@ Failed:
 **/
 - (void)disconnectAfterReading
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	theFlags |= (kForbidReadsWrites | kDisconnectAfterReads);
 	
 	[self maybeScheduleDisconnect];
@@ -1703,6 +2322,10 @@ Failed:
 **/
 - (void)disconnectAfterWriting
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	theFlags |= (kForbidReadsWrites | kDisconnectAfterWrites);
 	
 	[self maybeScheduleDisconnect];
@@ -1713,6 +2336,10 @@ Failed:
 **/
 - (void)disconnectAfterReadingAndWriting
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	theFlags |= (kForbidReadsWrites | kDisconnectAfterReads | kDisconnectAfterWrites);
 	
 	[self maybeScheduleDisconnect];
@@ -1764,31 +2391,42 @@ Failed:
 **/
 - (NSData *)unreadData
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	// Ensure this method will only return data in the event of an error
-	if(!(theFlags & kClosingWithError)) return nil;
+	if (!(theFlags & kClosingWithError)) return nil;
 	
-	if(theReadStream == NULL) return nil;
+	if (theReadStream == NULL) return nil;
 	
-	CFIndex totalBytesRead = [partialReadBuffer length];
+	NSUInteger totalBytesRead = [partialReadBuffer length];
+	
 	BOOL error = NO;
-	while(!error && CFReadStreamHasBytesAvailable(theReadStream))
+	while (!error && CFReadStreamHasBytesAvailable(theReadStream))
 	{
-		[partialReadBuffer increaseLengthBy:READALL_CHUNKSIZE];
+		if (totalBytesRead == [partialReadBuffer length])
+		{
+			[partialReadBuffer increaseLengthBy:READALL_CHUNKSIZE];
+		}
 		
 		// Number of bytes to read is space left in packet buffer.
-		CFIndex bytesToRead = [partialReadBuffer length] - totalBytesRead;
+		NSUInteger bytesToRead = [partialReadBuffer length] - totalBytesRead;
 		
 		// Read data into packet buffer
 		UInt8 *packetbuf = (UInt8 *)( [partialReadBuffer mutableBytes] + totalBytesRead );
-		CFIndex bytesRead = CFReadStreamRead(theReadStream, packetbuf, bytesToRead);
+		
+		CFIndex result = CFReadStreamRead(theReadStream, packetbuf, bytesToRead);
 		
 		// Check results
-		if(bytesRead < 0)
+		if (result < 0)
 		{
 			error = YES;
 		}
 		else
 		{
+			CFIndex bytesRead = result;
+			
 			totalBytesRead += bytesRead;
 		}
 	}
@@ -1964,137 +2602,455 @@ Failed:
 #pragma mark Diagnostics
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+- (BOOL)isDisconnected
+{
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	if (theNativeSocket4 > 0) return NO;
+	if (theNativeSocket6 > 0) return NO;
+	
+	if (theSocket4) return NO;
+	if (theSocket6) return NO;
+	
+	if (theReadStream)  return NO;
+	if (theWriteStream) return NO;
+	
+	return YES;
+}
+
 - (BOOL)isConnected
 {
-	return [self isSocketConnected] && [self areStreamsConnected];
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	return [self areStreamsConnected];
 }
 
 - (NSString *)connectedHost
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if(theSocket4)
-		return [self connectedHost:theSocket4];
-	else
-		return [self connectedHost:theSocket6];
+		return [self connectedHostFromCFSocket4:theSocket4];
+	if(theSocket6)
+		return [self connectedHostFromCFSocket6:theSocket6];
+	
+	if(theNativeSocket4 > 0)
+		return [self connectedHostFromNativeSocket4:theNativeSocket4];
+	if(theNativeSocket6 > 0)
+		return [self connectedHostFromNativeSocket6:theNativeSocket6];
+	
+	return nil;
 }
 
 - (UInt16)connectedPort
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if(theSocket4)
-		return [self connectedPort:theSocket4];
-	else
-		return [self connectedPort:theSocket6];
+		return [self connectedPortFromCFSocket4:theSocket4];
+	if(theSocket6)
+		return [self connectedPortFromCFSocket6:theSocket6];
+	
+	if(theNativeSocket4 > 0)
+		return [self connectedPortFromNativeSocket4:theNativeSocket4];
+	if(theNativeSocket6 > 0)
+		return [self connectedPortFromNativeSocket6:theNativeSocket6];
+	
+	return 0;
 }
 
 - (NSString *)localHost
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if(theSocket4)
-		return [self localHost:theSocket4];
-	else
-		return [self localHost:theSocket6];
+		return [self localHostFromCFSocket4:theSocket4];
+	if(theSocket6)
+		return [self localHostFromCFSocket6:theSocket6];
+	
+	if(theNativeSocket4 > 0)
+		return [self localHostFromNativeSocket4:theNativeSocket4];
+	if(theNativeSocket6 > 0)
+		return [self localHostFromNativeSocket6:theNativeSocket6];
+	
+	return nil;
 }
 
 - (UInt16)localPort
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if(theSocket4)
-		return [self localPort:theSocket4];
-	else
-		return [self localPort:theSocket6];
+		return [self localPortFromCFSocket4:theSocket4];
+	if(theSocket6)
+		return [self localPortFromCFSocket6:theSocket6];
+	
+	if(theNativeSocket4 > 0)
+		return [self localPortFromNativeSocket4:theNativeSocket4];
+	if(theNativeSocket6 > 0)
+		return [self localPortFromNativeSocket6:theNativeSocket6];
+	
+	return 0;
 }
 
-- (NSString *)connectedHost:(CFSocketRef)theSocket
+- (NSString *)connectedHost4
 {
-	if (theSocket == NULL) return nil;
+	if(theSocket4)
+		return [self connectedHostFromCFSocket4:theSocket4];
+	if(theNativeSocket4 > 0)
+		return [self connectedHostFromNativeSocket4:theNativeSocket4];
 	
+	return nil;
+}
+
+- (NSString *)connectedHost6
+{
+	if(theSocket6)
+		return [self connectedHostFromCFSocket6:theSocket6];
+	if(theNativeSocket6 > 0)
+		return [self connectedHostFromNativeSocket6:theNativeSocket6];
+	
+	return nil;
+}
+
+- (UInt16)connectedPort4
+{
+	if(theSocket4)
+		return [self connectedPortFromCFSocket4:theSocket4];
+	if(theNativeSocket4 > 0)
+		return [self connectedPortFromNativeSocket4:theNativeSocket4];
+	
+	return 0;
+}
+
+- (UInt16)connectedPort6
+{
+	if(theSocket6)
+		return [self connectedPortFromCFSocket6:theSocket6];
+	if(theNativeSocket6 > 0)
+		return [self connectedPortFromNativeSocket6:theNativeSocket6];
+	
+	return 0;
+}
+
+- (NSString *)localHost4
+{
+	if(theSocket4)
+		return [self localHostFromCFSocket4:theSocket4];
+	if(theNativeSocket4 > 0)
+		return [self localHostFromNativeSocket4:theNativeSocket4];
+	
+	return nil;
+}
+
+- (NSString *)localHost6
+{
+	if(theSocket6)
+		return [self localHostFromCFSocket6:theSocket6];
+	if(theNativeSocket6 > 0)
+		return [self localHostFromNativeSocket6:theNativeSocket6];
+	
+	return nil;
+}
+
+- (UInt16)localPort4
+{
+	if(theSocket4)
+		return [self localPortFromCFSocket4:theSocket4];
+	if(theNativeSocket4 > 0)
+		return [self localPortFromNativeSocket4:theNativeSocket4];
+	
+	return 0;
+}
+
+- (UInt16)localPort6
+{
+	if(theSocket6)
+		return [self localPortFromCFSocket6:theSocket6];
+	if(theNativeSocket6 > 0)
+		return [self localPortFromNativeSocket6:theNativeSocket6];
+	
+	return 0;
+}
+
+- (NSString *)connectedHostFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in sockaddr4;
+	socklen_t sockaddr4len = sizeof(sockaddr4);
+	
+	if(getpeername(theNativeSocket, (struct sockaddr *)&sockaddr4, &sockaddr4len) < 0)
+	{
+		return nil;
+	}
+	return [self hostFromAddress4:&sockaddr4];
+}
+
+- (NSString *)connectedHostFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in6 sockaddr6;
+	socklen_t sockaddr6len = sizeof(sockaddr6);
+	
+	if(getpeername(theNativeSocket, (struct sockaddr *)&sockaddr6, &sockaddr6len) < 0)
+	{
+		return nil;
+	}
+	return [self hostFromAddress6:&sockaddr6];
+}
+
+- (NSString *)connectedHostFromCFSocket4:(CFSocketRef)theSocket
+{
 	CFDataRef peeraddr;
 	NSString *peerstr = nil;
 
 	if((peeraddr = CFSocketCopyPeerAddress(theSocket)))
 	{
-		peerstr = [self addressHost:peeraddr];
+		struct sockaddr_in *pSockAddr = (struct sockaddr_in *)CFDataGetBytePtr(peeraddr);
+
+		peerstr = [self hostFromAddress4:pSockAddr];
 		CFRelease (peeraddr);
 	}
 
 	return peerstr;
 }
 
-- (UInt16)connectedPort:(CFSocketRef)theSocket
+- (NSString *)connectedHostFromCFSocket6:(CFSocketRef)theSocket
 {
-	if (theSocket == NULL) return 0;
+	CFDataRef peeraddr;
+	NSString *peerstr = nil;
+
+	if((peeraddr = CFSocketCopyPeerAddress(theSocket)))
+	{
+		struct sockaddr_in6 *pSockAddr = (struct sockaddr_in6 *)CFDataGetBytePtr(peeraddr);
+		
+		peerstr = [self hostFromAddress6:pSockAddr];
+		CFRelease (peeraddr);
+	}
+
+	return peerstr;
+}
+
+- (UInt16)connectedPortFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in sockaddr4;
+	socklen_t sockaddr4len = sizeof(sockaddr4);
 	
+	if(getpeername(theNativeSocket, (struct sockaddr *)&sockaddr4, &sockaddr4len) < 0)
+	{
+		return 0;
+	}
+	return [self portFromAddress4:&sockaddr4];
+}
+
+- (UInt16)connectedPortFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in6 sockaddr6;
+	socklen_t sockaddr6len = sizeof(sockaddr6);
+	
+	if(getpeername(theNativeSocket, (struct sockaddr *)&sockaddr6, &sockaddr6len) < 0)
+	{
+		return 0;
+	}
+	return [self portFromAddress6:&sockaddr6];
+}
+
+- (UInt16)connectedPortFromCFSocket4:(CFSocketRef)theSocket
+{
 	CFDataRef peeraddr;
 	UInt16 peerport = 0;
 
 	if((peeraddr = CFSocketCopyPeerAddress(theSocket)))
 	{
-		peerport = [self addressPort:peeraddr];
+		struct sockaddr_in *pSockAddr = (struct sockaddr_in *)CFDataGetBytePtr(peeraddr);
+		
+		peerport = [self portFromAddress4:pSockAddr];
 		CFRelease (peeraddr);
 	}
 
 	return peerport;
 }
 
-- (NSString *)localHost:(CFSocketRef)theSocket
+- (UInt16)connectedPortFromCFSocket6:(CFSocketRef)theSocket
 {
-	if (theSocket == NULL) return nil;
+	CFDataRef peeraddr;
+	UInt16 peerport = 0;
+
+	if((peeraddr = CFSocketCopyPeerAddress(theSocket)))
+	{
+		struct sockaddr_in6 *pSockAddr = (struct sockaddr_in6 *)CFDataGetBytePtr(peeraddr);
+		
+		peerport = [self portFromAddress6:pSockAddr];
+		CFRelease (peeraddr);
+	}
+
+	return peerport;
+}
+
+- (NSString *)localHostFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in sockaddr4;
+	socklen_t sockaddr4len = sizeof(sockaddr4);
 	
+	if(getsockname(theNativeSocket, (struct sockaddr *)&sockaddr4, &sockaddr4len) < 0)
+	{
+		return nil;
+	}
+	return [self hostFromAddress4:&sockaddr4];
+}
+
+- (NSString *)localHostFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in6 sockaddr6;
+	socklen_t sockaddr6len = sizeof(sockaddr6);
+	
+	if(getsockname(theNativeSocket, (struct sockaddr *)&sockaddr6, &sockaddr6len) < 0)
+	{
+		return nil;
+	}
+	return [self hostFromAddress6:&sockaddr6];
+}
+
+- (NSString *)localHostFromCFSocket4:(CFSocketRef)theSocket
+{
 	CFDataRef selfaddr;
 	NSString *selfstr = nil;
 
 	if((selfaddr = CFSocketCopyAddress(theSocket)))
 	{
-		selfstr = [self addressHost:selfaddr];
+		struct sockaddr_in *pSockAddr = (struct sockaddr_in *)CFDataGetBytePtr(selfaddr);
+		
+		selfstr = [self hostFromAddress4:pSockAddr];
 		CFRelease (selfaddr);
 	}
 
 	return selfstr;
 }
 
-- (UInt16)localPort:(CFSocketRef)theSocket
+- (NSString *)localHostFromCFSocket6:(CFSocketRef)theSocket
 {
-	if (theSocket == NULL) return 0;
+	CFDataRef selfaddr;
+	NSString *selfstr = nil;
+
+	if((selfaddr = CFSocketCopyAddress(theSocket)))
+	{
+		struct sockaddr_in6 *pSockAddr = (struct sockaddr_in6 *)CFDataGetBytePtr(selfaddr);
+		
+		selfstr = [self hostFromAddress6:pSockAddr];
+		CFRelease (selfaddr);
+	}
+
+	return selfstr;
+}
+
+- (UInt16)localPortFromNativeSocket4:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in sockaddr4;
+	socklen_t sockaddr4len = sizeof(sockaddr4);
 	
+	if(getsockname(theNativeSocket, (struct sockaddr *)&sockaddr4, &sockaddr4len) < 0)
+	{
+		return 0;
+	}
+	return [self portFromAddress4:&sockaddr4];
+}
+
+- (UInt16)localPortFromNativeSocket6:(CFSocketNativeHandle)theNativeSocket
+{
+	struct sockaddr_in6 sockaddr6;
+	socklen_t sockaddr6len = sizeof(sockaddr6);
+	
+	if(getsockname(theNativeSocket, (struct sockaddr *)&sockaddr6, &sockaddr6len) < 0)
+	{
+		return 0;
+	}
+	return [self portFromAddress6:&sockaddr6];
+}
+
+- (UInt16)localPortFromCFSocket4:(CFSocketRef)theSocket
+{
 	CFDataRef selfaddr;
 	UInt16 selfport = 0;
 
 	if ((selfaddr = CFSocketCopyAddress(theSocket)))
 	{
-		selfport = [self addressPort:selfaddr];
+		struct sockaddr_in *pSockAddr = (struct sockaddr_in *)CFDataGetBytePtr(selfaddr);
+		
+		selfport = [self portFromAddress4:pSockAddr];
 		CFRelease (selfaddr);
 	}
 
 	return selfport;
 }
 
-- (NSString *)addressHost:(CFDataRef)cfaddr
+- (UInt16)localPortFromCFSocket6:(CFSocketRef)theSocket
 {
-	if (cfaddr == NULL) return nil;
-	
-	char addrBuf[ MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN) ];
-	struct sockaddr *pSockAddr = (struct sockaddr *) CFDataGetBytePtr (cfaddr);
-	struct sockaddr_in  *pSockAddrV4 = (struct sockaddr_in  *)pSockAddr;
-	struct sockaddr_in6 *pSockAddrV6 = (struct sockaddr_in6 *)pSockAddr;
+	CFDataRef selfaddr;
+	UInt16 selfport = 0;
 
-	const void *pAddr = (pSockAddr->sa_family == AF_INET) ?
-							(void *)(&(pSockAddrV4->sin_addr)) :
-							(void *)(&(pSockAddrV6->sin6_addr));
+	if ((selfaddr = CFSocketCopyAddress(theSocket)))
+	{
+		struct sockaddr_in6 *pSockAddr = (struct sockaddr_in6 *)CFDataGetBytePtr(selfaddr);
+		
+		selfport = [self portFromAddress6:pSockAddr];
+		CFRelease (selfaddr);
+	}
 
-	const char *pStr = inet_ntop (pSockAddr->sa_family, pAddr, addrBuf, sizeof(addrBuf));
-	if (pStr == NULL) [NSException raise: NSInternalInconsistencyException
-								  format: @"Cannot convert address to string."];
-
-	return [NSString stringWithCString:pStr encoding:NSASCIIStringEncoding];
+	return selfport;
 }
 
-- (UInt16)addressPort:(CFDataRef)cfaddr
+- (NSString *)hostFromAddress4:(struct sockaddr_in *)pSockaddr4
 {
-	if (cfaddr == NULL) return 0;
-    
-	struct sockaddr_in *pAddr = (struct sockaddr_in *) CFDataGetBytePtr (cfaddr);
-	return ntohs (pAddr->sin_port);
+	char addrBuf[INET_ADDRSTRLEN];
+	
+	if(inet_ntop(AF_INET, &pSockaddr4->sin_addr, addrBuf, (socklen_t)sizeof(addrBuf)) == NULL)
+	{
+		[NSException raise:NSInternalInconsistencyException format:@"Cannot convert IPv4 address to string."];
+	}
+	
+	return [NSString stringWithCString:addrBuf encoding:NSASCIIStringEncoding];
+}
+
+- (NSString *)hostFromAddress6:(struct sockaddr_in6 *)pSockaddr6
+{
+	char addrBuf[INET6_ADDRSTRLEN];
+	
+	if(inet_ntop(AF_INET6, &pSockaddr6->sin6_addr, addrBuf, (socklen_t)sizeof(addrBuf)) == NULL)
+	{
+		[NSException raise:NSInternalInconsistencyException format:@"Cannot convert IPv6 address to string."];
+	}
+	
+	return [NSString stringWithCString:addrBuf encoding:NSASCIIStringEncoding];
+}
+
+- (UInt16)portFromAddress4:(struct sockaddr_in *)pSockaddr4
+{
+	return ntohs(pSockaddr4->sin_port);
+}
+
+- (UInt16)portFromAddress6:(struct sockaddr_in6 *)pSockaddr6
+{
+	return ntohs(pSockaddr6->sin6_port);
 }
 
 - (NSData *)connectedAddress
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	// Extract address from CFSocket
+	
     CFSocketRef theSocket;
     
     if (theSocket4)
@@ -2102,23 +3058,54 @@ Failed:
     else
         theSocket = theSocket6;
     
-    if (theSocket == NULL) return nil;
+    if (theSocket)
+    {
+		CFDataRef peeraddr = CFSocketCopyPeerAddress(theSocket);
+		
+		if (peeraddr == NULL) return nil;
+		
+		return [(NSData *)NSMakeCollectable(peeraddr) autorelease];
+	}
 	
-	CFDataRef peeraddr = CFSocketCopyPeerAddress(theSocket);
-    
-    if (peeraddr == NULL) return nil;
-    
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-    NSData *result = [NSData dataWithBytes:CFDataGetBytePtr(peeraddr) length:CFDataGetLength(peeraddr)];
-    CFRelease(peeraddr);
-    return result;
-#else
-    return [(NSData *)NSMakeCollectable(peeraddr) autorelease];
-#endif
+	// Extract address from CFSocketNativeHandle
+	
+	socklen_t sockaddrlen;
+	CFSocketNativeHandle theNativeSocket = 0;
+	
+	if (theNativeSocket4 > 0)
+	{
+		theNativeSocket = theNativeSocket4;
+		sockaddrlen = sizeof(struct sockaddr_in);
+	}
+	else
+	{
+		theNativeSocket = theNativeSocket6;
+		sockaddrlen = sizeof(struct sockaddr_in6);
+	}
+	
+	NSData *result = nil;
+	void *sockaddr = malloc(sockaddrlen);
+	
+	if(getpeername(theNativeSocket, (struct sockaddr *)sockaddr, &sockaddrlen) >= 0)
+	{
+		result = [NSData dataWithBytesNoCopy:sockaddr length:sockaddrlen freeWhenDone:YES];
+	}
+	else
+	{
+		free(sockaddr);
+	}
+	
+	return result;
 }
 
 - (NSData *)localAddress
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	// Extract address from CFSocket
+	
     CFSocketRef theSocket;
     
     if (theSocket4)
@@ -2126,39 +3113,62 @@ Failed:
     else
         theSocket = theSocket6;
     
-    if (theSocket == NULL) return nil;
-    
-    CFDataRef selfaddr = CFSocketCopyAddress(theSocket);
-    
-    if (selfaddr == NULL) return nil;
-    
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-    NSData *result = [NSData dataWithBytes:CFDataGetBytePtr(selfaddr) length:CFDataGetLength(selfaddr)];
-    CFRelease(selfaddr);
-    return result;
-#else
-    return [(NSData *)NSMakeCollectable(selfaddr) autorelease];
-#endif
+    if (theSocket)
+    {
+		CFDataRef selfaddr = CFSocketCopyAddress(theSocket);
+		
+		if (selfaddr == NULL) return nil;
+		
+		return [(NSData *)NSMakeCollectable(selfaddr) autorelease];
+	}
+	
+	// Extract address from CFSocketNativeHandle
+	
+	socklen_t sockaddrlen;
+	CFSocketNativeHandle theNativeSocket = 0;
+	
+	if (theNativeSocket4 > 0)
+	{
+		theNativeSocket = theNativeSocket4;
+		sockaddrlen = sizeof(struct sockaddr_in);
+	}
+	else
+	{
+		theNativeSocket = theNativeSocket6;
+		sockaddrlen = sizeof(struct sockaddr_in6);
+	}
+	
+	NSData *result = nil;
+	void *sockaddr = malloc(sockaddrlen);
+	
+	if(getsockname(theNativeSocket, (struct sockaddr *)sockaddr, &sockaddrlen) >= 0)
+	{
+		result = [NSData dataWithBytesNoCopy:sockaddr length:sockaddrlen freeWhenDone:YES];
+	}
+	else
+	{
+		free(sockaddr);
+	}
+	
+	return result;
 }
 
 - (BOOL)isIPv4
 {
-	return (theSocket4 != NULL);
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	return (theNativeSocket4 > 0 || theSocket4 != NULL);
 }
 
 - (BOOL)isIPv6
 {
-	return (theSocket6 != NULL);
-}
-
-- (BOOL)isSocketConnected
-{
-	if(theSocket4 != NULL)
-		return CFSocketIsValid(theSocket4);
-	else if(theSocket6 != NULL)
-		return CFSocketIsValid(theSocket6);
-	else
-		return NO;
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	return (theNativeSocket6 > 0 || theSocket6 != NULL);
 }
 
 - (BOOL)areStreamsConnected
@@ -2167,7 +3177,7 @@ Failed:
     
 	if (theReadStream != NULL)
 	{
-		s = CFReadStreamGetStatus (theReadStream);
+		s = CFReadStreamGetStatus(theReadStream);
 		if ( !(s == kCFStreamStatusOpen || s == kCFStreamStatusReading || s == kCFStreamStatusError) )
 			return NO;
 	}
@@ -2175,7 +3185,7 @@ Failed:
     
 	if (theWriteStream != NULL)
 	{
-		s = CFWriteStreamGetStatus (theWriteStream);
+		s = CFWriteStreamGetStatus(theWriteStream);
 		if ( !(s == kCFStreamStatusOpen || s == kCFStreamStatusWriting || s == kCFStreamStatusError) )
 			return NO;
 	}
@@ -2186,62 +3196,64 @@ Failed:
 
 - (NSString *)description
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	static const char *statstr[] = {"not open","opening","open","reading","writing","at end","closed","has error"};
 	CFStreamStatus rs = (theReadStream != NULL) ? CFReadStreamGetStatus(theReadStream) : 0;
 	CFStreamStatus ws = (theWriteStream != NULL) ? CFWriteStreamGetStatus(theWriteStream) : 0;
 	
 	NSString *peerstr, *selfstr;
-	CFDataRef peeraddr4 = NULL, peeraddr6 = NULL, selfaddr4 = NULL, selfaddr6 = NULL;
 
-	if (theSocket4 || theSocket6)
-	{
-		if (theSocket4) peeraddr4 = CFSocketCopyPeerAddress(theSocket4);
-		if (theSocket6) peeraddr6 = CFSocketCopyPeerAddress(theSocket6);
+	BOOL is4 = [self isIPv4];
+	BOOL is6 = [self isIPv6];
 	
-		if(theSocket4 && theSocket6)
+	if (is4 || is6)
+	{
+		if (is4 && is6)
 		{
 			peerstr = [NSString stringWithFormat: @"%@/%@ %u", 
-					   [self addressHost:peeraddr4], [self addressHost:peeraddr6], [self addressPort:peeraddr4]];
+					   [self connectedHost4],
+					   [self connectedHost6],
+					   [self connectedPort]];
 		}
-		else if(theSocket4)
+		else if (is4)
 		{
-			peerstr = [NSString stringWithFormat: @"%@ %u", [self addressHost:peeraddr4], [self addressPort:peeraddr4]];
+			peerstr = [NSString stringWithFormat: @"%@ %u", 
+					   [self connectedHost4],
+					   [self connectedPort4]];
 		}
 		else
 		{
-			peerstr = [NSString stringWithFormat: @"%@ %u", [self addressHost:peeraddr6], [self addressPort:peeraddr6]];
+			peerstr = [NSString stringWithFormat: @"%@ %u",
+					   [self connectedHost6],
+					   [self connectedPort6]];
 		}
-		
-		if(peeraddr4) CFRelease(peeraddr4);
-		if(peeraddr6) CFRelease(peeraddr6);
-		peeraddr4 = NULL;
-		peeraddr6 = NULL;
 	}
 	else peerstr = @"nowhere";
 
-	if (theSocket4 || theSocket6)
+	if (is4 || is6)
 	{
-		if (theSocket4) selfaddr4 = CFSocketCopyAddress (theSocket4);
-		if (theSocket6) selfaddr6 = CFSocketCopyAddress (theSocket6);
-	
-		if (theSocket4 && theSocket6)
+		if (is4 && is6)
 		{
 			selfstr = [NSString stringWithFormat: @"%@/%@ %u",
-					   [self addressHost:selfaddr4], [self addressHost:selfaddr6], [self addressPort:selfaddr4]];
+					   [self localHost4],
+					   [self localHost6],
+					   [self localPort]];
 		}
-		else if (theSocket4)
+		else if (is4)
 		{
-			selfstr = [NSString stringWithFormat: @"%@ %u", [self addressHost:selfaddr4], [self addressPort:selfaddr4]];
+			selfstr = [NSString stringWithFormat: @"%@ %u",
+					   [self localHost4],
+					   [self localPort4]];
 		}
 		else
 		{
-			selfstr = [NSString stringWithFormat: @"%@ %u", [self addressHost:selfaddr6], [self addressPort:selfaddr6]];
+			selfstr = [NSString stringWithFormat: @"%@ %u",
+					   [self localHost6],
+					   [self localPort6]];
 		}
-
-		if(selfaddr4) CFRelease(selfaddr4);
-		if(selfaddr6) CFRelease(selfaddr6);
-		selfaddr4 = NULL;
-		selfaddr6 = NULL;
 	}
 	else selfstr = @"nowhere";
 	
@@ -2255,14 +3267,13 @@ Failed:
 	
 	[ms appendString:[NSString stringWithFormat:@"has queued %u reads %u writes, ", readQueueCount, writeQueueCount]];
 
-	if (theCurrentRead == nil)
+	if (theCurrentRead == nil || [theCurrentRead isKindOfClass:[AsyncSpecialPacket class]])
 		[ms appendString: @"no current read, "];
 	else
 	{
 		int percentDone;
-		if ([theCurrentRead->buffer length] != 0)
-			percentDone = (float)theCurrentRead->bytesDone /
-						  (float)[theCurrentRead->buffer length] * 100.0F;
+		if (theCurrentRead->readLength > 0)
+			percentDone = (float)theCurrentRead->bytesDone / (float)theCurrentRead->readLength * 100.0F;
 		else
 			percentDone = 100.0F;
 
@@ -2271,16 +3282,11 @@ Failed:
 			theCurrentRead->bytesDone ? percentDone : 0]];
 	}
 
-	if (theCurrentWrite == nil)
+	if (theCurrentWrite == nil || [theCurrentWrite isKindOfClass:[AsyncSpecialPacket class]])
 		[ms appendString: @"no current write, "];
 	else
 	{
-		int percentDone;
-		if ([theCurrentWrite->buffer length] != 0)
-			percentDone = (float)theCurrentWrite->bytesDone /
-						  (float)[theCurrentWrite->buffer length] * 100.0F;
-		else
-			percentDone = 100.0F;
+		int percentDone = (float)theCurrentWrite->bytesDone / (float)[theCurrentWrite->buffer length] * 100.0F;
 
 		[ms appendString: [NSString stringWithFormat:@"currently written %u (%d%%), ",
 			(unsigned int)[theCurrentWrite->buffer length],
@@ -2313,69 +3319,123 @@ Failed:
 #pragma mark Reading
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)readDataToLength:(CFIndex)length withTimeout:(NSTimeInterval)timeout tag:(long)tag
+- (void)readDataWithTimeout:(NSTimeInterval)timeout tag:(long)tag
 {
-	if(length == 0) return;
-	if(theFlags & kForbidReadsWrites) return;
-	
-	NSMutableData *buffer = [[NSMutableData alloc] initWithLength:length];
-	AsyncReadPacket *packet = [[AsyncReadPacket alloc] initWithData:buffer
-															timeout:timeout
-																tag:tag
-												   readAllAvailable:NO
-														 terminator:nil
-														  maxLength:length];
+	[self readDataWithTimeout:timeout buffer:nil bufferOffset:0 maxLength:0 tag:tag];
+}
 
+- (void)readDataWithTimeout:(NSTimeInterval)timeout
+                     buffer:(NSMutableData *)buffer
+               bufferOffset:(NSUInteger)offset
+                        tag:(long)tag
+{
+	[self readDataWithTimeout:timeout buffer:buffer bufferOffset:offset maxLength:0 tag:tag];
+}
+
+- (void)readDataWithTimeout:(NSTimeInterval)timeout
+                     buffer:(NSMutableData *)buffer
+               bufferOffset:(NSUInteger)offset
+                  maxLength:(NSUInteger)length
+                        tag:(long)tag
+{
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	if (offset > [buffer length]) return;
+	if (theFlags & kForbidReadsWrites) return;
+	
+	AsyncReadPacket *packet = [[AsyncReadPacket alloc] initWithData:buffer
+	                                                    startOffset:offset
+	                                                      maxLength:length
+	                                                        timeout:timeout
+	                                                     readLength:0
+	                                                     terminator:nil
+	                                                            tag:tag];
 	[theReadQueue addObject:packet];
 	[self scheduleDequeueRead];
-
+	
 	[packet release];
-	[buffer release];
+}
+
+- (void)readDataToLength:(NSUInteger)length withTimeout:(NSTimeInterval)timeout tag:(long)tag
+{
+	[self readDataToLength:length withTimeout:timeout buffer:nil bufferOffset:0 tag:tag];
+}
+
+- (void)readDataToLength:(NSUInteger)length
+             withTimeout:(NSTimeInterval)timeout
+                  buffer:(NSMutableData *)buffer
+            bufferOffset:(NSUInteger)offset
+                     tag:(long)tag
+{
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	if (length == 0) return;
+	if (offset > [buffer length]) return;
+	if (theFlags & kForbidReadsWrites) return;
+	
+	AsyncReadPacket *packet = [[AsyncReadPacket alloc] initWithData:buffer
+	                                                    startOffset:offset
+	                                                      maxLength:0
+	                                                        timeout:timeout
+	                                                     readLength:length
+	                                                     terminator:nil
+	                                                            tag:tag];
+	[theReadQueue addObject:packet];
+	[self scheduleDequeueRead];
+	
+	[packet release];
 }
 
 - (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag
 {
-	[self readDataToData:data withTimeout:timeout maxLength:-1 tag:tag];
+	[self readDataToData:data withTimeout:timeout buffer:nil bufferOffset:0 maxLength:0 tag:tag];
 }
 
-- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout maxLength:(CFIndex)length tag:(long)tag
+- (void)readDataToData:(NSData *)data
+           withTimeout:(NSTimeInterval)timeout
+                buffer:(NSMutableData *)buffer
+          bufferOffset:(NSUInteger)offset
+                   tag:(long)tag
 {
-	if(data == nil || [data length] == 0) return;
-	if(length >= 0 && length < [data length]) return;
-	if(theFlags & kForbidReadsWrites) return;
-	
-	NSMutableData *buffer = [[NSMutableData alloc] initWithLength:0];
-	AsyncReadPacket *packet = [[AsyncReadPacket alloc] initWithData:buffer
-															timeout:timeout
-																tag:tag 
-												   readAllAvailable:NO 
-														 terminator:data
-														  maxLength:length];
-	
-	[theReadQueue addObject:packet];
-	[self scheduleDequeueRead];
-	
-	[packet release];
-	[buffer release];
+	[self readDataToData:data withTimeout:timeout buffer:buffer bufferOffset:offset maxLength:0 tag:tag];
 }
 
-- (void)readDataWithTimeout:(NSTimeInterval)timeout tag:(long)tag
+- (void)readDataToData:(NSData *)data withTimeout:(NSTimeInterval)timeout maxLength:(NSUInteger)length tag:(long)tag
 {
+	[self readDataToData:data withTimeout:timeout buffer:nil bufferOffset:0 maxLength:length tag:tag];
+}
+
+- (void)readDataToData:(NSData *)data
+           withTimeout:(NSTimeInterval)timeout
+                buffer:(NSMutableData *)buffer
+          bufferOffset:(NSUInteger)offset
+             maxLength:(NSUInteger)length
+                   tag:(long)tag
+{
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
+	if (data == nil || [data length] == 0) return;
+	if (offset > [buffer length]) return;
+	if (length > 0 && length < [data length]) return;
 	if (theFlags & kForbidReadsWrites) return;
 	
-	NSMutableData *buffer = [[NSMutableData alloc] initWithLength:0];
 	AsyncReadPacket *packet = [[AsyncReadPacket alloc] initWithData:buffer
-															timeout:timeout
-																tag:tag
-												   readAllAvailable:YES
-														 terminator:nil
-														  maxLength:-1];
-	
+	                                                    startOffset:offset
+	                                                      maxLength:length
+	                                                        timeout:timeout
+	                                                     readLength:0
+	                                                     terminator:data
+	                                                            tag:tag];
 	[theReadQueue addObject:packet];
 	[self scheduleDequeueRead];
 	
 	[packet release];
-	[buffer release];
 }
 
 /**
@@ -2415,7 +3475,7 @@ Failed:
 				// Attempt to start TLS
 				theFlags |= kStartingReadTLS;
 				
-				// This method won't do anything unless both kStartingReadTLS and kStartingWriteTLS are both set
+				// This method won't do anything unless both kStartingReadTLS and kStartingWriteTLS are set
 				[self maybeStartTLS];
 			}
 			else
@@ -2472,27 +3532,27 @@ Failed:
  * Call this method in doBytesAvailable instead of CFReadStreamRead().
  * This method support pre-buffering properly.
 **/
-- (CFIndex)readIntoBuffer:(UInt8 *)buffer maxLength:(CFIndex)length
+- (CFIndex)readIntoBuffer:(void *)buffer maxLength:(NSUInteger)length
 {
 	if([partialReadBuffer length] > 0)
 	{
 		// Determine the maximum amount of data to read
-		CFIndex bytesToRead = MIN(length, [partialReadBuffer length]);
+		NSUInteger bytesToRead = MIN(length, [partialReadBuffer length]);
 		
-		// Copy the bytes from the buffer
-		memcpy(buffer, [partialReadBuffer bytes], bytesToRead);
+		// Copy the bytes from the partial read buffer
+		memcpy(buffer, [partialReadBuffer bytes], (size_t)bytesToRead);
 		
-		// Remove the copied bytes from the buffer
+		// Remove the copied bytes from the partial read buffer
 		[partialReadBuffer replaceBytesInRange:NSMakeRange(0, bytesToRead) withBytes:NULL length:0];
 		
-		return bytesToRead;
+		return (CFIndex)bytesToRead;
 	}
 	else
 	{
 		// Unset the "has-bytes-available" flag
 		theFlags &= ~kSocketHasBytesAvailable;
 		
-		return CFReadStreamRead(theReadStream, buffer, length);
+		return CFReadStreamRead(theReadStream, (UInt8 *)buffer, length);
 	}
 }
 
@@ -2502,171 +3562,220 @@ Failed:
 - (void)doBytesAvailable
 {
 	// If data is available on the stream, but there is no read request, then we don't need to process the data yet.
-	// Also, if there is a read request, but no read stream setup yet, we can't process any data yet.
-	if((theCurrentRead != nil) && (theReadStream != NULL))
+	// Also, if there is a read request but no read stream setup, we can't process any data yet.
+	if((theCurrentRead == nil) || (theReadStream == NULL))
 	{
-		// Note: This method is not called if theCurrentRead is an AsyncSpecialPacket (startTLS packet)
-
-		CFIndex totalBytesRead = 0;
+		return;
+	}
+	
+	// Note: This method is not called if theCurrentRead is an AsyncSpecialPacket (startTLS packet)
+	
+	NSUInteger totalBytesRead = 0;
+	
+	BOOL done = NO;
+	BOOL socketError = NO;
+	BOOL maxoutError = NO;
+	
+	while(!done && !socketError && !maxoutError && [self hasBytesAvailable])
+	{
+		BOOL didPreBuffer = NO;
+		BOOL didReadFromPreBuffer = NO;
 		
-		BOOL done = NO;
-		BOOL socketError = NO;
-		BOOL maxoutError = NO;
+		// There are 3 types of read packets:
+		// 
+		// 1) Read all available data.
+		// 2) Read a specific length of data.
+		// 3) Read up to a particular terminator.
 		
-		while(!done && !socketError && !maxoutError && [self hasBytesAvailable])
+		NSUInteger bytesToRead;
+		
+		if (theCurrentRead->term != nil)
 		{
-			BOOL didPreBuffer = NO;
-			
-			// There are 3 types of read packets:
+			// Read type #3 - read up to a terminator
 			// 
-			// 1) Read a specific length of data.
-			// 2) Read all available data.
-			// 3) Read up to a particular terminator.
+			// If pre-buffering is enabled we'll read a chunk and search for the terminator.
+			// If the terminator is found, overflow data will be placed in the partialReadBuffer for the next read.
+			// 
+			// If pre-buffering is disabled we'll be forced to read only a few bytes.
+			// Just enough to ensure we don't go past our term or over our max limit.
+			// 
+			// If we already have data pre-buffered, we can read directly from it.
 			
-			if(theCurrentRead->readAllAvailableData == YES)
+			if ([partialReadBuffer length] > 0)
 			{
-				// We're reading all available data.
-				// 
-				// Make sure there is at least READALL_CHUNKSIZE bytes available.
-				// We don't want to increase the buffer any more than this or we'll waste space.
-				// With prebuffering it's possible to read in a small chunk on the first read.
-				
-				unsigned buffInc = READALL_CHUNKSIZE - ([theCurrentRead->buffer length] - theCurrentRead->bytesDone);
-				[theCurrentRead->buffer increaseLengthBy:buffInc];
-			}
-			else if(theCurrentRead->term != nil)
-			{
-				// We're reading up to a terminator.
-				// 
-				// We may only want to read a few bytes.
-				// Just enough to ensure we don't go past our term or over our max limit.
-				// Unless pre-buffering is enabled, in which case we may want to read in a larger chunk.
-				
-				// If we already have data pre-buffered, we obviously don't want to pre-buffer it again.
-				// So in this case we'll just read as usual.
-				
-				if(([partialReadBuffer length] > 0) || !(theFlags & kEnablePreBuffering))
-				{
-					unsigned maxToRead = [theCurrentRead readLengthForTerm];
-					
-					unsigned bufInc = maxToRead - ([theCurrentRead->buffer length] - theCurrentRead->bytesDone);
-					[theCurrentRead->buffer increaseLengthBy:bufInc];
-				}
-				else
-				{
-					didPreBuffer = YES;
-					unsigned maxToRead = [theCurrentRead prebufferReadLengthForTerm];
-					
-					unsigned buffInc = maxToRead - ([theCurrentRead->buffer length] - theCurrentRead->bytesDone);
-					[theCurrentRead->buffer increaseLengthBy:buffInc];
-
-				}
-			}
-			
-			// Number of bytes to read is space left in packet buffer.
-			CFIndex bytesToRead = [theCurrentRead->buffer length] - theCurrentRead->bytesDone;
-			
-			// Read data into packet buffer
-			UInt8 *subBuffer = (UInt8 *)([theCurrentRead->buffer mutableBytes] + theCurrentRead->bytesDone);
-			CFIndex bytesRead = [self readIntoBuffer:subBuffer maxLength:bytesToRead];
-			
-			// Check results
-			if(bytesRead < 0)
-			{
-				socketError = YES;
+				didReadFromPreBuffer = YES;
+				bytesToRead = [theCurrentRead readLengthForTermWithPreBuffer:partialReadBuffer found:&done];
 			}
 			else
 			{
-				// Update total amount read for the current read
-				theCurrentRead->bytesDone += bytesRead;
-				
-				// Update total amount read in this method invocation
-				totalBytesRead += bytesRead;
-			}
-
-			// Is packet done?
-			if(theCurrentRead->readAllAvailableData != YES)
-			{
-				if(theCurrentRead->term != nil)
+				if (theFlags & kEnablePreBuffering)
 				{
-					if(didPreBuffer)
-					{
-						// Search for the terminating sequence within the big chunk we just read.
-						CFIndex overflow = [theCurrentRead searchForTermAfterPreBuffering:bytesRead];
-						
-						if(overflow > 0)
-						{
-							// Copy excess data into partialReadBuffer
-							NSMutableData *buffer = theCurrentRead->buffer;
-							const void *overflowBuffer = [buffer bytes] + theCurrentRead->bytesDone - overflow;
-							
-							[partialReadBuffer appendBytes:overflowBuffer length:overflow];
-							
-							// Update the bytesDone variable.
-							// Note: The completeCurrentRead method will trim the buffer for us.
-							theCurrentRead->bytesDone -= overflow;
-						}
-						
-						done = (overflow >= 0);
-					}
-					else
-					{
-						// Search for the terminating sequence at the end of the buffer
-						int termlen = [theCurrentRead->term length];
-						if(theCurrentRead->bytesDone >= termlen)
-						{
-							const void *buf = [theCurrentRead->buffer bytes] + (theCurrentRead->bytesDone - termlen);
-							const void *seq = [theCurrentRead->term bytes];
-							done = (memcmp (buf, seq, termlen) == 0);
-						}
-					}
-					
-					if(!done && theCurrentRead->maxLength >= 0 && theCurrentRead->bytesDone >= theCurrentRead->maxLength)
-					{
-						// There's a set maxLength, and we've reached that maxLength without completing the read
-						maxoutError = YES;
-					}
+					didPreBuffer = YES;
+					bytesToRead = [theCurrentRead prebufferReadLengthForTerm];
 				}
 				else
 				{
-					// Done when (sized) buffer is full.
-					done = ([theCurrentRead->buffer length] == theCurrentRead->bytesDone);
+					bytesToRead = [theCurrentRead readLengthForTerm];
 				}
 			}
-			// else readAllAvailable doesn't end until all readable is read.
+		}
+		else
+		{
+			// Read type #1 or #2
+			
+			bytesToRead = [theCurrentRead readLengthForNonTerm];
 		}
 		
-		if(theCurrentRead->readAllAvailableData && theCurrentRead->bytesDone > 0)
+		// Make sure we have enough room in the buffer for our read
+		
+		NSUInteger buffSize = [theCurrentRead->buffer length];
+		NSUInteger buffSpace = buffSize - theCurrentRead->startOffset - theCurrentRead->bytesDone;
+		
+		if (bytesToRead > buffSpace)
+		{
+			NSUInteger buffInc = bytesToRead - buffSpace;
+			
+			[theCurrentRead->buffer increaseLengthBy:buffInc];
+		}
+		
+		// Read data into packet buffer
+		
+		void *buffer = [theCurrentRead->buffer mutableBytes] + theCurrentRead->startOffset;
+		void *subBuffer = buffer + theCurrentRead->bytesDone;
+		
+		CFIndex result = [self readIntoBuffer:subBuffer maxLength:bytesToRead];
+		
+		// Check results
+		if (result < 0)
+		{
+			socketError = YES;
+		}
+		else
+		{
+			CFIndex bytesRead = result;
+			
+			// Update total amount read for the current read
+			theCurrentRead->bytesDone += bytesRead;
+			
+			// Update total amount read in this method invocation
+			totalBytesRead += bytesRead;
+		
+		
+			// Is packet done?
+			if (theCurrentRead->readLength > 0)
+			{
+				// Read type #2 - read a specific length of data
+				
+				done = (theCurrentRead->bytesDone == theCurrentRead->readLength);
+			}
+			else if (theCurrentRead->term != nil)
+			{
+				// Read type #3 - read up to a terminator
+				
+				if (didPreBuffer)
+				{
+					// Search for the terminating sequence within the big chunk we just read.
+					
+					NSInteger overflow = [theCurrentRead searchForTermAfterPreBuffering:result];
+					
+					if (overflow > 0)
+					{
+						// Copy excess data into partialReadBuffer
+						void *overflowBuffer = buffer + theCurrentRead->bytesDone - overflow;
+						
+						[partialReadBuffer appendBytes:overflowBuffer length:overflow];
+						
+						// Update the bytesDone variable.
+						theCurrentRead->bytesDone -= overflow;
+						
+						// Note: The completeCurrentRead method will trim the buffer for us.
+					}
+					
+					done = (overflow >= 0);
+				}
+				else if (didReadFromPreBuffer)
+				{
+					// Our 'done' variable was updated via the readLengthForTermWithPreBuffer:found: method
+				}
+				else
+				{
+					// Search for the terminating sequence at the end of the buffer
+					
+					NSUInteger termlen = [theCurrentRead->term length];
+					
+					if(theCurrentRead->bytesDone >= termlen)
+					{
+						void *bufferEnd = buffer + (theCurrentRead->bytesDone - termlen);
+						
+						const void *seq = [theCurrentRead->term bytes];
+						
+						done = (memcmp (bufferEnd, seq, termlen) == 0);
+					}
+				}
+				
+				if(!done && theCurrentRead->maxLength > 0)
+				{
+					// We're not done and there's a set maxLength.
+					// Have we reached that maxLength yet?
+					
+					if(theCurrentRead->bytesDone >= theCurrentRead->maxLength)
+					{
+						maxoutError = YES;
+					}
+				}
+			}
+			else
+			{
+				// Read type #1 - read all available data
+				// 
+				// We're done when:
+				// - we reach maxLength (if there is a max)
+				// - all readable is read (see below)
+				
+				if (theCurrentRead->maxLength > 0)
+				{
+					done = (theCurrentRead->bytesDone >= theCurrentRead->maxLength);
+				}
+			}
+		}
+	}
+	
+	if (theCurrentRead->readLength <= 0 && theCurrentRead->term == nil)
+	{
+		// Read type #1 - read all available data
+		
+		if (theCurrentRead->bytesDone > 0)
 		{
 			// Ran out of bytes, so the "read-all-available-data" type packet is done
 			done = YES;
 		}
-
-		if(done)
+	}
+	
+	if (done)
+	{
+		[self completeCurrentRead];
+		if (!socketError) [self scheduleDequeueRead];
+	}
+	else if (totalBytesRead > 0)
+	{
+		// We're not done with the readToLength or readToData yet, but we have read in some bytes
+		if ([theDelegate respondsToSelector:@selector(onSocket:didReadPartialDataOfLength:tag:)])
 		{
-			[self completeCurrentRead];
-			if (!socketError) [self scheduleDequeueRead];
+			[theDelegate onSocket:self didReadPartialDataOfLength:totalBytesRead tag:theCurrentRead->tag];
 		}
-		else if(totalBytesRead > 0)
-		{
-			// We're not done with the readToLength or readToData yet, but we have read in some bytes
-			if ([theDelegate respondsToSelector:@selector(onSocket:didReadPartialDataOfLength:tag:)])
-			{
-				[theDelegate onSocket:self didReadPartialDataOfLength:totalBytesRead tag:theCurrentRead->tag];
-			}
-		}
-
-		if(socketError)
-		{
-			CFStreamError err = CFReadStreamGetError(theReadStream);
-			[self closeWithError:[self errorFromCFStreamError:err]];
-			return;
-		}
-		if(maxoutError)
-		{
-			[self closeWithError:[self getReadMaxedOutError]];
-			return;
-		}
+	}
+	
+	if(socketError)
+	{
+		CFStreamError err = CFReadStreamGetError(theReadStream);
+		[self closeWithError:[self errorFromCFStreamError:err]];
+		return;
+	}
+	
+	if(maxoutError)
+	{
+		[self closeWithError:[self getReadMaxedOutError]];
+		return;
 	}
 }
 
@@ -2675,13 +3784,47 @@ Failed:
 {
 	NSAssert(theCurrentRead, @"Trying to complete current read when there is no current read.");
 	
-	[theCurrentRead->buffer setLength:theCurrentRead->bytesDone];
-	if([theDelegate respondsToSelector:@selector(onSocket:didReadData:withTag:)])
+	NSData *result;
+	
+	if (theCurrentRead->bufferOwner)
 	{
-		[theDelegate onSocket:self didReadData:theCurrentRead->buffer withTag:theCurrentRead->tag];
+		// We created the buffer on behalf of the user.
+		// Trim our buffer to be the proper size.
+		[theCurrentRead->buffer setLength:theCurrentRead->bytesDone];
+		
+		result = theCurrentRead->buffer;
+	}
+	else
+	{
+		// We did NOT create the buffer.
+		// The buffer is owned by the caller.
+		// Only trim the buffer if we had to increase its size.
+		
+		if ([theCurrentRead->buffer length] > theCurrentRead->originalBufferLength)
+		{
+			NSUInteger readSize = theCurrentRead->startOffset + theCurrentRead->bytesDone;
+			NSUInteger origSize = theCurrentRead->originalBufferLength;
+			
+			NSUInteger buffSize = MAX(readSize, origSize);
+			
+			[theCurrentRead->buffer setLength:buffSize];
+		}
+		
+		void *buffer = [theCurrentRead->buffer mutableBytes] + theCurrentRead->startOffset;
+		
+		result = [NSData dataWithBytesNoCopy:buffer length:theCurrentRead->bytesDone freeWhenDone:NO];
 	}
 	
-	if (theCurrentRead != nil) [self endCurrentRead]; // Caller may have disconnected.
+	if([theDelegate respondsToSelector:@selector(onSocket:didReadData:withTag:)])
+	{
+		[theDelegate onSocket:self didReadData:result withTag:theCurrentRead->tag];
+	}
+	
+	// Caller may have disconnected in the above delegate method
+	if (theCurrentRead != nil)
+	{
+		[self endCurrentRead];
+	}
 }
 
 // Ends current read.
@@ -2698,6 +3841,8 @@ Failed:
 
 - (void)doReadTimeout:(NSTimer *)timer
 {
+	#pragma unused(timer)
+	
 	NSTimeInterval timeoutExtension = 0.0;
 	
 	if([theDelegate respondsToSelector:@selector(onSocket:shouldTimeoutReadWithTag:elapsed:bytesDone:)])
@@ -2733,6 +3878,10 @@ Failed:
 
 - (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if (data == nil || [data length] == 0) return;
 	if (theFlags & kForbidReadsWrites) return;
 	
@@ -2781,7 +3930,7 @@ Failed:
 				// Attempt to start TLS
 				theFlags |= kStartingWriteTLS;
 				
-				// This method won't do anything unless both kStartingReadTLS and kStartingWriteTLS are both set
+				// This method won't do anything unless both kStartingReadTLS and kStartingWriteTLS are set
 				[self maybeStartTLS];
 			}
 			else
@@ -2836,64 +3985,69 @@ Failed:
 
 - (void)doSendBytes
 {
-	if((theCurrentWrite != nil) && (theWriteStream != NULL))
+	if ((theCurrentWrite == nil) || (theWriteStream == NULL))
 	{
-		// Note: This method is not called if theCurrentWrite is an AsyncSpecialPacket (startTLS packet)
+		return;
+	}
+	
+	// Note: This method is not called if theCurrentWrite is an AsyncSpecialPacket (startTLS packet)
+	
+	NSUInteger totalBytesWritten = 0;
+	
+	BOOL done = NO;
+	BOOL error = NO;
+	
+	while (!done && !error && [self canAcceptBytes])
+	{
+		// Figure out what to write
+		NSUInteger bytesRemaining = [theCurrentWrite->buffer length] - theCurrentWrite->bytesDone;
+		NSUInteger bytesToWrite = (bytesRemaining < WRITE_CHUNKSIZE) ? bytesRemaining : WRITE_CHUNKSIZE;
 		
-		CFIndex totalBytesWritten = 0;
+		UInt8 *writestart = (UInt8 *)([theCurrentWrite->buffer bytes] + theCurrentWrite->bytesDone);
 		
-		BOOL done = NO;
-		BOOL error = NO;
+		// Write
+		CFIndex result = CFWriteStreamWrite(theWriteStream, writestart, bytesToWrite);
 		
-		while (!done && !error && [self canAcceptBytes])
+		// Unset the "can accept bytes" flag
+		theFlags &= ~kSocketCanAcceptBytes;
+		
+		// Check results
+		if (result < 0)
 		{
-			// Figure out what to write.
-			CFIndex bytesRemaining = [theCurrentWrite->buffer length] - theCurrentWrite->bytesDone;
-			CFIndex bytesToWrite = (bytesRemaining < WRITE_CHUNKSIZE) ? bytesRemaining : WRITE_CHUNKSIZE;
-			UInt8 *writestart = (UInt8 *)([theCurrentWrite->buffer bytes] + theCurrentWrite->bytesDone);
-
-			// Write.
-			CFIndex bytesWritten = CFWriteStreamWrite(theWriteStream, writestart, bytesToWrite);
-
-			// Unset the "can accept bytes" flag
-			theFlags &= ~kSocketCanAcceptBytes;
-			
-			// Check results
-			if (bytesWritten < 0)
-			{
-				error = YES;
-			}
-			else
-			{
-				// Update total amount read for the current write
-				theCurrentWrite->bytesDone += bytesWritten;
-				
-				// Update total amount written in this method invocation
-				totalBytesWritten += bytesWritten;
-				
-				// Is packet done?
-				done = ([theCurrentWrite->buffer length] == theCurrentWrite->bytesDone);
-			}
-		}
-
-		if(done)
-		{
-			[self completeCurrentWrite];
-			[self scheduleDequeueWrite];
-		}
-		else if(error)
-		{
-			CFStreamError err = CFWriteStreamGetError(theWriteStream);
-			[self closeWithError:[self errorFromCFStreamError:err]];
-			return;
+			error = YES;
 		}
 		else
 		{
-			// We're not done with the entire write, but we have written some bytes
-			if ([theDelegate respondsToSelector:@selector(onSocket:didWritePartialDataOfLength:tag:)])
-			{
-				[theDelegate onSocket:self didWritePartialDataOfLength:totalBytesWritten tag:theCurrentWrite->tag];
-			}
+			CFIndex bytesWritten = result;
+			
+			// Update total amount read for the current write
+			theCurrentWrite->bytesDone += bytesWritten;
+			
+			// Update total amount written in this method invocation
+			totalBytesWritten += bytesWritten;
+			
+			// Is packet done?
+			done = ([theCurrentWrite->buffer length] == theCurrentWrite->bytesDone);
+		}
+	}
+	
+	if(done)
+	{
+		[self completeCurrentWrite];
+		[self scheduleDequeueWrite];
+	}
+	else if(error)
+	{
+		CFStreamError err = CFWriteStreamGetError(theWriteStream);
+		[self closeWithError:[self errorFromCFStreamError:err]];
+		return;
+	}
+	else if (totalBytesWritten > 0)
+	{
+		// We're not done with the entire write, but we have written some bytes
+		if ([theDelegate respondsToSelector:@selector(onSocket:didWritePartialDataOfLength:tag:)])
+		{
+			[theDelegate onSocket:self didWritePartialDataOfLength:totalBytesWritten tag:theCurrentWrite->tag];
 		}
 	}
 }
@@ -2925,6 +4079,8 @@ Failed:
 
 - (void)doWriteTimeout:(NSTimer *)timer
 {
+	#pragma unused(timer)
+	
 	NSTimeInterval timeoutExtension = 0.0;
 	
 	if([theDelegate respondsToSelector:@selector(onSocket:shouldTimeoutWriteWithTag:elapsed:bytesDone:)])
@@ -2957,6 +4113,10 @@ Failed:
 
 - (void)startTLS:(NSDictionary *)tlsSettings
 {
+#if DEBUG_THREAD_SAFETY
+	[self checkForThreadSafety];
+#endif
+	
 	if(tlsSettings == nil)
     {
         // Passing nil/NULL to CFReadStreamSetProperty will appear to work the same as passing an empty dictionary,
@@ -3034,6 +4194,8 @@ Failed:
 			   withAddress:(NSData *)address
 				  withData:(const void *)pData
 {
+	#pragma unused(address)
+	
 	NSParameterAssert ((sock == theSocket4) || (sock == theSocket6));
 	
 	switch (type)
@@ -3046,16 +4208,18 @@ Failed:
 				[self doSocketOpen:sock withCFSocketError:kCFSocketSuccess];
 			break;
 		case kCFSocketAcceptCallBack:
-			[self doAcceptWithSocket: *((CFSocketNativeHandle *)pData)];
+			[self doAcceptFromSocket:sock withNewNativeSocket:*((CFSocketNativeHandle *)pData)];
 			break;
 		default:
-			NSLog (@"AsyncSocket %p received unexpected CFSocketCallBackType %d.", self, (int)type);
+			NSLog(@"AsyncSocket %p received unexpected CFSocketCallBackType %i", self, (int)type);
 			break;
 	}
 }
 
 - (void)doCFReadStreamCallback:(CFStreamEventType)type forStream:(CFReadStreamRef)stream
 {
+	#pragma unused(stream)
+	
 	NSParameterAssert(theReadStream != NULL);
 	
 	CFStreamError err;
@@ -3080,12 +4244,14 @@ Failed:
 			[self closeWithError: [self errorFromCFStreamError:err]];
 			break;
 		default:
-			NSLog (@"AsyncSocket %p received unexpected CFReadStream callback, CFStreamEventType %d.", self, (int)type);
+			NSLog(@"AsyncSocket %p received unexpected CFReadStream callback, CFStreamEventType %i", self, (int)type);
 	}
 }
 
 - (void)doCFWriteStreamCallback:(CFStreamEventType)type forStream:(CFWriteStreamRef)stream
 {
+	#pragma unused(stream)
+	
 	NSParameterAssert(theWriteStream != NULL);
 	
 	CFStreamError err;
@@ -3110,7 +4276,7 @@ Failed:
 			[self closeWithError: [self errorFromCFStreamError:err]];
 			break;
 		default:
-			NSLog (@"AsyncSocket %p received unexpected CFWriteStream callback, CFStreamEventType %d.", self, (int)type);
+			NSLog(@"AsyncSocket %p received unexpected CFWriteStream callback, CFStreamEventType %i", self, (int)type);
 	}
 }
 
