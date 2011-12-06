@@ -1,24 +1,10 @@
-# SignalR 
-Async signaling library for ASP.NET to help build real-time, multi-user interactive web applications
-for the official SignalR Library for ASP.NET see the [SignalR Repository](https://github.com/SignalR/SignalR/wiki)
+# SignalR.Samples Xcode Project
 
-# SignalR Objective-C
-Extends the reach of the main SignalR project by providing a client that is written in Objective-C and is compaitible
-with iOS and Mac
+## What is this for?
+This project is meant to be a proof of concept, it is by no means production ready. 
 
-## What can it be used for?
-Pushing data from the server to the client (not just browser clients) has always been a tough problem. SignalR makes 
-it dead easy and handles all the heavy lifting for you.
+## How to use
+Each sample in the iPad app allows for a server to be entered.  It is assumed that you have already setup an ASP.NET project that is hosting a project that uses the SignalR.Samples Project
 
-
-## Documentation
-See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki)
-	
-## Installation
-Copy the contents of the SignalR.Client Folder into your project and import SignalR.h, see the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) for more details
-
-## LICENSE
-[MIT License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
-
-## Questions?
-The SignalR team hangs out in the **signalr** room at http://chatapp.apphb.com.
+## How you can help?
+Update these samples either within this project or as their own standalone projects to more closely match the ones on in the SignalR Project
