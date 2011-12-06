@@ -2,7 +2,7 @@
 Async signaling library for ASP.NET to help build real-time, multi-user interactive web applications
 for the official SignalR Library for ASP.NET see the [SignalR Repository](https://github.com/SignalR/SignalR/wiki)
 
-# SignalR Objective C
+# SignalR Objective-C
 Extends the reach of the main SignalR project by providing a client that is written in Objective-C and is compaitible
 with iOS and Mac
 
