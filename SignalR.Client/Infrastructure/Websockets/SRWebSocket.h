@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class SRWebSocket;
-@class AsyncSocket;
+@class GCDAysncSocket;
 
 @protocol SRWebSocketDelegate<NSObject>
 @optional 
@@ -20,22 +20,14 @@
 - (void)webSocketDidSendMessage:(SRWebSocket*)webSocket;
 @end
 
-@interface SRWebSocket : NSObject
-{
-    id<SRWebSocketDelegate> delegate;
-    NSURL* url;
-    AsyncSocket* socket;
-    BOOL connected;
-    NSString* origin;
-    
-    NSArray* runLoopModes;
-}
+@interface SRWebSocket : NSObject { }
 
-@property(nonatomic,assign) id<SRWebSocketDelegate> delegate;
-@property(nonatomic,readonly) NSURL* url;
-@property(nonatomic,retain) NSString* origin;
-@property(nonatomic,readonly) BOOL connected;
-@property(nonatomic,retain) NSArray* runLoopModes;
+@property (nonatomic, assign) id<SRWebSocketDelegate> delegate;
+
+@property (nonatomic, getter=isConnected) BOOL connected;
+@property (strong, nonatomic, readonly) NSURL* url;
+@property (strong, nonatomic, readonly) NSString* origin;
+@property (strong, nonatomic) GCDAysncSocket *socket;
 
 + (id)webSocketWithURLString:(NSString*)urlString delegate:(id<SRWebSocketDelegate>)delegate;
 - (id)initWithURLString:(NSString*)urlString delegate:(id<SRWebSocketDelegate>)delegate;

@@ -8,14 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "SRClientTransport.h"
-#import "SRWebSocket.h"
 
-@interface SRWebSocketsTransport : NSObject <SRClientTransport, SRWebSocketDelegate>
-
-@property (nonatomic, retain) SRWebSocket *socket;
+@interface SRWebSocketsTransport : NSObject <SRClientTransport>
 
 - (void)start:(SRConnection *)connection;
-- (void)send:(SRConnection *)connection withData:(NSString *)data;
+- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block;
 - (void)stop:(SRConnection *)connection;
 
 @end

@@ -8,6 +8,7 @@
 
 #import "SRWebSocketsTransport.h"
 #import "SBJson.h"
+#import "SRWebSocket.h"
 
 @interface SRWebSocketsTransport()
 
@@ -15,38 +16,20 @@
 
 @implementation SRWebSocketsTransport
 
-@synthesize socket;
-
 - (void)start:(SRConnection *)connection
 {
     NSURL *connectionUrl = [NSURL URLWithString:connection.url];
-    NSString *url = [NSString stringWithFormat:@"ws://%@:%d%@", [connectionUrl host],[[connectionUrl port] intValue],connection.appRelativeUrl];
     
-    if(connection.data){
-        url = [url stringByAppendingFormat:@"?"];
-        url = [url stringByAppendingFormat:@"%@=%@&",kConnectionData,connection.data];
-        url = [url stringByAppendingFormat:@"%@=%@&",kTransport,kWebSocketsTransport];
-        url = [url stringByAppendingFormat:@"%@=%@",kConnectionId,connection.connectionId];
-    }
-    else{
-        url = [url stringByAppendingFormat:@"?"];
-        url = [url stringByAppendingFormat:@"%@=%@&",kTransport,kWebSocketsTransport];
-        url = [url stringByAppendingFormat:@"%@=%@",kConnectionId,connection.connectionId];
-    }
+    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
+    if (connection.data) [parameters setObject:[connection.data urlEncodedString] forKey:kConnectionData];    
+    [parameters setObject:connection.connectionId forKey:kConnectionId];
+    [parameters setObject:kLongPollingTransport forKey:kTransport];
     
-#if DEBUG
-    //connects to demo located here: http://websocket.org/echo.html
-    //url = @"ws://echo.websocket.org:80";
-    NSLog(@"%@",url);
-#endif
-    
-    self.socket = [[SRWebSocket alloc] initWithURLString:url delegate:self];
-    [self.socket open];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data
+- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block;
 {
-    [self.socket send:data];
+
 }
 
 - (void)stop:(SRConnection *)connection
