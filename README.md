@@ -12,7 +12,7 @@ it dead easy and handles all the heavy lifting for you.
 
 
 ## Documentation
-See the [documentation](https://github.com/DyKnow/DyKnowMe/wiki)
+See the [documentation](https://github.com/DyKnow/SignalR/wiki)
 	
 ## LICENSE
 [MIT License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
