@@ -1,21 +1,18 @@
-# SignalR 
-Async signaling library for ASP.NET to help build real-time, multi-user interactive web applications
-for the official SignalR Library for ASP.NET see the [SignalR Repository](https://github.com/SignalR/SignalR/wiki)
+# Vendor Projects 
+Other open source projects that must be included in the SignalR Objective C project for it to work properly
 
-# SignalR Objective-C
-Extends the reach of the main SignalR project by providing a client that is written in Objective-C and is compaitible
-with iOS and Mac
+## SBJSON
+JSON (JavaScript Object Notation) is a light-weight data interchange format that's easy to read and write for humans and computers alike. This library implements strict JSON parsing and generation in Objective-C.
+[Stig Brautaset json-framework on GitHub](https://github.com/stig/json-framework)
 
-## What can it be used for?
-Pushing data from the server to the client (not just browser clients) has always been a tough problem. SignalR makes 
-it dead easy and handles all the heavy lifting for you.
+### What is it for?
+SBJSON is used to json strinify objects in the Transports before sending to the server
 
 
-## Documentation
-See the [documentation](https://github.com/DyKnow/DyKnowMe/wiki)
-	
-## LICENSE
-[MIT License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
+## CocoaAysncSocket
+CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries for Mac and iOS. The classes are described below.
+[Robbie Hanson CocoaAsyncSocket on GitHub](https://github.com/robbiehanson/CocoaAsyncSocket)
 
-## Questions?
-The SignalR team hangs out in the **signalr** room at http://chatapp.apphb.com.
+### What is it for?
+CocoaAysncSocket will be used with the WebsocketsTransport when supported
+* Including this project is optional if the longpollingTransport is used (currently only supported transport)
