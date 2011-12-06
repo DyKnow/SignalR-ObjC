@@ -31,12 +31,9 @@
 		39571A35148E84580010DC77 /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A0B148E84580010DC77 /* SBJsonTokeniser.m */; };
 		39571A36148E84580010DC77 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A0D148E84580010DC77 /* SBJsonUTF8Stream.m */; };
 		39571A37148E84580010DC77 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A0F148E84580010DC77 /* SBJsonWriter.m */; };
-		39571A38148E84580010DC77 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A12148E84580010DC77 /* AsyncSocket.m */; };
-		39571A39148E84580010DC77 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A14148E84580010DC77 /* SRWebSocket.m */; };
 		39571A3A148E84580010DC77 /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A17148E84580010DC77 /* SRConnection.m */; };
 		39571A3B148E84580010DC77 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A19148E84580010DC77 /* SRNegotiationResponse.m */; };
 		39571A3C148E84580010DC77 /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A1D148E84580010DC77 /* SRLongPollingTransport.m */; };
-		39571A3D148E84580010DC77 /* SRWebSocketsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39571A1F148E84580010DC77 /* SRWebSocketsTransport.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
@@ -119,10 +116,6 @@
 		39571A0D148E84580010DC77 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		39571A0E148E84580010DC77 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		39571A0F148E84580010DC77 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
-		39571A11148E84580010DC77 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
-		39571A12148E84580010DC77 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
-		39571A13148E84580010DC77 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
-		39571A14148E84580010DC77 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
 		39571A15148E84580010DC77 /* SignalR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalR.h; sourceTree = "<group>"; };
 		39571A16148E84580010DC77 /* SRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnection.h; sourceTree = "<group>"; };
 		39571A17148E84580010DC77 /* SRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnection.m; sourceTree = "<group>"; };
@@ -131,8 +124,6 @@
 		39571A1B148E84580010DC77 /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransport.h; sourceTree = "<group>"; };
 		39571A1C148E84580010DC77 /* SRLongPollingTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRLongPollingTransport.h; sourceTree = "<group>"; };
 		39571A1D148E84580010DC77 /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
-		39571A1E148E84580010DC77 /* SRWebSocketsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketsTransport.h; sourceTree = "<group>"; };
-		39571A1F148E84580010DC77 /* SRWebSocketsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketsTransport.m; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -193,13 +184,13 @@
 		395719DA148E843C0010DC77 /* SignalR.Client */ = {
 			isa = PBXGroup;
 			children = (
-				395719DB148E84580010DC77 /* Hubs */,
-				395719EF148E84580010DC77 /* Infrastructure */,
 				39571A15148E84580010DC77 /* SignalR.h */,
 				39571A16148E84580010DC77 /* SRConnection.h */,
 				39571A17148E84580010DC77 /* SRConnection.m */,
 				39571A18148E84580010DC77 /* SRNegotiationResponse.h */,
 				39571A19148E84580010DC77 /* SRNegotiationResponse.m */,
+				395719DB148E84580010DC77 /* Hubs */,
+				395719EF148E84580010DC77 /* Infrastructure */,
 				39571A1A148E84580010DC77 /* Transports */,
 			);
 			name = SignalR.Client;
@@ -241,7 +232,6 @@
 				395719F4148E84580010DC77 /* NSString+Url.h */,
 				395719F5148E84580010DC77 /* NSString+Url.m */,
 				395719F6148E84580010DC77 /* SBJSON */,
-				39571A10148E84580010DC77 /* Websockets */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -278,25 +268,12 @@
 			path = SBJSON;
 			sourceTree = "<group>";
 		};
-		39571A10148E84580010DC77 /* Websockets */ = {
-			isa = PBXGroup;
-			children = (
-				39571A11148E84580010DC77 /* AsyncSocket.h */,
-				39571A12148E84580010DC77 /* AsyncSocket.m */,
-				39571A13148E84580010DC77 /* SRWebSocket.h */,
-				39571A14148E84580010DC77 /* SRWebSocket.m */,
-			);
-			path = Websockets;
-			sourceTree = "<group>";
-		};
 		39571A1A148E84580010DC77 /* Transports */ = {
 			isa = PBXGroup;
 			children = (
 				39571A1B148E84580010DC77 /* SRClientTransport.h */,
 				39571A1C148E84580010DC77 /* SRLongPollingTransport.h */,
 				39571A1D148E84580010DC77 /* SRLongPollingTransport.m */,
-				39571A1E148E84580010DC77 /* SRWebSocketsTransport.h */,
-				39571A1F148E84580010DC77 /* SRWebSocketsTransport.m */,
 			);
 			path = Transports;
 			sourceTree = "<group>";
@@ -527,12 +504,9 @@
 				39571A35148E84580010DC77 /* SBJsonTokeniser.m in Sources */,
 				39571A36148E84580010DC77 /* SBJsonUTF8Stream.m in Sources */,
 				39571A37148E84580010DC77 /* SBJsonWriter.m in Sources */,
-				39571A38148E84580010DC77 /* AsyncSocket.m in Sources */,
-				39571A39148E84580010DC77 /* SRWebSocket.m in Sources */,
 				39571A3A148E84580010DC77 /* SRConnection.m in Sources */,
 				39571A3B148E84580010DC77 /* SRNegotiationResponse.m in Sources */,
 				39571A3C148E84580010DC77 /* SRLongPollingTransport.m in Sources */,
-				39571A3D148E84580010DC77 /* SRWebSocketsTransport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
