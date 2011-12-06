@@ -1,21 +1,6 @@
-# SignalR 
-Async signaling library for ASP.NET to help build real-time, multi-user interactive web applications
-for the official SignalR Library for ASP.NET see the [SignalR Repository](https://github.com/SignalR/SignalR/wiki)
+# SBJSON
+JSON (JavaScript Object Notation) is a light-weight data interchange format that's easy to read and write for humans and computers alike. This library implements strict JSON parsing and generation in Objective-C.
+[Stig Brautaset json-framework on GitHub](https://github.com/stig/json-framework)
 
-# SignalR Objective-C
-Extends the reach of the main SignalR project by providing a client that is written in Objective-C and is compaitible
-with iOS and Mac
-
-## What can it be used for?
-Pushing data from the server to the client (not just browser clients) has always been a tough problem. SignalR makes 
-it dead easy and handles all the heavy lifting for you.
-
-
-## Documentation
-See the [documentation](https://github.com/DyKnow/DyKnowMe/wiki)
-	
-## LICENSE
-[MIT License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
-
-## Questions?
-The SignalR team hangs out in the **signalr** room at http://chatapp.apphb.com.
+## What is it for?
+SBJSON is used to json strinify objects in the Transports before sending to the server
