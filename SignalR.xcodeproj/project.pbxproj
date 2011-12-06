@@ -1,0 +1,695 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		390BC508146C1FB70032DAC5 /* SRHubProxyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 390BC507146C1FB70032DAC5 /* SRHubProxyExtensions.m */; };
+		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
+		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
+		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
+		39FE4E541468164300B111BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39FE4E521468164300B111BF /* InfoPlist.strings */; };
+		39FE4E561468164300B111BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E551468164300B111BF /* main.m */; };
+		39FE4E5A1468164300B111BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E591468164300B111BF /* AppDelegate.m */; };
+		39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */; };
+		39FE4E601468164300B111BF /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E5F1468164300B111BF /* MasterViewController.m */; };
+		39FE4E6B1468164300B111BF /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E6A1468164300B111BF /* SenTestingKit.framework */; };
+		39FE4E6C1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
+		39FE4E6D1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
+		39FE4E751468164300B111BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39FE4E731468164300B111BF /* InfoPlist.strings */; };
+		39FE4E781468164300B111BF /* SignalRTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E771468164300B111BF /* SignalRTests.m */; };
+		39FE4E87146816AD00B111BF /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E84146816AD00B111BF /* SRConnection.m */; };
+		39FE4E88146816AE00B111BF /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E86146816AD00B111BF /* SRNegotiationResponse.m */; };
+		39FE4E8C146816B700B111BF /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E8B146816B700B111BF /* SRLongPollingTransport.m */; };
+		39FE4E92146816D400B111BF /* HttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E8F146816D400B111BF /* HttpHelper.m */; };
+		39FE4E93146816D400B111BF /* HttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E91146816D400B111BF /* HttpRequest.m */; };
+		39FE4EAE146816E900B111BF /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E96146816E900B111BF /* NSObject+SBJson.m */; };
+		39FE4EAF146816E900B111BF /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E99146816E900B111BF /* SBJsonParser.m */; };
+		39FE4EB0146816E900B111BF /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E9B146816E900B111BF /* SBJsonStreamParser.m */; };
+		39FE4EB1146816E900B111BF /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E9D146816E900B111BF /* SBJsonStreamParserAccumulator.m */; };
+		39FE4EB2146816E900B111BF /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E9F146816E900B111BF /* SBJsonStreamParserAdapter.m */; };
+		39FE4EB3146816E900B111BF /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EA1146816E900B111BF /* SBJsonStreamParserState.m */; };
+		39FE4EB4146816E900B111BF /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EA3146816E900B111BF /* SBJsonStreamWriter.m */; };
+		39FE4EB5146816E900B111BF /* SBJsonStreamWriterAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EA5146816E900B111BF /* SBJsonStreamWriterAccumulator.m */; };
+		39FE4EB6146816E900B111BF /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EA7146816E900B111BF /* SBJsonStreamWriterState.m */; };
+		39FE4EB7146816E900B111BF /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EA9146816E900B111BF /* SBJsonTokeniser.m */; };
+		39FE4EB8146816E900B111BF /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EAB146816E900B111BF /* SBJsonUTF8Stream.m */; };
+		39FE4EB9146816E900B111BF /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EAD146816E900B111BF /* SBJsonWriter.m */; };
+		39FE4ED114681E5D00B111BF /* SRHubConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EC114681E5D00B111BF /* SRHubConnection.m */; };
+		39FE4ED414681E5D00B111BF /* SRHubProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EC714681E5D00B111BF /* SRHubProxy.m */; };
+		39FE4ED514681E5D00B111BF /* SRHubRegistrationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EC914681E5D00B111BF /* SRHubRegistrationData.m */; };
+		39FE4ED614681E5D00B111BF /* SRHubResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4ECB14681E5D00B111BF /* SRHubResult.m */; };
+		39FE4ED714681E5D00B111BF /* SRHubservable.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4ECE14681E5D00B111BF /* SRHubservable.m */; };
+		39FE4ED814681E5D00B111BF /* SRSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4ED014681E5D00B111BF /* SRSubscription.m */; };
+		39FE4EE81468209700B111BF /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EDF1468209700B111BF /* ChatViewController.m */; };
+		39FE4EE91468209700B111BF /* ConnectionStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE11468209700B111BF /* ConnectionStatusViewController.m */; };
+		39FE4EEA1468209700B111BF /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE31468209700B111BF /* MouseTrackingViewController.m */; };
+		39FE4EEB1468209700B111BF /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE51468209700B111BF /* RawViewController.m */; };
+		39FE4EEC1468209700B111BF /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE71468209700B111BF /* StreamingViewController.m */; };
+		39FE4EEF1468211500B111BF /* VisionWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EEE1468211500B111BF /* VisionWebViewController.m */; };
+		39FE4F461468464800B111BF /* SRHubServerInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4F451468464700B111BF /* SRHubServerInvocation.m */; };
+		39FE4F4A1468478300B111BF /* SRHubClientInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4F491468478200B111BF /* SRHubClientInvocation.m */; };
+		39FFF2AB1469A8C100D5F597 /* NSString+Url.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FFF2AA1469A8C100D5F597 /* NSString+Url.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		39FE4E6E1468164300B111BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39FE4E3C1468164300B111BF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 39FE4E441468164300B111BF;
+			remoteInfo = SignalR;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		390BC506146C1FB70032DAC5 /* SRHubProxyExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubProxyExtensions.h; path = SignalR.Client/Hubs/SRHubProxyExtensions.h; sourceTree = "<group>"; };
+		390BC507146C1FB70032DAC5 /* SRHubProxyExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubProxyExtensions.m; path = SignalR.Client/Hubs/SRHubProxyExtensions.m; sourceTree = "<group>"; };
+		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		39FE4E4D1468164300B111BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		39FE4E511468164300B111BF /* SignalR-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR-Info.plist"; sourceTree = "<group>"; };
+		39FE4E531468164300B111BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		39FE4E551468164300B111BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		39FE4E571468164300B111BF /* SignalR-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR-Prefix.pch"; sourceTree = "<group>"; };
+		39FE4E581468164300B111BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		39FE4E591468164300B111BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		39FE4E5C1468164300B111BF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		39FE4E5E1468164300B111BF /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
+		39FE4E5F1468164300B111BF /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		39FE4E691468164300B111BF /* SignalRTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalRTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		39FE4E6A1468164300B111BF /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		39FE4E721468164300B111BF /* SignalRTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalRTests-Info.plist"; sourceTree = "<group>"; };
+		39FE4E741468164300B111BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		39FE4E761468164300B111BF /* SignalRTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignalRTests.h; sourceTree = "<group>"; };
+		39FE4E771468164300B111BF /* SignalRTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SignalRTests.m; sourceTree = "<group>"; };
+		39FE4E83146816AD00B111BF /* SRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRConnection.h; path = SignalR.Client/SRConnection.h; sourceTree = "<group>"; };
+		39FE4E84146816AD00B111BF /* SRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRConnection.m; path = SignalR.Client/SRConnection.m; sourceTree = "<group>"; };
+		39FE4E85146816AD00B111BF /* SRNegotiationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRNegotiationResponse.h; path = SignalR.Client/SRNegotiationResponse.h; sourceTree = "<group>"; };
+		39FE4E86146816AD00B111BF /* SRNegotiationResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRNegotiationResponse.m; path = SignalR.Client/SRNegotiationResponse.m; sourceTree = "<group>"; };
+		39FE4E89146816B700B111BF /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRClientTransport.h; path = SignalR.Client/Transports/SRClientTransport.h; sourceTree = "<group>"; };
+		39FE4E8A146816B700B111BF /* SRLongPollingTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRLongPollingTransport.h; path = SignalR.Client/Transports/SRLongPollingTransport.h; sourceTree = "<group>"; };
+		39FE4E8B146816B700B111BF /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRLongPollingTransport.m; path = SignalR.Client/Transports/SRLongPollingTransport.m; sourceTree = "<group>"; };
+		39FE4E8E146816D400B111BF /* HttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HttpHelper.h; path = SignalR.Client/Infrastructure/HttpHelper.h; sourceTree = "<group>"; };
+		39FE4E8F146816D400B111BF /* HttpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HttpHelper.m; path = SignalR.Client/Infrastructure/HttpHelper.m; sourceTree = "<group>"; };
+		39FE4E90146816D400B111BF /* HttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HttpRequest.h; path = SignalR.Client/Infrastructure/HttpRequest.h; sourceTree = "<group>"; };
+		39FE4E91146816D400B111BF /* HttpRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HttpRequest.m; path = SignalR.Client/Infrastructure/HttpRequest.m; sourceTree = "<group>"; };
+		39FE4E95146816E900B111BF /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+SBJson.h"; path = "SignalR.Client/Infrastructure/SBJSON/NSObject+SBJson.h"; sourceTree = "<group>"; };
+		39FE4E96146816E900B111BF /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+SBJson.m"; path = "SignalR.Client/Infrastructure/SBJSON/NSObject+SBJson.m"; sourceTree = "<group>"; };
+		39FE4E97146816E900B111BF /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJson.h; path = SignalR.Client/Infrastructure/SBJSON/SBJson.h; sourceTree = "<group>"; };
+		39FE4E98146816E900B111BF /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonParser.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonParser.h; sourceTree = "<group>"; };
+		39FE4E99146816E900B111BF /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonParser.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonParser.m; sourceTree = "<group>"; };
+		39FE4E9A146816E900B111BF /* SBJsonStreamParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParser.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParser.h; sourceTree = "<group>"; };
+		39FE4E9B146816E900B111BF /* SBJsonStreamParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParser.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParser.m; sourceTree = "<group>"; };
+		39FE4E9C146816E900B111BF /* SBJsonStreamParserAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParserAccumulator.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParserAccumulator.h; sourceTree = "<group>"; };
+		39FE4E9D146816E900B111BF /* SBJsonStreamParserAccumulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParserAccumulator.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParserAccumulator.m; sourceTree = "<group>"; };
+		39FE4E9E146816E900B111BF /* SBJsonStreamParserAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParserAdapter.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParserAdapter.h; sourceTree = "<group>"; };
+		39FE4E9F146816E900B111BF /* SBJsonStreamParserAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParserAdapter.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParserAdapter.m; sourceTree = "<group>"; };
+		39FE4EA0146816E900B111BF /* SBJsonStreamParserState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamParserState.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParserState.h; sourceTree = "<group>"; };
+		39FE4EA1146816E900B111BF /* SBJsonStreamParserState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamParserState.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamParserState.m; sourceTree = "<group>"; };
+		39FE4EA2146816E900B111BF /* SBJsonStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamWriter.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamWriter.h; sourceTree = "<group>"; };
+		39FE4EA3146816E900B111BF /* SBJsonStreamWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamWriter.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamWriter.m; sourceTree = "<group>"; };
+		39FE4EA4146816E900B111BF /* SBJsonStreamWriterAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamWriterAccumulator.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamWriterAccumulator.h; sourceTree = "<group>"; };
+		39FE4EA5146816E900B111BF /* SBJsonStreamWriterAccumulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamWriterAccumulator.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamWriterAccumulator.m; sourceTree = "<group>"; };
+		39FE4EA6146816E900B111BF /* SBJsonStreamWriterState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonStreamWriterState.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamWriterState.h; sourceTree = "<group>"; };
+		39FE4EA7146816E900B111BF /* SBJsonStreamWriterState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonStreamWriterState.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonStreamWriterState.m; sourceTree = "<group>"; };
+		39FE4EA8146816E900B111BF /* SBJsonTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonTokeniser.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonTokeniser.h; sourceTree = "<group>"; };
+		39FE4EA9146816E900B111BF /* SBJsonTokeniser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonTokeniser.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonTokeniser.m; sourceTree = "<group>"; };
+		39FE4EAA146816E900B111BF /* SBJsonUTF8Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonUTF8Stream.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonUTF8Stream.h; sourceTree = "<group>"; };
+		39FE4EAB146816E900B111BF /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonUTF8Stream.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonUTF8Stream.m; sourceTree = "<group>"; };
+		39FE4EAC146816E900B111BF /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonWriter.h; path = SignalR.Client/Infrastructure/SBJSON/SBJsonWriter.h; sourceTree = "<group>"; };
+		39FE4EAD146816E900B111BF /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonWriter.m; path = SignalR.Client/Infrastructure/SBJSON/SBJsonWriter.m; sourceTree = "<group>"; };
+		39FE4EC014681E5D00B111BF /* SRHubConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubConnection.h; path = SignalR.Client/Hubs/SRHubConnection.h; sourceTree = "<group>"; };
+		39FE4EC114681E5D00B111BF /* SRHubConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubConnection.m; path = SignalR.Client/Hubs/SRHubConnection.m; sourceTree = "<group>"; };
+		39FE4EC614681E5D00B111BF /* SRHubProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubProxy.h; path = SignalR.Client/Hubs/SRHubProxy.h; sourceTree = "<group>"; };
+		39FE4EC714681E5D00B111BF /* SRHubProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubProxy.m; path = SignalR.Client/Hubs/SRHubProxy.m; sourceTree = "<group>"; };
+		39FE4EC814681E5D00B111BF /* SRHubRegistrationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubRegistrationData.h; path = SignalR.Client/Hubs/SRHubRegistrationData.h; sourceTree = "<group>"; };
+		39FE4EC914681E5D00B111BF /* SRHubRegistrationData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubRegistrationData.m; path = SignalR.Client/Hubs/SRHubRegistrationData.m; sourceTree = "<group>"; };
+		39FE4ECA14681E5D00B111BF /* SRHubResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubResult.h; path = SignalR.Client/Hubs/SRHubResult.h; sourceTree = "<group>"; };
+		39FE4ECB14681E5D00B111BF /* SRHubResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubResult.m; path = SignalR.Client/Hubs/SRHubResult.m; sourceTree = "<group>"; };
+		39FE4ECC14681E5D00B111BF /* SRHubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubs.h; path = SignalR.Client/Hubs/SRHubs.h; sourceTree = "<group>"; };
+		39FE4ECD14681E5D00B111BF /* SRHubservable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubservable.h; path = SignalR.Client/Hubs/SRHubservable.h; sourceTree = "<group>"; };
+		39FE4ECE14681E5D00B111BF /* SRHubservable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubservable.m; path = SignalR.Client/Hubs/SRHubservable.m; sourceTree = "<group>"; };
+		39FE4ECF14681E5D00B111BF /* SRSubscription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRSubscription.h; path = SignalR.Client/Hubs/SRSubscription.h; sourceTree = "<group>"; };
+		39FE4ED014681E5D00B111BF /* SRSubscription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRSubscription.m; path = SignalR.Client/Hubs/SRSubscription.m; sourceTree = "<group>"; };
+		39FE4EDE1468209700B111BF /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		39FE4EDF1468209700B111BF /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		39FE4EE01468209700B111BF /* ConnectionStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStatusViewController.h; sourceTree = "<group>"; };
+		39FE4EE11468209700B111BF /* ConnectionStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionStatusViewController.m; sourceTree = "<group>"; };
+		39FE4EE21468209700B111BF /* MouseTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseTrackingViewController.h; sourceTree = "<group>"; };
+		39FE4EE31468209700B111BF /* MouseTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MouseTrackingViewController.m; sourceTree = "<group>"; };
+		39FE4EE41468209700B111BF /* RawViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawViewController.h; sourceTree = "<group>"; };
+		39FE4EE51468209700B111BF /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
+		39FE4EE61468209700B111BF /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
+		39FE4EE71468209700B111BF /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
+		39FE4EED1468211500B111BF /* VisionWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionWebViewController.h; sourceTree = "<group>"; };
+		39FE4EEE1468211500B111BF /* VisionWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionWebViewController.m; sourceTree = "<group>"; };
+		39FE4F441468464700B111BF /* SRHubServerInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubServerInvocation.h; path = SignalR.Client/Hubs/SRHubServerInvocation.h; sourceTree = "<group>"; };
+		39FE4F451468464700B111BF /* SRHubServerInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubServerInvocation.m; path = SignalR.Client/Hubs/SRHubServerInvocation.m; sourceTree = "<group>"; };
+		39FE4F481468478200B111BF /* SRHubClientInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHubClientInvocation.h; path = SignalR.Client/Hubs/SRHubClientInvocation.h; sourceTree = "<group>"; };
+		39FE4F491468478200B111BF /* SRHubClientInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubClientInvocation.m; path = SignalR.Client/Hubs/SRHubClientInvocation.m; sourceTree = "<group>"; };
+		39FFF2A91469A8C100D5F597 /* NSString+Url.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Url.h"; path = "SignalR.Client/Infrastructure/NSString+Url.h"; sourceTree = "<group>"; };
+		39FFF2AA1469A8C100D5F597 /* NSString+Url.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Url.m"; path = "SignalR.Client/Infrastructure/NSString+Url.m"; sourceTree = "<group>"; };
+		39FFF2AC1469AA5600D5F597 /* SignalR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalR.h; path = SignalR.Client/SignalR.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		39FE4E421468164300B111BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */,
+				39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */,
+				39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39FE4E651468164300B111BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39FE4E6B1468164300B111BF /* SenTestingKit.framework in Frameworks */,
+				39FE4E6C1468164300B111BF /* UIKit.framework in Frameworks */,
+				39FE4E6D1468164300B111BF /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		39FE4E3A1468164200B111BF = {
+			isa = PBXGroup;
+			children = (
+				39FE4E4F1468164300B111BF /* SignalR */,
+				39FE4E701468164300B111BF /* SignalRTests */,
+				39FE4E481468164300B111BF /* Frameworks */,
+				39FE4E461468164300B111BF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		39FE4E461468164300B111BF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E451468164300B111BF /* SignalR.app */,
+				39FE4E691468164300B111BF /* SignalRTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		39FE4E481468164300B111BF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E491468164300B111BF /* UIKit.framework */,
+				39FE4E4B1468164300B111BF /* Foundation.framework */,
+				39FE4E4D1468164300B111BF /* CoreGraphics.framework */,
+				39FE4E6A1468164300B111BF /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		39FE4E4F1468164300B111BF /* SignalR */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E811468168000B111BF /* SignalR.Client */,
+				39FE4E581468164300B111BF /* AppDelegate.h */,
+				39FE4E591468164300B111BF /* AppDelegate.m */,
+				39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */,
+				39FE4E5E1468164300B111BF /* MasterViewController.h */,
+				39FE4E5F1468164300B111BF /* MasterViewController.m */,
+				39FE4EE41468209700B111BF /* RawViewController.h */,
+				39FE4EE51468209700B111BF /* RawViewController.m */,
+				39FE4EE61468209700B111BF /* StreamingViewController.h */,
+				39FE4EE71468209700B111BF /* StreamingViewController.m */,
+				39FE4EE01468209700B111BF /* ConnectionStatusViewController.h */,
+				39FE4EE11468209700B111BF /* ConnectionStatusViewController.m */,
+				39FE4EE21468209700B111BF /* MouseTrackingViewController.h */,
+				39FE4EE31468209700B111BF /* MouseTrackingViewController.m */,
+				39FE4EDE1468209700B111BF /* ChatViewController.h */,
+				39FE4EDF1468209700B111BF /* ChatViewController.m */,
+				39FE4EED1468211500B111BF /* VisionWebViewController.h */,
+				39FE4EEE1468211500B111BF /* VisionWebViewController.m */,
+				39FE4E501468164300B111BF /* Supporting Files */,
+			);
+			path = SignalR;
+			sourceTree = "<group>";
+		};
+		39FE4E501468164300B111BF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E511468164300B111BF /* SignalR-Info.plist */,
+				39FE4E521468164300B111BF /* InfoPlist.strings */,
+				39FE4E551468164300B111BF /* main.m */,
+				39FE4E571468164300B111BF /* SignalR-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		39FE4E701468164300B111BF /* SignalRTests */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E761468164300B111BF /* SignalRTests.h */,
+				39FE4E771468164300B111BF /* SignalRTests.m */,
+				39FE4E711468164300B111BF /* Supporting Files */,
+			);
+			path = SignalRTests;
+			sourceTree = "<group>";
+		};
+		39FE4E711468164300B111BF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E721468164300B111BF /* SignalRTests-Info.plist */,
+				39FE4E731468164300B111BF /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		39FE4E811468168000B111BF /* SignalR.Client */ = {
+			isa = PBXGroup;
+			children = (
+				39FFF2AC1469AA5600D5F597 /* SignalR.h */,
+				39FE4E83146816AD00B111BF /* SRConnection.h */,
+				39FE4E84146816AD00B111BF /* SRConnection.m */,
+				39FE4E85146816AD00B111BF /* SRNegotiationResponse.h */,
+				39FE4E86146816AD00B111BF /* SRNegotiationResponse.m */,
+				39FE4EBF14681E4900B111BF /* Hubs */,
+				39FE4E8D146816BE00B111BF /* Infrastructure */,
+				39FE4E821468168D00B111BF /* Transports */,
+			);
+			name = SignalR.Client;
+			sourceTree = "<group>";
+		};
+		39FE4E821468168D00B111BF /* Transports */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E89146816B700B111BF /* SRClientTransport.h */,
+				39FE4E8A146816B700B111BF /* SRLongPollingTransport.h */,
+				39FE4E8B146816B700B111BF /* SRLongPollingTransport.m */,
+			);
+			name = Transports;
+			sourceTree = "<group>";
+		};
+		39FE4E8D146816BE00B111BF /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E94146816DA00B111BF /* SBJSON */,
+				39FE4E8E146816D400B111BF /* HttpHelper.h */,
+				39FE4E8F146816D400B111BF /* HttpHelper.m */,
+				39FE4E90146816D400B111BF /* HttpRequest.h */,
+				39FE4E91146816D400B111BF /* HttpRequest.m */,
+				39FFF2A91469A8C100D5F597 /* NSString+Url.h */,
+				39FFF2AA1469A8C100D5F597 /* NSString+Url.m */,
+			);
+			name = Infrastructure;
+			sourceTree = "<group>";
+		};
+		39FE4E94146816DA00B111BF /* SBJSON */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4E95146816E900B111BF /* NSObject+SBJson.h */,
+				39FE4E96146816E900B111BF /* NSObject+SBJson.m */,
+				39FE4E97146816E900B111BF /* SBJson.h */,
+				39FE4E98146816E900B111BF /* SBJsonParser.h */,
+				39FE4E99146816E900B111BF /* SBJsonParser.m */,
+				39FE4E9A146816E900B111BF /* SBJsonStreamParser.h */,
+				39FE4E9B146816E900B111BF /* SBJsonStreamParser.m */,
+				39FE4E9C146816E900B111BF /* SBJsonStreamParserAccumulator.h */,
+				39FE4E9D146816E900B111BF /* SBJsonStreamParserAccumulator.m */,
+				39FE4E9E146816E900B111BF /* SBJsonStreamParserAdapter.h */,
+				39FE4E9F146816E900B111BF /* SBJsonStreamParserAdapter.m */,
+				39FE4EA0146816E900B111BF /* SBJsonStreamParserState.h */,
+				39FE4EA1146816E900B111BF /* SBJsonStreamParserState.m */,
+				39FE4EA2146816E900B111BF /* SBJsonStreamWriter.h */,
+				39FE4EA3146816E900B111BF /* SBJsonStreamWriter.m */,
+				39FE4EA4146816E900B111BF /* SBJsonStreamWriterAccumulator.h */,
+				39FE4EA5146816E900B111BF /* SBJsonStreamWriterAccumulator.m */,
+				39FE4EA6146816E900B111BF /* SBJsonStreamWriterState.h */,
+				39FE4EA7146816E900B111BF /* SBJsonStreamWriterState.m */,
+				39FE4EA8146816E900B111BF /* SBJsonTokeniser.h */,
+				39FE4EA9146816E900B111BF /* SBJsonTokeniser.m */,
+				39FE4EAA146816E900B111BF /* SBJsonUTF8Stream.h */,
+				39FE4EAB146816E900B111BF /* SBJsonUTF8Stream.m */,
+				39FE4EAC146816E900B111BF /* SBJsonWriter.h */,
+				39FE4EAD146816E900B111BF /* SBJsonWriter.m */,
+			);
+			name = SBJSON;
+			sourceTree = "<group>";
+		};
+		39FE4EBF14681E4900B111BF /* Hubs */ = {
+			isa = PBXGroup;
+			children = (
+				39FE4ECC14681E5D00B111BF /* SRHubs.h */,
+				39FE4EC014681E5D00B111BF /* SRHubConnection.h */,
+				39FE4EC114681E5D00B111BF /* SRHubConnection.m */,
+				39FE4F441468464700B111BF /* SRHubServerInvocation.h */,
+				39FE4F451468464700B111BF /* SRHubServerInvocation.m */,
+				39FE4F481468478200B111BF /* SRHubClientInvocation.h */,
+				39FE4F491468478200B111BF /* SRHubClientInvocation.m */,
+				39FE4EC614681E5D00B111BF /* SRHubProxy.h */,
+				39FE4EC714681E5D00B111BF /* SRHubProxy.m */,
+				390BC506146C1FB70032DAC5 /* SRHubProxyExtensions.h */,
+				390BC507146C1FB70032DAC5 /* SRHubProxyExtensions.m */,
+				39FE4EC814681E5D00B111BF /* SRHubRegistrationData.h */,
+				39FE4EC914681E5D00B111BF /* SRHubRegistrationData.m */,
+				39FE4ECA14681E5D00B111BF /* SRHubResult.h */,
+				39FE4ECB14681E5D00B111BF /* SRHubResult.m */,
+				39FE4ECF14681E5D00B111BF /* SRSubscription.h */,
+				39FE4ED014681E5D00B111BF /* SRSubscription.m */,
+				39FE4ECD14681E5D00B111BF /* SRHubservable.h */,
+				39FE4ECE14681E5D00B111BF /* SRHubservable.m */,
+			);
+			name = Hubs;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		39FE4E441468164300B111BF /* SignalR */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39FE4E7B1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalR" */;
+			buildPhases = (
+				39FE4E411468164300B111BF /* Sources */,
+				39FE4E421468164300B111BF /* Frameworks */,
+				39FE4E431468164300B111BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SignalR;
+			productName = SignalR;
+			productReference = 39FE4E451468164300B111BF /* SignalR.app */;
+			productType = "com.apple.product-type.application";
+		};
+		39FE4E681468164300B111BF /* SignalRTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39FE4E7E1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalRTests" */;
+			buildPhases = (
+				39FE4E641468164300B111BF /* Sources */,
+				39FE4E651468164300B111BF /* Frameworks */,
+				39FE4E661468164300B111BF /* Resources */,
+				39FE4E671468164300B111BF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				39FE4E6F1468164300B111BF /* PBXTargetDependency */,
+			);
+			name = SignalRTests;
+			productName = SignalRTests;
+			productReference = 39FE4E691468164300B111BF /* SignalRTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		39FE4E3C1468164300B111BF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "DyKnow LLC";
+			};
+			buildConfigurationList = 39FE4E3F1468164300B111BF /* Build configuration list for PBXProject "SignalR" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 39FE4E3A1468164200B111BF;
+			productRefGroup = 39FE4E461468164300B111BF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				39FE4E441468164300B111BF /* SignalR */,
+				39FE4E681468164300B111BF /* SignalRTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		39FE4E431468164300B111BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39FE4E541468164300B111BF /* InfoPlist.strings in Resources */,
+				39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39FE4E661468164300B111BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39FE4E751468164300B111BF /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		39FE4E671468164300B111BF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		39FE4E411468164300B111BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39FE4E561468164300B111BF /* main.m in Sources */,
+				39FE4E5A1468164300B111BF /* AppDelegate.m in Sources */,
+				39FE4E601468164300B111BF /* MasterViewController.m in Sources */,
+				39FE4E87146816AD00B111BF /* SRConnection.m in Sources */,
+				39FE4E88146816AE00B111BF /* SRNegotiationResponse.m in Sources */,
+				39FE4E8C146816B700B111BF /* SRLongPollingTransport.m in Sources */,
+				39FE4E92146816D400B111BF /* HttpHelper.m in Sources */,
+				39FE4E93146816D400B111BF /* HttpRequest.m in Sources */,
+				39FE4EAE146816E900B111BF /* NSObject+SBJson.m in Sources */,
+				39FE4EAF146816E900B111BF /* SBJsonParser.m in Sources */,
+				39FE4EB0146816E900B111BF /* SBJsonStreamParser.m in Sources */,
+				39FE4EB1146816E900B111BF /* SBJsonStreamParserAccumulator.m in Sources */,
+				39FE4EB2146816E900B111BF /* SBJsonStreamParserAdapter.m in Sources */,
+				39FE4EB3146816E900B111BF /* SBJsonStreamParserState.m in Sources */,
+				39FE4EB4146816E900B111BF /* SBJsonStreamWriter.m in Sources */,
+				39FE4EB5146816E900B111BF /* SBJsonStreamWriterAccumulator.m in Sources */,
+				39FE4EB6146816E900B111BF /* SBJsonStreamWriterState.m in Sources */,
+				39FE4EB7146816E900B111BF /* SBJsonTokeniser.m in Sources */,
+				39FE4EB8146816E900B111BF /* SBJsonUTF8Stream.m in Sources */,
+				39FE4EB9146816E900B111BF /* SBJsonWriter.m in Sources */,
+				39FE4ED114681E5D00B111BF /* SRHubConnection.m in Sources */,
+				39FE4ED414681E5D00B111BF /* SRHubProxy.m in Sources */,
+				39FE4ED514681E5D00B111BF /* SRHubRegistrationData.m in Sources */,
+				39FE4ED614681E5D00B111BF /* SRHubResult.m in Sources */,
+				39FE4ED714681E5D00B111BF /* SRHubservable.m in Sources */,
+				39FE4ED814681E5D00B111BF /* SRSubscription.m in Sources */,
+				39FE4EE81468209700B111BF /* ChatViewController.m in Sources */,
+				39FE4EE91468209700B111BF /* ConnectionStatusViewController.m in Sources */,
+				39FE4EEA1468209700B111BF /* MouseTrackingViewController.m in Sources */,
+				39FE4EEB1468209700B111BF /* RawViewController.m in Sources */,
+				39FE4EEC1468209700B111BF /* StreamingViewController.m in Sources */,
+				39FE4EEF1468211500B111BF /* VisionWebViewController.m in Sources */,
+				39FE4F461468464800B111BF /* SRHubServerInvocation.m in Sources */,
+				39FE4F4A1468478300B111BF /* SRHubClientInvocation.m in Sources */,
+				39FFF2AB1469A8C100D5F597 /* NSString+Url.m in Sources */,
+				390BC508146C1FB70032DAC5 /* SRHubProxyExtensions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39FE4E641468164300B111BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39FE4E781468164300B111BF /* SignalRTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		39FE4E6F1468164300B111BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 39FE4E441468164300B111BF /* SignalR */;
+			targetProxy = 39FE4E6E1468164300B111BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		39FE4E521468164300B111BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39FE4E531468164300B111BF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39FE4E5C1468164300B111BF /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+		39FE4E731468164300B111BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39FE4E741468164300B111BF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		39FE4E791468164300B111BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		39FE4E7A1468164300B111BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		39FE4E7C1468164300B111BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR/SignalR-Prefix.pch";
+				INFOPLIST_FILE = "SignalR/SignalR-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		39FE4E7D1468164300B111BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR/SignalR-Prefix.pch";
+				INFOPLIST_FILE = "SignalR/SignalR-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		39FE4E7F1468164300B111BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SignalR.app/SignalR";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR/SignalR-Prefix.pch";
+				INFOPLIST_FILE = "SignalRTests/SignalRTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		39FE4E801468164300B111BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SignalR.app/SignalR";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR/SignalR-Prefix.pch";
+				INFOPLIST_FILE = "SignalRTests/SignalRTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		39FE4E3F1468164300B111BF /* Build configuration list for PBXProject "SignalR" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39FE4E791468164300B111BF /* Debug */,
+				39FE4E7A1468164300B111BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		39FE4E7B1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalR" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39FE4E7C1468164300B111BF /* Debug */,
+				39FE4E7D1468164300B111BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		39FE4E7E1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalRTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39FE4E7F1468164300B111BF /* Debug */,
+				39FE4E801468164300B111BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 39FE4E3C1468164300B111BF /* Project object */;
+}
