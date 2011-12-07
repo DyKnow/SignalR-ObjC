@@ -21,4 +21,4 @@ Copy the contents of the SignalR.Client Folder into your project and import Sign
 [MIT License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
 
 ## Questions?
-The SignalR team hangs out in the **signalr** room at http://chatapp.apphb.com.
+The SignalR team hangs out in the **signalr** room at http://jabbr.net.
