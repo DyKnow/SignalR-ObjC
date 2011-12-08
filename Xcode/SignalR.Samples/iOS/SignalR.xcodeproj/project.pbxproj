@@ -53,7 +53,6 @@
 		39FE4EEA1468209700B111BF /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE31468209700B111BF /* MouseTrackingViewController.m */; };
 		39FE4EEB1468209700B111BF /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE51468209700B111BF /* RawViewController.m */; };
 		39FE4EEC1468209700B111BF /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE71468209700B111BF /* StreamingViewController.m */; };
-		39FE4EEF1468211500B111BF /* VisionWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EEE1468211500B111BF /* VisionWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,8 +154,6 @@
 		39FE4EE51468209700B111BF /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
 		39FE4EE61468209700B111BF /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
 		39FE4EE71468209700B111BF /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
-		39FE4EED1468211500B111BF /* VisionWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionWebViewController.h; sourceTree = "<group>"; };
-		39FE4EEE1468211500B111BF /* VisionWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionWebViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -343,8 +340,6 @@
 				39FE4EE31468209700B111BF /* MouseTrackingViewController.m */,
 				39FE4EDE1468209700B111BF /* ChatViewController.h */,
 				39FE4EDF1468209700B111BF /* ChatViewController.m */,
-				39FE4EED1468211500B111BF /* VisionWebViewController.h */,
-				39FE4EEE1468211500B111BF /* VisionWebViewController.m */,
 				39FE4E501468164300B111BF /* Supporting Files */,
 			);
 			path = SignalR;
@@ -495,7 +490,6 @@
 				39FE4EEA1468209700B111BF /* MouseTrackingViewController.m in Sources */,
 				39FE4EEB1468209700B111BF /* RawViewController.m in Sources */,
 				39FE4EEC1468209700B111BF /* StreamingViewController.m in Sources */,
-				39FE4EEF1468211500B111BF /* VisionWebViewController.m in Sources */,
 				392EFE91148EEB8C001E5958 /* SRHubClientInvocation.m in Sources */,
 				392EFE92148EEB8C001E5958 /* SRHubConnection.m in Sources */,
 				392EFE93148EEB8C001E5958 /* SRHubProxy.m in Sources */,

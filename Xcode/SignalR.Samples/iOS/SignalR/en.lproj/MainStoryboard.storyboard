@@ -604,102 +604,66 @@
             </objects>
             <point key="canvasLocation" x="4572" y="-618"/>
         </scene>
-        <scene sceneID="PB4-yb-V6H">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="GFl-mB-v4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController storyboardIdentifier="VisionWebViewController" title="Vision Web" id="9af-dJ-TyC" customClass="VisionWebViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="uIf-Tc-0s8">
-                        <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Enter Server:" lineBreakMode="tailTruncation" minimumFontSize="10" id="U1g-oo-6uQ">
-                                <rect key="frame" x="20" y="20" width="728" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://dex.dyknow.com/visionweb_tests/SignalR/" borderStyle="roundedRect" minimumFontSize="17" id="sZX-ZD-elm">
-                                <rect key="frame" x="20" y="49" width="538" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="wIH-dp-94j">
-                                <rect key="frame" x="566" y="46" width="117" height="37"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Connect">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="connectClicked:" destination="9af-dJ-TyC" eventType="touchUpInside" id="J79-OP-qAe"/>
-                                </connections>
-                            </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="mN7-PL-qGd">
-                                <rect key="frame" x="20" y="197" width="728" height="787"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="dataSource" destination="9af-dJ-TyC" id="IIM-tw-XL9"/>
-                                    <outlet property="delegate" destination="9af-dJ-TyC" id="oPt-Xb-2Gq"/>
-                                </connections>
-                            </tableView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Messages:" lineBreakMode="tailTruncation" minimumFontSize="10" id="Xx2-Ww-QOd">
-                                <rect key="frame" x="20" y="168" width="83" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Send" lineBreakMode="tailTruncation" minimumFontSize="10" id="RGw-fp-Qdt">
-                                <rect key="frame" x="20" y="88" width="42" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cKW-uQ-8Ze">
-                                <rect key="frame" x="566" y="114" width="117" height="37"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Send">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="sendClicked:" destination="6Xm-ey-H7h" eventType="touchUpInside" id="xAg-ce-PE6"/>
-                                    <action selector="sendClicked:" destination="9af-dJ-TyC" eventType="touchUpInside" id="zm9-9g-zOH"/>
-                                </connections>
-                            </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="Q4Z-Mo-9Gj">
-                                <rect key="frame" x="20" y="120" width="538" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <string key="text">{"toWho":"00000000-0000-0000-0000-000000000000","fromWho":793799,"type":0,"SVGObject":{"line":{"x1":"165","y1":"62","x2":"637","y2":"87","id":"431232","stroke":"black","strokeWidth":"1","strokeLinecap":"round"}}}</string>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Raw" id="13u-1v-Swr"/>
-                    <connections>
-                        <outlet property="messageField" destination="Q4Z-Mo-9Gj" id="toF-H9-cQy"/>
-                        <outlet property="messageTable" destination="mN7-PL-qGd" id="IVo-tH-HpN"/>
-                        <outlet property="serverName" destination="sZX-ZD-elm" id="lyw-9a-Mz7"/>
-                    </connections>
-                </viewController>
-            </objects>
-            <point key="canvasLocation" x="2804" y="566"/>
-        </scene>
     </scenes>
+    <classes>
+        <class className="ChatViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ChatViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="connectClicked:"/>
+                <relationship kind="action" name="sendClicked:"/>
+                <relationship kind="outlet" name="messageField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="messageTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="serverName" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="ConnectionStatusViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ConnectionStatusViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="connectClicked:"/>
+                <relationship kind="outlet" name="messageTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="serverName" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="MasterViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MasterViewController.h"/>
+        </class>
+        <class className="MouseTrackingViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MouseTrackingViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="connectClicked:"/>
+                <relationship kind="outlet" name="messageTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="serverName" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="RawViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RawViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="broadcastClicked:"/>
+                <relationship kind="action" name="connectClicked:"/>
+                <relationship kind="action" name="enternameClicked:"/>
+                <relationship kind="action" name="joingroupClicked:"/>
+                <relationship kind="action" name="leavegroupClicked:"/>
+                <relationship kind="action" name="sendClicked:"/>
+                <relationship kind="action" name="sendToGroupClicked:"/>
+                <relationship kind="action" name="sendToUserClicked:"/>
+                <relationship kind="action" name="stopClicked:"/>
+                <relationship kind="outlet" name="meField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="messageField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="messageTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="privateMessageField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="privateMessageToField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="serverName" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="StreamingViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/StreamingViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="connectClicked:"/>
+                <relationship kind="outlet" name="messageTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="serverName" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

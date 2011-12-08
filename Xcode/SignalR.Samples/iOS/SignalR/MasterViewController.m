@@ -13,7 +13,6 @@
 #import "ConnectionStatusViewController.h"
 #import "MouseTrackingViewController.h"
 #import "ChatViewController.h"
-#import "VisionWebViewController.h"
 
 @implementation MasterViewController
 
@@ -29,7 +28,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return 6;
+    return 5;
 }
 
 
@@ -61,9 +60,6 @@
     else if (row == 4) {
         cell.textLabel.text = @"Mouse Tracking";
     }
-    else if (row == 5) {
-        cell.textLabel.text = @"Vision Web";
-    }
     return cell;
 }
 
@@ -90,10 +86,6 @@
     }
     else if (row == 4) {
         MouseTrackingViewController *newDetailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"MouseTrackingViewController"];
-        self.detailViewController = newDetailViewController;
-    }
-    else if (row == 5) {
-        VisionWebViewController *newDetailViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"VisionWebViewController"];
         self.detailViewController = newDetailViewController;
     }
     
