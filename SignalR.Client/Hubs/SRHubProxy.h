@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "SRConnection.h"
-#import "SBJson.h"
 
 #import "SRSubscription.h"
 #import "SRHubServerInvocation.h"

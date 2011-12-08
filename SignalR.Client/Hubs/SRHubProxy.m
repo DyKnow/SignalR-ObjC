@@ -8,6 +8,8 @@
 
 #import "SRHubProxy.h"
 
+#import "SBJson.h"
+
 @interface SRHubProxy()
 
 @end

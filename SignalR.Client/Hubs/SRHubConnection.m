@@ -8,6 +8,8 @@
 
 #import "SRHubConnection.h"
 
+#import "SBJson.h"
+
 typedef NSString* (^onConnectionSending)();
 typedef void (^onConnectionReceived)(NSString *);
 

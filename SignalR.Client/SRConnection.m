@@ -179,7 +179,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
         _assemblyVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     }
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-    return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
+    return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
+    //return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
 #elif TARGET_OS_MAC
     //TODO: Add system version
     return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
