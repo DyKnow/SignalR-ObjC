@@ -32,7 +32,8 @@
 #define kConnectionData @"connectionData"
 #define kData @"data"
 #define kMessageId @"messageId"
-#define kConnectionId @"connectionId"
+//#define kConnectionId @"connectionId"
+#define kConnectionId @"clientId"
 #define kTransport @"transport"
 #define kGroups @"groups"
 

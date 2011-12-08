@@ -10,7 +10,8 @@
 
 @interface SRNegotiationResponse()
 
-#define kConnectionId @"ConnectionId"
+//#define kConnectionId @"ConnectionId"
+#define kConnectionId @"ClientId"
 #define kUrl @"Url"
 
 @end
