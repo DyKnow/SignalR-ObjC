@@ -27,11 +27,11 @@
 		390123ED14903CA500BFD302 /* SRHubServerInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 390123CA14903CA500BFD302 /* SRHubServerInvocation.m */; };
 		390123EE14903CA500BFD302 /* SRSubscription.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123CB14903CA500BFD302 /* SRSubscription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		390123EF14903CA500BFD302 /* SRSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 390123CC14903CA500BFD302 /* SRSubscription.m */; };
-		390123F014903CA500BFD302 /* HttpHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123CE14903CA500BFD302 /* HttpHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		390123F014903CA500BFD302 /* HttpHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123CE14903CA500BFD302 /* HttpHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390123F114903CA500BFD302 /* HttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 390123CF14903CA500BFD302 /* HttpHelper.m */; };
-		390123F214903CA500BFD302 /* HttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123D014903CA500BFD302 /* HttpRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		390123F214903CA500BFD302 /* HttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123D014903CA500BFD302 /* HttpRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390123F314903CA500BFD302 /* HttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 390123D114903CA500BFD302 /* HttpRequest.m */; };
-		390123F414903CA500BFD302 /* NSString+Url.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123D214903CA500BFD302 /* NSString+Url.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		390123F414903CA500BFD302 /* NSString+Url.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123D214903CA500BFD302 /* NSString+Url.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		390123F514903CA500BFD302 /* NSString+Url.m in Sources */ = {isa = PBXBuildFile; fileRef = 390123D314903CA500BFD302 /* NSString+Url.m */; };
 		390123F614903CA500BFD302 /* SignalR.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123D414903CA500BFD302 /* SignalR.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		390123F714903CA500BFD302 /* SRConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 390123D514903CA500BFD302 /* SRConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -306,14 +306,14 @@
 				390123EA14903CA500BFD302 /* SRHubservable.h in Headers */,
 				390123EC14903CA500BFD302 /* SRHubServerInvocation.h in Headers */,
 				390123EE14903CA500BFD302 /* SRSubscription.h in Headers */,
-				390123F014903CA500BFD302 /* HttpHelper.h in Headers */,
-				390123F214903CA500BFD302 /* HttpRequest.h in Headers */,
-				390123F414903CA500BFD302 /* NSString+Url.h in Headers */,
 				390123F614903CA500BFD302 /* SignalR.h in Headers */,
 				390123F714903CA500BFD302 /* SRConnection.h in Headers */,
 				390123F914903CA500BFD302 /* SRNegotiationResponse.h in Headers */,
 				390123FB14903CA500BFD302 /* SRClientTransport.h in Headers */,
 				390123FC14903CA500BFD302 /* SRLongPollingTransport.h in Headers */,
+				390123F014903CA500BFD302 /* HttpHelper.h in Headers */,
+				390123F214903CA500BFD302 /* HttpRequest.h in Headers */,
+				390123F414903CA500BFD302 /* NSString+Url.h in Headers */,
 				3901241D14903CAF00BFD302 /* NSObject+SBJson.h in Headers */,
 				3901242014903CAF00BFD302 /* SBJson.h in Headers */,
 				3901242114903CAF00BFD302 /* SBJsonParser.h in Headers */,
