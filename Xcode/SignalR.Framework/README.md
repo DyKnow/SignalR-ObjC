@@ -1,10 +1,7 @@
-# SignalR.Samples Xcode Project
+# SignalR.Frameworks Xcode Project
 
 ## What is this for?
-This project is meant to be a proof of concept, it is by no means production ready. 
+This project builds the SignalR.Client Objective C files into a framework that can be easily added to other projects
 
 ## How to use
-Each sample in the iPad app allows for a server to be entered.  It is assumed that you have already setup an ASP.NET project that is hosting a project that uses the SignalR.Samples Project
-
-## How you can help?
-Update these samples either within this project or as their own standalone projects to more closely match the ones on in the SignalR Project
+The framework is built using [Karl Stenerud's iOS-Universal-Framework](https://github.com/kstenerud/iOS-Universal-Framework) on Github.  See the project page for detailed instructions on using the framework in your project
