@@ -7,6 +7,7 @@
 //
 
 #import "SRHubservable.h"
+#import "SRHubs.h"
 
 @interface SRHubservable()
 

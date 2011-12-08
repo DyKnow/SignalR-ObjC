@@ -22,9 +22,7 @@
 		392EFE9E148EEB8C001E5958 /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE88148EEB8C001E5958 /* SRConnection.m */; };
 		392EFE9F148EEB8C001E5958 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE8A148EEB8C001E5958 /* SRNegotiationResponse.m */; };
 		392EFEA0148EEB8C001E5958 /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE8E148EEB8C001E5958 /* SRLongPollingTransport.m */; };
-		392EFEFC148EF113001E5958 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 392EFEE0148EF113001E5958 /* README.md */; };
 		392EFEFD148EF113001E5958 /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFEE3148EF113001E5958 /* NSObject+SBJson.m */; };
-		392EFEFE148EF113001E5958 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 392EFEE4148EF113001E5958 /* README.md */; };
 		392EFEFF148EF113001E5958 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFEE7148EF113001E5958 /* SBJsonParser.m */; };
 		392EFF00148EF113001E5958 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFEE9148EF113001E5958 /* SBJsonStreamParser.m */; };
 		392EFF01148EF113001E5958 /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFEEB148EF113001E5958 /* SBJsonStreamParserAccumulator.m */; };
@@ -102,10 +100,8 @@
 		392EFE8C148EEB8C001E5958 /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransport.h; sourceTree = "<group>"; };
 		392EFE8D148EEB8C001E5958 /* SRLongPollingTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRLongPollingTransport.h; sourceTree = "<group>"; };
 		392EFE8E148EEB8C001E5958 /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
-		392EFEE0148EF113001E5958 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../../../Vendor/README.md; sourceTree = "<group>"; };
 		392EFEE2148EF113001E5958 /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
 		392EFEE3148EF113001E5958 /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJson.m"; sourceTree = "<group>"; };
-		392EFEE4148EF113001E5958 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		392EFEE5148EF113001E5958 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJson.h; sourceTree = "<group>"; };
 		392EFEE6148EF113001E5958 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
 		392EFEE7148EF113001E5958 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
@@ -245,7 +241,6 @@
 			children = (
 				392EFEE2148EF113001E5958 /* NSObject+SBJson.h */,
 				392EFEE3148EF113001E5958 /* NSObject+SBJson.m */,
-				392EFEE4148EF113001E5958 /* README.md */,
 				392EFEE5148EF113001E5958 /* SBJson.h */,
 				392EFEE6148EF113001E5958 /* SBJsonParser.h */,
 				392EFEE7148EF113001E5958 /* SBJsonParser.m */,
@@ -292,7 +287,6 @@
 		39571AFF148E8F3B0010DC77 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				392EFEE0148EF113001E5958 /* README.md */,
 				392EFEE1148EF113001E5958 /* SBJSON */,
 			);
 			name = Vendor;
@@ -459,8 +453,6 @@
 			files = (
 				39FE4E541468164300B111BF /* InfoPlist.strings in Resources */,
 				39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */,
-				392EFEFC148EF113001E5958 /* README.md in Resources */,
-				392EFEFE148EF113001E5958 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

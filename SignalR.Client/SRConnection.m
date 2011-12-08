@@ -7,9 +7,10 @@
 //
 
 #import "SRConnection.h"
-#import "SBJson.h"
-#import "SRLongPollingTransport.h"
 
+#import "SBJson.h"
+#import "HttpHelper.h"
+#import "SRLongPollingTransport.h"
 #import "SRNegotiationResponse.h"
 
 void (^prepareRequest)(NSMutableURLRequest *);
@@ -94,13 +95,15 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #if DEBUG
             NSLog(@"%@",negotiationResponse);
 #endif
-            self.connectionId = negotiationResponse.connectionId;
-            self.appRelativeUrl = negotiationResponse.url;
+            if(negotiationResponse.connectionId){
+                self.connectionId = negotiationResponse.connectionId;
+                self.appRelativeUrl = negotiationResponse.url;
             
-            [self.transport start:connection];
+                [self.transport start:connection];
             
-            if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                [self.delegate SRConnectionDidOpen:self];
+                if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                    [self.delegate SRConnectionDidOpen:self];
+                }
             }
         }
         else if([response isKindOfClass:[NSError class]])

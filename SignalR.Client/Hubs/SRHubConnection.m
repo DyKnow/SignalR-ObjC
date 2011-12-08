@@ -9,6 +9,9 @@
 #import "SRHubConnection.h"
 
 #import "SBJson.h"
+#import "SRHubProxy.h"
+#import "SRHubRegistrationData.h"
+#import "SRHubClientInvocation.h"
 
 typedef NSString* (^onConnectionSending)();
 typedef void (^onConnectionReceived)(NSString *);

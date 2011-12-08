@@ -7,11 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnection.h"
-
-#import "SRSubscription.h"
-#import "SRHubServerInvocation.h"
-#import "SRHubResult.h"
 
 @class SRConnection;
 @class SRSubscription;

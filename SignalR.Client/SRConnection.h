@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "HttpHelper.h"
 
 @class SRConnection;
 

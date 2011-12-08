@@ -9,6 +9,9 @@
 #import "HttpHelper.h"
 
 #import "SBJson.h"
+#import "SRConnection.h"
+#import "HttpRequest.h"
+#import "NSString+Url.h"
 
 @interface HttpHelper()
 
