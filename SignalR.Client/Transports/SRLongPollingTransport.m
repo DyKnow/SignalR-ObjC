@@ -8,6 +8,8 @@
 
 #import "SRLongPollingTransport.h"
 
+#import "SBJson.h"
+
 void (^prepareRequest)(NSMutableURLRequest *);
 
 @interface SRLongPollingTransport()

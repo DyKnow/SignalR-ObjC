@@ -9,10 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "SRHubProxy.h"
 
-#import "SRSubscription.h"
-#import "SRHubservable.h"
-
 @class SRHubservable;
+@class SRSubscription;
 
 @interface SRHubProxy (SRHubProxyExtensions)
 

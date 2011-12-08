@@ -8,6 +8,9 @@
 
 #import "SRHubProxyExtensions.h"
 
+#import "SRSubscription.h"
+#import "SRHubservable.h"
+
 @implementation SRHubProxy (SRHubProxyExtensions)
 
 - (id)getValue:(NSString *)name
