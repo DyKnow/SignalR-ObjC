@@ -9,6 +9,5 @@
 #import "SRConnection.h"
 #import "SRHubs.h"
 
-#import "SBJson.h"
 #import "NSString+Url.h"
 

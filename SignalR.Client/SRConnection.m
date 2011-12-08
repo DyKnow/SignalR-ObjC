@@ -7,9 +7,10 @@
 //
 
 #import "SRConnection.h"
-#import "SBJson.h"
-#import "SRLongPollingTransport.h"
 
+#import "SBJson.h"
+#import "HttpHelper.h"
+#import "SRLongPollingTransport.h"
 #import "SRNegotiationResponse.h"
 
 void (^prepareRequest)(NSMutableURLRequest *);
@@ -94,13 +95,15 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #if DEBUG
             NSLog(@"%@",negotiationResponse);
 #endif
-            self.connectionId = negotiationResponse.connectionId;
-            self.appRelativeUrl = negotiationResponse.url;
+            if(negotiationResponse.connectionId){
+                self.connectionId = negotiationResponse.connectionId;
+                self.appRelativeUrl = negotiationResponse.url;
             
-            [self.transport start:connection];
+                [self.transport start:connection];
             
-            if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                [self.delegate SRConnectionDidOpen:self];
+                if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                    [self.delegate SRConnectionDidOpen:self];
+                }
             }
         }
         else if([response isKindOfClass:[NSError class]])
@@ -179,7 +182,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
         _assemblyVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     }
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-    return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
+    return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
+    //return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
 #elif TARGET_OS_MAC
     //TODO: Add system version
     return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];

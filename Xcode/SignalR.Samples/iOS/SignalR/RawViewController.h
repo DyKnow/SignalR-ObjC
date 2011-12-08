@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SignalR.h"
+#import "SBJson.h"
 
 @interface RawViewController : UIViewController <UISplitViewControllerDelegate, SRConnectionDelegate>
 {

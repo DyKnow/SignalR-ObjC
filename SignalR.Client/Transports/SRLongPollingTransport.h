@@ -10,7 +10,6 @@
 #import "SRClientTransport.h"
 #import "HttpHelper.h"
 #import "NSString+Url.h"
-#import "SBJson.h"
 
 @interface SRLongPollingTransport : NSObject <SRClientTransport>
 

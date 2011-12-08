@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRHubs.h"
 
 @class SRHubProxy;
 @class SRSubscription;

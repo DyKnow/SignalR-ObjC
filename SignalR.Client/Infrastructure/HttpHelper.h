@@ -7,10 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnection.h"
-#import "HttpRequest.h"
-#import "NSString+Url.h"
-#import "SBJson.h"
 
 @class SRConnection;
 

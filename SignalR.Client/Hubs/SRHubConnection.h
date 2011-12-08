@@ -7,7 +7,6 @@
 //
 
 #import "SRConnection.h"
-#import "SignalR.h"
 
 @class SRHubProxy;
 

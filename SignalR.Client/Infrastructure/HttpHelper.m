@@ -8,6 +8,11 @@
 
 #import "HttpHelper.h"
 
+#import "SBJson.h"
+#import "SRConnection.h"
+#import "HttpRequest.h"
+#import "NSString+Url.h"
+
 @interface HttpHelper()
 
 - (void)postInternal:(SRConnection *)connection url:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(NSDictionary *)postData onCompletion:(void(^)(SRConnection *, id))block;
