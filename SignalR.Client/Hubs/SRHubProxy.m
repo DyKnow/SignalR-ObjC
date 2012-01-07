@@ -25,7 +25,8 @@
 @synthesize state = _state;
 @synthesize subscriptions = _subscriptions;
 
-#pragma mark - Initialization
+#pragma mark - 
+#pragma mark Initialization
 
 + (SRHubProxy *)hubProxyWith:(SRConnection *)connection hubName:(NSString *)hubname
 {
@@ -34,7 +35,8 @@
 
 - (id)initWithConnection:(SRConnection *)connection hubName:(NSString *)hubname
 {
-    if ((self = [super init])) {
+    if (self = [super init]) 
+    {
         _connection = connection;
         _hubName = hubname;
         _subscriptions = [[NSMutableDictionary alloc] init];
@@ -43,12 +45,8 @@
     return self;
 }
 
-- (NSString *)description 
-{     
-    return [NSString stringWithFormat:@"HubProxy: Name=%@ State=%@ Subscriptions:%@",_hubName,_state,_subscriptions];
-}
-
-#pragma mark - Subscription Management
+#pragma mark - 
+#pragma mark Subscription Management
 
 - (SRSubscription *)subscribe:(NSString *)eventName
 {
@@ -91,7 +89,8 @@
     }
 }
 
-#pragma mark - State Management
+#pragma mark - 
+#pragma mark State Management
 
 - (id)getMember:(NSString *)name
 {
@@ -132,7 +131,8 @@
          if([response isKindOfClass:[NSString class]])
          {
              SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
-             if (hubResult != nil) {
+             if (hubResult != nil) 
+             {
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
                  {
                      [NSException raise:@"InvalidOperationException" format:hubResult.error];
@@ -153,6 +153,11 @@
              }
          }
     }];
+}
+
+- (NSString *)description 
+{     
+    return [NSString stringWithFormat:@"HubProxy: Name=%@ State=%@ Subscriptions:%@",_hubName,_state,_subscriptions];
 }
 
 @end

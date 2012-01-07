@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 DyKnow LLC. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "SRHttpBasedTransport.h"
 
 @interface SRLongPollingTransport : SRHttpBasedTransport

@@ -8,6 +8,8 @@
 
 #import "SRHttpBasedTransport.h"
 
+#import "SRConnection.h"
+
 #import "SBJson.h"
 #import "HttpHelper.h"
 #import "NSString+Url.h"
@@ -17,7 +19,6 @@ void (^prepareRequest)(NSMutableURLRequest *);
 @interface SRHttpBasedTransport()
 
 @end
-
 
 @implementation SRHttpBasedTransport
 
@@ -35,9 +36,9 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #pragma mark -
 #pragma mark SRConnectionTransport Protocol
 
-- (void)start:(SRConnection *)connection
+- (void)start:(SRConnection *)connection withData:(NSString *)data
 {
-    [self onStart:connection data:connection.data];
+    [self onStart:connection data:data initializeCallback:nil errorCallback:nil];
 }
 
 - (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block
@@ -50,9 +51,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [parameters setObject:_transport forKey:kTransport];
     
     url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
-#if DEBUG
-    NSLog(@"%@",url);
-#endif
+
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
     [postData setObject:[data urlEncodedString] forKey:kData];
     
@@ -87,6 +86,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     }
 }
 
+//TODO: Abort Request if one exists
 - (void)stop:(SRConnection *)connection
 {
     id httpRequest = [connection.items objectForKey:kHttpRequestKey];
@@ -127,9 +127,9 @@ void (^prepareRequest)(NSMutableURLRequest *);
     {
         [parameters setObject:[connection.groups componentsJoinedByString:@","] forKey:kGroups];
     }
-    if (connection.data) 
+    if (data) 
     {
-        [parameters setObject:[connection.data urlEncodedString] forKey:kConnectionData]; 
+        [parameters setObject:[data urlEncodedString] forKey:kConnectionData]; 
     }   
     return [NSString addQueryStringToUrlString:@"" withDictionary:parameters];
 }
@@ -170,11 +170,14 @@ void (^prepareRequest)(NSMutableURLRequest *);
             id messageData = [result objectForKey:kResponse_Messages];
             if(messageData && [messageData isKindOfClass:[NSArray class]])
             {
-                for (id message in messageData) {   
-                    if([message isKindOfClass:[NSDictionary class]]){
+                for (id message in messageData) 
+                {   
+                    if([message isKindOfClass:[NSDictionary class]])
+                    {
                         [connection didReceiveData:[[SBJsonWriter new] stringWithObject:message]];
                     }
-                    else if([message isKindOfClass:[NSString class]]){
+                    else if([message isKindOfClass:[NSString class]])
+                    {
                         [connection didReceiveData:message];
                     }
                 }
@@ -186,7 +189,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
                 id groups = [transportData objectForKey:kResponse_Groups];
                 if(groups && [groups isKindOfClass:[NSArray class]])
                 {
-                    for (NSString *group in groups) {
+                    for (NSString *group in groups) 
+                    {
                         [connection.groups addObject:group];
                     }
                 }
@@ -200,4 +204,5 @@ void (^prepareRequest)(NSMutableURLRequest *);
         [connection didReceiveError:ex];
     }
 }
+
 @end

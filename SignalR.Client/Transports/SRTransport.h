@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 DyKnow LLC. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
 @class SRLongPollingTransport;
@@ -15,6 +16,6 @@
 @property (strong, nonatomic, readonly) id <SRClientTransport> longPolling;
 @property (strong, nonatomic, readonly) id <SRClientTransport> serverSentEvents;
 
-+ (SRLongPollingTransport *)LongPolling;
++ (id <SRClientTransport>)LongPolling;
 
 @end

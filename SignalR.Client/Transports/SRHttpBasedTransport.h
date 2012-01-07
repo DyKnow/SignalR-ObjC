@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 DyKnow LLC. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
 @interface SRHttpBasedTransport : NSObject <SRClientTransport>
@@ -14,7 +15,7 @@
 
 - (id) initWithTransport:(NSString *)transport;
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data;
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
 
 - (BOOL)isRequestAborted:(NSError *)error;
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data;

@@ -22,7 +22,8 @@
 @synthesize url = _url;
 @synthesize protocolVersion = _protocolVersion;
 
-#pragma mark - Initialization
+#pragma mark -
+#pragma mark SRSBJSON Protocol
 
 - (id) init
 {
@@ -68,4 +69,5 @@
 {  
     return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];
 }
+
 @end

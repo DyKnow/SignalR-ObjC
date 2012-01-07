@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SRClientTransport.h"
 @class SRConnection;
 
 @protocol SRConnectionDelegate<NSObject>
@@ -26,33 +27,32 @@ typedef void (^onClosed)();
 
 @interface SRConnection : NSObject 
 
-@property (nonatomic, assign) id<SRConnectionDelegate> delegate;
-
-@property (copy) onSending sending;
 @property (copy) onReceived received;
 @property (copy) onError error; 
 @property (copy) onClosed closed;
-
-@property (nonatomic, readonly, strong) id transport;
-
-@property (nonatomic, strong) NSString *url;
-@property (nonatomic, getter=isActive) BOOL active;
-@property (nonatomic, strong) NSNumber *messageId;
-@property (nonatomic, strong) NSString *connectionId;
-@property (nonatomic, strong) NSMutableArray *groups;
-@property (nonatomic, strong) NSString *assemblyVersion;
+//TODO: Credentials
+//@property (strong, nonatomic, readwrite) id credentials;
+@property (strong, nonatomic, readwrite) NSMutableArray *groups;
+@property (copy) onSending sending;
+@property (strong, nonatomic, readwrite) NSString *url;
+@property (assign, nonatomic, readonly, getter=isActive) BOOL active;
+@property (strong, nonatomic, readwrite) NSNumber *messageId;
+@property (strong, nonatomic, readwrite) NSString *connectionId;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 
-@property (nonatomic, strong) NSString *data;
+@property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
 + (SRConnection *)connectionWithURL:(NSString *)URL;
 - (id)initWithURL:(NSString *)url;
+
 - (void)start;
+- (void)start:(id <SRClientTransport>)transport;
 - (void)send:(NSString *)message;
 - (void)send:(NSString *)message onCompletion:(void(^)(SRConnection *, id))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
+
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end

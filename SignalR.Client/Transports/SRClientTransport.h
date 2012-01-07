@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnection.h"
+
+@class SRConnection;
 /**
  * IClientTransport
  * Each Client Transport should conform to the following protocol
  **/
 @protocol SRClientTransport <NSObject>
 
-- (void)start:(SRConnection *)connection;
+- (void)start:(SRConnection *)connection withData:(NSString *)data;
 - (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block;
 - (void)stop:(SRConnection *)connection;
 

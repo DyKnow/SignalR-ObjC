@@ -13,17 +13,10 @@
 typedef void (^onCompletion)(SRConnection *, id);
 
 @interface HttpRequest : NSObject
-{
-    SRConnection *connection;
-    NSURLConnection *urlConnection;
-    NSMutableData *receivedData;
-    onCompletion resultBlock;
-    
-}
 
-@property (nonatomic, strong) SRConnection *connection;
-@property (nonatomic, strong) NSURLConnection *urlConnection;
-@property (nonatomic, strong) NSMutableData *receivedData;
+@property (strong, nonatomic, readwrite) SRConnection *connection;
+@property (strong, nonatomic, readwrite) NSURLConnection *urlConnection;
+@property (strong, nonatomic, readwrite) NSMutableData *receivedData;
 @property (copy) onCompletion resultBlock;
 
 + (HttpRequest *)httpRequest:(SRConnection *)connection URLConnection:(NSURLConnection *)urlConnection block:(void(^)(SRConnection *, id))block;

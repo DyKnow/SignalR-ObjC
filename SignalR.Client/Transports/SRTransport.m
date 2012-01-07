@@ -10,12 +10,16 @@
 
 #import "SRLongPollingTransport.h"
 
+@interface SRTransport()
+
+@end
+
 @implementation SRTransport
 
 @synthesize longPolling = _longPolling;
 @synthesize serverSentEvents = _serverSentEvents;
 
-+ (SRLongPollingTransport *)LongPolling
++ (id <SRClientTransport>)LongPolling
 {
     SRTransport *transport = [[SRTransport alloc] init];
     
@@ -31,4 +35,5 @@
     }
     return self;
 }
+
 @end

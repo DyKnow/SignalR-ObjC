@@ -11,12 +11,13 @@
 
 @implementation HttpRequest
 
-@synthesize connection;
-@synthesize urlConnection;
-@synthesize receivedData;
-@synthesize resultBlock;
+@synthesize connection = _connection;
+@synthesize urlConnection = _urlConnection;
+@synthesize receivedData = _receivedData;
+@synthesize resultBlock = _resultBlock;
 
-#pragma mark - Initialization
+#pragma mark - 
+#pragma mark Initialization
 
 + (HttpRequest *)httpRequest:(SRConnection *)connection URLConnection:(NSURLConnection *)urlConnection block:(void(^)(SRConnection *, id))block
 {
@@ -29,11 +30,13 @@
     return request;
 }
 
-- (NSMutableData *)receivedData {
-    if (receivedData == nil) {
-		receivedData = [[NSMutableData alloc] init];
+- (NSMutableData *)receivedData 
+{
+    if (_receivedData == nil) 
+    {
+		_receivedData = [[NSMutableData alloc] init];
 	}
-	return receivedData;
+	return _receivedData;
 }
 
 @end

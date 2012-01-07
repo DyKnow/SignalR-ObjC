@@ -17,7 +17,9 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 @interface SRConnection ()
 
-@property (nonatomic, assign) BOOL initialized;
+@property (strong, nonatomic, readonly) NSString *assemblyVersion;
+@property (strong, nonatomic, readonly) id <SRClientTransport> transport;
+@property (assign, nonatomic, readonly) BOOL initialized;
 
 - (void)verifyProtocolVersion:(NSString *)versionString;
 
@@ -27,21 +29,22 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 @implementation SRConnection
 
-@synthesize transport = _transport;
-@synthesize url;
-@synthesize connectionId;
-@synthesize messageId;
-@synthesize data;
-@synthesize active;
-@synthesize groups;
+//private
 @synthesize assemblyVersion = _assemblyVersion;
+@synthesize transport = _transport;
 @synthesize initialized = _initialized;
-@synthesize items = _items;
 
-@synthesize sending;
-@synthesize received;
-@synthesize error;
-@synthesize closed;
+//public
+@synthesize received = _received;
+@synthesize error = _error;
+@synthesize closed = _closed;
+@synthesize groups = _groups;
+@synthesize sending = _sending;
+@synthesize url = _url;
+@synthesize active = _active;
+@synthesize messageId = _messageId;
+@synthesize connectionId = _connectionId;
+@synthesize items = _items;
 
 @synthesize delegate = _delegate;
 
@@ -56,13 +59,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
 - (id)initWithURL:(NSString *)URL
 {
     if ((self = [super init])) {
-        _transport = [SRTransport LongPolling];
-        self.groups = [[NSMutableArray alloc] init];
+        _groups = [[NSMutableArray alloc] init];
         _items = [NSMutableDictionary dictionary];
         if([URL hasSuffix:@"/"] == false){
             URL = [URL stringByAppendingString:@"/"];
         }
-        self.url = URL;
+        _url = URL;
     }
     return self;
 }
@@ -72,19 +74,24 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)start
 {
+    [self start:[SRTransport LongPolling]];
+}
+
+- (void)start:(id <SRClientTransport>)transport
+{
     if (self.isActive)
         return;
     
-    active = YES;
+    _active = YES;
     
-    self.data = nil;
+    NSString *data = nil;
     
-    if(sending != nil)
+    if(_sending != nil)
     {
-        self.data = self.sending();
+        data = self.sending();
     }
     
-    NSString *negotiateUrl = [self.url stringByAppendingString:kNegotiateRequest];
+    NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
 
     prepareRequest = ^(NSMutableURLRequest * request){
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -106,13 +113,13 @@ void (^prepareRequest)(NSMutableURLRequest *);
             [self verifyProtocolVersion:negotiationResponse.protocolVersion];
 
             if(negotiationResponse.connectionId){
-                self.connectionId = negotiationResponse.connectionId;
+                _connectionId = negotiationResponse.connectionId;
                             
-                [self.transport start:connection];
+                [_transport start:connection withData:data];
             
                 _initialized = YES;
         
-                if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
                     [self.delegate SRConnectionDidOpen:self];
                 }
             }
@@ -140,20 +147,20 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     @try 
     {
-        [self.transport stop:self];
+        [_transport stop:self];
         
-        if(closed != nil)
+        if(_closed != nil)
         {
             self.closed();
         }
     }
     @finally 
     {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
+        if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
             [self.delegate SRConnectionDidClose:self];
         }
         
-        active = NO;
+        _active = NO;
         _initialized = NO;
     }
 }
@@ -173,7 +180,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
         [NSException raise:@"InvalidOperationException" format:@"Start must be called before data can be sent"];
     }
 
-    [self.transport send:self withData:message onCompletion:block];
+    [_transport send:self withData:message onCompletion:block];
 }
 
 #pragma mark - 
@@ -181,24 +188,24 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)didReceiveData:(NSString *)message
 {
-    if(received != nil)
+    if(_received != nil)
     {
         self.received(message);
     }
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnection:didReceiveData:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveData:)]) {
         [self.delegate SRConnection:self didReceiveData:message];
     }
 }
 
 - (void)didReceiveError:(NSError *)ex
 {
-    if(error != nil)
+    if(_error != nil)
     {
         self.error(ex);
     }
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) {
         [self.delegate SRConnection:self didReceiveError:ex];
     }
 }
@@ -221,4 +228,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #endif
 }
 
+- (void)dealloc
+{
+    _delegate = nil;
+}
 @end

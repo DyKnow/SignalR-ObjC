@@ -41,12 +41,6 @@
 
 - (NSString *) urlEncodedString
 {
-    /*return (__bridge NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
-     (__bridge CFStringRef)self,
-     NULL,
-     (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-     kCFStringEncodingUTF8 );*/
-    
     NSArray *escapeChars = [NSArray arrayWithObjects:@";" , @"/" , @"?" , @":" ,
                             @"@" , @"&" , @"=" , @"+" ,
                             @"$" , @"," , @"[" , @"]",

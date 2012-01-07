@@ -34,11 +34,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
-    [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
+//TODO: Handle initializeCallback and errorCallback, also if exception is an IOException
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
     NSString *url = connection.url;
@@ -49,10 +50,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     }
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
-#if DEBUG
-    NSLog(@"%@",url);
-#endif
-    
+
     prepareRequest = ^(NSMutableURLRequest * request){
         [connection.items setObject:request forKey:kHttpRequestKey];
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -152,4 +150,5 @@ void (^prepareRequest)(NSMutableURLRequest *);
         //intializeCallback();
     }
 }
+
 @end

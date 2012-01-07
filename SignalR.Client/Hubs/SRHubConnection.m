@@ -26,7 +26,8 @@ typedef void (^onConnectionReceived)(NSString *);
 
 @synthesize hubs = _hubs;
 
-#pragma mark - Initialization
+#pragma mark - 
+#pragma mark Initialization
 
 + (SRHubConnection *)connectionWithURL:(NSString *)URL
 {
@@ -35,7 +36,8 @@ typedef void (^onConnectionReceived)(NSString *);
 
 - (id)initWithURL:(NSString *)URL
 {
-    if ((self = [super initWithURL:[self _getUrl:URL]])) {
+    if ((self = [super initWithURL:[self _getUrl:URL]])) 
+    {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
@@ -52,17 +54,20 @@ typedef void (^onConnectionReceived)(NSString *);
     return hubProxy;
 }
 
-#pragma mark - Private
+#pragma mark - 
+#pragma mark Private
 
 - (NSString *)_getUrl:(NSString *)URL
 {
-    if([URL hasSuffix:@"/"] == false){
+    if([URL hasSuffix:@"/"] == false)
+    {
         URL = [URL stringByAppendingString:@"/"];
     }
     return [URL stringByAppendingString:@"signalr"];
 }
 
-#pragma mark - Connection management
+#pragma mark - 
+#pragma mark Connection management
 
 - (void)start
 {
@@ -82,12 +87,14 @@ typedef void (^onConnectionReceived)(NSString *);
         return data;
     };
     
-    self.received = ^(NSString * data) {
+    self.received = ^(NSString * data) 
+    {
         if([data isKindOfClass:[NSString class]])
         {
             SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[[SBJsonParser new] objectWithString:data]];
             SRHubProxy *hubProxy = [_hubs objectForKey:invocation.hub];
-            if(hubProxy){
+            if(hubProxy)
+            {
                 if(invocation.state != nil)
                 {
                     for (id key in invocation.state)

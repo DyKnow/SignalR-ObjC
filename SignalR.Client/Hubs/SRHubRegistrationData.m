@@ -17,41 +17,52 @@
 
 @implementation SRHubRegistrationData
 
-@synthesize name;
-@synthesize methods;
+@synthesize name = _name;
+@synthesize methods = _methods;
 
-#pragma mark - Initialization
+#pragma mark -
+#pragma mark SRSBJSON Protocol
 
-- (id)initWithDictionary:(NSDictionary *)dict
+- (id) init
 {
-    self = [super init];
-	if(self != nil)
-	{
-        name  = [dict objectForKey:kName];
-        methods = [dict objectForKey:kMethods];
+    if (self = [super init])
+    {
+        _name = [NSString stringWithFormat:@""];
+		_methods = [NSMutableArray array];
     }
     return self;
 }
 
-- (NSString *)description 
-{     
-    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@ Methods=%@",name,methods];
+- (id)initWithDictionary:(NSDictionary*)dict
+{
+	self = [self init];
+	if(self != nil)
+	{
+        _name  = [dict objectForKey:kName];
+        _methods = [dict objectForKey:kMethods];
+    }
+    return self;
 }
 
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	name = [dict objectForKey:kName];
-	methods = [dict objectForKey:kMethods];
+	_name = [dict objectForKey:kName];
+	_methods = [dict objectForKey:kMethods];
 }
 
 - (id)proxyForJson
 {
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc]init];
-    if (name) [dict setObject:name forKey:kName];
-    if (methods) [dict setObject:methods forKey:kMethods];
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    
+    [dict setObject:[NSString stringWithFormat:@"%@",_name] forKey:kName];
+    [dict setObject:_methods forKey:kMethods];
     
     return dict;
 }
 
+- (NSString *)description 
+{     
+    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@ Methods=%@",_name,_methods];
+}
 
 @end

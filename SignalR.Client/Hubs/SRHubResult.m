@@ -18,44 +18,56 @@
 
 @implementation SRHubResult
 
-@synthesize result;
-@synthesize error;
-@synthesize state;
+@synthesize result = _result;
+@synthesize error = _error;
+@synthesize state = _state;
 
-#pragma mark - Initialization
+#pragma mark -
+#pragma mark SRSBJSON Protocol
 
-- (id)initWithDictionary:(NSDictionary *)dict
+- (id) init
 {
-    self = [super init];
-	if(self != nil)
-	{
-        result  = [dict objectForKey:kResult];
-        error = [dict objectForKey:kError];
-        state = [dict objectForKey:kState];
+    if (self = [super init])
+    {
+        _error = [NSString stringWithFormat:@""];
+		_state = [NSDictionary dictionary];
     }
     return self;
 }
 
-- (NSString *)description 
-{  
-    return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",result,error,state];
+- (id)initWithDictionary:(NSDictionary*)dict
+{
+	self = [self init];
+	if(self != nil)
+	{
+        _result  = [dict objectForKey:kResult];
+        _error = [dict objectForKey:kError];
+        _state = [dict objectForKey:kState];
+    }
+    return self;
 }
 
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	result = [dict objectForKey:kResult];
-	error = [dict objectForKey:kError];
-    state = [dict objectForKey:kState];
+	_result = [dict objectForKey:kResult];
+	_error = [dict objectForKey:kError];
+    _state = [dict objectForKey:kState];
 }
 
 - (id)proxyForJson
 {
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc]init];
-    if (result) [dict setObject:result forKey:kResult];
-    if (error) [dict setObject:error forKey:kError];
-    if (state) [dict setObject:state forKey:kState];
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    
+    [dict setObject:_result forKey:kResult];
+    [dict setObject:[NSString stringWithFormat:@"%@",_error] forKey:kError];
+    [dict setObject:_state forKey:kState];
     
     return dict;
+}
+
+- (NSString *)description 
+{  
+    return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
 }
 
 @end
