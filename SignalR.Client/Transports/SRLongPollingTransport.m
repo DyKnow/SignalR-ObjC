@@ -37,6 +37,10 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [parameters setObject:kLongPollingTransport forKey:kTransport];
     if([connection.groups count]>0)[parameters setObject:[connection.groups componentsJoinedByString:@","] forKey:kGroups];
 
+    url = [NSString addQueryStringToUrlString:url withDictionary:parameters];
+#if DEBUG
+    NSLog(@"%@",url);
+#endif
     prepareRequest = ^(NSMutableURLRequest * request){
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
         [request setValue:[connection createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
@@ -45,7 +49,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #endif
     };
     
-    [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest postData:parameters onCompletion:
+    [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest onCompletion:
      ^(SRConnection *connection, id response) {
 #if DEBUG
         NSLog(@"startDidReceiveResponse: %@",response);
@@ -88,10 +92,16 @@ void (^prepareRequest)(NSMutableURLRequest *);
     url = [url stringByAppendingString:kSendEndPoint];
     
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    [parameters setObject:[data urlEncodedString] forKey:kData];
     [parameters setObject:connection.connectionId forKey:kConnectionId];
     [parameters setObject:kLongPollingTransport forKey:kTransport];
         
+    url = [NSString addQueryStringToUrlString:url withDictionary:parameters];
+#if DEBUG
+    NSLog(@"%@",url);
+#endif
+    NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
+    [postData setObject:[data urlEncodedString] forKey:kData];
+
     if(block == nil)
     {
         prepareRequest = ^(NSMutableURLRequest * request){
@@ -102,7 +112,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #endif
         };
         
-        [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest postData:parameters onCompletion:
+        [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest postData:postData onCompletion:
          ^(SRConnection *connection, id response) {
 #if DEBUG
              NSLog(@"sendDidReceiveResponse: %@",response);

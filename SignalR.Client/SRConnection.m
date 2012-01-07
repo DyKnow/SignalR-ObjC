@@ -17,6 +17,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 @interface SRConnection ()
 
+- (void)verifyProtocolVersion:(NSString *)versionString;
+
 @end
 
 #define kNegotiateRequest @"negotiate"
@@ -95,10 +97,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #if DEBUG
             NSLog(@"%@",negotiationResponse);
 #endif
+            [self verifyProtocolVersion:negotiationResponse.protocolVersion];
+
             if(negotiationResponse.connectionId){
                 self.connectionId = negotiationResponse.connectionId;
                 self.appRelativeUrl = negotiationResponse.url;
-            
+                            
                 [self.transport start:connection];
             
                 if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
@@ -170,6 +174,18 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) {
         [self.delegate SRConnection:self didReceiveError:ex];
+    }
+}
+
+#pragma mark - 
+#pragma mark Verify Protocol Version
+
+//TODO: Parse Version into Version Object like C#
+- (void)verifyProtocolVersion:(NSString *)versionString
+{
+    if(![versionString isEqualToString:@"1.0"])
+    {
+        [NSException raise:@"InvalidOperationException" format:@"Incompatible Protocol Version"];
     }
 }
 

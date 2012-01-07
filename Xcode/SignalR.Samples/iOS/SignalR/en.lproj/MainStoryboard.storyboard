@@ -93,7 +93,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://abillingsley-vm:8080/Raw/Raw.ashx" borderStyle="roundedRect" minimumFontSize="17" id="nxP-CG-dZN">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://192.168.1.84:9090/Raw/Raw.ashx" borderStyle="roundedRect" minimumFontSize="17" id="nxP-CG-dZN">
                                 <rect key="frame" x="20" y="49" width="538" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -334,7 +334,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://abillingsley-vm:8080/Streaming/Streaming.ashx" borderStyle="roundedRect" minimumFontSize="17" id="F6k-cb-udm">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://192.168.0.15:9090/Streaming/Streaming.ashx" borderStyle="roundedRect" minimumFontSize="17" id="F6k-cb-udm">
                                 <rect key="frame" x="20" y="49" width="538" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -398,7 +398,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://abillingsley-vm:8080/" borderStyle="roundedRect" minimumFontSize="17" id="dsb-p5-ZQl">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://192.168.0.15:9090/" borderStyle="roundedRect" minimumFontSize="17" id="dsb-p5-ZQl">
                                 <rect key="frame" x="20" y="49" width="538" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -462,7 +462,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://abillingsley-vm:8080/" borderStyle="roundedRect" minimumFontSize="17" id="iWc-yV-ARe">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://192.168.0.15:9090/" borderStyle="roundedRect" minimumFontSize="17" id="iWc-yV-ARe">
                                 <rect key="frame" x="20" y="49" width="538" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -526,7 +526,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://abillingsley-vm:8080/" borderStyle="roundedRect" minimumFontSize="17" id="jr2-CO-wAp">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://192.168.0.15:9090/" borderStyle="roundedRect" minimumFontSize="17" id="jr2-CO-wAp">
                                 <rect key="frame" x="20" y="49" width="538" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>

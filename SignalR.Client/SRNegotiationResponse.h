@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSString *connectionId;
 @property (nonatomic, strong) NSString *url;
+@property (nonatomic, strong) NSString *protocolVersion;
 
 - (id)initWithDictionary:(NSDictionary*)dict;
 - (void)updateWithDictionary:(NSDictionary *)dict;
