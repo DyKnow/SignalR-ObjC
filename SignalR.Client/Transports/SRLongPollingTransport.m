@@ -8,40 +8,53 @@
 
 #import "SRLongPollingTransport.h"
 
-#import "SBJson.h"
+#import "SRConnection.h"
+
+#import "HttpHelper.h"
+#import "NSString+Url.h"
 
 void (^prepareRequest)(NSMutableURLRequest *);
 
 @interface SRLongPollingTransport()
 
-- (void)_processResponse:(SRConnection *)connection response:(NSString *)response;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
+
+#define kTransportName @"longPolling"
 
 @end
 
 @implementation SRLongPollingTransport
 
-- (void)start:(SRConnection *)connection
+- (id)init
+{
+    if(self = [super initWithTransport:kTransportName])
+    {
+        
+    }
+    return self;
+}
+
+- (void)onStart:(SRConnection *)connection data:(NSString *)data
+{
+    [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+}
+
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
     NSString *url = connection.url;
     
-    if(connection.messageId == nil){
+    if(connection.messageId == nil)
+    {
         url = [url stringByAppendingString:kConnectEndPoint];
     }
-
-    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    if (connection.data) [parameters setObject:[connection.data urlEncodedString] forKey:kConnectionData];    
-    if(connection.messageId) {
-        [parameters setObject:[connection.messageId stringValue] forKey:kMessageId];
-    }
-    [parameters setObject:connection.connectionId forKey:kConnectionId];
-    [parameters setObject:kLongPollingTransport forKey:kTransport];
-    if([connection.groups count]>0)[parameters setObject:[connection.groups componentsJoinedByString:@","] forKey:kGroups];
-
-    url = [NSString addQueryStringToUrlString:url withDictionary:parameters];
+    
+    url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 #if DEBUG
     NSLog(@"%@",url);
 #endif
+    
     prepareRequest = ^(NSMutableURLRequest * request){
+        [connection.items setObject:request forKey:kHttpRequestKey];
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
         [request setValue:[connection createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
 #elif TARGET_OS_MAC
@@ -52,140 +65,91 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest onCompletion:
      ^(SRConnection *connection, id response) {
 #if DEBUG
-        NSLog(@"startDidReceiveResponse: %@",response);
+         NSLog(@"startDidReceiveResponse: %@",response);
 #endif
-        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
-                          [response isEqualToString:@""] || response == nil ||
-                          [response isEqualToString:@"null"]);
+         // Clear the pending request
+         [connection.items removeObjectForKey:kHttpRequestKey];
         
-        @try {
-            if([response isKindOfClass:[NSString class]])
-            {
-                if(!isFaulted)
-                {
-                    [self _processResponse:connection response:response];
-                }
-            }
-        }
-        @finally {
-            if(isFaulted)
-            {
-                if([response isKindOfClass:[NSError class]])[connection didReceiveError:response];
-                
-                if(connection.isActive){
-                    [self performSelector:@selector(start:) withObject:connection afterDelay:2];
-                }
-            }
-            else
-            {
-                if (connection.isActive) {
-                    [self start:connection];
-                }
-            }
-        }
-    }];
-}
-
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block
-{       
-    NSString *url = connection.url;
-    url = [url stringByAppendingString:kSendEndPoint];
-    
-    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    [parameters setObject:connection.connectionId forKey:kConnectionId];
-    [parameters setObject:kLongPollingTransport forKey:kTransport];
-        
-    url = [NSString addQueryStringToUrlString:url withDictionary:parameters];
-#if DEBUG
-    NSLog(@"%@",url);
-#endif
-    NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
-    [postData setObject:[data urlEncodedString] forKey:kData];
-
-    if(block == nil)
-    {
-        prepareRequest = ^(NSMutableURLRequest * request){
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-            [request setValue:[connection createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
-#elif TARGET_OS_MAC
-            [request setValue:[connection createUserAgentString:@"SignalR.Client.MAC"] forHTTPHeaderField:@"User-Agent"];
-#endif
-        };
-        
-        [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest postData:postData onCompletion:
-         ^(SRConnection *connection, id response) {
-#if DEBUG
-             NSLog(@"sendDidReceiveResponse: %@",response);
-#endif
+         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
+                           [response isEqualToString:@""] || response == nil ||
+                           [response isEqualToString:@"null"]);
+         @try 
+         {
              if([response isKindOfClass:[NSString class]])
              {
-                 if([response isEqualToString:@""] == NO && response != nil)
+                 if(!isFaulted)
                  {
-                     [connection didReceiveData:response];
+                     [self onMessage:connection response:response];
                  }
              }
-         }];
-    }
-    else
+         }
+         @finally 
+         {
+             BOOL requestAborted = NO;
+             BOOL continuePolling = YES;
+             
+             if (isFaulted)
+             {
+                 if([response isKindOfClass:[NSError class]])
+                 {
+                     if (errorCallback != nil)
+                     {
+                         //Raise Error
+                         [connection didReceiveError:response];
+                         
+                         //call the callback
+                         //errorCallback(response);
+                         
+                         //Don't continue polling if error is on the first request
+                         continuePolling = NO;
+                     }
+                     else
+                     {
+                         //Figure out if the request is aborted
+                         requestAborted = [self isRequestAborted:response];
+                         
+                         //Sometimes a connection might have been closed by the server before we get to write anything
+                         //So just try again and don't raise an error
+                         if(!requestAborted) //&& !(exception is IOExeption))
+                         {
+                             //Raise Error
+                             [connection didReceiveError:response];
+                             
+                             //If the connection is still active after raising the error wait 2 seconds 
+                             //before polling again so we arent hammering the server
+                             if(connection.isActive)
+                             {
+                                 NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
+                                 NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                                 [invocation setSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
+                                 [invocation setTarget:self ];
+                                 
+                                 NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil,nil];
+                                 for(int i =0; i<[args count]; i++)
+                                 {
+                                     int arguementIndex = 2 + i;
+                                     NSString *argument = [args objectAtIndex:i];
+                                     [invocation setArgument:&argument atIndex:arguementIndex];
+                                 }
+                                 [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
+                             }
+                         }
+                     }
+                 }
+             }
+             
+             if (continuePolling && !requestAborted && connection.isActive)
+             {
+                 [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+             }
+         }
+     }];
+    
+    if(initializeCallback != nil)
     {
-        [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:nil postData:parameters onCompletion:block];
+        //Only set this the firsttime
+        //TODO: we should delay this until after the http request is made
+        //intializeCallback();
     }
 }
-
-- (void)stop:(SRConnection *)connection
-{
-    
-}
-
-#pragma mark - Private
-
-- (void)_processResponse:(SRConnection *)connection response:(NSString *)response
-{
-    if(connection.messageId == nil){
-        connection.messageId = [NSNumber numberWithInt:0];
-    }
-    
-    @try {
-        id result = [[SBJsonParser new] objectWithString:response];
-        if([result isKindOfClass:[NSDictionary class]])
-        {
-            id messageId = [result objectForKey:kResponse_MessageId];
-            if(messageId && [messageId isKindOfClass:[NSNumber class]]){
-                connection.messageId = messageId;
-            }
-            
-            id messageData = [result objectForKey:kResponse_Messages];
-            if(messageData && [messageData isKindOfClass:[NSArray class]])
-            {
-                for (id message in messageData) {   
-                    if([message isKindOfClass:[NSDictionary class]]){
-                        [connection didReceiveData:[[SBJsonWriter new] stringWithObject:message]];
-                    }
-                    else if([message isKindOfClass:[NSString class]]){
-                        [connection didReceiveData:message];
-                    }
-                }
-            }
-            
-            id transportData = [result objectForKey:kResponse_TransportData];
-            if(transportData && [transportData isKindOfClass:[NSDictionary class]])  
-            {
-                id groups = [transportData objectForKey:kResponse_Groups];
-                if(groups && [groups isKindOfClass:[NSArray class]])
-                {
-                    for (NSString *group in groups) {
-                        [connection.groups addObject:group];
-                    }
-                }
-            }
-        }
-    }
-    @catch (NSError *ex) {
-#if DEBUG
-        NSLog(@"Failed to respond: %@",ex);
-#endif
-        [connection didReceiveError:ex];
-    }
-}
-
 @end

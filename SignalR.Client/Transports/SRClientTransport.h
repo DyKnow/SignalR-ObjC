@@ -24,8 +24,6 @@
 
 #define kConnectEndPoint @"connect"
 #define kSendEndPoint @"send"
-#define kLongPollingTransport @"longPolling"
-#define kWebSocketsTransport @"webSockets"
 
 #pragma  mark - Request Constants
 

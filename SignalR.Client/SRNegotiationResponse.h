@@ -6,16 +6,12 @@
 //  Copyright (c) 2011 DyKnow LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "SRSBJSON.h"
 
-@interface SRNegotiationResponse : NSObject
+@interface SRNegotiationResponse : NSObject <SRSBJSON>
 
-@property (nonatomic, strong) NSString *connectionId;
-@property (nonatomic, strong) NSString *url;
-@property (nonatomic, strong) NSString *protocolVersion;
-
-- (id)initWithDictionary:(NSDictionary*)dict;
-- (void)updateWithDictionary:(NSDictionary *)dict;
-- (id) proxyForJson;
+@property (strong, nonatomic, readwrite) NSString *connectionId;
+@property (strong, nonatomic, readwrite) NSString *url;
+@property (strong, nonatomic, readwrite) NSString *protocolVersion;
 
 @end

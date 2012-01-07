@@ -10,12 +10,14 @@
 
 #import "SBJson.h"
 #import "HttpHelper.h"
-#import "SRLongPollingTransport.h"
+#import "SRTransport.h"
 #import "SRNegotiationResponse.h"
 
 void (^prepareRequest)(NSMutableURLRequest *);
 
 @interface SRConnection ()
+
+@property (nonatomic, assign) BOOL initialized;
 
 - (void)verifyProtocolVersion:(NSString *)versionString;
 
@@ -27,13 +29,14 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 @synthesize transport = _transport;
 @synthesize url;
-@synthesize appRelativeUrl;
 @synthesize connectionId;
 @synthesize messageId;
 @synthesize data;
 @synthesize active;
 @synthesize groups;
 @synthesize assemblyVersion = _assemblyVersion;
+@synthesize initialized = _initialized;
+@synthesize items = _items;
 
 @synthesize sending;
 @synthesize received;
@@ -42,7 +45,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 @synthesize delegate = _delegate;
 
-#pragma mark - Initialization
+#pragma mark - 
+#pragma mark Initialization
 
 + (SRConnection *)connectionWithURL:(NSString *)URL
 {
@@ -52,8 +56,9 @@ void (^prepareRequest)(NSMutableURLRequest *);
 - (id)initWithURL:(NSString *)URL
 {
     if ((self = [super init])) {
-        _transport = [[SRLongPollingTransport alloc] init];
+        _transport = [SRTransport LongPolling];
         self.groups = [[NSMutableArray alloc] init];
+        _items = [NSMutableDictionary dictionary];
         if([URL hasSuffix:@"/"] == false){
             URL = [URL stringByAppendingString:@"/"];
         }
@@ -62,7 +67,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
     return self;
 }
 
-#pragma mark - Connection management
+#pragma mark - 
+#pragma mark Connection management
 
 - (void)start
 {
@@ -101,10 +107,11 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
             if(negotiationResponse.connectionId){
                 self.connectionId = negotiationResponse.connectionId;
-                self.appRelativeUrl = negotiationResponse.url;
                             
                 [self.transport start:connection];
             
+                _initialized = YES;
+        
                 if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
                     [self.delegate SRConnectionDidOpen:self];
                 }
@@ -117,26 +124,42 @@ void (^prepareRequest)(NSMutableURLRequest *);
     }];
 }
 
-- (void)stop
+//TODO: Parse Version into Version Object like C#
+- (void)verifyProtocolVersion:(NSString *)versionString
 {
-    if (!self.isActive)
-        return;
-    
-    [self.transport stop:self];
-    
-    if(closed != nil)
+    if(![versionString isEqualToString:@"1.0"])
     {
-        self.closed();
+        [NSException raise:@"InvalidOperationException" format:@"Incompatible Protocol Version"];
     }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
-        [self.delegate SRConnectionDidClose:self];
-    }
-    
-    active = NO;
 }
 
-#pragma mark - Sending data
+- (void)stop
+{
+    if (!_initialized)
+        return;
+    
+    @try 
+    {
+        [self.transport stop:self];
+        
+        if(closed != nil)
+        {
+            self.closed();
+        }
+    }
+    @finally 
+    {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
+            [self.delegate SRConnectionDidClose:self];
+        }
+        
+        active = NO;
+        _initialized = NO;
+    }
+}
+
+#pragma mark - 
+#pragma mark Sending data
 
 - (void)send:(NSString *)message
 {
@@ -145,13 +168,16 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)send:(NSString *)message onCompletion:(void(^)(SRConnection *, id))block
 {
-    if (!self.isActive)
-        return;
+    if (!_initialized)
+    {
+        [NSException raise:@"InvalidOperationException" format:@"Start must be called before data can be sent"];
+    }
 
     [self.transport send:self withData:message onCompletion:block];
 }
 
-#pragma mark - Received Data
+#pragma mark - 
+#pragma mark Received Data
 
 - (void)didReceiveData:(NSString *)message
 {
@@ -178,18 +204,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 }
 
 #pragma mark - 
-#pragma mark Verify Protocol Version
-
-//TODO: Parse Version into Version Object like C#
-- (void)verifyProtocolVersion:(NSString *)versionString
-{
-    if(![versionString isEqualToString:@"1.0"])
-    {
-        [NSException raise:@"InvalidOperationException" format:@"Incompatible Protocol Version"];
-    }
-}
-
-#pragma mark - Prepare Request
+#pragma mark Prepare Request
 
 - (NSString *)createUserAgentString:(NSString *)client
 {

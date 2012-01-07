@@ -35,6 +35,8 @@
 		392EFF08148EF113001E5958 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFEF9148EF113001E5958 /* SBJsonUTF8Stream.m */; };
 		392EFF09148EF113001E5958 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFEFB148EF113001E5958 /* SBJsonWriter.m */; };
 		39571B09148E97590010DC77 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39571B08148E97590010DC77 /* CFNetwork.framework */; };
+		39A55A5914B8DE6F0075C06F /* SRTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A5814B8DE6F0075C06F /* SRTransport.m */; };
+		39A55A6214B8E1090075C06F /* SRHttpBasedTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
@@ -125,6 +127,11 @@
 		392EFEFA148EF113001E5958 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		392EFEFB148EF113001E5958 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
 		39571B08148E97590010DC77 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		39A55A5714B8DE6F0075C06F /* SRTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRTransport.h; sourceTree = "<group>"; };
+		39A55A5814B8DE6F0075C06F /* SRTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTransport.m; sourceTree = "<group>"; };
+		39A55A5F14B8E0650075C06F /* SRSBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRSBJSON.h; path = ../../../SignalR.Client/SRSBJSON.h; sourceTree = "<group>"; };
+		39A55A6014B8E1090075C06F /* SRHttpBasedTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpBasedTransport.h; sourceTree = "<group>"; };
+		39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHttpBasedTransport.m; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -226,8 +233,12 @@
 			isa = PBXGroup;
 			children = (
 				392EFE8C148EEB8C001E5958 /* SRClientTransport.h */,
+				39A55A6014B8E1090075C06F /* SRHttpBasedTransport.h */,
+				39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */,
 				392EFE8D148EEB8C001E5958 /* SRLongPollingTransport.h */,
 				392EFE8E148EEB8C001E5958 /* SRLongPollingTransport.m */,
+				39A55A5714B8DE6F0075C06F /* SRTransport.h */,
+				39A55A5814B8DE6F0075C06F /* SRTransport.m */,
 			);
 			name = Transports;
 			path = ../../../SignalR.Client/Transports;
@@ -272,6 +283,7 @@
 				392EFE86148EEB8C001E5958 /* SignalR.h */,
 				392EFE68148EEB8C001E5958 /* Hubs */,
 				392EFE7C148EEB8C001E5958 /* Infrastructure */,
+				39A55A5F14B8E0650075C06F /* SRSBJSON.h */,
 				392EFE87148EEB8C001E5958 /* SRConnection.h */,
 				392EFE88148EEB8C001E5958 /* SRConnection.m */,
 				392EFE89148EEB8C001E5958 /* SRNegotiationResponse.h */,
@@ -517,6 +529,8 @@
 				392EFF07148EF113001E5958 /* SBJsonTokeniser.m in Sources */,
 				392EFF08148EF113001E5958 /* SBJsonUTF8Stream.m in Sources */,
 				392EFF09148EF113001E5958 /* SBJsonWriter.m in Sources */,
+				39A55A5914B8DE6F0075C06F /* SRTransport.m in Sources */,
+				39A55A6214B8E1090075C06F /* SRHttpBasedTransport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

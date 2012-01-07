@@ -41,8 +41,8 @@ typedef void (^onClosed)();
 @property (nonatomic, strong) NSString *connectionId;
 @property (nonatomic, strong) NSMutableArray *groups;
 @property (nonatomic, strong) NSString *assemblyVersion;
+@property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 
-@property (nonatomic, strong) NSString *appRelativeUrl;
 @property (nonatomic, strong) NSString *data;
 
 + (SRConnection *)connectionWithURL:(NSString *)URL;
