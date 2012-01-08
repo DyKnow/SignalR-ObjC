@@ -90,17 +90,17 @@ static HttpHelper *sharedHttpRequestManager = nil;
     NSData *requestData = [sb dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20];
-    
-    if(requestPreparer != nil)
-    {
-        requestPreparer(request);
-    }
-    
+        
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody: requestData];
+    
+    if(requestPreparer != nil)
+    {
+        requestPreparer(request);
+    }
     
     NSURLConnection *urlConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
     if (!urlConnection) {

@@ -69,7 +69,7 @@ typedef void (^onConnectionReceived)(NSString *);
 #pragma mark - 
 #pragma mark Connection management
 
-- (void)start
+- (void)start:(id<SRClientTransport>)transport
 {
     self.sending = ^()
     {    
@@ -107,7 +107,7 @@ typedef void (^onConnectionReceived)(NSString *);
             }
         }
     };
-    [super start];
+    [super start:transport];
 }
 
 - (void)stop

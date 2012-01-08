@@ -10,6 +10,7 @@
 #import "SRClientTransport.h"
 
 @class SRLongPollingTransport;
+@class SRServerSentEventsTransport;
 
 @interface SRTransport : NSObject
 
@@ -17,5 +18,6 @@
 @property (strong, nonatomic, readonly) id <SRClientTransport> serverSentEvents;
 
 + (id <SRClientTransport>)LongPolling;
++ (id <SRClientTransport>)ServerSentEvents;
 
 @end

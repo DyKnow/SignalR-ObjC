@@ -9,6 +9,7 @@
 #import "SRServerSentEventsTransport.h"
 
 #import "SRConnection.h"
+#import "SRConnectionExtensions.h"
 
 #import "HttpHelper.h"
 #import "NSString+Url.h"
@@ -112,6 +113,8 @@ typedef enum {
 @property (assign, nonatomic, readonly)  BOOL reading;
 @property (assign, nonatomic, readonly)  BOOL processingBuffer;
 
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
+
 - (void)startReading;
 - (void)stopReading;
 - (void)readLoop;
@@ -132,6 +135,17 @@ typedef enum {
 @synthesize reading = _reading;
 @synthesize processingBuffer = _processingBuffer;
 
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+{
+    if (self = [super init])
+    {
+        _stream = steam;
+        _connection = connection;
+        _initializedCallback = initializeCallback;
+        _errorCallback = _errorCallback;
+    }
+    return self;
+}
 - (void)startReading
 {
     _reading = YES;
@@ -143,6 +157,7 @@ typedef enum {
     _reading = NO;
 }
 
+//TODO: implement readloop
 - (void)readLoop
 {
     if(!_reading)
@@ -193,7 +208,7 @@ typedef enum {
     {
         NSString *line = [_buffer readLine];
         
-        if(!line || [line isEqualToString:@""] == YES)
+        if(line == nil)
         {
             break;
         }
@@ -216,11 +231,24 @@ typedef enum {
         
         switch (sseEvent.type) {
             case Id:
-                
+            {
+                NSLog(@"%@",sseEvent.data);
                 break;
+            }
             case Data:
-                
+            {
+                if([sseEvent.data isEqualToString:@"initialized"])
+                {
+                    NSLog(@"Initialize the callback");
+                    //initializeCallback();
+                }
+                else
+                {
+                    NSLog(@"onMessage%@",sseEvent.data);
+                    //onMessage(_connection,sseEvent.data);
+                }
                 break;
+            }
             default:
                 break;
         }
@@ -229,8 +257,20 @@ typedef enum {
 
 - (BOOL)tryParseEvent:(NSString *)line sseEvent:(SseEvent **)sseEvent
 {
-    sseEvent = nil;
+    *sseEvent = nil;
     
+    if([line hasPrefix:@"data:"])
+    {
+        NSString *data = [line substringFromIndex:@"data:".length];
+        *sseEvent = [[SseEvent alloc] initWithType:Data data:data];
+        return YES;
+    }
+    else if([line hasPrefix:@"id:"])
+    {
+        NSString *data = [line substringFromIndex:@"id:".length];
+        *sseEvent = [[SseEvent alloc] initWithType:Id data:data];
+        return YES;
+    }
     return NO;
 }
 @end
@@ -267,12 +307,16 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
+//TODO: handle callbacks
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
     NSString *url = connection.url;
 
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     
+#if DEBUG
+    NSLog(@"%@",url);
+#endif
     prepareRequest = ^(NSMutableURLRequest * request){
         [connection.items setObject:request forKey:kHttpRequestKey];
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -292,6 +336,9 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest onCompletion:
      ^(SRConnection *connection, id response) 
     {
+#if DEBUG
+        NSLog(@"openConnectionDidReceiveResponse: %@",response);
+#endif
          BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                            [response isEqualToString:@""] || response == nil ||
                            [response isEqualToString:@"null"]);
@@ -301,14 +348,26 @@ void (^prepareRequest)(NSMutableURLRequest *);
         }
         else
         {
+            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection initializeCallback:initializeCallback errorCallback:errorCallback];
+            [reader startReading];
             
+            [connection.items setObject:reader forKey:kReaderKey];
         }
      }];
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection
 {
-    
+    //Get the reader from the connection and stop it
+    id reader = nil;
+    if((reader = [connection getValue:kReaderKey]))
+    {
+        //Stop reading data from the stream
+        [reader stopReading];
+        
+        //Remove the reader
+        [connection.items removeObjectForKey:kReaderKey];
+    }
 }
 
 @end

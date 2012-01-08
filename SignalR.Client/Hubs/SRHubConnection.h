@@ -19,7 +19,7 @@
 
 - (SRHubProxy *)createProxy:(NSString *)hubName;
 
-- (void)start;
+- (void)start:(id<SRClientTransport>)transport;
 - (void)stop;
 
 @end

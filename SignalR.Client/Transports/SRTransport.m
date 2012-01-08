@@ -9,6 +9,7 @@
 #import "SRTransport.h"
 
 #import "SRLongPollingTransport.h"
+#import "SRServerSentEventsTransport.h"
 
 @interface SRTransport()
 
@@ -26,12 +27,19 @@
     return transport.longPolling;
 }
 
++ (id <SRClientTransport>)ServerSentEvents
+{
+    SRTransport *transport = [[SRTransport alloc] init];
+    
+    return transport.serverSentEvents;
+}
+
 - (id)init
 {
     if (self = [super init])
     {
         _longPolling = [[SRLongPollingTransport alloc] init];
-        _serverSentEvents = nil;
+        _serverSentEvents = [[SRServerSentEventsTransport alloc] init];
     }
     return self;
 }

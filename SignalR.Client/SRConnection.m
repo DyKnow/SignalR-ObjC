@@ -59,12 +59,13 @@ void (^prepareRequest)(NSMutableURLRequest *);
 - (id)initWithURL:(NSString *)URL
 {
     if ((self = [super init])) {
-        _groups = [[NSMutableArray alloc] init];
-        _items = [NSMutableDictionary dictionary];
         if([URL hasSuffix:@"/"] == false){
             URL = [URL stringByAppendingString:@"/"];
         }
+        
         _url = URL;
+        _groups = [[NSMutableArray alloc] init];
+        _items = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -74,7 +75,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport LongPolling]];
+    [self start:[SRTransport ServerSentEvents]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -83,6 +84,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
         return;
     
     _active = YES;
+    _transport = transport;
     
     NSString *data = nil;
     

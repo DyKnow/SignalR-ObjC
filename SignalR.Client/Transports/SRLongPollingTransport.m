@@ -63,7 +63,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest onCompletion:
      ^(SRConnection *connection, id response) {
 #if DEBUG
-         NSLog(@"startDidReceiveResponse: %@",response);
+         NSLog(@"pollingLoopDidReceiveResponse: %@",response);
 #endif
          // Clear the pending request
          [connection.items removeObjectForKey:kHttpRequestKey];

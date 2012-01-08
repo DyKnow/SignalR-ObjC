@@ -9,6 +9,7 @@
 #import "SRHttpBasedTransport.h"
 
 #import "SRConnection.h"
+#import "SRConnectionExtensions.h"
 
 #import "SBJson.h"
 #import "HttpHelper.h"
@@ -94,13 +95,13 @@ void (^prepareRequest)(NSMutableURLRequest *);
 //TODO: Abort Request if one exists
 - (void)stop:(SRConnection *)connection
 {
-    id httpRequest = [connection.items objectForKey:kHttpRequestKey];
+    id httpRequest = [connection getValue:kHttpRequestKey];
     
     if(httpRequest != nil)
     {
         @try 
         {
-            //onBeforeAbort
+            [self onBeforeAbort:connection];
             //httpRequest.Abort();
         }
         @catch (NSError *error) {
@@ -118,24 +119,39 @@ void (^prepareRequest)(NSMutableURLRequest *);
     return NO;
 }
 
-//?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&&groups=<groups>&&connectionData=<data>
+//?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data>
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data
 {
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     [parameters setObject:_transport forKey:kTransport];
     [parameters setObject:connection.connectionId forKey:kConnectionId];
+    
     if(connection.messageId) 
     {
         [parameters setObject:[connection.messageId stringValue] forKey:kMessageId];
     }
+    else
+    {
+        [parameters setObject:[NSString stringWithFormat:@""] forKey:kMessageId];
+    }
+    
     if([connection.groups count]>0)
     {
         [parameters setObject:[connection.groups componentsJoinedByString:@","] forKey:kGroups];
     }
+    else
+    {
+        [parameters setObject:[NSString stringWithFormat:@""] forKey:kGroups];
+    }
+    
     if (data) 
     {
         [parameters setObject:[data urlEncodedString] forKey:kConnectionData]; 
-    }   
+    }
+    else
+    {
+        [parameters setObject:[NSString stringWithFormat:@""] forKey:kConnectionData];
+    }
     return [NSString addQueryStringToUrlString:@"" withDictionary:parameters];
 }
 
