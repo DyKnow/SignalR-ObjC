@@ -41,6 +41,11 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [self onStart:connection data:data initializeCallback:nil errorCallback:nil];
 }
 
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+{
+    //override this method
+}
+
 - (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block
 {       
     NSString *url = connection.url;
@@ -146,7 +151,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)onBeforeAbort:(SRConnection *)connection
 {
-    
+    //override this method
 }
 
 - (void)onMessage:(SRConnection *)connection response:(NSString *)response

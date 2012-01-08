@@ -37,6 +37,7 @@
 		39571B09148E97590010DC77 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39571B08148E97590010DC77 /* CFNetwork.framework */; };
 		39A55A5914B8DE6F0075C06F /* SRTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A5814B8DE6F0075C06F /* SRTransport.m */; };
 		39A55A6214B8E1090075C06F /* SRHttpBasedTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */; };
+		39A55A6514B90C580075C06F /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A6414B90C580075C06F /* SRServerSentEventsTransport.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
@@ -132,6 +133,8 @@
 		39A55A5F14B8E0650075C06F /* SRSBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRSBJSON.h; path = ../../../SignalR.Client/SRSBJSON.h; sourceTree = "<group>"; };
 		39A55A6014B8E1090075C06F /* SRHttpBasedTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpBasedTransport.h; sourceTree = "<group>"; };
 		39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHttpBasedTransport.m; sourceTree = "<group>"; };
+		39A55A6314B90C580075C06F /* SRServerSentEventsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRServerSentEventsTransport.h; sourceTree = "<group>"; };
+		39A55A6414B90C580075C06F /* SRServerSentEventsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEventsTransport.m; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -237,6 +240,8 @@
 				39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */,
 				392EFE8D148EEB8C001E5958 /* SRLongPollingTransport.h */,
 				392EFE8E148EEB8C001E5958 /* SRLongPollingTransport.m */,
+				39A55A6314B90C580075C06F /* SRServerSentEventsTransport.h */,
+				39A55A6414B90C580075C06F /* SRServerSentEventsTransport.m */,
 				39A55A5714B8DE6F0075C06F /* SRTransport.h */,
 				39A55A5814B8DE6F0075C06F /* SRTransport.m */,
 			);
@@ -531,6 +536,7 @@
 				392EFF09148EF113001E5958 /* SBJsonWriter.m in Sources */,
 				39A55A5914B8DE6F0075C06F /* SRTransport.m in Sources */,
 				39A55A6214B8E1090075C06F /* SRHttpBasedTransport.m in Sources */,
+				39A55A6514B90C580075C06F /* SRServerSentEventsTransport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
