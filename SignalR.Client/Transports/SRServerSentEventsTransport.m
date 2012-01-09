@@ -11,7 +11,7 @@
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 
-#import "HttpHelper.h"
+#import "SRHttpHelper.h"
 #import "NSString+Url.h"
 
 #pragma mark - 
@@ -333,26 +333,25 @@ void (^prepareRequest)(NSMutableURLRequest *);
         }
     };
     
-    [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest onCompletion:
-     ^(SRConnection *connection, id response) 
-    {
+    [SRHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:
+     ^(id response) {
 #if DEBUG
-        NSLog(@"openConnectionDidReceiveResponse: %@",response);
+         NSLog(@"openConnectionDidReceiveResponse: %@",response);
 #endif
          BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                            [response isEqualToString:@""] || response == nil ||
                            [response isEqualToString:@"null"]);
-        if(isFaulted)
-        {
-            //errorCallback(task.excpetion);
-        }
-        else
-        {
-            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection initializeCallback:initializeCallback errorCallback:errorCallback];
-            [reader startReading];
-            
-            [connection.items setObject:reader forKey:kReaderKey];
-        }
+         if(isFaulted)
+         {
+             //errorCallback(task.excpetion);
+         }
+         else
+         {
+             AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection initializeCallback:initializeCallback errorCallback:errorCallback];
+             [reader startReading];
+             
+             [connection.items setObject:reader forKey:kReaderKey];
+         }
      }];
 }
 

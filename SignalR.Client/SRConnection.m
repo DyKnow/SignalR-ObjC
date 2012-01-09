@@ -9,7 +9,7 @@
 #import "SRConnection.h"
 
 #import "SBJson.h"
-#import "HttpHelper.h"
+#import "SRHttpHelper.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
 
@@ -75,7 +75,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport LongPolling]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -103,9 +103,9 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #endif
     };
     
-    [[HttpHelper sharedHttpRequestManager] postAsync:self url:negotiateUrl requestPreparer:prepareRequest onCompletion:
-     
-     ^(SRConnection *connection, id response) {
+    [SRHttpHelper postAsync:negotiateUrl requestPreparer:prepareRequest continueWith:
+     ^(id response) 
+    {
         if([response isKindOfClass:[NSString class]])
         {        
             SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
@@ -113,14 +113,14 @@ void (^prepareRequest)(NSMutableURLRequest *);
             NSLog(@"%@",negotiationResponse);
 #endif
             [self verifyProtocolVersion:negotiationResponse.protocolVersion];
-
+            
             if(negotiationResponse.connectionId){
                 _connectionId = negotiationResponse.connectionId;
-                            
-                [_transport start:connection withData:data];
-            
+                
+                [_transport start:self withData:data];
+                
                 _initialized = YES;
-        
+                
                 if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
                     [self.delegate SRConnectionDidOpen:self];
                 }

@@ -12,7 +12,7 @@
 #import "SRConnectionExtensions.h"
 
 #import "SBJson.h"
-#import "HttpHelper.h"
+#import "SRHttpHelper.h"
 #import "NSString+Url.h"
 
 void (^prepareRequest)(NSMutableURLRequest *);
@@ -72,23 +72,24 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #endif
         };
         
-        [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:prepareRequest postData:postData onCompletion:
-         ^(SRConnection *connection, id response) {
+        [SRHttpHelper postAsync:url requestPreparer:prepareRequest postData:postData continueWith:
+         ^(id response) 
+        {
 #if DEBUG
-             NSLog(@"sendDidReceiveResponse: %@",response);
+            NSLog(@"sendDidReceiveResponse: %@",response);
 #endif
-             if([response isKindOfClass:[NSString class]])
-             {
-                 if([response isEqualToString:@""] == NO && response != nil)
-                 {
-                     [connection didReceiveData:response];
-                 }
-             }
-         }];
+            if([response isKindOfClass:[NSString class]])
+            {
+                if([response isEqualToString:@""] == NO && response != nil)
+                {
+                    [connection didReceiveData:response];
+                }
+            }
+        }];
     }
     else
     {
-        [[HttpHelper sharedHttpRequestManager] postAsync:connection url:url requestPreparer:nil postData:parameters onCompletion:block];
+        //[SRHttpHelper postAsync:connection url:url requestPreparer:nil postData:parameters onCompletion:block];*/
     }
 }
 
