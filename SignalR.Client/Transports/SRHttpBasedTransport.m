@@ -13,9 +13,11 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "NSString+Url.h"
+#import "NSDictionary+QueryString.h"
+#import "NSString+QueryString.h"
+#import "ASIHTTPRequest.h"
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(ASIHTTPRequest *);
 
 @interface SRHttpBasedTransport()
 
@@ -59,16 +61,16 @@ void (^prepareRequest)(NSMutableURLRequest *);
     url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
 
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
-    [postData setObject:[data urlEncodedString] forKey:kData];
+    [postData setObject:[data stringByEscapingForURLQuery] forKey:kData];
     
     if(block == nil)
     {
-        prepareRequest = ^(NSMutableURLRequest * request){
+        prepareRequest = ^(ASIHTTPRequest * request){
             [connection.items setObject:request forKey:kHttpRequestKey];
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-            [request setValue:[connection createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+            [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.iOS"]];
 #elif TARGET_OS_MAC
-            [request setValue:[connection createUserAgentString:@"SignalR.Client.MAC"] forHTTPHeaderField:@"User-Agent"];
+            [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.MAC"]];
 #endif
         };
         
@@ -147,13 +149,13 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     if (data) 
     {
-        [parameters setObject:[data urlEncodedString] forKey:kConnectionData]; 
+        [parameters setObject:[data stringByEscapingForURLQuery] forKey:kConnectionData]; 
     }
     else
     {
         [parameters setObject:[NSString stringWithFormat:@""] forKey:kConnectionData];
     }
-    return [NSString addQueryStringToUrlString:@"" withDictionary:parameters];
+    return [NSString stringWithFormat:@"?%@",[parameters stringWithFormEncodedComponents]];
 }
 
 //?transport=<transportname>&connectionId=<connectionId>
@@ -163,7 +165,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [parameters setObject:_transport forKey:kTransport];
     [parameters setObject:connection.connectionId forKey:kConnectionId];
     
-    return [NSString addQueryStringToUrlString:@"" withDictionary:parameters];
+    return [NSString stringWithFormat:@"?%@",[parameters stringWithFormEncodedComponents]];
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection

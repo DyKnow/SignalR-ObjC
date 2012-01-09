@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 392B088114BB93FF00988019 /* NSString+QueryString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		392EFE91148EEB8C001E5958 /* SRHubClientInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE6A148EEB8C001E5958 /* SRHubClientInvocation.m */; };
 		392EFE92148EEB8C001E5958 /* SRHubConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE6C148EEB8C001E5958 /* SRHubConnection.m */; };
 		392EFE93148EEB8C001E5958 /* SRHubProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE6E148EEB8C001E5958 /* SRHubProxy.m */; };
@@ -17,7 +19,6 @@
 		392EFE98148EEB8C001E5958 /* SRHubServerInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE79148EEB8C001E5958 /* SRHubServerInvocation.m */; };
 		392EFE99148EEB8C001E5958 /* SRSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE7B148EEB8C001E5958 /* SRSubscription.m */; };
 		392EFE9A148EEB8C001E5958 /* SRHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE7E148EEB8C001E5958 /* SRHttpHelper.m */; };
-		392EFE9C148EEB8C001E5958 /* NSString+Url.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE82148EEB8C001E5958 /* NSString+Url.m */; };
 		392EFE9E148EEB8C001E5958 /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE88148EEB8C001E5958 /* SRConnection.m */; };
 		392EFE9F148EEB8C001E5958 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE8A148EEB8C001E5958 /* SRNegotiationResponse.m */; };
 		392EFEA0148EEB8C001E5958 /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE8E148EEB8C001E5958 /* SRLongPollingTransport.m */; };
@@ -82,6 +83,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		392B087E14BB93FF00988019 /* NSDictionary+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+QueryString.h"; sourceTree = "<group>"; };
+		392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+QueryString.m"; sourceTree = "<group>"; };
+		392B088014BB93FF00988019 /* NSString+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+QueryString.h"; sourceTree = "<group>"; };
+		392B088114BB93FF00988019 /* NSString+QueryString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+QueryString.m"; sourceTree = "<group>"; };
 		392EFE69148EEB8C001E5958 /* SRHubClientInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubClientInvocation.h; sourceTree = "<group>"; };
 		392EFE6A148EEB8C001E5958 /* SRHubClientInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubClientInvocation.m; sourceTree = "<group>"; };
 		392EFE6B148EEB8C001E5958 /* SRHubConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubConnection.h; sourceTree = "<group>"; };
@@ -101,10 +106,8 @@
 		392EFE79148EEB8C001E5958 /* SRHubServerInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubServerInvocation.m; sourceTree = "<group>"; };
 		392EFE7A148EEB8C001E5958 /* SRSubscription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSubscription.h; sourceTree = "<group>"; };
 		392EFE7B148EEB8C001E5958 /* SRSubscription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSubscription.m; sourceTree = "<group>"; };
-		392EFE7D148EEB8C001E5958 /* SRHttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SRHttpHelper.h; sourceTree = "<group>"; };
+		392EFE7D148EEB8C001E5958 /* SRHttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpHelper.h; sourceTree = "<group>"; };
 		392EFE7E148EEB8C001E5958 /* SRHttpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHttpHelper.m; sourceTree = "<group>"; };
-		392EFE81148EEB8C001E5958 /* NSString+Url.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Url.h"; sourceTree = "<group>"; };
-		392EFE82148EEB8C001E5958 /* NSString+Url.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Url.m"; sourceTree = "<group>"; };
 		392EFE86148EEB8C001E5958 /* SignalR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalR.h; path = ../../../SignalR.Client/SignalR.h; sourceTree = "<group>"; };
 		392EFE87148EEB8C001E5958 /* SRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRConnection.h; path = ../../../SignalR.Client/SRConnection.h; sourceTree = "<group>"; };
 		392EFE88148EEB8C001E5958 /* SRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRConnection.m; path = ../../../SignalR.Client/SRConnection.m; sourceTree = "<group>"; };
@@ -264,10 +267,12 @@
 		392EFE7C148EEB8C001E5958 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				392B087E14BB93FF00988019 /* NSDictionary+QueryString.h */,
+				392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */,
+				392B088014BB93FF00988019 /* NSString+QueryString.h */,
+				392B088114BB93FF00988019 /* NSString+QueryString.m */,
 				392EFE7D148EEB8C001E5958 /* SRHttpHelper.h */,
 				392EFE7E148EEB8C001E5958 /* SRHttpHelper.m */,
-				392EFE81148EEB8C001E5958 /* NSString+Url.h */,
-				392EFE82148EEB8C001E5958 /* NSString+Url.m */,
 			);
 			name = Infrastructure;
 			path = ../../../SignalR.Client/Infrastructure;
@@ -614,7 +619,6 @@
 				392EFE98148EEB8C001E5958 /* SRHubServerInvocation.m in Sources */,
 				392EFE99148EEB8C001E5958 /* SRSubscription.m in Sources */,
 				392EFE9A148EEB8C001E5958 /* SRHttpHelper.m in Sources */,
-				392EFE9C148EEB8C001E5958 /* NSString+Url.m in Sources */,
 				392EFE9E148EEB8C001E5958 /* SRConnection.m in Sources */,
 				392EFE9F148EEB8C001E5958 /* SRNegotiationResponse.m in Sources */,
 				392EFEA0148EEB8C001E5958 /* SRLongPollingTransport.m in Sources */,
@@ -644,6 +648,8 @@
 				399A880B14B9EB780090DDCC /* ASINetworkQueue.m in Sources */,
 				399A880E14B9EB780090DDCC /* Reachability.m in Sources */,
 				39A9B7B514BB327F00249CCB /* DKHttpHelper.m in Sources */,
+				392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */,
+				392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

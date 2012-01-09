@@ -71,14 +71,17 @@ typedef void (^onConnectionReceived)(NSString *);
 
 - (void)start:(id<SRClientTransport>)transport
 {
+    __weak NSMutableDictionary *hubs_ = _hubs;
+
     self.sending = ^()
     {    
         NSMutableArray *dataFromHub = [[NSMutableArray alloc] init];
-        for(id key in _hubs)
+
+        for(id key in hubs_)
         {
             SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
-            registration.name = [[_hubs objectForKey:key] hubName];
-            registration.methods = [NSMutableArray arrayWithArray:[[_hubs objectForKey:key] getSubscriptions]];
+            registration.name = [[hubs_ objectForKey:key] hubName];
+            registration.methods = [NSMutableArray arrayWithArray:[[hubs_ objectForKey:key] getSubscriptions]];
             [dataFromHub addObject:registration];
         }
         
@@ -92,7 +95,7 @@ typedef void (^onConnectionReceived)(NSString *);
         if([data isKindOfClass:[NSString class]])
         {
             SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[[SBJsonParser new] objectWithString:data]];
-            SRHubProxy *hubProxy = [_hubs objectForKey:invocation.hub];
+            SRHubProxy *hubProxy = [hubs_ objectForKey:invocation.hub];
             if(hubProxy)
             {
                 if(invocation.state != nil)

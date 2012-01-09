@@ -11,9 +11,9 @@
 #import "SRConnection.h"
 
 #import "SRHttpHelper.h"
-#import "NSString+Url.h"
+#import "ASIHTTPRequest.h"
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(ASIHTTPRequest *);
 
 @interface SRLongPollingTransport()
 
@@ -51,12 +51,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
-    prepareRequest = ^(NSMutableURLRequest * request){
+    prepareRequest = ^(ASIHTTPRequest * request){
         [connection.items setObject:request forKey:kHttpRequestKey];
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request setValue:[connection createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.iOS"]];
 #elif TARGET_OS_MAC
-        [request setValue:[connection createUserAgentString:@"SignalR.Client.MAC"] forHTTPHeaderField:@"User-Agent"];
+        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.MAC"]];
 #endif
     };
     
@@ -136,10 +136,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
                     }
                 }
             }
-            
-            if (continuePolling && !requestAborted && connection.isActive)
+            else
             {
-                [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+                if (continuePolling && !requestAborted && connection.isActive)
+                {
+                    [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+                }
             }
         }
     }];

@@ -11,6 +11,7 @@
 #import "SBJson.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
+#import "NSDictionary+QueryString.h"
 
 @interface SRHttpHelper()
 
@@ -24,7 +25,7 @@
 #pragma mark GET Requests Implementation
 
 //TODO: Handle Request Preparer
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
     if (!_queue) {
         _queue = [[NSOperationQueue alloc] init];
@@ -46,6 +47,10 @@
     for(NSString *key in dict)
     {
         [_request setPostValue:[dict objectForKey:key] forKey:key];
+    }
+    if(requestPreparer)
+    {
+        requestPreparer(_request);
     }
     __weak ASIFormDataRequest *request = _request;
     
@@ -69,16 +74,30 @@
 #pragma mark - 
 #pragma mark POST Requests Implementation
 
-//TODO: Handle Request Preparer
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
 {
     if (!_queue) {
         _queue = [[NSOperationQueue alloc] init];
     }
-    
-    ASIFormDataRequest *_request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:url]];
-    __weak ASIHTTPRequest *request = _request;
 
+    NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    
+    ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
+    [_request setRequestMethod:@"POST"];
+    [_request addRequestHeader:@"Accept" value:@"application/json"];
+    [_request addRequestHeader:@"Content-Type" value:@"application/x-www-form-urlencoded"];
+    [_request addRequestHeader:@"Content-Length" value:[NSString stringWithFormat:@"%d", [requestData length]]];
+    [_request appendPostData:requestData];
+    if(requestPreparer)
+    {
+        requestPreparer(_request);
+    }
+    __weak ASIHTTPRequest *request = _request;
+    
+#if DEBUG
+    NSLog(@"%@",[request.url absoluteString]);
+    NSLog(@"%@",[postData stringWithFormEncodedComponents]);
+#endif
     [request setCompletionBlock:^{
         if(block){
             block([request responseString]);

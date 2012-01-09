@@ -12,7 +12,7 @@
 #import "SRConnectionExtensions.h"
 
 #import "SRHttpHelper.h"
-#import "NSString+Url.h"
+#import "ASIHTTPRequest.h"
 
 #pragma mark - 
 #pragma mark SseEvent
@@ -280,7 +280,7 @@ typedef enum {
 #pragma mark -
 #pragma mark ServerSentEventsTransport
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(ASIHTTPRequest *);
 
 @interface SRServerSentEventsTransport ()
 
@@ -317,19 +317,19 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #if DEBUG
     NSLog(@"%@",url);
 #endif
-    prepareRequest = ^(NSMutableURLRequest * request){
+    prepareRequest = ^(ASIHTTPRequest * request){
         [connection.items setObject:request forKey:kHttpRequestKey];
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request setValue:[connection createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.iOS"]];
 #elif TARGET_OS_MAC
-        [request setValue:[connection createUserAgentString:@"SignalR.Client.MAC"] forHTTPHeaderField:@"User-Agent"];
+        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.MAC"]];
 #endif
-        
-        [request setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
+
+        [request addRequestHeader:@"Accept" value:@"text/event-stream"];
         
         if(connection.messageId != nil)
         {
-            [request setValue:[connection.messageId stringValue] forHTTPHeaderField:@"Last-Event-ID"];
+            [request addRequestHeader:@"Last-Event-ID" value:[connection.messageId stringValue]];
         }
     };
     

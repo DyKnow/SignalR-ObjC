@@ -12,8 +12,9 @@
 #import "SRHttpHelper.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
+#import "ASIHTTPRequest.h"
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(ASIHTTPRequest *);
 
 @interface SRConnection ()
 
@@ -75,7 +76,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport LongPolling]];
+    [self start:[SRTransport ServerSentEvents]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -95,11 +96,11 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
 
-    prepareRequest = ^(NSMutableURLRequest * request){
+    prepareRequest = ^(ASIHTTPRequest * request){
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request setValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+        [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.iOS"]];
 #elif TARGET_OS_MAC
-        [request setValue:[self createUserAgentString:@"SignalR.Client.MAC"] forHTTPHeaderField:@"User-Agent"];
+        [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.MAC"]];
 #endif
     };
     

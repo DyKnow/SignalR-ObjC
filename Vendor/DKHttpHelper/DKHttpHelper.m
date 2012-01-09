@@ -39,12 +39,12 @@ static id sharedHttpRequestManager = nil;
     [self getAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block
 {
     [[self sharedHttpRequestManager] getAsync:url requestPreparer:requestPreparer continueWith:block];
 }
 
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block
 {
     [self postInternal:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
 }
@@ -59,17 +59,17 @@ static id sharedHttpRequestManager = nil;
     [self getAsync:url requestPreparer:nil parameters:parameters continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
     [[self sharedHttpRequestManager] getAsync:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
 }
 
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
     [self getInternal:url requestPreparer:nil parameters:parameters continueWith:block];
 }
 
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
    
 }
@@ -87,12 +87,12 @@ static id sharedHttpRequestManager = nil;
     [self postAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block
 {
     [[self sharedHttpRequestManager] postAsync:url requestPreparer:requestPreparer continueWith:block];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block
 {
     [self postInternal:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
 }
@@ -107,17 +107,17 @@ static id sharedHttpRequestManager = nil;
     [self postAsync:url requestPreparer:nil postData:postData continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
 {
     [[self sharedHttpRequestManager] postAsync:url requestPreparer:requestPreparer postData:postData continueWith:block];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
 {
     [self postInternal:url requestPreparer:nil postData:postData continueWith:block];
 }
 
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
 {  
     
 }

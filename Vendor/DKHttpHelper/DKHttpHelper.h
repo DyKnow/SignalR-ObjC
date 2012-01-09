@@ -31,8 +31,8 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block;
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block;
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block;
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -54,8 +54,8 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block;
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block;
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block;
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block;
 
 /**
  * Helper for getAsync functions, performs the GET request
@@ -67,7 +67,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block;
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block;
 
 #pragma mark -
 #pragma mark POST Requests
@@ -90,8 +90,8 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block;
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer continueWith:(void(^)(id))block;
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block;
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void(^)(id))block;
 
 /**
  * Creates a POST request with the specified url and payload returns on the given block
@@ -114,8 +114,8 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block;
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block;
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block;
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block;
 
 /**
  * Helper for postAsync functions, performs the POST request
@@ -127,6 +127,6 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(NSMutableURLRequest *))requestPreparer postData:(id)postData continueWith:(void(^)(id))block;
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block;
 
 @end
