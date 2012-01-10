@@ -10,48 +10,64 @@
 
 @interface SRNegotiationResponse()
 
-//#define kConnectionId @"ConnectionId"
-#define kConnectionId @"ClientId"
+#define kConnectionId @"ConnectionId"
 #define kUrl @"Url"
+#define kProtocolVersion @"ProtocolVersion"
 
 @end
 
 @implementation SRNegotiationResponse
 
-@synthesize connectionId;
-@synthesize url;
+@synthesize connectionId = _connectionId;
+@synthesize url = _url;
+@synthesize protocolVersion = _protocolVersion;
 
-#pragma mark - Initialization
+#pragma mark -
+#pragma mark SRSBJSON Protocol
+
+- (id) init
+{
+    if (self = [super init])
+    {
+        _connectionId = [NSString stringWithFormat:@""];
+		_url = [NSString stringWithFormat:@""];
+        _protocolVersion = [NSString stringWithFormat:@""];
+    }
+    return self;
+}
 
 - (id)initWithDictionary:(NSDictionary*)dict
 {
-	self = [super init];
+	self = [self init];
 	if(self != nil)
 	{
-		connectionId = [dict objectForKey:kConnectionId];
-		url = [dict objectForKey:kUrl];
+		_connectionId = [dict objectForKey:kConnectionId];
+		_url = [dict objectForKey:kUrl];
+        _protocolVersion = [dict objectForKey:kProtocolVersion];
 	}
 	return self;
 }
 
-- (NSString *)description 
-{  
-    return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@",connectionId,url];
-}
-
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	connectionId = [dict objectForKey:kConnectionId];
-	url = [dict objectForKey:kUrl];
+	_connectionId = [dict objectForKey:kConnectionId];
+	_url = [dict objectForKey:kUrl];
+    _protocolVersion = [dict objectForKey:kProtocolVersion];
 }
 
 - (id)proxyForJson
 {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc]init];
-    if (connectionId) [dict setObject:connectionId forKey:kConnectionId];
-    if (url) [dict setObject:url forKey:kUrl];
+    [dict setObject:[NSString stringWithFormat:@"%@",_connectionId] forKey:kConnectionId];
+    [dict setObject:[NSString stringWithFormat:@"%@",_url] forKey:kUrl];
+    [dict setObject:[NSString stringWithFormat:@"%@",_protocolVersion] forKey:kProtocolVersion];
     
     return dict;
+}
+
+- (NSString *)description 
+{  
+    return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];
 }
 
 @end

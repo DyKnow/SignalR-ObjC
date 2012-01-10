@@ -12,13 +12,14 @@
 
 @interface SRHubConnection : SRConnection
 
-@property (nonatomic, readonly, strong) NSMutableDictionary *hubs;
+@property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
 
 + (SRHubConnection *)connectionWithURL:(NSString *)URL;
 - (id)initWithURL:(NSString *)url;
+
 - (SRHubProxy *)createProxy:(NSString *)hubName;
 
-- (void)start;
+- (void)start:(id<SRClientTransport>)transport;
 - (void)stop;
 
 @end

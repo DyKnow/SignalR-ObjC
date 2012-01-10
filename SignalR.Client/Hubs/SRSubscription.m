@@ -13,12 +13,9 @@
 @synthesize object;
 @synthesize selector;
 
-#pragma mark - Initialization
-
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"Subscription: Object:%@ Selector=%@",object, selector];
 }
-
 
 @end

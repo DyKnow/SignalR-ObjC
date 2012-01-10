@@ -18,7 +18,8 @@
 @synthesize proxy = _proxy;
 @synthesize eventName = _eventName;
 
-#pragma mark - Initialization
+#pragma mark - 
+#pragma mark Initialization
 
 + (id)observe:(SRHubProxy *)proxy event:(NSString *)eventName
 {
@@ -27,16 +28,12 @@
 
 - (id)initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName
 {
-    if ((self = [super init])) {
+    if (self = [super init]) 
+    {
         _proxy = proxy;
         _eventName = eventName;
     }
     return self;
-}
-
-- (NSString *)description 
-{  
-    return [NSString stringWithFormat:@"Hubservable: Hub:%@ Event=%@",_proxy, _eventName];
 }
 
 - (SRSubscription *)subscribe:(NSObject *)object selector:(SEL)selector
@@ -46,6 +43,11 @@
     subscription.selector = selector;
     
     return subscription;
+}
+
+- (NSString *)description 
+{  
+    return [NSString stringWithFormat:@"Hubservable: Hub:%@ Event=%@",_proxy, _eventName];
 }
 
 @end

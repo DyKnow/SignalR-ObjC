@@ -10,7 +10,7 @@
 
 @interface SRSubscription : NSObject
 
-@property (nonatomic, strong) NSObject *object;
-@property (nonatomic, assign) SEL selector;
+@property (strong, nonatomic, readwrite) NSObject *object;
+@property (assign, nonatomic, readwrite) SEL selector;
 
 @end

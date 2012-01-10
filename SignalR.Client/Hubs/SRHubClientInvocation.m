@@ -19,48 +19,61 @@
 
 @implementation SRHubClientInvocation
 
-@synthesize hub;
-@synthesize method;
-@synthesize args;
-@synthesize state;
+@synthesize hub = _hub;
+@synthesize method = _method;
+@synthesize args = _args;
+@synthesize state = _state;
 
-#pragma mark - Initialization
+#pragma mark -
+#pragma mark SRSBJSON Protocol
 
-- (id)initWithDictionary:(NSDictionary *)dict
+- (id) init
 {
-    self = [super init];
-	if(self != nil)
-	{
-        hub  = [dict objectForKey:kHub];
-        method = [dict objectForKey:kMethod];
-        args = [dict objectForKey:kArgs];
-        state = [dict objectForKey:kState];
+    if (self = [super init])
+    {
+        _hub = [NSString stringWithFormat:@""];
+		_method = [NSString stringWithFormat:@""];
+        _args = [NSMutableArray array];
+        _state = [NSMutableDictionary dictionary];
     }
     return self;
 }
 
-- (NSString *)description 
-{  
-    return [NSString stringWithFormat:@"HubInvocation: Hub=%@ Method=%@",hub,method];
+- (id)initWithDictionary:(NSDictionary*)dict
+{
+	self = [self init];
+	if(self != nil)
+	{
+        _hub  = [dict objectForKey:kHub];
+        _method = [dict objectForKey:kMethod];
+        _args = [dict objectForKey:kArgs];
+        _state = [dict objectForKey:kState];
+    }
+    return self;
 }
 
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	hub = [dict objectForKey:kHub];
-	method = [dict objectForKey:kMethod];
-    args = [dict objectForKey:kArgs];
-    state = [dict objectForKey:kState];
+	_hub = [dict objectForKey:kHub];
+	_method = [dict objectForKey:kMethod];
+    _args = [dict objectForKey:kArgs];
+    _state = [dict objectForKey:kState];
 }
 
 - (id)proxyForJson
 {
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc]init];
-    if (hub) [dict setObject:hub forKey:kHub];
-    if (method) [dict setObject:method forKey:kMethod];
-    if (args) [dict setObject:args forKey:kArgs];
-    if (state) [dict setObject:state forKey:kState];
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
+    
+    [dict setObject:[NSString stringWithFormat:@"%@",_hub] forKey:kHub];
+    [dict setObject:[NSString stringWithFormat:@"%@",_method] forKey:kMethod];
+    [dict setObject:_args forKey:kArgs];
+    [dict setObject:_state forKey:kState];
     
     return dict;
 }
 
+- (NSString *)description 
+{  
+    return [NSString stringWithFormat:@"HubInvocation: Hub=%@ Method=%@",_hub,_method];
+}
 @end

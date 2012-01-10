@@ -9,13 +9,20 @@
 #import "SRConnection.h"
 
 #import "SBJson.h"
-#import "HttpHelper.h"
-#import "SRLongPollingTransport.h"
+#import "SRHttpHelper.h"
+#import "SRTransport.h"
 #import "SRNegotiationResponse.h"
+#import "ASIHTTPRequest.h"
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(ASIHTTPRequest *);
 
 @interface SRConnection ()
+
+@property (strong, nonatomic, readonly) NSString *assemblyVersion;
+@property (strong, nonatomic, readonly) id <SRClientTransport> transport;
+@property (assign, nonatomic, readonly) BOOL initialized;
+
+- (void)verifyProtocolVersion:(NSString *)versionString;
 
 @end
 
@@ -23,24 +30,27 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 @implementation SRConnection
 
-@synthesize transport = _transport;
-@synthesize url;
-@synthesize appRelativeUrl;
-@synthesize connectionId;
-@synthesize messageId;
-@synthesize data;
-@synthesize active;
-@synthesize groups;
+//private
 @synthesize assemblyVersion = _assemblyVersion;
+@synthesize transport = _transport;
+@synthesize initialized = _initialized;
 
-@synthesize sending;
-@synthesize received;
-@synthesize error;
-@synthesize closed;
+//public
+@synthesize received = _received;
+@synthesize error = _error;
+@synthesize closed = _closed;
+@synthesize groups = _groups;
+@synthesize sending = _sending;
+@synthesize url = _url;
+@synthesize active = _active;
+@synthesize messageId = _messageId;
+@synthesize connectionId = _connectionId;
+@synthesize items = _items;
 
 @synthesize delegate = _delegate;
 
-#pragma mark - Initialization
+#pragma mark - 
+#pragma mark Initialization
 
 + (SRConnection *)connectionWithURL:(NSString *)URL
 {
@@ -50,58 +60,67 @@ void (^prepareRequest)(NSMutableURLRequest *);
 - (id)initWithURL:(NSString *)URL
 {
     if ((self = [super init])) {
-        _transport = [[SRLongPollingTransport alloc] init];
-        self.groups = [[NSMutableArray alloc] init];
         if([URL hasSuffix:@"/"] == false){
             URL = [URL stringByAppendingString:@"/"];
         }
-        self.url = URL;
+        
+        _url = URL;
+        _groups = [[NSMutableArray alloc] init];
+        _items = [NSMutableDictionary dictionary];
     }
     return self;
 }
 
-#pragma mark - Connection management
+#pragma mark - 
+#pragma mark Connection management
 
 - (void)start
 {
+    [self start:[SRTransport ServerSentEvents]];
+}
+
+- (void)start:(id <SRClientTransport>)transport
+{
     if (self.isActive)
-        return;
-    
-    active = YES;
-    
-    self.data = nil;
-    
-    if(sending != nil)
     {
-        self.data = self.sending();
+        return;
     }
     
-    NSString *negotiateUrl = [self.url stringByAppendingString:kNegotiateRequest];
-
-    prepareRequest = ^(NSMutableURLRequest * request){
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request setValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
-#elif TARGET_OS_MAC
-        [request setValue:[self createUserAgentString:@"SignalR.Client.MAC"] forHTTPHeaderField:@"User-Agent"];
-#endif
-    };
+    _active = YES;
+        
+    _transport = transport;
     
-    [[HttpHelper sharedHttpRequestManager] postAsync:self url:negotiateUrl requestPreparer:prepareRequest onCompletion:
-     
-     ^(SRConnection *connection, id response) {
+    NSString *data = nil;
+    
+    if(_sending != nil)
+    {
+        data = self.sending();
+    }
+    
+    NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
+
+    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(ASIHTTPRequest * request)
+    {
+        [self prepareRequest:request];
+    }
+    continueWith:^(id response) 
+    {
         if([response isKindOfClass:[NSString class]])
         {        
             SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
 #if DEBUG
             NSLog(@"%@",negotiationResponse);
 #endif
+            [self verifyProtocolVersion:negotiationResponse.protocolVersion];
+            
             if(negotiationResponse.connectionId){
-                self.connectionId = negotiationResponse.connectionId;
-                self.appRelativeUrl = negotiationResponse.url;
-            
-                [self.transport start:connection];
-            
-                if(self.delegate &&[self.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                _connectionId = negotiationResponse.connectionId;
+                
+                [_transport start:self withData:data];
+                
+                _initialized = YES;
+                
+                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
                     [self.delegate SRConnectionDidOpen:self];
                 }
             }
@@ -113,68 +132,109 @@ void (^prepareRequest)(NSMutableURLRequest *);
     }];
 }
 
-- (void)stop
+//TODO: Parse Version into Version Object like C#
+- (void)verifyProtocolVersion:(NSString *)versionString
 {
-    if (!self.isActive)
-        return;
-    
-    [self.transport stop:self];
-    
-    if(closed != nil)
+    if(![versionString isEqualToString:@"1.0"])
     {
-        self.closed();
+        [NSException raise:@"InvalidOperationException" format:@"Incompatible Protocol Version"];
     }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
-        [self.delegate SRConnectionDidClose:self];
-    }
-    
-    active = NO;
 }
 
-#pragma mark - Sending data
+- (void)stop
+{
+    if (!_initialized)
+    {
+        return;
+    }
+    
+    @try 
+    {
+        [_transport stop:self];
+        
+        if(_closed != nil)
+        {
+            self.closed();
+        }
+    }
+    @finally 
+    {
+        if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) 
+        {
+            [self.delegate SRConnectionDidClose:self];
+        }
+        
+        _active = NO;
+        _initialized = NO;
+    }
+}
+
+#pragma mark - 
+#pragma mark Sending data
 
 - (void)send:(NSString *)message
 {
     [self send:message onCompletion:nil];
 }
 
-- (void)send:(NSString *)message onCompletion:(void(^)(SRConnection *, id))block
+- (void)send:(NSString *)message onCompletion:(void(^)(id))block
 {
-    if (!self.isActive)
-        return;
+    if (!_initialized)
+    {
+        [NSException raise:@"InvalidOperationException" format:@"Start must be called before data can be sent"];
+    }
 
-    [self.transport send:self withData:message onCompletion:block];
+    [_transport send:self withData:message onCompletion:block];
 }
 
-#pragma mark - Received Data
+#pragma mark - 
+#pragma mark Received Data
 
 - (void)didReceiveData:(NSString *)message
 {
-    if(received != nil)
+    if(_received != nil)
     {
         self.received(message);
     }
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnection:didReceiveData:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveData:)]) 
+    {
         [self.delegate SRConnection:self didReceiveData:message];
     }
 }
 
 - (void)didReceiveError:(NSError *)ex
 {
-    if(error != nil)
+    if(_error != nil)
     {
         self.error(ex);
     }
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) 
+    {
         [self.delegate SRConnection:self didReceiveError:ex];
     }
 }
 
-#pragma mark - Prepare Request
+#pragma mark - 
+#pragma mark Prepare Request
+//TODO:Handle Credentials
+- (void)prepareRequest:(ASIHTTPRequest *)request
+{
+#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+    [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.iOS"]];
+#elif TARGET_OS_MAC
+    [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.MAC"]];
+#endif
 
+    //Handle Credentials
+    //if(_credentials != nil)
+    //{
+    //  request.credentials = _credentials;
+    //}
+}
+
+//TODO: Include system version, causes issues in framework bundle
 - (NSString *)createUserAgentString:(NSString *)client
 {
     if(_assemblyVersion == nil)
@@ -188,6 +248,11 @@ void (^prepareRequest)(NSMutableURLRequest *);
     //TODO: Add system version
     return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
 #endif
+}
+
+- (void)dealloc
+{
+    _delegate = nil;
 }
 
 @end

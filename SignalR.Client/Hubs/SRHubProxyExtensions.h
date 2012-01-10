@@ -12,7 +12,7 @@
 @class SRHubservable;
 @class SRSubscription;
 
-@interface SRHubProxy (SRHubProxyExtensions)
+@interface SRHubProxy (Extensions)
 
 - (id)getValue:(NSString *)name;
 - (SRSubscription *)on:(NSString *)eventName perform:(NSObject *)object selector:(SEL)selector;

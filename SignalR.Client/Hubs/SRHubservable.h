@@ -13,8 +13,8 @@
 
 @interface SRHubservable : NSObject
 
-@property (nonatomic, readonly, strong) NSString *eventName;
-@property (nonatomic, readonly, strong) SRHubProxy *proxy;
+@property (strong, nonatomic, readonly) NSString *eventName;
+@property (strong, nonatomic, readonly) SRHubProxy *proxy;
 
 + (id)observe:(SRHubProxy *)proxy event:(NSString *)eventName;
 - (id)initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName;
