@@ -10,6 +10,9 @@
 
 @interface NSString (UrlAdditions)
 
++ (NSString*)addQueryStringToUrlString:(NSString *)urlString withDictionary:(NSDictionary *)dictionary;
+
 - (NSString *) urlEncodedString;
 - (NSString *) urlDecodedString;
+
 @end

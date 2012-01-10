@@ -13,10 +13,10 @@
 
 @interface SRHubProxy : NSObject
 
-@property (nonatomic, readonly, strong) SRConnection *connection;
-@property (nonatomic, readonly, strong) NSString *hubName;
-@property (nonatomic, readonly, strong) NSMutableDictionary *state;
-@property (nonatomic, readonly, strong) NSMutableDictionary *subscriptions;
+@property (strong, nonatomic, readonly) SRConnection *connection;
+@property (strong, nonatomic, readonly) NSString *hubName;
+@property (strong, nonatomic, readonly) NSMutableDictionary *state;
+@property (strong, nonatomic, readonly) NSMutableDictionary *subscriptions;
 
 - (id)initWithConnection:(SRConnection *)connection hubName:(NSString *)hubname;
 

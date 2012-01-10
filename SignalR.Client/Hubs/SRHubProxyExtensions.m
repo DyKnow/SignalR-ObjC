@@ -11,7 +11,7 @@
 #import "SRSubscription.h"
 #import "SRHubservable.h"
 
-@implementation SRHubProxy (SRHubProxyExtensions)
+@implementation SRHubProxy (Extensions)
 
 - (id)getValue:(NSString *)name
 {
