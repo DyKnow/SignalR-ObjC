@@ -13,8 +13,6 @@
 #import "SRHttpHelper.h"
 #import "ASIHTTPRequest.h"
 
-void (^prepareRequest)(ASIHTTPRequest *);
-
 @interface SRLongPollingTransport()
 
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
@@ -50,18 +48,13 @@ void (^prepareRequest)(ASIHTTPRequest *);
     }
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
-
-    prepareRequest = ^(ASIHTTPRequest * request){
-        [connection.items setObject:request forKey:kHttpRequestKey];
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.iOS"]];
-#elif TARGET_OS_MAC
-        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.MAC"]];
-#endif
-    };
     
-    [SRHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:
-     ^(id response) 
+    [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+    {
+        [connection.items setObject:request forKey:kHttpRequestKey];
+        [connection prepareRequest:request];
+    } 
+    continueWith:^(id response) 
     {
 #if DEBUG
         NSLog(@"pollingLoopDidReceiveResponse: %@",response);

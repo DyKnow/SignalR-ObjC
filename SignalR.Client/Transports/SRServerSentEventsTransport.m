@@ -280,8 +280,6 @@ typedef enum {
 #pragma mark -
 #pragma mark ServerSentEventsTransport
 
-void (^prepareRequest)(ASIHTTPRequest *);
-
 @interface SRServerSentEventsTransport ()
 
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
@@ -317,24 +315,20 @@ void (^prepareRequest)(ASIHTTPRequest *);
 #if DEBUG
     NSLog(@"%@",url);
 #endif
-    prepareRequest = ^(ASIHTTPRequest * request){
-        [connection.items setObject:request forKey:kHttpRequestKey];
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.iOS"]];
-#elif TARGET_OS_MAC
-        [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.MAC"]];
-#endif
 
-        [request addRequestHeader:@"Accept" value:@"text/event-stream"];
+    [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+    {
+        [connection.items setObject:request forKey:kHttpRequestKey];
+        [connection prepareRequest:request];
         
+        [request addRequestHeader:@"Accept" value:@"text/event-stream"];
+         
         if(connection.messageId != nil)
         {
             [request addRequestHeader:@"Last-Event-ID" value:[connection.messageId stringValue]];
         }
-    };
-    
-    [SRHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:
-     ^(id response) {
+    }
+    continueWith:^(id response) {
 #if DEBUG
          NSLog(@"openConnectionDidReceiveResponse: %@",response);
 #endif

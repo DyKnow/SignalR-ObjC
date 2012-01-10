@@ -76,15 +76,18 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport LongPolling]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
 {
     if (self.isActive)
+    {
         return;
+    }
     
     _active = YES;
+        
     _transport = transport;
     
     NSString *data = nil;
@@ -96,16 +99,11 @@ void (^prepareRequest)(ASIHTTPRequest *);
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
 
-    prepareRequest = ^(ASIHTTPRequest * request){
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.iOS"]];
-#elif TARGET_OS_MAC
-        [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.MAC"]];
-#endif
-    };
-    
-    [SRHttpHelper postAsync:negotiateUrl requestPreparer:prepareRequest continueWith:
-     ^(id response) 
+    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(ASIHTTPRequest * request)
+    {
+        [self prepareRequest:request];
+    }
+    continueWith:^(id response) 
     {
         if([response isKindOfClass:[NSString class]])
         {        
@@ -146,7 +144,9 @@ void (^prepareRequest)(ASIHTTPRequest *);
 - (void)stop
 {
     if (!_initialized)
+    {
         return;
+    }
     
     @try 
     {
@@ -159,7 +159,8 @@ void (^prepareRequest)(ASIHTTPRequest *);
     }
     @finally 
     {
-        if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
+        if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) 
+        {
             [self.delegate SRConnectionDidClose:self];
         }
         
@@ -196,7 +197,8 @@ void (^prepareRequest)(ASIHTTPRequest *);
         self.received(message);
     }
     
-    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveData:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveData:)]) 
+    {
         [self.delegate SRConnection:self didReceiveData:message];
     }
 }
@@ -208,13 +210,29 @@ void (^prepareRequest)(ASIHTTPRequest *);
         self.error(ex);
     }
     
-    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnection:didReceiveError:)]) 
+    {
         [self.delegate SRConnection:self didReceiveError:ex];
     }
 }
 
 #pragma mark - 
 #pragma mark Prepare Request
+
+- (void)prepareRequest:(ASIHTTPRequest *)request
+{
+#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+    [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.iOS"]];
+#elif TARGET_OS_MAC
+    [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.MAC"]];
+#endif
+
+    //Handle Credentials
+    //if(_credentials != nil)
+    //{
+    //  request.credentials = _credentials;
+    //}
+}
 
 - (NSString *)createUserAgentString:(NSString *)client
 {
@@ -235,4 +253,5 @@ void (^prepareRequest)(ASIHTTPRequest *);
 {
     _delegate = nil;
 }
+
 @end

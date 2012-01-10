@@ -13,8 +13,10 @@
 #import "SRHubRegistrationData.h"
 #import "SRHubClientInvocation.h"
 
+#if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onConnectionSending)();
 typedef void (^onConnectionReceived)(NSString *);
+#endif
 
 @interface SRHubConnection()
 

@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 #import "SRClientTransport.h"
+#import "ASIHTTPRequest.h"
+
 @class SRConnection;
 
 @protocol SRConnectionDelegate<NSObject>
@@ -20,10 +22,12 @@
 
 @end
 
+#if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onSending)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
+#endif
 
 @interface SRConnection : NSObject 
 
@@ -53,6 +57,7 @@ typedef void (^onClosed)();
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
 
+- (void)prepareRequest:(ASIHTTPRequest *)request;
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end

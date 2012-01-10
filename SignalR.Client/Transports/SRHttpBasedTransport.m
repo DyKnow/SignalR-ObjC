@@ -17,8 +17,6 @@
 #import "NSString+QueryString.h"
 #import "ASIHTTPRequest.h"
 
-void (^prepareRequest)(ASIHTTPRequest *);
-
 @interface SRHttpBasedTransport()
 
 @end
@@ -65,16 +63,12 @@ void (^prepareRequest)(ASIHTTPRequest *);
     
     if(block == nil)
     {
-        prepareRequest = ^(ASIHTTPRequest * request){
+        [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+        {
             [connection.items setObject:request forKey:kHttpRequestKey];
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-            [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.iOS"]];
-#elif TARGET_OS_MAC
-            [request addRequestHeader:@"User-Agent" value:[connection createUserAgentString:@"SignalR.Client.MAC"]];
-#endif
-        };
-        
-        [SRHttpHelper postAsync:url requestPreparer:prepareRequest postData:postData continueWith:
+            [connection prepareRequest:request];
+        } 
+        postData:postData continueWith:
          ^(id response) 
         {
 #if DEBUG
