@@ -52,7 +52,7 @@ typedef void (^onClosed)();
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
 - (void)send:(NSString *)message;
-- (void)send:(NSString *)message onCompletion:(void(^)(SRConnection *, id))block;
+- (void)send:(NSString *)message onCompletion:(void(^)(id))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;

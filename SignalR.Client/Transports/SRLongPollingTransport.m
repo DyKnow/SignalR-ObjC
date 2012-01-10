@@ -51,8 +51,7 @@
     
     [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
     {
-        [connection.items setObject:request forKey:kHttpRequestKey];
-        [connection prepareRequest:request];
+        [self prepareRequest:request forConnection:connection];
     } 
     continueWith:^(id response) 
     {
@@ -62,6 +61,7 @@
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
         
+        //TODO:isFaulted is not correct there must be a better way to do this
         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                           [response isEqualToString:@""] || response == nil ||
                           [response isEqualToString:@"null"]);
@@ -90,6 +90,7 @@
                         [connection didReceiveError:response];
                         
                         //call the callback
+                        //TODO:handle errorcallback
                         //errorCallback(response);
                         
                         //Don't continue polling if error is on the first request
@@ -102,6 +103,7 @@
                         
                         //Sometimes a connection might have been closed by the server before we get to write anything
                         //So just try again and don't raise an error
+                        //TODO: check for IOException
                         if(!requestAborted) //&& !(exception is IOExeption))
                         {
                             //Raise Error
@@ -139,6 +141,7 @@
         }
     }];
 
+    //TODO:initialize callback
     if(initializeCallback != nil)
     {
         //Only set this the firsttime

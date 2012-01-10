@@ -24,7 +24,6 @@
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
-//TODO: Handle Request Preparer
 - (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
     if (!_queue) {
@@ -98,6 +97,17 @@
     NSLog(@"%@",[request.url absoluteString]);
     NSLog(@"%@",[postData stringWithFormEncodedComponents]);
 #endif
+    //When using ServerSentEvents Transport we need to intercept the data
+    if([[_request.requestHeaders objectForKey:@"Accept"] isEqualToString:@"text/event-stream"])
+    {
+        if(block)
+        {
+            [request setDataReceivedBlock:^(NSData *data) {
+                block([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            }];
+        }
+    }
+    
     [request setCompletionBlock:^{
         if(block){
             block([request responseString]);

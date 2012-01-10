@@ -76,7 +76,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport LongPolling]];
+    [self start:[SRTransport ServerSentEvents]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -177,7 +177,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
     [self send:message onCompletion:nil];
 }
 
-- (void)send:(NSString *)message onCompletion:(void(^)(SRConnection *, id))block
+- (void)send:(NSString *)message onCompletion:(void(^)(id))block
 {
     if (!_initialized)
     {
@@ -218,7 +218,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 #pragma mark - 
 #pragma mark Prepare Request
-
+//TODO:Handle Credentials
 - (void)prepareRequest:(ASIHTTPRequest *)request
 {
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -234,6 +234,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
     //}
 }
 
+//TODO: Include system version, causes issues in framework bundle
 - (NSString *)createUserAgentString:(NSString *)client
 {
     if(_assemblyVersion == nil)

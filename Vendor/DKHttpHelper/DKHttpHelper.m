@@ -71,7 +71,7 @@ static id sharedHttpRequestManager = nil;
 
 - (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
-   
+    [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpHelper"];
 }
 
 #pragma mark - 
@@ -119,7 +119,7 @@ static id sharedHttpRequestManager = nil;
 
 - (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
 {  
-    
+    [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpHelper"];
 }
 
 @end

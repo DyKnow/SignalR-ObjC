@@ -39,62 +39,9 @@ typedef enum {
     if (self = [super init])
     {
         _type = type;
-        _data = _data;
+        _data = data;
     }
     return self;
-}
-
-@end
-
-#pragma mark - 
-#pragma mark ChunkBuffer
-
-@interface ChunkBuffer : NSObject 
-
-@property (assign, nonatomic, readonly) NSInteger offset;
-@property (strong, nonatomic, readonly) NSString *buffer;
-@property (strong, nonatomic, readonly) NSString *lineBuilder;
-
-- (BOOL)hasChunks;
-- (NSString *)readLine;
-- (void)add:(id)buffer length:(int)length;
-
-@end
-
-@implementation ChunkBuffer
-
-@synthesize offset = _offset;
-@synthesize buffer = _buffer;
-@synthesize lineBuilder = _lineBuilder;
-
-- (id)init
-{
-    if (self = [super init])
-    {
-        _buffer = [NSString stringWithFormat:@""];
-        _lineBuilder = [NSString stringWithFormat:@""];
-    }
-    return self;
-}
-
-- (BOOL)hasChunks
-{
-    return (_offset < _buffer.length);
-}
-
-- (NSString *)readLine
-{
-    for (int i=_offset; i<_buffer.length; i++, _offset++)
-    {
-
-    }
-    
-    return nil;
-}
-
-- (void)add:(id)buffer length:(int)length
-{
-    
 }
 
 @end
@@ -104,22 +51,19 @@ typedef enum {
 
 @interface AsyncStreamReader : NSObject
 
-@property (strong, nonatomic, readonly)  id stream;
-@property (strong, nonatomic, readonly)  ChunkBuffer *buffer;
+@property (strong, nonatomic, readonly)  NSString *stream;
+@property (strong, nonatomic, readonly)  SRConnection *connection;
+@property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
 @property (strong, nonatomic, readonly)  id initializedCallback;
 @property (strong, nonatomic, readonly)  id errorCallback;
-@property (strong, nonatomic, readonly)  SRConnection *connection;
-@property (assign, nonatomic, readonly)  NSInteger processingQueue;
 @property (assign, nonatomic, readonly)  BOOL reading;
-@property (assign, nonatomic, readonly)  BOOL processingBuffer;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
 
 - (void)startReading;
 - (void)stopReading;
 - (void)readLoop;
-- (void)processBuffer;
-- (void)processChunks;
+- (void)processChunks:(NSScanner *)scanner;
 - (BOOL)tryParseEvent:(NSString *)line sseEvent:(SseEvent **)sseEvent;
 
 @end
@@ -127,20 +71,19 @@ typedef enum {
 @implementation AsyncStreamReader
 
 @synthesize stream = _stream;
-@synthesize buffer = _buffer;
+@synthesize connection = _connection;
+@synthesize transport = _transport;
 @synthesize initializedCallback = _initializedCallback;
 @synthesize errorCallback = _errorCallback;
-@synthesize connection = _connection;
-@synthesize processingQueue = _processingQueue;
 @synthesize reading = _reading;
-@synthesize processingBuffer = _processingBuffer;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
     if (self = [super init])
     {
         _stream = steam;
         _connection = connection;
+        _transport = transport;
         _initializedCallback = initializeCallback;
         _errorCallback = _errorCallback;
     }
@@ -157,56 +100,24 @@ typedef enum {
     _reading = NO;
 }
 
-//TODO: implement readloop
 - (void)readLoop
 {
     if(!_reading)
     {
         return;
     }
+    
+    NSScanner *scanner = [[NSScanner alloc] initWithString:_stream];
+    [self processChunks:scanner];
 }
 
-- (void)processBuffer
+//TODO: handle initialized callback
+- (void)processChunks:(NSScanner *)scanner
 {
-    if(!_reading)
+    while (_reading && ![scanner isAtEnd]) 
     {
-        return;
-    }
-    
-    if(_processingBuffer)
-    {
-        //Increment the number of times we should process messages
-        _processingQueue = _processingQueue + 1;
-        return;
-    }
-    
-    _processingBuffer = YES;
-    
-    int total = _processingQueue; //Math.max(1,_processingQueue);
-    
-    for (int i=0; i<total; i++)
-    {
-        if (!_reading)
-        {
-            return;
-        }
-        
-        [self processChunks];
-    }
-    
-    if(_processingQueue > 0)
-    {
-        _processingQueue = _processingQueue - 1;
-    }
-    
-    _processingBuffer = NO;
-}
-
-- (void)processChunks
-{
-    while (_reading && [_buffer hasChunks]) 
-    {
-        NSString *line = [_buffer readLine];
+        NSString *line = nil;
+        [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
         
         if(line == nil)
         {
@@ -232,7 +143,7 @@ typedef enum {
         switch (sseEvent.type) {
             case Id:
             {
-                NSLog(@"%@",sseEvent.data);
+                _connection.messageId = [NSNumber numberWithInteger:[sseEvent.data integerValue]];
                 break;
             }
             case Data:
@@ -244,8 +155,10 @@ typedef enum {
                 }
                 else
                 {
-                    NSLog(@"onMessage%@",sseEvent.data);
-                    //onMessage(_connection,sseEvent.data);
+                    if(_reading)
+                    {
+                        [_transport onMessage:_connection response:sseEvent.data];
+                    }
                 }
                 break;
             }
@@ -271,8 +184,10 @@ typedef enum {
         *sseEvent = [[SseEvent alloc] initWithType:Id data:data];
         return YES;
     }
+    
     return NO;
 }
+
 @end
 
 
@@ -305,22 +220,17 @@ typedef enum {
     [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-//TODO: handle callbacks
+//TODO: handle error callbacks
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
     NSString *url = connection.url;
 
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
-    
-#if DEBUG
-    NSLog(@"%@",url);
-#endif
 
     [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
     {
-        [connection.items setObject:request forKey:kHttpRequestKey];
-        [connection prepareRequest:request];
-        
+        [self prepareRequest:request forConnection:connection];
+
         [request addRequestHeader:@"Accept" value:@"text/event-stream"];
          
         if(connection.messageId != nil)
@@ -341,9 +251,11 @@ typedef enum {
          }
          else
          {
-             AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection initializeCallback:initializeCallback errorCallback:errorCallback];
+             //Get the response stream and read it for messages
+             AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self initializeCallback:initializeCallback errorCallback:errorCallback];
              [reader startReading];
              
+             //Set the reader for this connection
              [connection.items setObject:reader forKey:kReaderKey];
          }
      }];

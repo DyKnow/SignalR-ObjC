@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
+@class ASIHTTPRequest;
+
 @interface SRHttpBasedTransport : NSObject <SRClientTransport>
 
 @property (strong, nonatomic, readonly) NSString *transport;
@@ -22,6 +24,8 @@
 - (NSString *)getSendQueryString:(SRConnection *)connection;
 - (void)onBeforeAbort:(SRConnection *)connection;
 - (void)onMessage:(SRConnection *)connection response:(NSString *)response;
+
+- (void)prepareRequest:(ASIHTTPRequest *)request forConnection:(SRConnection *)connection;
 
 #define kHttpRequestKey @"http.Request"
 

@@ -334,7 +334,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://192.168.1.84:9090/Streaming/Streaming.ashx" borderStyle="roundedRect" minimumFontSize="17" id="F6k-cb-udm">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://abillingsley-vm:8888/Streaming/Streaming.ashx" borderStyle="roundedRect" minimumFontSize="17" id="F6k-cb-udm">
                                 <rect key="frame" x="20" y="49" width="538" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>

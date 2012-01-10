@@ -124,7 +124,8 @@
     NSString *value = [[SBJsonWriter new] stringWithObject:hubData];
         
     [_connection send:value onCompletion:
-     ^(SRConnection *connection, id response) {
+     ^(id response) 
+    {
 #if DEBUG
          NSLog(@"hubReceiveResponse: %@",response);
 #endif

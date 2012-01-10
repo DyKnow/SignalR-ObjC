@@ -45,9 +45,10 @@
 - (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
 {
     //override this method
+    [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(SRConnection *, id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(id))block
 {       
     NSString *url = connection.url;
     url = [url stringByAppendingString:kSendEndPoint];
@@ -65,7 +66,6 @@
     {
         [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
         {
-            [connection.items setObject:request forKey:kHttpRequestKey];
             [connection prepareRequest:request];
         } 
         postData:postData continueWith:
@@ -85,21 +85,24 @@
     }
     else
     {
-        //[SRHttpHelper postAsync:connection url:url requestPreparer:nil postData:parameters onCompletion:block];*/
+        [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+        {
+            [connection prepareRequest:request];
+        }
+        postData:postData continueWith:block];
     }
 }
 
-//TODO: Abort Request if one exists
 - (void)stop:(SRConnection *)connection
 {
-    id httpRequest = [connection getValue:kHttpRequestKey];
+    ASIHTTPRequest *httpRequest = [connection getValue:kHttpRequestKey];
     
     if(httpRequest != nil)
     {
         @try 
         {
             [self onBeforeAbort:connection];
-            //httpRequest.Abort();
+            [httpRequest cancel];
         }
         @catch (NSError *error) {
             //NotImplementedException
@@ -160,6 +163,14 @@
     [parameters setObject:connection.connectionId forKey:kConnectionId];
     
     return [NSString stringWithFormat:@"?%@",[parameters stringWithFormEncodedComponents]];
+}
+
+- (void)prepareRequest:(ASIHTTPRequest *)request forConnection:(SRConnection *)connection;
+{
+    //Setup the user agent alogn with and other defaults
+    [connection prepareRequest:request];
+    
+    [connection.items setObject:request forKey:kHttpRequestKey];
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection
