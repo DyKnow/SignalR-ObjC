@@ -13,7 +13,7 @@
 
 @interface SRLongPollingTransport()
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data;
 
 #define kTransportName @"longPolling"
 
@@ -30,13 +30,13 @@
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data
 {
-    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
+    [self pollingLoop:connection data:data];
 }
 
 //TODO: Check if exception is an IOException
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data
 {
     NSString *url = connection.url;
     
@@ -82,51 +82,34 @@
             {
                 if([response isKindOfClass:[NSError class]])
                 {
-                    if (errorCallback != nil)
+                    //Figure out if the request is aborted
+                    requestAborted = [self isRequestAborted:response];
+                    
+                    //Sometimes a connection might have been closed by the server before we get to write anything
+                    //So just try again and don't raise an error
+                    //TODO: check for IOException
+                    if(!requestAborted) //&& !(exception is IOExeption))
                     {
                         //Raise Error
                         [connection didReceiveError:response];
                         
-                        //call the callback
-                        if(errorCallback)
+                        //If the connection is still active after raising the error wait 2 seconds 
+                        //before polling again so we arent hammering the server
+                        if(connection.isActive)
                         {
-                            errorCallback(response);
-                        }
-                        
-                        //Don't continue polling if error is on the first request
-                        continuePolling = NO;
-                    }
-                    else
-                    {
-                        //Figure out if the request is aborted
-                        requestAborted = [self isRequestAborted:response];
-                        
-                        //Sometimes a connection might have been closed by the server before we get to write anything
-                        //So just try again and don't raise an error
-                        //TODO: check for IOException
-                        if(!requestAborted) //&& !(exception is IOExeption))
-                        {
-                            //Raise Error
-                            [connection didReceiveError:response];
+                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:)];
+                            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                            [invocation setSelector:@selector(pollingLoop:data:)];
+                            [invocation setTarget:self ];
                             
-                            //If the connection is still active after raising the error wait 2 seconds 
-                            //before polling again so we arent hammering the server
-                            if(connection.isActive)
+                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil];
+                            for(int i =0; i<[args count]; i++)
                             {
-                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
-                                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                                [invocation setSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
-                                [invocation setTarget:self ];
-                                
-                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil,nil];
-                                for(int i =0; i<[args count]; i++)
-                                {
-                                    int arguementIndex = 2 + i;
-                                    NSString *argument = [args objectAtIndex:i];
-                                    [invocation setArgument:&argument atIndex:arguementIndex];
-                                }
-                                [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
+                                int arguementIndex = 2 + i;
+                                NSString *argument = [args objectAtIndex:i];
+                                [invocation setArgument:&argument atIndex:arguementIndex];
                             }
+                            [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
                         }
                     }
                 }
@@ -135,21 +118,11 @@
             {
                 if (continuePolling && !requestAborted && connection.isActive)
                 {
-                    [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+                    [self pollingLoop:connection data:data];
                 }
             }
         }
     }];
-
-    if(initializeCallback != nil)
-    {
-        //Only set this the firsttime
-        //TODO: we should delay this until after the http request is made
-        if(initializeCallback)
-        {
-            initializeCallback();
-        }
-    }
 }
 
 @end

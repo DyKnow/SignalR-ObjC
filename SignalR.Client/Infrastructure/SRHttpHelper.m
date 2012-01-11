@@ -40,6 +40,7 @@
         [NSException raise:@"InvalidParametersException" format:@"Parameters must respond to proxyForJson or be an NSDictionary"];
     }
     
+    [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
     ASIFormDataRequest *_request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:url]];
     [_request setRequestMethod:@"GET"];
     for(NSString *key in dict)
@@ -80,6 +81,7 @@
 
     NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
+    [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
     ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
     [_request setRequestMethod:@"POST"];
     [_request addRequestHeader:@"Accept" value:@"application/json"];
