@@ -10,9 +10,10 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
+#import "ASIHTTPRequest.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
-#import "ASIHTTPRequest.h"
+#import "SRVersion.h"
 
 void (^prepareRequest)(ASIHTTPRequest *);
 
@@ -132,10 +133,12 @@ void (^prepareRequest)(ASIHTTPRequest *);
     }];
 }
 
-//TODO: Parse Version into Version Object like C#
 - (void)verifyProtocolVersion:(NSString *)versionString
 {
-    if(![versionString isEqualToString:@"1.0"])
+    SRVersion *version = nil;
+    if((versionString == nil || [versionString isEqualToString:@""] == YES) ||
+       ![SRVersion tryParse:versionString forVersion:&version] ||
+       !(version.major == 1 && version.minor == 0))
     {
         [NSException raise:@"InvalidOperationException" format:@"Incompatible Protocol Version"];
     }

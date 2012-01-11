@@ -7,7 +7,8 @@
 //
 
 #import "SRHubservable.h"
-#import "SRHubs.h"
+#import "SRHubProxy.h"
+#import "SRSubscription.h"
 
 @interface SRHubservable()
 

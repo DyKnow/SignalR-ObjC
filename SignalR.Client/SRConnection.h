@@ -7,10 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import "SRClientTransport.h"
-#import "ASIHTTPRequest.h"
 
+@class ASIHTTPRequest;
 @class SRConnection;
 
 @protocol SRConnectionDelegate<NSObject>
