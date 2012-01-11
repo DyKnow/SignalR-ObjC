@@ -8,11 +8,10 @@
 
 #import "SRServerSentEventsTransport.h"
 
-#import "SRConnection.h"
-#import "SRConnectionExtensions.h"
-
 #import "SRHttpHelper.h"
 #import "ASIHTTPRequest.h"
+#import "SRConnection.h"
+#import "SRConnectionExtensions.h"
 
 #pragma mark - 
 #pragma mark SseEvent

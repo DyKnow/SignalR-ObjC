@@ -8,10 +8,8 @@
 
 #import "SRLongPollingTransport.h"
 
-#import "SRConnection.h"
-
 #import "SRHttpHelper.h"
-#import "ASIHTTPRequest.h"
+#import "SRConnection.h"
 
 @interface SRLongPollingTransport()
 

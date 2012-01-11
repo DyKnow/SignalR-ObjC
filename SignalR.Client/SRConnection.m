@@ -10,9 +10,9 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
+#import "ASIHTTPRequest.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
-#import "ASIHTTPRequest.h"
 #import "SRVersion.h"
 
 void (^prepareRequest)(ASIHTTPRequest *);
