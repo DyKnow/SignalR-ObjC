@@ -113,10 +113,9 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
-//TODO: figure out if the request is aborted
 - (BOOL)isRequestAborted:(NSError *)error
 {
-    return NO;
+    return (error != nil && (error.code == ASIRequestCancelledErrorType));
 }
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data>
