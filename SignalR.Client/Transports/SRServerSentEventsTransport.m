@@ -49,16 +49,21 @@ typedef enum {
 #pragma mark -
 #pragma mark AsyncStreamReader
 
+#if NS_BLOCKS_AVAILABLE
+typedef void (^handleInitialized)(void);
+typedef void (^handleError)(id);
+#endif
+
 @interface AsyncStreamReader : NSObject
 
 @property (strong, nonatomic, readonly)  NSString *stream;
 @property (strong, nonatomic, readonly)  SRConnection *connection;
 @property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
-@property (strong, nonatomic, readonly)  id initializedCallback;
-@property (strong, nonatomic, readonly)  id errorCallback;
+@property (copy)  handleInitialized initializeCallback;
+@property (copy)  handleError errorCallback;
 @property (assign, nonatomic, readonly)  BOOL reading;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
 
 - (void)startReading;
 - (void)stopReading;
@@ -73,18 +78,18 @@ typedef enum {
 @synthesize stream = _stream;
 @synthesize connection = _connection;
 @synthesize transport = _transport;
-@synthesize initializedCallback = _initializedCallback;
+@synthesize initializeCallback = _initializeCallback;
 @synthesize errorCallback = _errorCallback;
 @synthesize reading = _reading;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
 {
     if (self = [super init])
     {
         _stream = steam;
         _connection = connection;
         _transport = transport;
-        _initializedCallback = initializeCallback;
+        _initializeCallback = initializeCallback;
         _errorCallback = _errorCallback;
     }
     return self;
@@ -111,7 +116,6 @@ typedef enum {
     [self processChunks:scanner];
 }
 
-//TODO: handle initialized callback
 - (void)processChunks:(NSScanner *)scanner
 {
     while (_reading && ![scanner isAtEnd]) 
@@ -150,8 +154,10 @@ typedef enum {
             {
                 if([sseEvent.data isEqualToString:@"initialized"])
                 {
-                    NSLog(@"Initialize the callback");
-                    //initializeCallback();
+                    if(_initializeCallback)
+                    {
+                        _initializeCallback();
+                    }
                 }
                 else
                 {
@@ -197,7 +203,7 @@ typedef enum {
 
 @interface SRServerSentEventsTransport ()
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
 
 #define kTransportName @"serverSentEvents"
 #define kReaderKey @"sse.reader"
@@ -215,13 +221,12 @@ typedef enum {
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
 {
     [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-//TODO: handle error callbacks
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
 {
     NSString *url = connection.url;
 
@@ -247,7 +252,10 @@ typedef enum {
                            [response isEqualToString:@"null"]);
          if(isFaulted)
          {
-             //errorCallback(task.excpetion);
+             if(errorCallback)
+             {
+                 errorCallback(response);
+             }
          }
          else
          {
