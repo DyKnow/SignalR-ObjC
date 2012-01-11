@@ -8,14 +8,14 @@
 
 #import "SRHttpBasedTransport.h"
 
+#import "SBJson.h"
+#import "SRHttpHelper.h"
+#import "ASIHTTPRequest.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 
-#import "SBJson.h"
-#import "SRHttpHelper.h"
 #import "NSDictionary+QueryString.h"
 #import "NSString+QueryString.h"
-#import "ASIHTTPRequest.h"
 
 @interface SRHttpBasedTransport()
 
@@ -42,7 +42,7 @@
     [self onStart:connection data:data initializeCallback:nil errorCallback:nil];
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
 {
     //override this method
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
@@ -113,10 +113,9 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
-//TODO: figure out if the request is aborted
 - (BOOL)isRequestAborted:(NSError *)error
 {
-    return NO;
+    return (error != nil && (error.code == ASIRequestCancelledErrorType));
 }
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data>

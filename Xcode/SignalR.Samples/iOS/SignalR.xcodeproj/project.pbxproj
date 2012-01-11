@@ -52,6 +52,7 @@
 		39A55A6214B8E1090075C06F /* SRHttpBasedTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */; };
 		39A55A6514B90C580075C06F /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A55A6414B90C580075C06F /* SRServerSentEventsTransport.m */; };
 		39A9B7B514BB327F00249CCB /* DKHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A9B7B414BB327F00249CCB /* DKHttpHelper.m */; };
+		39B6A8F414BCFA3000E074E9 /* SRVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B6A8F314BCFA3000E074E9 /* SRVersion.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
@@ -178,6 +179,8 @@
 		39A55A6414B90C580075C06F /* SRServerSentEventsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEventsTransport.m; sourceTree = "<group>"; };
 		39A9B7B314BB327F00249CCB /* DKHttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKHttpHelper.h; sourceTree = "<group>"; };
 		39A9B7B414BB327F00249CCB /* DKHttpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKHttpHelper.m; sourceTree = "<group>"; };
+		39B6A8F214BCFA3000E074E9 /* SRVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRVersion.h; sourceTree = "<group>"; };
+		39B6A8F314BCFA3000E074E9 /* SRVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRVersion.m; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -273,6 +276,8 @@
 				392B088114BB93FF00988019 /* NSString+QueryString.m */,
 				392EFE7D148EEB8C001E5958 /* SRHttpHelper.h */,
 				392EFE7E148EEB8C001E5958 /* SRHttpHelper.m */,
+				39B6A8F214BCFA3000E074E9 /* SRVersion.h */,
+				39B6A8F314BCFA3000E074E9 /* SRVersion.m */,
 			);
 			name = Infrastructure;
 			path = ../../../SignalR.Client/Infrastructure;
@@ -650,6 +655,7 @@
 				39A9B7B514BB327F00249CCB /* DKHttpHelper.m in Sources */,
 				392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */,
 				392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */,
+				39B6A8F414BCFA3000E074E9 /* SRVersion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

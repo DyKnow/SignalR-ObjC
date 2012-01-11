@@ -8,14 +8,12 @@
 
 #import "SRLongPollingTransport.h"
 
-#import "SRConnection.h"
-
 #import "SRHttpHelper.h"
-#import "ASIHTTPRequest.h"
+#import "SRConnection.h"
 
 @interface SRLongPollingTransport()
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
 
 #define kTransportName @"longPolling"
 
@@ -32,13 +30,13 @@
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
 {
     [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-//TODO: Handle initializeCallback and errorCallback, also if exception is an IOException
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(id)initializeCallback errorCallback:(id)errorCallback
+//TODO: Check if exception is an IOException
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
 {
     NSString *url = connection.url;
     
@@ -90,8 +88,10 @@
                         [connection didReceiveError:response];
                         
                         //call the callback
-                        //TODO:handle errorcallback
-                        //errorCallback(response);
+                        if(errorCallback)
+                        {
+                            errorCallback(response);
+                        }
                         
                         //Don't continue polling if error is on the first request
                         continuePolling = NO;
@@ -141,12 +141,14 @@
         }
     }];
 
-    //TODO:initialize callback
     if(initializeCallback != nil)
     {
         //Only set this the firsttime
         //TODO: we should delay this until after the http request is made
-        //intializeCallback();
+        if(initializeCallback)
+        {
+            initializeCallback();
+        }
     }
 }
 
