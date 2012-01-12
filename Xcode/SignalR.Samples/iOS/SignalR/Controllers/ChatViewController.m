@@ -7,6 +7,7 @@
 //
 
 #import "ChatViewController.h"
+#import "Router.h"
 
 @interface ChatViewController ()
 {
@@ -14,24 +15,107 @@
     NSString *hash;
     NSString *room;
 }
-@property (strong, nonatomic) UIPopoverController *masterPopoverController;
-- (void)configureView;
+
 - (void)addUser:(id)user exists:(BOOL)exists;
 
 @end
 
 @implementation ChatViewController
 
-@synthesize serverName, messageField, messageTable;
+@synthesize messageField, messageTable;
 
-@synthesize detailItem = _detailItem;
-@synthesize masterPopoverController = _masterPopoverController;
+- (void)dealloc
+{
+    [connection stop];
+    hub = nil;
+    connection.delegate = nil;
+    connection = nil;
+}
 
-#pragma mark - View Actions
+- (void)didReceiveMemoryWarning
+{
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    
+    // Release any cached data, images, etc that aren't in use.
+}
+
+#pragma mark - 
+#pragma mark View lifecycle
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+	return YES;
+}
+
+#pragma mark -
+#pragma mark TableView datasource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
+{
+    return [messagesReceived count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
+{    
+    static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
+    
+    cell.textLabel.text = [messagesReceived objectAtIndex:indexPath.row];
+    
+    return cell;
+}
+
+#pragma mark - 
+#pragma mark View Actions
 
 - (IBAction)connectClicked:(id)sender
 {
-    connection = [SRHubConnection connectionWithURL:serverName.text];
+    NSString *server = [Router sharedRouter].server_url;
+    connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createProxy:@"SignalR.Samples.Hubs.Chat.Chat"];
     
     [hub setMember:@"focus" object:[NSNumber numberWithBool:YES]];
@@ -62,7 +146,8 @@
     [messageField setText:@""];
 }
 
-#pragma mark - Chat Sample Project
+#pragma mark - 
+#pragma mark Chat Sample Project
 
 - (void)clearMessages
 {
@@ -186,136 +271,32 @@
     [self addMessage:[NSString stringWithFormat:@"%@ left the room",userName] type:nil];
 }
 
-
-#pragma mark Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // Return the number of sections.
-    return 1;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
-    return [messagesReceived count];
-}
-
-
-// Customize the appearance of table view cells.
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    static NSString *CellIdentifier = @"Cell";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-    }
-    
-    // Configure the cell...
-    cell.textLabel.text = [messagesReceived objectAtIndex:indexPath.row];
-    
-    return cell;
-}
-
-
-#pragma SRConnection Delegate
+#pragma mark - 
+#pragma mark SRConnection Delegate
 
 - (void)SRConnectionDidOpen:(SRConnection *)connection
 {
-    NSLog(@"Connection OPENED");
+    [messagesReceived insertObject:@"Connection Opened" atIndex:0];
     [hub invoke:@"Join" withArgs:[NSArray arrayWithObjects: nil]];
+    [messageTable reloadData];
+}
+
+- (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
+{
+    [messagesReceived insertObject:data atIndex:0];
+    [messageTable reloadData];
 }
 
 - (void)SRConnectionDidClose:(SRConnection *)connection
 {
-    NSLog(@"Connection CLOSED");
+    [messagesReceived insertObject:@"Connection Closed" atIndex:0];
+    [messageTable reloadData];
 }
 
-#pragma mark - Managing the detail item
-
-- (void)setDetailItem:(id)newDetailItem
+- (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error
 {
-    if (_detailItem != newDetailItem) {
-        _detailItem = newDetailItem;
-        
-        // Update the view.
-        [self configureView];
-    }
-    
-    if (self.masterPopoverController != nil) {
-        [self.masterPopoverController dismissPopoverAnimated:YES];
-    }         
+    [messagesReceived insertObject:[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription] atIndex:0];
+    [messageTable reloadData];
 }
 
-- (void)configureView
-{
-    // Update the user interface for the detail item.
-    
-    if (self.detailItem) {
-    }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
-}
-
-#pragma mark - View lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    [self configureView];
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return YES;
-}
-
-#pragma mark - Split view
-
-- (void)splitViewController:(UISplitViewController *)splitController willHideViewController:(UIViewController *)viewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)popoverController
-{
-    barButtonItem.title = NSLocalizedString(@"Master", @"Master");
-    [self.navigationItem setLeftBarButtonItem:barButtonItem animated:YES];
-    self.masterPopoverController = popoverController;
-}
-
-- (void)splitViewController:(UISplitViewController *)splitController willShowViewController:(UIViewController *)viewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-    // Called when the view is shown again in the split view, invalidating the button and popover controller.
-    [self.navigationItem setLeftBarButtonItem:nil animated:YES];
-    self.masterPopoverController = nil;
-}
 @end

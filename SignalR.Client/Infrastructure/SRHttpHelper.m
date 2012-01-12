@@ -40,6 +40,7 @@
         [NSException raise:@"InvalidParametersException" format:@"Parameters must respond to proxyForJson or be an NSDictionary"];
     }
     
+    [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
     ASIFormDataRequest *_request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:url]];
     [_request setRequestMethod:@"GET"];
     for(NSString *key in dict)
@@ -51,10 +52,6 @@
         requestPreparer(_request);
     }
     __weak ASIFormDataRequest *request = _request;
-    
-#if DEBUG
-    NSLog(@"%@",[request.url absoluteString]);
-#endif
     
     [request setCompletionBlock:^{
         if(block){
@@ -80,6 +77,7 @@
 
     NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
+    [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
     ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
     [_request setRequestMethod:@"POST"];
     [_request addRequestHeader:@"Accept" value:@"application/json"];
@@ -91,11 +89,7 @@
         requestPreparer(_request);
     }
     __weak ASIHTTPRequest *request = _request;
-    
-#if DEBUG
-    NSLog(@"%@",[request.url absoluteString]);
-    NSLog(@"%@",[postData stringWithFormEncodedComponents]);
-#endif
+
     //When using ServerSentEvents Transport we need to intercept the data
     if([[_request.requestHeaders objectForKey:@"Accept"] isEqualToString:@"text/event-stream"])
     {

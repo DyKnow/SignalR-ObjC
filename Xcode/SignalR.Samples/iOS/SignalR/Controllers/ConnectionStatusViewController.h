@@ -1,5 +1,5 @@
 //
-//  MouseTrackingViewController.h
+//  ConnectionStatusViewController.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 11/3/11.
@@ -9,16 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "SignalR.h"
 
-@interface MouseTrackingViewController : UIViewController <UISplitViewControllerDelegate, SRConnectionDelegate>
+@interface ConnectionStatusViewController : UIViewController<UISplitViewControllerDelegate, SRConnectionDelegate>
 {
     SRHubConnection *connection;
     SRHubProxy *hub;
     NSMutableArray *messagesReceived;
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
-@property (nonatomic, strong) IBOutlet UITextField *serverName;
-
-@property (strong, nonatomic) id detailItem;
 
 - (IBAction)connectClicked:(id)sender;
 

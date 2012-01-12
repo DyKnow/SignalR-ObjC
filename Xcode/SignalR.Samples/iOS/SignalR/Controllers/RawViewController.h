@@ -16,13 +16,10 @@
     NSMutableArray *messagesReceived;
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
-@property (nonatomic, strong) IBOutlet UITextField *serverName;
 @property (nonatomic, strong) IBOutlet UITextField *messageField;
 @property (nonatomic, strong) IBOutlet UITextField *meField;
 @property (nonatomic, strong) IBOutlet UITextField *privateMessageField;
 @property (nonatomic, strong) IBOutlet UITextField *privateMessageToField;
-
-@property (strong, nonatomic) id detailItem;
 
 - (IBAction)connectClicked:(id)sender;
 
