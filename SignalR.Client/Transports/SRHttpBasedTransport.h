@@ -17,7 +17,7 @@
 
 - (id) initWithTransport:(NSString *)transport;
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
+- (void)onStart:(SRConnection *)connection data:(NSString *)data;
 
 - (BOOL)isRequestAborted:(NSError *)error;
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data;

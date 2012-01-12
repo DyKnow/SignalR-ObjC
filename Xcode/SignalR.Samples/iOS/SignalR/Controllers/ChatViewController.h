@@ -1,5 +1,5 @@
 //
-//  ConnectionStatusViewController.h
+//  ChatViewController.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 11/3/11.
@@ -9,17 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "SignalR.h"
 
-@interface ConnectionStatusViewController : UIViewController<UISplitViewControllerDelegate, SRConnectionDelegate>
+@interface ChatViewController : UIViewController <UISplitViewControllerDelegate, SRConnectionDelegate>
 {
     SRHubConnection *connection;
     SRHubProxy *hub;
     NSMutableArray *messagesReceived;
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
-@property (nonatomic, strong) IBOutlet UITextField *serverName;
-
-@property (strong, nonatomic) id detailItem;
+@property (nonatomic, strong) IBOutlet UITextField *messageField;
 
 - (IBAction)connectClicked:(id)sender;
+- (IBAction)sendClicked:(id)sender;
 
 @end

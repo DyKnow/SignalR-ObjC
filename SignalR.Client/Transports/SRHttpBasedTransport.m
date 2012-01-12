@@ -39,12 +39,11 @@
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data
 {
-    [self onStart:connection data:data initializeCallback:nil errorCallback:nil];
+    [self onStart:connection data:data];
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data
 {
-    //override this method
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 

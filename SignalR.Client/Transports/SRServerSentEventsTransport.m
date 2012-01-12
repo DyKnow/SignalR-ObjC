@@ -48,21 +48,14 @@ typedef enum {
 #pragma mark -
 #pragma mark AsyncStreamReader
 
-#if NS_BLOCKS_AVAILABLE
-typedef void (^handleInitialized)(void);
-typedef void (^handleError)(id);
-#endif
-
 @interface AsyncStreamReader : NSObject
 
 @property (strong, nonatomic, readonly)  NSString *stream;
 @property (strong, nonatomic, readonly)  SRConnection *connection;
 @property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
-@property (copy)  handleInitialized initializeCallback;
-@property (copy)  handleError errorCallback;
 @property (assign, nonatomic, readonly)  BOOL reading;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport;
 
 - (void)startReading;
 - (void)stopReading;
@@ -77,19 +70,15 @@ typedef void (^handleError)(id);
 @synthesize stream = _stream;
 @synthesize connection = _connection;
 @synthesize transport = _transport;
-@synthesize initializeCallback = _initializeCallback;
-@synthesize errorCallback = _errorCallback;
 @synthesize reading = _reading;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
+- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport
 {
     if (self = [super init])
     {
         _stream = steam;
         _connection = connection;
         _transport = transport;
-        _initializeCallback = initializeCallback;
-        _errorCallback = _errorCallback;
     }
     return self;
 }
@@ -153,10 +142,6 @@ typedef void (^handleError)(id);
             {
                 if([sseEvent.data isEqualToString:@"initialized"])
                 {
-                    if(_initializeCallback)
-                    {
-                        _initializeCallback();
-                    }
                 }
                 else
                 {
@@ -179,7 +164,7 @@ typedef void (^handleError)(id);
     
     if([line hasPrefix:@"data:"])
     {
-        NSString *data = [line substringFromIndex:@"data:".length];
+        NSString *data = [[line substringFromIndex:@"data:".length] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         *sseEvent = [[SseEvent alloc] initWithType:Data data:data];
         return YES;
     }
@@ -202,7 +187,7 @@ typedef void (^handleError)(id);
 
 @interface SRServerSentEventsTransport ()
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback;
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data;
 
 #define kTransportName @"serverSentEvents"
 #define kReaderKey @"sse.reader"
@@ -215,20 +200,26 @@ typedef void (^handleError)(id);
 {
     if(self = [super initWithTransport:kTransportName])
     {
-        
+
     }
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data
 {
-    [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
+    [self openConnection:connection data:data];
 }
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void(^)(void))initializeCallback errorCallback:(void(^)(id))errorCallback
+//TODO: Check if exception is an IOException
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data
 {
     NSString *url = connection.url;
-
+    
+    if(connection.messageId == nil)
+    {
+        url = [url stringByAppendingString:kConnectEndPoint];
+    }
+    
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
     [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
@@ -236,36 +227,76 @@ typedef void (^handleError)(id);
         [self prepareRequest:request forConnection:connection];
 
         [request addRequestHeader:@"Accept" value:@"text/event-stream"];
-         
-        if(connection.messageId != nil)
-        {
-            [request addRequestHeader:@"Last-Event-ID" value:[connection.messageId stringValue]];
-        }
     }
     continueWith:^(id response) {
 #if DEBUG
          NSLog(@"openConnectionDidReceiveResponse: %@",response);
 #endif
-         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
+        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                            [response isEqualToString:@""] || response == nil ||
                            [response isEqualToString:@"null"]);
-         if(isFaulted)
-         {
-             if(errorCallback)
-             {
-                 errorCallback(response);
-             }
-         }
-         else
-         {
-             //Get the response stream and read it for messages
-             AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self initializeCallback:initializeCallback errorCallback:errorCallback];
-             [reader startReading];
-             
-             //Set the reader for this connection
-             [connection.items setObject:reader forKey:kReaderKey];
-         }
-     }];
+        
+        @try 
+        {
+            if([response isKindOfClass:[NSString class]])
+            {
+                if(!isFaulted)
+                {
+                    [self onMessage:connection response:response];
+                }
+            }
+        }
+        @finally 
+        {
+            BOOL requestAborted = NO;
+            
+            if(isFaulted)
+            {
+                if([response isKindOfClass:[NSError class]])
+                {
+                    //Figure out if the request is aborted
+                    requestAborted = [self isRequestAborted:response];
+                    
+                    //Sometimes a connection might have been closed by the server before we get to write anything
+                    //So just try again and don't raise an error
+                    //TODO: check for IOException
+                    if(!requestAborted) //&& !(exception is IOExeption))
+                    {
+                        //Raise Error
+                        [connection didReceiveError:response];
+                        
+                        //If the connection is still active after raising the error wait 2 seconds 
+                        //before polling again so we arent hammering the server
+                        if(connection.isActive)
+                        {
+                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:)];
+                            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                            [invocation setSelector:@selector(openConnection:data:)];
+                            [invocation setTarget:self ];
+                            
+                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil];
+                            for(int i =0; i<[args count]; i++)
+                            {
+                                int arguementIndex = 2 + i;
+                                NSString *argument = [args objectAtIndex:i];
+                                [invocation setArgument:&argument atIndex:arguementIndex];
+                            }
+                            [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Get the response stream and read it for messages
+                AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self];
+                [reader startReading];
+                
+                //Set the reader for this connection
+                [connection.items setObject:reader forKey:kReaderKey];
+            }
+        }
+    }];
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection

@@ -15,9 +15,6 @@
     NSMutableArray *messagesReceived;
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
-@property (nonatomic, strong) IBOutlet UITextField *serverName;
-
-@property (strong, nonatomic) id detailItem;
 
 - (IBAction)connectClicked:(id)sender;
 
