@@ -8,6 +8,8 @@
 
 #import "ConnectionStatusViewController.h"
 
+#import "Router.h"
+
 @interface ConnectionStatusViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
@@ -15,7 +17,7 @@
 
 @implementation ConnectionStatusViewController
 
-@synthesize serverName, messageTable;
+@synthesize messageTable;
 
 @synthesize detailItem = _detailItem;
 @synthesize masterPopoverController = _masterPopoverController;
@@ -24,7 +26,8 @@
 
 - (IBAction)connectClicked:(id)sender
 {
-    connection = [SRHubConnection connectionWithURL:serverName.text];
+    NSString *server = [Router sharedRouter].server_url;
+    connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createProxy:@"SignalR.Samples.Hubs.ConnectDisconnect.Status"];
     [hub on:@"joined" perform:self selector:@selector(joined:when:)];
     [hub on:@"leave" perform:self selector:@selector(leave:when:)];

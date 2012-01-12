@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39145AD814BE599900FD8E5A /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39145AD714BE599900FD8E5A /* Environments.plist */; };
+		39145ADC14BE5A4F00FD8E5A /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145ADB14BE5A4F00FD8E5A /* Router.m */; };
 		392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 392B088114BB93FF00988019 /* NSString+QueryString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		392EFE91148EEB8C001E5958 /* SRHubClientInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE6A148EEB8C001E5958 /* SRHubClientInvocation.m */; };
@@ -84,6 +86,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		39145AD714BE599900FD8E5A /* Environments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Environments.plist; sourceTree = "<group>"; };
+		39145ADA14BE5A4F00FD8E5A /* Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Router.h; sourceTree = "<group>"; };
+		39145ADB14BE5A4F00FD8E5A /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		392B087E14BB93FF00988019 /* NSDictionary+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+QueryString.h"; sourceTree = "<group>"; };
 		392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+QueryString.m"; sourceTree = "<group>"; };
 		392B088014BB93FF00988019 /* NSString+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+QueryString.h"; sourceTree = "<group>"; };
@@ -449,6 +454,8 @@
 		39FE4E4F1468164300B111BF /* SignalR */ = {
 			isa = PBXGroup;
 			children = (
+				39145ADA14BE5A4F00FD8E5A /* Router.h */,
+				39145ADB14BE5A4F00FD8E5A /* Router.m */,
 				39FE4E581468164300B111BF /* AppDelegate.h */,
 				39FE4E591468164300B111BF /* AppDelegate.m */,
 				39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */,
@@ -472,6 +479,7 @@
 		39FE4E501468164300B111BF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				39145AD714BE599900FD8E5A /* Environments.plist */,
 				39FE4E511468164300B111BF /* SignalR-Info.plist */,
 				39FE4E521468164300B111BF /* InfoPlist.strings */,
 				39FE4E551468164300B111BF /* main.m */,
@@ -572,6 +580,7 @@
 			files = (
 				39FE4E541468164300B111BF /* InfoPlist.strings in Resources */,
 				39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */,
+				39145AD814BE599900FD8E5A /* Environments.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,6 +665,7 @@
 				392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */,
 				392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */,
 				39B6A8F414BCFA3000E074E9 /* SRVersion.m in Sources */,
+				39145ADC14BE5A4F00FD8E5A /* Router.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

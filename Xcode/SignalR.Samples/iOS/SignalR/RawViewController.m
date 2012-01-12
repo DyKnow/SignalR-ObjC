@@ -8,6 +8,8 @@
 
 #import "RawViewController.h"
 
+#import "Router.h"
+
 @interface RawViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
@@ -15,7 +17,7 @@
 
 @implementation RawViewController
 
-@synthesize serverName, meField, privateMessageField, privateMessageToField, messageField, messageTable;
+@synthesize meField, privateMessageField, privateMessageToField, messageField, messageTable;
 
 @synthesize detailItem = _detailItem;
 @synthesize masterPopoverController = _masterPopoverController;
@@ -24,7 +26,9 @@
 
 - (IBAction)connectClicked:(id)sender
 {
-    connection = [SRConnection connectionWithURL:serverName.text];
+    NSString *server = [Router sharedRouter].server_url;
+    server = [server stringByAppendingFormat:@"Raw/Raw.ashx"];
+    connection = [SRConnection connectionWithURL:server];
     [connection setDelegate:self];
     [connection start];
     

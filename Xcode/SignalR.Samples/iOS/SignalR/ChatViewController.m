@@ -8,6 +8,8 @@
 
 #import "ChatViewController.h"
 
+#import "Router.h"
+
 @interface ChatViewController ()
 {
     NSString *name;
@@ -22,7 +24,7 @@
 
 @implementation ChatViewController
 
-@synthesize serverName, messageField, messageTable;
+@synthesize messageField, messageTable;
 
 @synthesize detailItem = _detailItem;
 @synthesize masterPopoverController = _masterPopoverController;
@@ -31,7 +33,8 @@
 
 - (IBAction)connectClicked:(id)sender
 {
-    connection = [SRHubConnection connectionWithURL:serverName.text];
+    NSString *server = [Router sharedRouter].server_url;
+    connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createProxy:@"SignalR.Samples.Hubs.Chat.Chat"];
     
     [hub setMember:@"focus" object:[NSNumber numberWithBool:YES]];

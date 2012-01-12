@@ -8,6 +8,8 @@
 
 #import "StreamingViewController.h"
 
+#import "Router.h"
+
 @interface StreamingViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
@@ -15,7 +17,7 @@
 
 @implementation StreamingViewController
 
-@synthesize serverName, messageTable;
+@synthesize messageTable;
 
 @synthesize detailItem = _detailItem;
 @synthesize masterPopoverController = _masterPopoverController;
@@ -24,7 +26,9 @@
 
 - (IBAction)connectClicked:(id)sender
 {
-    connection = [SRConnection connectionWithURL:serverName.text];
+    NSString *server = [Router sharedRouter].server_url;
+    server = [server stringByAppendingFormat:@"Streaming/Streaming.ashx"];
+    connection = [SRConnection connectionWithURL:server];
     [connection setDelegate:self];
     [connection start];
     

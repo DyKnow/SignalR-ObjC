@@ -16,7 +16,6 @@
     NSMutableArray *messagesReceived;
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
-@property (nonatomic, strong) IBOutlet UITextField *serverName;
 @property (nonatomic, strong) IBOutlet UITextField *messageField;
 @property (nonatomic, strong) IBOutlet UITextField *meField;
 @property (nonatomic, strong) IBOutlet UITextField *privateMessageField;

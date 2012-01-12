@@ -8,6 +8,8 @@
 
 #import "MouseTrackingViewController.h"
 
+#import "Router.h"
+
 @interface MouseTrackingViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
@@ -19,7 +21,7 @@
 
 @implementation MouseTrackingViewController
 
-@synthesize serverName, messageTable;
+@synthesize messageTable;
 
 @synthesize detailItem = _detailItem;
 @synthesize masterPopoverController = _masterPopoverController;
@@ -28,7 +30,8 @@
 
 - (IBAction)connectClicked:(id)sender
 {
-    connection = [SRHubConnection connectionWithURL:serverName.text];
+    NSString *server = [Router sharedRouter].server_url;
+    connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createProxy:@"SignalR.Samples.Hubs.MouseTracking.MouseTracking"]; 
     [hub on:@"moveMouse" perform:self selector:@selector(moveMouse:x:y:)];
     [hub on:@"join" perform:self selector:@selector(join)];
