@@ -27,7 +27,7 @@ SBJSON is used to json strinify objects in the Transports before sending to the 
 
 
 ## DKHttpHelper
-Simiple wrapper to make for posting and getting http request easy.  
+Simiple wrapper to make http requests easy.  
 This is adopted from the HttpHelper in the SignalR Project and is included in Vendor since I have started using it in multiple projects I am working.
 
 ### What is it for?
