@@ -17,8 +17,6 @@
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
 
-@property (strong, nonatomic) id detailItem;
-
 - (IBAction)connectClicked:(id)sender;
 
 @end

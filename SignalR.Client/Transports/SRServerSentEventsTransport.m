@@ -232,9 +232,6 @@ typedef enum {
 #if DEBUG
          NSLog(@"openConnectionDidReceiveResponse: %@",response);
 #endif
-        // Clear the pending request
-        [connection.items removeObjectForKey:kHttpRequestKey];
-        
         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                            [response isEqualToString:@""] || response == nil ||
                            [response isEqualToString:@"null"]);

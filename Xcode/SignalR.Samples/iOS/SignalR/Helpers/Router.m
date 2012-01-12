@@ -35,6 +35,7 @@ static Router *sharedRouter = nil;
 	return sharedRouter;
 }
 
+#warning Set your server location in the Supporting Files/Environments.plist 
 - (void)routeForEnvironment
 {
     NSString *configuration = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Configuration"];

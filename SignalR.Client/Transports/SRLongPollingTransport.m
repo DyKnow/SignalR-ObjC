@@ -58,7 +58,7 @@
 #endif
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
-        
+
         //TODO:isFaulted is not correct there must be a better way to do this
         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                           [response isEqualToString:@""] || response == nil ||

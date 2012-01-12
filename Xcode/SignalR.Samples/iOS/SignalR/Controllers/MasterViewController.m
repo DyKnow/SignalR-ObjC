@@ -18,21 +18,71 @@
 
 @synthesize detailViewController = _detailViewController;
 
-#pragma mark Table view data source
+- (void)didReceiveMemoryWarning
+{
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    
+    // Release any cached data, images, etc that aren't in use.
+}
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // Return the number of sections.
+#pragma mark - 
+#pragma mark View lifecycle
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+    self.clearsSelectionOnViewWillAppear = NO;
+    self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+	return YES;
+}
+
+#pragma mark -
+#pragma mark TableView datasource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
+{
     return 1;
 }
 
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
+{
     return 5;
 }
 
-
-// Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
@@ -42,28 +92,28 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    // Configure the cell...
     NSUInteger row = indexPath.row;
     
     if (row == 0) {
-        cell.textLabel.text = @"Raw";
+        cell.textLabel.text = NSLocalizedString(@"Raw", @"");
     }
     else if (row == 1) {
-        cell.textLabel.text = @"Streaming";
+        cell.textLabel.text = NSLocalizedString(@"Streaming", @"");
     }
     else if (row == 2) {
-        cell.textLabel.text = @"Connection Status";
+        cell.textLabel.text = NSLocalizedString(@"Connection Status", @"");
     }
     else if (row == 3) {
-        cell.textLabel.text = @"Chat";
+        cell.textLabel.text = NSLocalizedString(@"Chat", @"");
     }
     else if (row == 4) {
-        cell.textLabel.text = @"Mouse Tracking";
+        cell.textLabel.text = NSLocalizedString(@"Mouse Tracking", @"");
     }
     return cell;
 }
 
-#pragma mark - Table view delegate
+#pragma mark - 
+#pragma mark TableView delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSUInteger row = indexPath.row;
@@ -94,43 +144,8 @@
     // Update the split view controller's view controllers array.
     NSArray *viewControllers = [[NSArray alloc] initWithObjects:self.navigationController, navController, nil];
     self.splitViewController.viewControllers = viewControllers;
-    
+      
     self.detailViewController = [[self.splitViewController.viewControllers lastObject] topViewController];
-}
-
-#pragma mark - View lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    self.clearsSelectionOnViewWillAppear = NO;
-    self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
-    
-   //self.detailViewController = [[self.splitViewController.viewControllers lastObject] topViewController];
-   // [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-#pragma mark Memory management
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Relinquish ownership any cached data, images, etc that aren't in use.
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return YES;
 }
 
 @end

@@ -77,7 +77,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport LongPolling]];
 }
 
 - (void)start:(id <SRClientTransport>)transport

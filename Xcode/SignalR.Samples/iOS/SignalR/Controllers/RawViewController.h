@@ -21,8 +21,6 @@
 @property (nonatomic, strong) IBOutlet UITextField *privateMessageField;
 @property (nonatomic, strong) IBOutlet UITextField *privateMessageToField;
 
-@property (strong, nonatomic) id detailItem;
-
 - (IBAction)connectClicked:(id)sender;
 
 - (IBAction)broadcastClicked:(id)sender;

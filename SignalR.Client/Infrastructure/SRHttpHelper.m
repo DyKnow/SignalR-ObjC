@@ -53,10 +53,6 @@
     }
     __weak ASIFormDataRequest *request = _request;
     
-#if DEBUG
-    NSLog(@"%@",[request.url absoluteString]);
-#endif
-    
     [request setCompletionBlock:^{
         if(block){
             block([request responseData]);
@@ -93,11 +89,7 @@
         requestPreparer(_request);
     }
     __weak ASIHTTPRequest *request = _request;
-    
-#if DEBUG
-    NSLog(@"%@",[request.url absoluteString]);
-    NSLog(@"%@",[postData stringWithFormEncodedComponents]);
-#endif
+
     //When using ServerSentEvents Transport we need to intercept the data
     if([[_request.requestHeaders objectForKey:@"Accept"] isEqualToString:@"text/event-stream"])
     {

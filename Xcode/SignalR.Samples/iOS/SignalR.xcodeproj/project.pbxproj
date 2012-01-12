@@ -8,7 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		39145AD814BE599900FD8E5A /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39145AD714BE599900FD8E5A /* Environments.plist */; };
-		39145ADC14BE5A4F00FD8E5A /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145ADB14BE5A4F00FD8E5A /* Router.m */; };
+		39145AEA14BE5E8200FD8E5A /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145ADF14BE5E8200FD8E5A /* ChatViewController.m */; };
+		39145AEB14BE5E8200FD8E5A /* ConnectionStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AE114BE5E8200FD8E5A /* ConnectionStatusViewController.m */; };
+		39145AEC14BE5E8200FD8E5A /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AE314BE5E8200FD8E5A /* MasterViewController.m */; };
+		39145AED14BE5E8200FD8E5A /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AE514BE5E8200FD8E5A /* MouseTrackingViewController.m */; };
+		39145AEE14BE5E8200FD8E5A /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AE714BE5E8200FD8E5A /* RawViewController.m */; };
+		39145AEF14BE5E8200FD8E5A /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AE914BE5E8200FD8E5A /* StreamingViewController.m */; };
+		39145AF314BE5EA800FD8E5A /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39145AF114BE5EA800FD8E5A /* MainStoryboard.storyboard */; };
+		39145AFB14BE5F1700FD8E5A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AFA14BE5F1700FD8E5A /* AppDelegate.m */; };
+		39145AFF14BE5F3A00FD8E5A /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AFE14BE5F3A00FD8E5A /* Router.m */; };
 		392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 392B088114BB93FF00988019 /* NSString+QueryString.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		392EFE91148EEB8C001E5958 /* SRHubClientInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 392EFE6A148EEB8C001E5958 /* SRHubClientInvocation.m */; };
@@ -60,19 +68,11 @@
 		39FE4E4E1468164300B111BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4D1468164300B111BF /* CoreGraphics.framework */; };
 		39FE4E541468164300B111BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39FE4E521468164300B111BF /* InfoPlist.strings */; };
 		39FE4E561468164300B111BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E551468164300B111BF /* main.m */; };
-		39FE4E5A1468164300B111BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E591468164300B111BF /* AppDelegate.m */; };
-		39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */; };
-		39FE4E601468164300B111BF /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E5F1468164300B111BF /* MasterViewController.m */; };
 		39FE4E6B1468164300B111BF /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E6A1468164300B111BF /* SenTestingKit.framework */; };
 		39FE4E6C1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E6D1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 		39FE4E751468164300B111BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39FE4E731468164300B111BF /* InfoPlist.strings */; };
 		39FE4E781468164300B111BF /* SignalRTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4E771468164300B111BF /* SignalRTests.m */; };
-		39FE4EE81468209700B111BF /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EDF1468209700B111BF /* ChatViewController.m */; };
-		39FE4EE91468209700B111BF /* ConnectionStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE11468209700B111BF /* ConnectionStatusViewController.m */; };
-		39FE4EEA1468209700B111BF /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE31468209700B111BF /* MouseTrackingViewController.m */; };
-		39FE4EEB1468209700B111BF /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE51468209700B111BF /* RawViewController.m */; };
-		39FE4EEC1468209700B111BF /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FE4EE71468209700B111BF /* StreamingViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,8 +87,23 @@
 
 /* Begin PBXFileReference section */
 		39145AD714BE599900FD8E5A /* Environments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Environments.plist; sourceTree = "<group>"; };
-		39145ADA14BE5A4F00FD8E5A /* Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Router.h; sourceTree = "<group>"; };
-		39145ADB14BE5A4F00FD8E5A /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
+		39145ADE14BE5E8200FD8E5A /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		39145ADF14BE5E8200FD8E5A /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		39145AE014BE5E8200FD8E5A /* ConnectionStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStatusViewController.h; sourceTree = "<group>"; };
+		39145AE114BE5E8200FD8E5A /* ConnectionStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionStatusViewController.m; sourceTree = "<group>"; };
+		39145AE214BE5E8200FD8E5A /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
+		39145AE314BE5E8200FD8E5A /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		39145AE414BE5E8200FD8E5A /* MouseTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseTrackingViewController.h; sourceTree = "<group>"; };
+		39145AE514BE5E8200FD8E5A /* MouseTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MouseTrackingViewController.m; sourceTree = "<group>"; };
+		39145AE614BE5E8200FD8E5A /* RawViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawViewController.h; sourceTree = "<group>"; };
+		39145AE714BE5E8200FD8E5A /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
+		39145AE814BE5E8200FD8E5A /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
+		39145AE914BE5E8200FD8E5A /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
+		39145AF214BE5EA800FD8E5A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		39145AF914BE5F1700FD8E5A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		39145AFA14BE5F1700FD8E5A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		39145AFD14BE5F3A00FD8E5A /* Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Router.h; sourceTree = "<group>"; };
+		39145AFE14BE5F3A00FD8E5A /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		392B087E14BB93FF00988019 /* NSDictionary+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+QueryString.h"; sourceTree = "<group>"; };
 		392B087F14BB93FF00988019 /* NSDictionary+QueryString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+QueryString.m"; sourceTree = "<group>"; };
 		392B088014BB93FF00988019 /* NSString+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+QueryString.h"; sourceTree = "<group>"; };
@@ -194,27 +209,12 @@
 		39FE4E531468164300B111BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		39FE4E551468164300B111BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		39FE4E571468164300B111BF /* SignalR-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR-Prefix.pch"; sourceTree = "<group>"; };
-		39FE4E581468164300B111BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		39FE4E591468164300B111BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		39FE4E5C1468164300B111BF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		39FE4E5E1468164300B111BF /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
-		39FE4E5F1468164300B111BF /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
 		39FE4E691468164300B111BF /* SignalRTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalRTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E6A1468164300B111BF /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		39FE4E721468164300B111BF /* SignalRTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalRTests-Info.plist"; sourceTree = "<group>"; };
 		39FE4E741468164300B111BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		39FE4E761468164300B111BF /* SignalRTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignalRTests.h; sourceTree = "<group>"; };
 		39FE4E771468164300B111BF /* SignalRTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SignalRTests.m; sourceTree = "<group>"; };
-		39FE4EDE1468209700B111BF /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
-		39FE4EDF1468209700B111BF /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
-		39FE4EE01468209700B111BF /* ConnectionStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStatusViewController.h; sourceTree = "<group>"; };
-		39FE4EE11468209700B111BF /* ConnectionStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionStatusViewController.m; sourceTree = "<group>"; };
-		39FE4EE21468209700B111BF /* MouseTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseTrackingViewController.h; sourceTree = "<group>"; };
-		39FE4EE31468209700B111BF /* MouseTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MouseTrackingViewController.m; sourceTree = "<group>"; };
-		39FE4EE41468209700B111BF /* RawViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawViewController.h; sourceTree = "<group>"; };
-		39FE4EE51468209700B111BF /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
-		39FE4EE61468209700B111BF /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
-		39FE4EE71468209700B111BF /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,6 +245,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		39145ADD14BE5E8200FD8E5A /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				39145AF914BE5F1700FD8E5A /* AppDelegate.h */,
+				39145AFA14BE5F1700FD8E5A /* AppDelegate.m */,
+				39145AE214BE5E8200FD8E5A /* MasterViewController.h */,
+				39145AE314BE5E8200FD8E5A /* MasterViewController.m */,
+				39145AE614BE5E8200FD8E5A /* RawViewController.h */,
+				39145AE714BE5E8200FD8E5A /* RawViewController.m */,
+				39145AE814BE5E8200FD8E5A /* StreamingViewController.h */,
+				39145AE914BE5E8200FD8E5A /* StreamingViewController.m */,
+				39145AE014BE5E8200FD8E5A /* ConnectionStatusViewController.h */,
+				39145AE114BE5E8200FD8E5A /* ConnectionStatusViewController.m */,
+				39145ADE14BE5E8200FD8E5A /* ChatViewController.h */,
+				39145ADF14BE5E8200FD8E5A /* ChatViewController.m */,
+				39145AE414BE5E8200FD8E5A /* MouseTrackingViewController.h */,
+				39145AE514BE5E8200FD8E5A /* MouseTrackingViewController.m */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		39145AF014BE5E9700FD8E5A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				39145AF114BE5EA800FD8E5A /* MainStoryboard.storyboard */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		39145AFC14BE5F3A00FD8E5A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				39145AFD14BE5F3A00FD8E5A /* Router.h */,
+				39145AFE14BE5F3A00FD8E5A /* Router.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		392EFE68148EEB8C001E5958 /* Hubs */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,23 +492,9 @@
 		39FE4E4F1468164300B111BF /* SignalR */ = {
 			isa = PBXGroup;
 			children = (
-				39145ADA14BE5A4F00FD8E5A /* Router.h */,
-				39145ADB14BE5A4F00FD8E5A /* Router.m */,
-				39FE4E581468164300B111BF /* AppDelegate.h */,
-				39FE4E591468164300B111BF /* AppDelegate.m */,
-				39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */,
-				39FE4E5E1468164300B111BF /* MasterViewController.h */,
-				39FE4E5F1468164300B111BF /* MasterViewController.m */,
-				39FE4EE41468209700B111BF /* RawViewController.h */,
-				39FE4EE51468209700B111BF /* RawViewController.m */,
-				39FE4EE61468209700B111BF /* StreamingViewController.h */,
-				39FE4EE71468209700B111BF /* StreamingViewController.m */,
-				39FE4EE01468209700B111BF /* ConnectionStatusViewController.h */,
-				39FE4EE11468209700B111BF /* ConnectionStatusViewController.m */,
-				39FE4EE21468209700B111BF /* MouseTrackingViewController.h */,
-				39FE4EE31468209700B111BF /* MouseTrackingViewController.m */,
-				39FE4EDE1468209700B111BF /* ChatViewController.h */,
-				39FE4EDF1468209700B111BF /* ChatViewController.m */,
+				39145AFC14BE5F3A00FD8E5A /* Helpers */,
+				39145ADD14BE5E8200FD8E5A /* Controllers */,
+				39145AF014BE5E9700FD8E5A /* Views */,
 				39FE4E501468164300B111BF /* Supporting Files */,
 			);
 			path = SignalR;
@@ -579,8 +603,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				39FE4E541468164300B111BF /* InfoPlist.strings in Resources */,
-				39FE4E5D1468164300B111BF /* MainStoryboard.storyboard in Resources */,
 				39145AD814BE599900FD8E5A /* Environments.plist in Resources */,
+				39145AF314BE5EA800FD8E5A /* MainStoryboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,13 +640,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				39FE4E561468164300B111BF /* main.m in Sources */,
-				39FE4E5A1468164300B111BF /* AppDelegate.m in Sources */,
-				39FE4E601468164300B111BF /* MasterViewController.m in Sources */,
-				39FE4EE81468209700B111BF /* ChatViewController.m in Sources */,
-				39FE4EE91468209700B111BF /* ConnectionStatusViewController.m in Sources */,
-				39FE4EEA1468209700B111BF /* MouseTrackingViewController.m in Sources */,
-				39FE4EEB1468209700B111BF /* RawViewController.m in Sources */,
-				39FE4EEC1468209700B111BF /* StreamingViewController.m in Sources */,
 				392EFE91148EEB8C001E5958 /* SRHubClientInvocation.m in Sources */,
 				392EFE92148EEB8C001E5958 /* SRHubConnection.m in Sources */,
 				392EFE93148EEB8C001E5958 /* SRHubProxy.m in Sources */,
@@ -665,7 +682,14 @@
 				392B088214BB93FF00988019 /* NSDictionary+QueryString.m in Sources */,
 				392B088314BB93FF00988019 /* NSString+QueryString.m in Sources */,
 				39B6A8F414BCFA3000E074E9 /* SRVersion.m in Sources */,
-				39145ADC14BE5A4F00FD8E5A /* Router.m in Sources */,
+				39145AEA14BE5E8200FD8E5A /* ChatViewController.m in Sources */,
+				39145AEB14BE5E8200FD8E5A /* ConnectionStatusViewController.m in Sources */,
+				39145AEC14BE5E8200FD8E5A /* MasterViewController.m in Sources */,
+				39145AED14BE5E8200FD8E5A /* MouseTrackingViewController.m in Sources */,
+				39145AEE14BE5E8200FD8E5A /* RawViewController.m in Sources */,
+				39145AEF14BE5E8200FD8E5A /* StreamingViewController.m in Sources */,
+				39145AFB14BE5F1700FD8E5A /* AppDelegate.m in Sources */,
+				39145AFF14BE5F3A00FD8E5A /* Router.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,20 +712,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		39145AF114BE5EA800FD8E5A /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39145AF214BE5EA800FD8E5A /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
 		39FE4E521468164300B111BF /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				39FE4E531468164300B111BF /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		39FE4E5B1468164300B111BF /* MainStoryboard.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				39FE4E5C1468164300B111BF /* en */,
-			);
-			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
 		};
 		39FE4E731468164300B111BF /* InfoPlist.strings */ = {

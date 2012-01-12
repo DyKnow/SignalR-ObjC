@@ -1,5 +1,5 @@
 //
-//  StreamingViewController.h
+//  ChatViewController.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 11/3/11.
@@ -9,15 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "SignalR.h"
 
-@interface StreamingViewController : UIViewController<UISplitViewControllerDelegate, SRConnectionDelegate>
+@interface ChatViewController : UIViewController <UISplitViewControllerDelegate, SRConnectionDelegate>
 {
-    SRConnection *connection;
+    SRHubConnection *connection;
+    SRHubProxy *hub;
     NSMutableArray *messagesReceived;
 }
 @property (nonatomic, strong) IBOutlet UITableView *messageTable;
-
-@property (strong, nonatomic) id detailItem;
+@property (nonatomic, strong) IBOutlet UITextField *messageField;
 
 - (IBAction)connectClicked:(id)sender;
+- (IBAction)sendClicked:(id)sender;
 
 @end
