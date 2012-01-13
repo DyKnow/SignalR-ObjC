@@ -12,18 +12,15 @@
 
 @end
 
-static id sharedHttpRequestManager = nil;
-
 @implementation DKHttpHelper
 
 #pragma mark - 
 #pragma mark Initialization
 
-+ (id)sharedHttpRequestManager {
-	if (sharedHttpRequestManager == nil) {
-		sharedHttpRequestManager = [[self alloc] init];
-	}
-	return sharedHttpRequestManager;
++ (id)sharedHttpRequestManager 
+{
+    [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpHelper"];
+	return nil;
 }
 
 #pragma mark - 
@@ -66,7 +63,7 @@ static id sharedHttpRequestManager = nil;
 
 - (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
 {
-    [self getInternal:url requestPreparer:nil parameters:parameters continueWith:block];
+    [self getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
 }
 
 - (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
@@ -114,7 +111,7 @@ static id sharedHttpRequestManager = nil;
 
 - (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
 {
-    [self postInternal:url requestPreparer:nil postData:postData continueWith:block];
+    [self postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
 }
 
 - (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
