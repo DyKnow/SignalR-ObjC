@@ -16,9 +16,19 @@
 
 @end
 
+static id sharedHttpRequestManager = nil;
+
 @implementation SRHttpHelper
 
 @synthesize queue = _queue;
+
++ (id)sharedHttpRequestManager
+{
+    if (sharedHttpRequestManager == nil) {
+		sharedHttpRequestManager = [[self alloc] init];
+	}
+	return sharedHttpRequestManager;
+}
 
 #pragma mark - 
 #pragma mark GET Requests Implementation
