@@ -15,7 +15,20 @@ it dead easy and handles all the heavy lifting for you.
 See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki)
 	
 ## Installation
-Copy the contents of the SignalR.Client Folder into your project and import SignalR.h, see the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) for more details
+NOTE: SignalR-ObjC uses Automatic Reference Counting.
+
+### Method 1:
+Copy the contents of the SignalR.Client and Vendor Folders into your project and import SignalR.h
+
+Note: While SignalR-ObjC uses arc it makes use of Vendor Projects that do not.
+For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to
+-fno-objc-arc 
+for any files that have the prefix ASI and for Reachability.m
+
+You should now be able to click build with no errors.
+
+### Method 2:
+
 
 ## LICENSE
 [MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
