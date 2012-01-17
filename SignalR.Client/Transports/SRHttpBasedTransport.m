@@ -19,6 +19,8 @@
 
 @interface SRHttpBasedTransport()
 
+- (NSString *)getCustomQueryString:(SRConnection *)connection;
+
 @end
 
 @implementation SRHttpBasedTransport
@@ -117,7 +119,7 @@
     return (error != nil && (error.code == ASIRequestCancelledErrorType));
 }
 
-//?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data>
+//?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data
 {
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
@@ -150,17 +152,17 @@
     {
         [parameters setObject:[NSString stringWithFormat:@""] forKey:kConnectionData];
     }
-    return [NSString stringWithFormat:@"?%@",[parameters stringWithFormEncodedComponents]];
+    return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
 }
 
-//?transport=<transportname>&connectionId=<connectionId>
+//?transport=<transportname>&connectionId=<connectionId><customquerystring>
 - (NSString *)getSendQueryString:(SRConnection *)connection
 {
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     [parameters setObject:_transport forKey:kTransport];
     [parameters setObject:connection.connectionId forKey:kConnectionId];
     
-    return [NSString stringWithFormat:@"?%@",[parameters stringWithFormEncodedComponents]];
+    return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
 }
 
 - (void)prepareRequest:(ASIHTTPRequest *)request forConnection:(SRConnection *)connection;
@@ -230,6 +232,11 @@
 #endif
         [connection didReceiveError:ex];
     }
+}
+
+- (NSString *)getCustomQueryString:(SRConnection *)connection
+{
+    return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
 }
 
 @end

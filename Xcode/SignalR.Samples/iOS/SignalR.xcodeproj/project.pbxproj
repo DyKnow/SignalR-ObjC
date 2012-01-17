@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3904CA9E14C345A500C11FCB /* SRAutoTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3904CA9D14C345A500C11FCB /* SRAutoTransport.m */; };
 		39145AD814BE599900FD8E5A /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39145AD714BE599900FD8E5A /* Environments.plist */; };
 		39145AEA14BE5E8200FD8E5A /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145ADF14BE5E8200FD8E5A /* ChatViewController.m */; };
 		39145AEB14BE5E8200FD8E5A /* ConnectionStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39145AE114BE5E8200FD8E5A /* ConnectionStatusViewController.m */; };
@@ -86,6 +87,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3904CA9C14C345A500C11FCB /* SRAutoTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRAutoTransport.h; sourceTree = "<group>"; };
+		3904CA9D14C345A500C11FCB /* SRAutoTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRAutoTransport.m; sourceTree = "<group>"; };
 		39145AD714BE599900FD8E5A /* Environments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Environments.plist; sourceTree = "<group>"; };
 		39145ADE14BE5E8200FD8E5A /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
 		39145ADF14BE5E8200FD8E5A /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
@@ -330,6 +333,8 @@
 			isa = PBXGroup;
 			children = (
 				392EFE8C148EEB8C001E5958 /* SRClientTransport.h */,
+				3904CA9C14C345A500C11FCB /* SRAutoTransport.h */,
+				3904CA9D14C345A500C11FCB /* SRAutoTransport.m */,
 				39A55A6014B8E1090075C06F /* SRHttpBasedTransport.h */,
 				39A55A6114B8E1090075C06F /* SRHttpBasedTransport.m */,
 				392EFE8D148EEB8C001E5958 /* SRLongPollingTransport.h */,
@@ -690,6 +695,7 @@
 				39145AEF14BE5E8200FD8E5A /* StreamingViewController.m in Sources */,
 				39145AFB14BE5F1700FD8E5A /* AppDelegate.m in Sources */,
 				39145AFF14BE5F3A00FD8E5A /* Router.m in Sources */,
+				3904CA9E14C345A500C11FCB /* SRAutoTransport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

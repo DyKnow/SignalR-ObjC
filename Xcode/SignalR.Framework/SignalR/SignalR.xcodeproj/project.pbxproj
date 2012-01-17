@@ -91,7 +91,7 @@
 		3948FF7214C069D00028753B /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3948FF4314C069D00028753B /* SRConnectionExtensions.m */; };
 		3948FF7314C069D00028753B /* SRNegotiationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3948FF4414C069D00028753B /* SRNegotiationResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3948FF7414C069D00028753B /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3948FF4514C069D00028753B /* SRNegotiationResponse.m */; };
-		3948FF7514C069D00028753B /* SRSBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 3948FF4614C069D00028753B /* SRSBJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3948FF7514C069D00028753B /* SRSBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 3948FF4614C069D00028753B /* SRSBJSON.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3948FF7614C069D00028753B /* SRClientTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3948FF4814C069D00028753B /* SRClientTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3948FF7714C069D00028753B /* SRHttpBasedTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3948FF4914C069D00028753B /* SRHttpBasedTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3948FF7814C069D00028753B /* SRHttpBasedTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3948FF4A14C069D00028753B /* SRHttpBasedTransport.m */; };
@@ -441,11 +441,11 @@
 				3948FF7914C069D00028753B /* SRLongPollingTransport.h in Headers */,
 				3948FF7B14C069D00028753B /* SRServerSentEventsTransport.h in Headers */,
 				3948FF7D14C069D00028753B /* SRTransport.h in Headers */,
+				3948FF7514C069D00028753B /* SRSBJSON.h in Headers */,
 				3948FF6414C069D00028753B /* NSDictionary+QueryString.h in Headers */,
 				3948FF6614C069D00028753B /* NSString+QueryString.h in Headers */,
 				3948FF6A14C069D00028753B /* SRHttpHelper.h in Headers */,
 				3948FF6C14C069D00028753B /* SRVersion.h in Headers */,
-				3948FF7514C069D00028753B /* SRSBJSON.h in Headers */,
 				3948FEE914C069970028753B /* ASIAuthenticationDialog.h in Headers */,
 				3948FEEB14C069970028753B /* ASICacheDelegate.h in Headers */,
 				3948FEEC14C069970028753B /* ASIDataCompressor.h in Headers */,
