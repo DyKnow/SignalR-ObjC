@@ -293,18 +293,27 @@ void (^prepareRequest)(ASIHTTPRequest *);
     }
 }
 
-//TODO: Include system version, causes issues in framework bundle
 - (NSString *)createUserAgentString:(NSString *)client
 {
     if(_assemblyVersion == nil)
     {
         _assemblyVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     }
+   
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-    return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
-    //return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
+    return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
 #elif TARGET_OS_MAC
-    //TODO: Add system version
+    NSString *environmentVersion = @"";
+    if([[NSProcessInfo processInfo] operatingSystem] == NSMACHOperatingSystem)
+    {
+        environmentVersion = [environmentVersion stringByAppendingString:@"Mac OS X"];
+        NSString *version = [[NSProcessInfo processInfo] operatingSystemVersionString];        
+        if ([version rangeOfString:@"Version"].location != NSNotFound)
+        {
+            environmentVersion = [environmentVersion stringByAppendingFormat:@" %@",version];
+        }
+        return [NSString stringWithFormat:@"%@/%@ (%@)",client,_assemblyVersion,environmentVersion];
+    }
     return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
 #endif
 }
