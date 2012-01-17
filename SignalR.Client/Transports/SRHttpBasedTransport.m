@@ -236,7 +236,7 @@
 
 - (NSString *)getCustomQueryString:(SRConnection *)connection
 {
-    return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? [@"&" stringByAppendingString:connection.queryString] : @"";
+    return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
 }
 
 @end

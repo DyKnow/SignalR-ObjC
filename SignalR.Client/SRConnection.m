@@ -42,6 +42,8 @@ void (^prepareRequest)(ASIHTTPRequest *);
 @synthesize error = _error;
 @synthesize closed = _closed;
 @synthesize groups = _groups;
+@synthesize credentials = _credentials;
+@synthesize protectionSpace = _protectionSpace;
 @synthesize sending = _sending;
 @synthesize url = _url;
 @synthesize active = _active;
@@ -55,14 +57,24 @@ void (^prepareRequest)(ASIHTTPRequest *);
 #pragma mark - 
 #pragma mark Initialization
 
-+ (SRConnection *)connectionWithURL:(NSString *)URL
++ (SRConnection *)connectionWithURL:(NSString *)url
 {
-    return [[SRConnection alloc] initWithURL:URL];
+    return [[SRConnection alloc] initWithURL:url];
+}
+
++ (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
+{
+    return [[SRConnection alloc] initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
+}
+
++ (SRConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
+{
+    return [[SRConnection alloc] initWithURL:url queryString:queryString];
 }
 
 - (id)initWithURL:(NSString *)url
 {
-    return [self initWithURL:url queryString:nil];
+    return [self initWithURL:url queryString:@""];
 }
 
 - (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString
@@ -97,7 +109,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport LongPolling]];
+    [self start:[SRTransport ServerSentEvents]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -241,7 +253,6 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 #pragma mark - 
 #pragma mark Prepare Request
-//TODO:Handle Credentials
 - (void)prepareRequest:(ASIHTTPRequest *)request
 {
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -250,11 +261,36 @@ void (^prepareRequest)(ASIHTTPRequest *);
     [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.MAC"]];
 #endif
 
-    //Handle Credentials
-    //if(_credentials != nil)
-    //{
-    //  request.credentials = _credentials;
-    //}
+    if(_credentials != nil)
+    {
+        [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
+        
+        if(_protectionSpace && [_protectionSpace isProxy])
+        {
+            [request setProxyUsername:_credentials.user];
+            [request setProxyPassword:_credentials.password];
+        }
+        else
+        {
+            [request setUsername:_credentials.user];
+            [request setPassword:_credentials.password];
+        }
+
+        if(_protectionSpace && [_protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM])
+        {
+            if([_protectionSpace isProxy])
+            {
+                [request setProxyDomain:_protectionSpace.host];
+            }
+            else
+            {
+                [request setDomain:_protectionSpace.host];
+            }
+            [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
+        }
+        
+        [request setShouldPresentCredentialsBeforeChallenge:YES];
+    }
 }
 
 //TODO: Include system version, causes issues in framework bundle

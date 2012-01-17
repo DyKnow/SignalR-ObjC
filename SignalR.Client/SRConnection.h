@@ -33,8 +33,8 @@ typedef void (^onClosed)();
 @property (copy) onReceived received;
 @property (copy) onError error; 
 @property (copy) onClosed closed;
-//TODO: Credentials
-//@property (strong, nonatomic, readwrite) id credentials;
+@property (strong, nonatomic, readwrite) NSURLCredential *credentials;
+@property (strong, nonatomic, readwrite) NSURLProtectionSpace *protectionSpace;
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
 @property (copy) onSending sending;
 @property (strong, nonatomic, readwrite) NSString *url;
@@ -47,7 +47,10 @@ typedef void (^onClosed)();
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
 + (SRConnection *)connectionWithURL:(NSString *)URL;
++ (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
++ (SRConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
 - (id)initWithURL:(NSString *)url;
+- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString;
 - (id)initWithURL:(NSString *)url queryString:(NSString *)queryString;
 
 - (void)start;
