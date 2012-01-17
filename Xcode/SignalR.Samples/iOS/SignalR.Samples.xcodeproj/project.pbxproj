@@ -46,11 +46,8 @@
 		3995195B14C6371600B33280 /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995195014C6371600B33280 /* StreamingViewController.m */; };
 		3995195C14C6371600B33280 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995195314C6371600B33280 /* Router.m */; };
 		3995195F14C6372E00B33280 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3995195D14C6372E00B33280 /* MainStoryboard.storyboard */; };
-		3995196414C6373800B33280 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3995196014C6373800B33280 /* Environments.plist */; };
 		3995196514C6373800B33280 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995196114C6373800B33280 /* main.m */; };
-		3995196614C6373800B33280 /* SignalR-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3995196214C6373800B33280 /* SignalR-Info.plist */; };
-		3995196714C6374F00B33280 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3995196014C6373800B33280 /* Environments.plist */; };
-		3995196814C6375A00B33280 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3995196014C6373800B33280 /* Environments.plist */; };
+		3995197114C6399400B33280 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3995196014C6373800B33280 /* Environments.plist */; };
 		399A880414B9EB780090DDCC /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 399A87EC14B9EB780090DDCC /* ASIAuthenticationDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		399A880514B9EB780090DDCC /* ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 399A87EF14B9EB780090DDCC /* ASIDataCompressor.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		399A880614B9EB780090DDCC /* ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = 399A87F114B9EB780090DDCC /* ASIDataDecompressor.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -156,8 +153,8 @@
 		3995195E14C6372E00B33280 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = SignalR.Samples/en.lproj/MainStoryboard.storyboard; sourceTree = SOURCE_ROOT; };
 		3995196014C6373800B33280 /* Environments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Environments.plist; path = SignalR.Samples/Environments.plist; sourceTree = SOURCE_ROOT; };
 		3995196114C6373800B33280 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SignalR.Samples/main.m; sourceTree = SOURCE_ROOT; };
-		3995196214C6373800B33280 /* SignalR-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "SignalR-Info.plist"; path = "SignalR.Samples/SignalR-Info.plist"; sourceTree = SOURCE_ROOT; };
-		3995196314C6373800B33280 /* SignalR-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SignalR-Prefix.pch"; path = "SignalR.Samples/SignalR-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		3995196E14C6391B00B33280 /* SignalR.Samples-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "SignalR.Samples-Info.plist"; path = "SignalR.Samples/SignalR.Samples-Info.plist"; sourceTree = SOURCE_ROOT; };
+		3995196F14C6391B00B33280 /* SignalR.Samples-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SignalR.Samples-Prefix.pch"; path = "SignalR.Samples/SignalR.Samples-Prefix.pch"; sourceTree = SOURCE_ROOT; };
 		399A87EB14B9EB780090DDCC /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		399A87EC14B9EB780090DDCC /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		399A87ED14B9EB780090DDCC /* ASICacheDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASICacheDelegate.h; sourceTree = "<group>"; };
@@ -194,7 +191,7 @@
 		39A9B7B414BB327F00249CCB /* DKHttpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKHttpHelper.m; sourceTree = "<group>"; };
 		39B6A8F214BCFA3000E074E9 /* SRVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRVersion.h; sourceTree = "<group>"; };
 		39B6A8F314BCFA3000E074E9 /* SRVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRVersion.m; sourceTree = "<group>"; };
-		39FE4E451468164300B111BF /* SignalR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		39FE4E451468164300B111BF /* SignalR.Samples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		39FE4E4D1468164300B111BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -445,7 +442,7 @@
 		39FE4E461468164300B111BF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				39FE4E451468164300B111BF /* SignalR.app */,
+				39FE4E451468164300B111BF /* SignalR.Samples.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -480,9 +477,9 @@
 			isa = PBXGroup;
 			children = (
 				3995196014C6373800B33280 /* Environments.plist */,
-				3995196214C6373800B33280 /* SignalR-Info.plist */,
+				3995196E14C6391B00B33280 /* SignalR.Samples-Info.plist */,
 				3995196114C6373800B33280 /* main.m */,
-				3995196314C6373800B33280 /* SignalR-Prefix.pch */,
+				3995196F14C6391B00B33280 /* SignalR.Samples-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -490,9 +487,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		39FE4E441468164300B111BF /* SignalR */ = {
+		39FE4E441468164300B111BF /* SignalR.Samples */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 39FE4E7B1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalR" */;
+			buildConfigurationList = 39FE4E7B1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalR.Samples" */;
 			buildPhases = (
 				39FE4E411468164300B111BF /* Sources */,
 				39FE4E421468164300B111BF /* Frameworks */,
@@ -502,9 +499,9 @@
 			);
 			dependencies = (
 			);
-			name = SignalR;
+			name = SignalR.Samples;
 			productName = SignalR;
-			productReference = 39FE4E451468164300B111BF /* SignalR.app */;
+			productReference = 39FE4E451468164300B111BF /* SignalR.Samples.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -516,7 +513,7 @@
 				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "DyKnow LLC";
 			};
-			buildConfigurationList = 39FE4E3F1468164300B111BF /* Build configuration list for PBXProject "SignalR" */;
+			buildConfigurationList = 39FE4E3F1468164300B111BF /* Build configuration list for PBXProject "SignalR.Samples" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -528,7 +525,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				39FE4E441468164300B111BF /* SignalR */,
+				39FE4E441468164300B111BF /* SignalR.Samples */,
 			);
 		};
 /* End PBXProject section */
@@ -538,11 +535,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3995197114C6399400B33280 /* Environments.plist in Resources */,
 				3995195F14C6372E00B33280 /* MainStoryboard.storyboard in Resources */,
-				3995196414C6373800B33280 /* Environments.plist in Resources */,
-				3995196614C6373800B33280 /* SignalR-Info.plist in Resources */,
-				3995196714C6374F00B33280 /* Environments.plist in Resources */,
-				3995196814C6375A00B33280 /* Environments.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,9 +669,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SignalR.Samples/SignalR-Prefix.pch";
-				INFOPLIST_FILE = "SignalR.Samples/SignalR-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "SignalR.Samples/SignalR.Samples-Prefix.pch";
+				INFOPLIST_FILE = "SignalR.Samples/SignalR.Samples-Info.plist";
+				PRODUCT_NAME = SignalR.Samples;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -686,9 +680,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SignalR.Samples/SignalR-Prefix.pch";
-				INFOPLIST_FILE = "SignalR.Samples/SignalR-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "SignalR.Samples/SignalR.Samples-Prefix.pch";
+				INFOPLIST_FILE = "SignalR.Samples/SignalR.Samples-Info.plist";
+				PRODUCT_NAME = SignalR.Samples;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -696,7 +690,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		39FE4E3F1468164300B111BF /* Build configuration list for PBXProject "SignalR" */ = {
+		39FE4E3F1468164300B111BF /* Build configuration list for PBXProject "SignalR.Samples" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				39FE4E791468164300B111BF /* Debug */,
@@ -705,7 +699,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		39FE4E7B1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalR" */ = {
+		39FE4E7B1468164300B111BF /* Build configuration list for PBXNativeTarget "SignalR.Samples" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				39FE4E7C1468164300B111BF /* Debug */,
