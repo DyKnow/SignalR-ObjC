@@ -14,6 +14,8 @@
 
 @interface SRHttpHelper()
 
+#define DEBUG_VERBOSE 0
+
 @end
 
 static id sharedHttpRequestManager = nil;
@@ -63,7 +65,19 @@ static id sharedHttpRequestManager = nil;
     }
     __weak ASIFormDataRequest *request = _request;
     
+#if DEBUG_VERBOSE
+    NSLog(@"Url => %@",[request.url absoluteString]);
+    NSLog(@"Headers => %@",[request requestHeaders]);
+    NSLog(@"Cookies => %@",[request requestCookies]);
+    NSLog(@"Method => %@",[request requestMethod]);
+#endif
+    
     [request setCompletionBlock:^{
+#if DEBUG_VERBOSE
+        NSLog(@"Headers => %@",[request responseHeaders]);
+        NSLog(@"Code => %d",[request responseStatusCode]);
+        NSLog(@"Status => %@",[request responseStatusMessage]);
+#endif
         if(block){
             block([request responseData]);
         }
@@ -100,18 +114,35 @@ static id sharedHttpRequestManager = nil;
     }
     __weak ASIHTTPRequest *request = _request;
 
+#if DEBUG_VERBOSE
+    NSLog(@"Url => %@",[request.url absoluteString]);
+    NSLog(@"Headers => %@",[request requestHeaders]);
+    NSLog(@"Cookies => %@",[request requestCookies]);
+    NSLog(@"Method => %@",[request requestMethod]);
+#endif
+    
     //When using ServerSentEvents Transport we need to intercept the data
     if([[_request.requestHeaders objectForKey:@"Accept"] isEqualToString:@"text/event-stream"])
     {
         if(block)
         {
             [request setDataReceivedBlock:^(NSData *data) {
+#if DEBUG_VERBOSE
+                NSLog(@"Headers => %@",[request responseHeaders]);
+                NSLog(@"Code => %d",[request responseStatusCode]);
+                NSLog(@"Status => %@",[request responseStatusMessage]);
+#endif
                 block([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             }];
         }
     }
     
     [request setCompletionBlock:^{
+#if DEBUG_VERBOSE
+        NSLog(@"Headers => %@",[request responseHeaders]);
+        NSLog(@"Code => %d",[request responseStatusCode]);
+        NSLog(@"Status => %@",[request responseStatusMessage]);
+#endif
         if(block){
             block([request responseString]);
         }

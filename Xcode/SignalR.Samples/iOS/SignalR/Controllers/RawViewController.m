@@ -106,6 +106,16 @@
     NSString *server = [Router sharedRouter].server_url;
     server = [server stringByAppendingFormat:@"Raw/Raw.ashx"];
     connection = [SRConnection connectionWithURL:server];
+    connection.credentials = [NSURLCredential credentialWithUser:@"myuser"
+                                                             password:@"mypassword"
+                                                          persistence:NSURLCredentialPersistenceForSession];
+    
+    connection.protectionSpace = [[NSURLProtectionSpace alloc]
+                                             initWithHost:@"example.com"
+                                             port:443
+                                             protocol:@"https"
+                                             realm:nil
+                                             authenticationMethod:NSURLAuthenticationMethodHTTPBasic];
     [connection setDelegate:self];
     [connection start];
     
@@ -213,8 +223,8 @@
 
 - (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error
 {
-    [messagesReceived insertObject:[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription] atIndex:0];
-    [messageTable reloadData];
+    //[messagesReceived insertObject:[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription] atIndex:0];
+    //[messageTable reloadData];
 }
 
 @end

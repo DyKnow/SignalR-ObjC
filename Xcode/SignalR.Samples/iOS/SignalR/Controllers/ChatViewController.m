@@ -295,8 +295,8 @@
 
 - (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error
 {
-    [messagesReceived insertObject:[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription] atIndex:0];
-    [messageTable reloadData];
+    //[messagesReceived insertObject:[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription] atIndex:0];
+    //[messageTable reloadData];
 }
 
 @end
