@@ -14,6 +14,7 @@
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
+#import "NSDictionary+QueryString.h"
 
 void (^prepareRequest)(ASIHTTPRequest *);
 
@@ -47,6 +48,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 @synthesize messageId = _messageId;
 @synthesize connectionId = _connectionId;
 @synthesize items = _items;
+@synthesize queryString = _queryString;
 
 @synthesize delegate = _delegate;
 
@@ -58,14 +60,32 @@ void (^prepareRequest)(ASIHTTPRequest *);
     return [[SRConnection alloc] initWithURL:URL];
 }
 
-- (id)initWithURL:(NSString *)URL
+- (id)initWithURL:(NSString *)url
 {
-    if ((self = [super init])) {
-        if([URL hasSuffix:@"/"] == false){
-            URL = [URL stringByAppendingString:@"/"];
+    return [self initWithURL:url queryString:nil];
+}
+
+- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString
+{
+    return [self initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
+}
+
+- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString
+{
+    if ((self = [super init])) 
+    {
+        NSRange range = [queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch];
+        if(range.location != NSNotFound) 
+        {
+            [NSException raise:@"ArgumentException" format:@"Url cannot contain QueryString directly. Pass QueryString values in using available overload."];
         }
         
-        _url = URL;
+        if([url hasSuffix:@"/"] == false){
+            url = [url stringByAppendingString:@"/"];
+        }
+        
+        _url = url;
+        _queryString = queryString;
         _groups = [[NSMutableArray alloc] init];
         _items = [NSMutableDictionary dictionary];
     }

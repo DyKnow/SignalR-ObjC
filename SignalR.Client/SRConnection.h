@@ -42,11 +42,13 @@ typedef void (^onClosed)();
 @property (strong, nonatomic, readwrite) NSNumber *messageId;
 @property (strong, nonatomic, readwrite) NSString *connectionId;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
+@property (strong, nonatomic, readonly) NSString *queryString;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
 + (SRConnection *)connectionWithURL:(NSString *)URL;
 - (id)initWithURL:(NSString *)url;
+- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString;
 
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
