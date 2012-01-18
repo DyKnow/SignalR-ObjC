@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'SignalR-OSX' target in the 'SignalR-OSX' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
