@@ -7,9 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "SignalR.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
-
+@interface AppDelegate : NSObject <NSApplicationDelegate, SRConnectionDelegate>
+{
+    SRConnection *connection;
+}
 @property (assign) IBOutlet NSWindow *window;
 
 @end
