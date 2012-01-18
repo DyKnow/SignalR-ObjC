@@ -25,12 +25,9 @@
                              @"%23", @"%21", @"%27",
                              @"%28", @"%29", @"%2A",@"%7B", @"%7D", @"%22", nil];
     
-    int len = [escapeChars count];
-    
     NSMutableString *temp = [self mutableCopy];
     
-    int i;
-    for(i = 0; i < len; i++)
+    for(int i = 0; i < [escapeChars count]; i++)
     {
         
         [temp replaceOccurrencesOfString: [escapeChars objectAtIndex:i]
