@@ -33,5 +33,8 @@ You should now be able to click build with no errors.
 ## LICENSE
 [MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
 
+SignalR-ObjC uses 3rd-party code, see [ACKNOWLEDGEMENTS](https://github.com/DyKnow/SignalR-ObjC/blob/master/ACKNOWLEDGEMENTS.md) for contributions and
+[Vendor](https://github.com/DyKnow/SignalR-ObjC/tree/master/Vendor) for specific usage
+
 ## Questions?
 The SignalR team hangs out in the **signalr** room at http://jabbr.net.
