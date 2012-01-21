@@ -108,7 +108,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport Auto]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -162,6 +162,9 @@ void (^prepareRequest)(ASIHTTPRequest *);
         }
         else if([response isKindOfClass:[NSError class]])
         {
+#if DEBUG
+            NSLog(@"Negotiation Error: %@",response);
+#endif
             [self didReceiveError:response];
         }
     }];

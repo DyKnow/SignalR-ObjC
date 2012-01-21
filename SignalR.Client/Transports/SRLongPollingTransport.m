@@ -86,34 +86,44 @@ typedef void (^onInitialized)(void);
             {
                 if([response isKindOfClass:[NSError class]])
                 {
-                    //Figure out if the request is aborted
-                    requestAborted = [self isRequestAborted:response];
-                    
-                    //Sometimes a connection might have been closed by the server before we get to write anything
-                    //So just try again and don't raise an error
-                    //TODO: check for IOException
-                    if(!requestAborted) //&& !(exception is IOExeption))
+                    if([response code] >= 500)
                     {
-                        //Raise Error
-                        [connection didReceiveError:response];
-                        
-                        //If the connection is still active after raising the error wait 2 seconds 
-                        //before polling again so we arent hammering the server
-                        if(connection.isActive)
+                        /*if (errorCallback)
                         {
-                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:)];
-                            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                            [invocation setSelector:@selector(pollingLoop:data:initializeCallback:)];
-                            [invocation setTarget:self ];
+                            errorCallback(response);
+                        }*/
+                    }
+                    else
+                    {
+                        //Figure out if the request is aborted
+                        requestAborted = [self isRequestAborted:response];
+                        
+                        //Sometimes a connection might have been closed by the server before we get to write anything
+                        //So just try again and don't raise an error
+                        //TODO: check for IOException
+                        if(!requestAborted) //&& !(exception is IOExeption))
+                        {
+                            //Raise Error
+                            [connection didReceiveError:response];
                             
-                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback,nil];
-                            for(int i =0; i<[args count]; i++)
+                            //If the connection is still active after raising the error wait 2 seconds 
+                            //before polling again so we arent hammering the server
+                            if(connection.isActive)
                             {
-                                int arguementIndex = 2 + i;
-                                NSString *argument = [args objectAtIndex:i];
-                                [invocation setArgument:&argument atIndex:arguementIndex];
+                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:)];
+                                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                                [invocation setSelector:@selector(pollingLoop:data:initializeCallback:)];
+                                [invocation setTarget:self ];
+                                
+                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback, nil];
+                                for(int i =0; i<[args count]; i++)
+                                {
+                                    int arguementIndex = 2 + i;
+                                    NSString *argument = [args objectAtIndex:i];
+                                    [invocation setArgument:&argument atIndex:arguementIndex];
+                                }
+                                [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
                             }
-                            [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
                         }
                     }
                 }

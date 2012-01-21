@@ -30,7 +30,6 @@
     {
         //List the transports in fallback order
         _transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
-        //_transports = [NSArray arrayWithObjects:[SRTransport LongPolling], nil];
     }
     return self;
 }
@@ -46,34 +45,29 @@
     
     [transport start:connection withData:data continueWith:
      ^(id task) {
-         if(block) block(nil);
-         NSLog(@"Continue Task");
-         
-         //remove
-         _transport = transport;
+         if (task != nil)
+         {
+             int next = index + 1;
+             if (next < [_transports count])
+             {
+                 [self resolveTransport:connection data:data taskCompletionSource:block index:next];
+             }
+             else
+             {
+                 [NSException raise:@"TransportInitializeException" format:@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization."];
+             }
+         }
+         else
+         {
+             //Set the active transport
+             _transport = transport;
+             
+             if(block) 
+             {
+                 block(nil);
+             }
+         }
      }];
-    /*continueWith
-    {
-        if (task.isFaulted)
-        {
-            int next = index + 1;
-            if (next < [_transports count])
-            {
-                [self resolveTransport:connection data:data index:next];
-            }
-            else
-            {
-                tcs.setException(task.exception);
-            }
-        }
-        else
-        {
-            //Set the active transport
-            _transport = transport;
-            
-            tcs.setResult(nil);
-        }
-    }*/
 }
 
 - (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block

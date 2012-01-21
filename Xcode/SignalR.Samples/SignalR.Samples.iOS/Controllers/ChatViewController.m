@@ -283,8 +283,8 @@
 
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
 {
-    [messagesReceived insertObject:data atIndex:0];
-    [messageTable reloadData];
+    //[messagesReceived insertObject:data atIndex:0];
+    //[messageTable reloadData];
 }
 
 - (void)SRConnectionDidClose:(SRConnection *)connection
