@@ -43,6 +43,7 @@ typedef void (^onClosed)();
 @property (strong, nonatomic, readwrite) NSString *connectionId;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 @property (strong, nonatomic, readonly) NSString *queryString;
+@property (assign, nonatomic, readonly) BOOL initialized;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 

@@ -22,7 +22,6 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 @property (strong, nonatomic, readonly) NSString *assemblyVersion;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
-@property (assign, nonatomic, readonly) BOOL initialized;
 
 - (void)verifyProtocolVersion:(NSString *)versionString;
 
@@ -109,7 +108,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport LongPolling]];
+    [self start:[SRTransport Auto]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -153,13 +152,12 @@ void (^prepareRequest)(ASIHTTPRequest *);
                  ^(id task) 
                 {
                     NSLog(@"Initialized Task");
+                    _initialized = YES;
+                    
+                    if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                        [self.delegate SRConnectionDidOpen:self];
+                    }
                 }];
-                
-                _initialized = YES;
-                
-                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                    [self.delegate SRConnectionDidOpen:self];
-                }
             }
         }
         else if([response isKindOfClass:[NSError class]])

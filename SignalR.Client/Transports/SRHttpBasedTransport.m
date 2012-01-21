@@ -39,12 +39,12 @@
 #pragma mark -
 #pragma mark SRConnectionTransport Protocol
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))tcs
 {
-    [self onStart:connection data:data];
+    [self onStart:connection data:data initializeCallback:^{ if(tcs) tcs(nil); }];
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
 {
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }

@@ -11,9 +11,11 @@
 #import "SRHttpHelper.h"
 #import "SRConnection.h"
 
+typedef void (^onInitialized)(void);
+
 @interface SRLongPollingTransport()
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback;
 
 #define kTransportName @"longPolling"
 
@@ -30,14 +32,16 @@
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
 {
-    [self pollingLoop:connection data:data];
+    [self pollingLoop:connection data:data initializeCallback:initializeCallback];
 }
 
 //TODO: Check if exception is an IOException
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data
-{
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
+{    
+    if(connection.initialized) initializeCallback = nil;
+    
     NSString *url = connection.url;
     
     if(connection.messageId == nil)
@@ -97,12 +101,12 @@
                         //before polling again so we arent hammering the server
                         if(connection.isActive)
                         {
-                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:)];
+                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:)];
                             NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                            [invocation setSelector:@selector(pollingLoop:data:)];
+                            [invocation setSelector:@selector(pollingLoop:data:initializeCallback:)];
                             [invocation setTarget:self ];
                             
-                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil];
+                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback,nil];
                             for(int i =0; i<[args count]; i++)
                             {
                                 int arguementIndex = 2 + i;
@@ -118,11 +122,18 @@
             {
                 if (continuePolling && !requestAborted && connection.isActive)
                 {
-                    [self pollingLoop:connection data:data];
+                    [self pollingLoop:connection data:data initializeCallback:initializeCallback];
                 }
             }
         }
     }];
+    
+    if (initializeCallback != nil)
+    {
+        // Only set this the first time
+        // TODO: We should delay this until after the http request has been made
+        initializeCallback();
+    }
 }
 
 @end

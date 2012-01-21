@@ -15,7 +15,7 @@
 @property (strong, nonatomic, readonly) NSArray *transports;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data index:(int)index;
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id))block index:(int)index;
 
 @end
 
@@ -29,23 +29,28 @@
     if(self = [super init])
     {
         //List the transports in fallback order
-        _transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
+        //_transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
+        _transports = [NSArray arrayWithObjects:[SRTransport LongPolling], nil];
     }
     return self;
 }
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
 {
-    [self resolveTransport:connection data:data index:0];
+    [self resolveTransport:connection data:data taskCompletionSource:block index:0];
 }
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data index:(int)index
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id))block index:(int)index
 {
     id <SRClientTransport> transport = [_transports objectAtIndex:index];
     
     [transport start:connection withData:data continueWith:
      ^(id task) {
-         NSLog(@"Contine Task");
+         if(block) block(nil);
+         NSLog(@"Continue Task");
+         
+         //remove
+         _transport = transport;
      }];
     /*continueWith
     {
