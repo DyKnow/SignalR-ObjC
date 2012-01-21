@@ -34,7 +34,7 @@
     return self;
 }
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
 {
     [self resolveTransport:connection data:data index:0];
 }
@@ -43,7 +43,10 @@
 {
     id <SRClientTransport> transport = [_transports objectAtIndex:index];
     
-    [transport start:connection withData:data];
+    [transport start:connection withData:data continueWith:
+     ^(id task) {
+         NSLog(@"Contine Task");
+     }];
     /*continueWith
     {
         if (task.isFaulted)
@@ -68,9 +71,9 @@
     }*/
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void (^)(id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
 {
-    [_transport send:connection withData:data onCompletion:block];
+    [_transport send:connection withData:data continueWith:block];
 }
 
 - (void)stop:(SRConnection *)connection

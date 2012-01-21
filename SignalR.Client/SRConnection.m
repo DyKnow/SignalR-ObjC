@@ -109,7 +109,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport LongPolling]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -149,7 +149,11 @@ void (^prepareRequest)(ASIHTTPRequest *);
             if(negotiationResponse.connectionId){
                 _connectionId = negotiationResponse.connectionId;
                 
-                [_transport start:self withData:data];
+                [_transport start:self withData:data continueWith:
+                 ^(id task) 
+                {
+                    NSLog(@"Initialized Task");
+                }];
                 
                 _initialized = YES;
                 
@@ -209,17 +213,17 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)send:(NSString *)message
 {
-    [self send:message onCompletion:nil];
+    [self send:message continueWith:nil];
 }
 
-- (void)send:(NSString *)message onCompletion:(void(^)(id))block
+- (void)send:(NSString *)message continueWith:(void(^)(id))block
 {
     if (!_initialized)
     {
         [NSException raise:@"InvalidOperationException" format:@"Start must be called before data can be sent"];
     }
 
-    [_transport send:self withData:message onCompletion:block];
+    [_transport send:self withData:message continueWith:block];
 }
 
 #pragma mark - 

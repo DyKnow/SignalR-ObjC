@@ -39,7 +39,7 @@
 #pragma mark -
 #pragma mark SRConnectionTransport Protocol
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
 {
     [self onStart:connection data:data];
 }
@@ -49,7 +49,7 @@
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block
 {       
     NSString *url = connection.url;
     url = [url stringByAppendingString:kSendEndPoint];
