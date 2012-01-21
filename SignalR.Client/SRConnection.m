@@ -108,7 +108,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport Auto]];
+    [self start:[SRTransport ServerSentEvents]];
 }
 
 - (void)start:(id <SRClientTransport>)transport

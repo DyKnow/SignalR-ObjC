@@ -48,10 +48,15 @@ typedef enum {
 #pragma mark -
 #pragma mark AsyncStreamReader
 
+#if NS_BLOCKS_AVAILABLE
+typedef void (^onInitialized)(void);
+#endif
+
 @interface AsyncStreamReader : NSObject
 
 @property (strong, nonatomic, readonly)  NSString *stream;
 @property (strong, nonatomic, readonly)  SRConnection *connection;
+@property (copy) onInitialized initializeCallback;
 @property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
 @property (assign, nonatomic, readonly)  BOOL reading;
 
@@ -69,6 +74,7 @@ typedef enum {
 
 @synthesize stream = _stream;
 @synthesize connection = _connection;
+@synthesize initializeCallback = _initializeCallback;
 @synthesize transport = _transport;
 @synthesize reading = _reading;
 
@@ -142,6 +148,11 @@ typedef enum {
             {
                 if([sseEvent.data isEqualToString:@"initialized"])
                 {
+                    if (_initializeCallback != nil)
+                    {
+                        // Mark the connection as started
+                        _initializeCallback();
+                    }
                 }
                 else
                 {
@@ -187,7 +198,7 @@ typedef enum {
 
 @interface SRServerSentEventsTransport ()
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data;
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback;
 
 #define kTransportName @"serverSentEvents"
 #define kReaderKey @"sse.reader"
@@ -205,14 +216,16 @@ typedef enum {
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
 {
-    [self openConnection:connection data:data];
+    [self openConnection:connection data:data initializeCallback:initializeCallback];
 }
 
 //TODO: Check if exception is an IOException
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
 {
+    if(connection.initialized) initializeCallback = nil;
+
     NSString *url = connection.url;
     
     if(connection.messageId == nil)
@@ -269,12 +282,12 @@ typedef enum {
                         //before polling again so we arent hammering the server
                         if(connection.isActive)
                         {
-                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:)];
+                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:)];
                             NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                            [invocation setSelector:@selector(openConnection:data:)];
+                            [invocation setSelector:@selector(openConnection:data:initializeCallback:)];
                             [invocation setTarget:self ];
                             
-                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil];
+                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback, nil];
                             for(int i =0; i<[args count]; i++)
                             {
                                 int arguementIndex = 2 + i;
@@ -290,6 +303,10 @@ typedef enum {
             {
                 //Get the response stream and read it for messages
                 AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self];
+                reader.initializeCallback = ^(){
+                    initializeCallback();
+                };
+                
                 [reader startReading];
                 
                 //Set the reader for this connection
@@ -297,6 +314,13 @@ typedef enum {
             }
         }
     }];
+    
+    if (initializeCallback != nil)
+    {
+        // Only set this the first time
+        // TODO: We should delay this until after the http request has been made
+        //initializeCallback();
+    }
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection

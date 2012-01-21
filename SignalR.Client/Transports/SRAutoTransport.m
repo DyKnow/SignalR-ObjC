@@ -29,8 +29,8 @@
     if(self = [super init])
     {
         //List the transports in fallback order
-        //_transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
-        _transports = [NSArray arrayWithObjects:[SRTransport LongPolling], nil];
+        _transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
+        //_transports = [NSArray arrayWithObjects:[SRTransport LongPolling], nil];
     }
     return self;
 }
