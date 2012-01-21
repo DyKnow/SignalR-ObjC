@@ -304,7 +304,10 @@ typedef void (^onInitialized)(void);
                 //Get the response stream and read it for messages
                 AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self];
                 reader.initializeCallback = ^(){
-                    initializeCallback();
+                    if(initializeCallback != nil)
+                    {
+                        initializeCallback();
+                    }
                 };
                 
                 [reader startReading];
