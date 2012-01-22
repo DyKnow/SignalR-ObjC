@@ -41,10 +41,18 @@
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))tcs
 {
-    [self onStart:connection data:data initializeCallback:^{ if(tcs) tcs(nil); }];
+    [self onStart:connection data:data initializeCallback:^{ if(tcs) tcs(nil); } 
+    errorCallback:^(SRErrorByReferenceBlock block) {
+        NSError *error = nil;
+        if (tcs && block)
+        {
+            block(&error);
+            tcs(error);
+        }
+    }];
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }

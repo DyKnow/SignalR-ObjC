@@ -198,7 +198,9 @@ typedef void (^onInitialized)(void);
 
 @interface SRServerSentEventsTransport ()
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback;
+@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 #define kTransportName @"serverSentEvents"
 #define kReaderKey @"sse.reader"
@@ -207,22 +209,24 @@ typedef void (^onInitialized)(void);
 
 @implementation SRServerSentEventsTransport
 
+@synthesize reconnectDelay = _reconnectDelay;
+
 - (id)init
 {
     if(self = [super initWithTransport:kTransportName])
     {
-
+        _reconnectDelay = 2;
     }
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
-    [self openConnection:connection data:data initializeCallback:initializeCallback];
+    [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
 //TODO: Check if exception is an IOException
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     if(connection.initialized) initializeCallback = nil;
 
@@ -269,10 +273,14 @@ typedef void (^onInitialized)(void);
                 {
                     if([response code] >= 500)
                     {
-                        /*if (errorCallback)
+                        if (errorCallback && connection.initialized ==NO)
                         {
-                            errorCallback(response);
-                        }*/
+                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                            {
+                                *error = response;
+                            };
+                            errorCallback(errorBlock);
+                        }
                     }
                     else
                     {
@@ -291,19 +299,19 @@ typedef void (^onInitialized)(void);
                             //before polling again so we arent hammering the server
                             if(connection.isActive)
                             {
-                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:)];
+                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
                                 NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                                [invocation setSelector:@selector(openConnection:data:initializeCallback:)];
+                                [invocation setSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
                                 [invocation setTarget:self ];
                                 
-                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback, nil];
+                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
                                 for(int i =0; i<[args count]; i++)
                                 {
                                     int arguementIndex = 2 + i;
                                     NSString *argument = [args objectAtIndex:i];
                                     [invocation setArgument:&argument atIndex:arguementIndex];
                                 }
-                                [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
+                                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay invocation:invocation repeats:NO];
                             }
                         }
                     }

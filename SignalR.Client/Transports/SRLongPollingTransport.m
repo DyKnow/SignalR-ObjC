@@ -15,7 +15,7 @@ typedef void (^onInitialized)(void);
 
 @interface SRLongPollingTransport()
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 #define kTransportName @"longPolling"
 
@@ -32,13 +32,13 @@ typedef void (^onInitialized)(void);
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 {
-    [self pollingLoop:connection data:data initializeCallback:initializeCallback];
+    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
 //TODO: Check if exception is an IOException
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {    
     if(connection.initialized) initializeCallback = nil;
     
@@ -88,10 +88,14 @@ typedef void (^onInitialized)(void);
                 {
                     if([response code] >= 500)
                     {
-                        /*if (errorCallback)
+                        if (errorCallback)
                         {
-                            errorCallback(response);
-                        }*/
+                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                            {
+                                *error = response;
+                            };
+                            errorCallback(errorBlock);
+                        }
                     }
                     else
                     {
@@ -110,12 +114,12 @@ typedef void (^onInitialized)(void);
                             //before polling again so we arent hammering the server
                             if(connection.isActive)
                             {
-                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:)];
+                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
                                 NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                                [invocation setSelector:@selector(pollingLoop:data:initializeCallback:)];
+                                [invocation setSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
                                 [invocation setTarget:self ];
                                 
-                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback, nil];
+                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback,errorCallback, nil];
                                 for(int i =0; i<[args count]; i++)
                                 {
                                     int arguementIndex = 2 + i;
@@ -132,7 +136,7 @@ typedef void (^onInitialized)(void);
             {
                 if (continuePolling && !requestAborted && connection.isActive)
                 {
-                    [self pollingLoop:connection data:data initializeCallback:initializeCallback];
+                    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
                 }
             }
         }

@@ -11,13 +11,17 @@
 
 @class ASIHTTPRequest;
 
+#if NS_BLOCKS_AVAILABLE
+typedef void (^SRErrorByReferenceBlock)(NSError **);
+#endif
+
 @interface SRHttpBasedTransport : NSObject <SRClientTransport>
 
 @property (strong, nonatomic, readonly) NSString *transport;
 
 - (id) initWithTransport:(NSString *)transport;
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback;
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 - (BOOL)isRequestAborted:(NSError *)error;
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data;
