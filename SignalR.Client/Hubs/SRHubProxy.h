@@ -27,6 +27,6 @@
 - (id)getMember:(NSString *)name;
 - (void)setMember:(NSString *)name object:(id)value;
 - (void)invoke:(NSString *)method withArgs:(NSArray *)args;
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args onCompletion:(void(^)(id data))responseBlock;
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(void(^)(id data))responseBlock;
 
 @end

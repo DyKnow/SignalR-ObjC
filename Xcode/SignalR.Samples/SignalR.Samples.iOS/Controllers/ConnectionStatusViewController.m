@@ -125,18 +125,18 @@
 {
     if([id isEqualToString:connection.connectionId])
     {
-        [messagesReceived addObject:[NSString stringWithFormat:@"I joined at: %@",when]];
+        [messagesReceived insertObject:[NSString stringWithFormat:@"I joined at: %@",when] atIndex:0];
     }
     else
     {
-        [messagesReceived addObject:[NSString stringWithFormat:@"%@ joined at: %@",id,when]];
+        [messagesReceived insertObject:[NSString stringWithFormat:@"%@ joined at: %@",id,when] atIndex:0];
     }
     [messageTable reloadData];
 }
 
 - (void)leave:(NSString *)id when:(NSString *)when
 {
-    [messagesReceived addObject:[NSString stringWithFormat:@"%@ left at: %@",id,when]];
+    [messagesReceived insertObject:[NSString stringWithFormat:@"%@ left at: %@",id,when] atIndex:0];
     [messageTable reloadData];
 }
 
@@ -151,8 +151,8 @@
 
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
 {
-    [messagesReceived insertObject:data atIndex:0];
-    [messageTable reloadData];
+    //[messagesReceived insertObject:data atIndex:0];
+    //[messageTable reloadData];
 }
 
 - (void)SRConnectionDidClose:(SRConnection *)connection

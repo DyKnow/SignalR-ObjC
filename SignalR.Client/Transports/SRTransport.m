@@ -8,8 +8,9 @@
 
 #import "SRTransport.h"
 
-#import "SRLongPollingTransport.h"
+#import "SRAutoTransport.h"
 #import "SRServerSentEventsTransport.h"
+#import "SRLongPollingTransport.h"
 
 @interface SRTransport()
 
@@ -17,14 +18,16 @@
 
 @implementation SRTransport
 
+@synthesize autoTransport = _autoTransport;
 @synthesize longPolling = _longPolling;
 @synthesize serverSentEvents = _serverSentEvents;
 
-+ (id <SRClientTransport>)LongPolling
++ (id <SRClientTransport>)Auto
 {
     SRTransport *transport = [[SRTransport alloc] init];
+    transport.autoTransport = [[SRAutoTransport alloc] init];
     
-    return transport.longPolling;
+    return transport.autoTransport;
 }
 
 + (id <SRClientTransport>)ServerSentEvents
@@ -34,12 +37,19 @@
     return transport.serverSentEvents;
 }
 
++ (id <SRClientTransport>)LongPolling
+{
+    SRTransport *transport = [[SRTransport alloc] init];
+    
+    return transport.longPolling;
+}
+
 - (id)init
 {
     if (self = [super init])
     {
-        _longPolling = [[SRLongPollingTransport alloc] init];
         _serverSentEvents = [[SRServerSentEventsTransport alloc] init];
+        _longPolling = [[SRLongPollingTransport alloc] init];
     }
     return self;
 }

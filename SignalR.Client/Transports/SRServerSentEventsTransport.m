@@ -48,10 +48,15 @@ typedef enum {
 #pragma mark -
 #pragma mark AsyncStreamReader
 
+#if NS_BLOCKS_AVAILABLE
+typedef void (^onInitialized)(void);
+#endif
+
 @interface AsyncStreamReader : NSObject
 
 @property (strong, nonatomic, readonly)  NSString *stream;
 @property (strong, nonatomic, readonly)  SRConnection *connection;
+@property (copy) onInitialized initializeCallback;
 @property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
 @property (assign, nonatomic, readonly)  BOOL reading;
 
@@ -69,6 +74,7 @@ typedef enum {
 
 @synthesize stream = _stream;
 @synthesize connection = _connection;
+@synthesize initializeCallback = _initializeCallback;
 @synthesize transport = _transport;
 @synthesize reading = _reading;
 
@@ -142,6 +148,11 @@ typedef enum {
             {
                 if([sseEvent.data isEqualToString:@"initialized"])
                 {
+                    if (_initializeCallback != nil)
+                    {
+                        // Mark the connection as started
+                        _initializeCallback();
+                    }
                 }
                 else
                 {
@@ -187,7 +198,9 @@ typedef enum {
 
 @interface SRServerSentEventsTransport ()
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data;
+@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 #define kTransportName @"serverSentEvents"
 #define kReaderKey @"sse.reader"
@@ -196,23 +209,27 @@ typedef enum {
 
 @implementation SRServerSentEventsTransport
 
+@synthesize reconnectDelay = _reconnectDelay;
+
 - (id)init
 {
     if(self = [super initWithTransport:kTransportName])
     {
-
+        _reconnectDelay = 2;
     }
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
-    [self openConnection:connection data:data];
+    [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
 //TODO: Check if exception is an IOException
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data
+- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
+    if(connection.initialized) initializeCallback = nil;
+
     NSString *url = connection.url;
     
     if(connection.messageId == nil)
@@ -254,34 +271,48 @@ typedef enum {
             {
                 if([response isKindOfClass:[NSError class]])
                 {
-                    //Figure out if the request is aborted
-                    requestAborted = [self isRequestAborted:response];
-                    
-                    //Sometimes a connection might have been closed by the server before we get to write anything
-                    //So just try again and don't raise an error
-                    //TODO: check for IOException
-                    if(!requestAborted) //&& !(exception is IOExeption))
+                    if([response code] >= 500)
                     {
-                        //Raise Error
-                        [connection didReceiveError:response];
-                        
-                        //If the connection is still active after raising the error wait 2 seconds 
-                        //before polling again so we arent hammering the server
-                        if(connection.isActive)
+                        if (errorCallback && connection.initialized ==NO)
                         {
-                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:)];
-                            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                            [invocation setSelector:@selector(openConnection:data:)];
-                            [invocation setTarget:self ];
-                            
-                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil];
-                            for(int i =0; i<[args count]; i++)
+                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
-                                int arguementIndex = 2 + i;
-                                NSString *argument = [args objectAtIndex:i];
-                                [invocation setArgument:&argument atIndex:arguementIndex];
+                                *error = response;
+                            };
+                            errorCallback(errorBlock);
+                        }
+                    }
+                    else
+                    {
+                        //Figure out if the request is aborted
+                        requestAborted = [self isRequestAborted:response];
+                        
+                        //Sometimes a connection might have been closed by the server before we get to write anything
+                        //So just try again and don't raise an error
+                        //TODO: check for IOException
+                        if(!requestAborted) //&& !(exception is IOExeption))
+                        {
+                            //Raise Error
+                            [connection didReceiveError:response];
+                            
+                            //If the connection is still active after raising the error wait 2 seconds 
+                            //before polling again so we arent hammering the server
+                            if(connection.isActive)
+                            {
+                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
+                                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                                [invocation setSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
+                                [invocation setTarget:self ];
+                                
+                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
+                                for(int i =0; i<[args count]; i++)
+                                {
+                                    int arguementIndex = 2 + i;
+                                    NSString *argument = [args objectAtIndex:i];
+                                    [invocation setArgument:&argument atIndex:arguementIndex];
+                                }
+                                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay invocation:invocation repeats:NO];
                             }
-                            [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
                         }
                     }
                 }
@@ -290,6 +321,13 @@ typedef enum {
             {
                 //Get the response stream and read it for messages
                 AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self];
+                reader.initializeCallback = ^(){
+                    if(initializeCallback != nil)
+                    {
+                        initializeCallback();
+                    }
+                };
+                
                 [reader startReading];
                 
                 //Set the reader for this connection

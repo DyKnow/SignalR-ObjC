@@ -105,10 +105,10 @@
 
 - (void)invoke:(NSString *)method withArgs:(NSArray *)args
 {
-    [self invoke:method withArgs:args onCompletion:nil];
+    [self invoke:method withArgs:args continueWith:nil];
 }
 
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args onCompletion:(void(^)(id data))responseBlock
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(void(^)(id data))responseBlock
 {
     if([method isEqualToString:@""] || method == nil)
     {
@@ -123,7 +123,7 @@
     
     NSString *value = [[SBJsonWriter new] stringWithObject:hubData];
         
-    [_connection send:value onCompletion:
+    [_connection send:value continueWith:
      ^(id response) 
     {
 #if DEBUG

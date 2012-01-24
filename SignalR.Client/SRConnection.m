@@ -22,7 +22,6 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 @property (strong, nonatomic, readonly) NSString *assemblyVersion;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
-@property (assign, nonatomic, readonly) BOOL initialized;
 
 - (void)verifyProtocolVersion:(NSString *)versionString;
 
@@ -109,7 +108,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport Auto]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -149,17 +148,23 @@ void (^prepareRequest)(ASIHTTPRequest *);
             if(negotiationResponse.connectionId){
                 _connectionId = negotiationResponse.connectionId;
                 
-                [_transport start:self withData:data];
-                
-                _initialized = YES;
-                
-                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                    [self.delegate SRConnectionDidOpen:self];
-                }
+                [_transport start:self withData:data continueWith:
+                 ^(id task) 
+                {
+                    NSLog(@"Initialized Task");
+                    _initialized = YES;
+                    
+                    if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                        [self.delegate SRConnectionDidOpen:self];
+                    }
+                }];
             }
         }
         else if([response isKindOfClass:[NSError class]])
         {
+#if DEBUG
+            NSLog(@"Negotiation Error: %@",response);
+#endif
             [self didReceiveError:response];
         }
     }];
@@ -209,17 +214,17 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)send:(NSString *)message
 {
-    [self send:message onCompletion:nil];
+    [self send:message continueWith:nil];
 }
 
-- (void)send:(NSString *)message onCompletion:(void(^)(id))block
+- (void)send:(NSString *)message continueWith:(void(^)(id))block
 {
     if (!_initialized)
     {
         [NSException raise:@"InvalidOperationException" format:@"Start must be called before data can be sent"];
     }
 
-    [_transport send:self withData:message onCompletion:block];
+    [_transport send:self withData:message continueWith:block];
 }
 
 #pragma mark - 

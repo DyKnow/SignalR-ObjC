@@ -43,6 +43,7 @@ typedef void (^onClosed)();
 @property (strong, nonatomic, readwrite) NSString *connectionId;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 @property (strong, nonatomic, readonly) NSString *queryString;
+@property (assign, nonatomic, readonly) BOOL initialized;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -56,7 +57,7 @@ typedef void (^onClosed)();
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
 - (void)send:(NSString *)message;
-- (void)send:(NSString *)message onCompletion:(void(^)(id))block;
+- (void)send:(NSString *)message continueWith:(void(^)(id))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;

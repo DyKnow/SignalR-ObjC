@@ -183,7 +183,7 @@
     [self clearMessages];
     [self clearUsers];
     
-    [hub invoke:@"GetUsers" withArgs:[NSArray arrayWithObjects:nil] onCompletion:^(id users) {
+    [hub invoke:@"GetUsers" withArgs:[NSArray arrayWithObjects:nil] continueWith:^(id users) {
         for(id user in users)
         {
             if([user isKindOfClass:[NSDictionary class]]){
@@ -283,8 +283,8 @@
 
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
 {
-    [messagesReceived insertObject:data atIndex:0];
-    [messageTable reloadData];
+    //[messagesReceived insertObject:data atIndex:0];
+    //[messageTable reloadData];
 }
 
 - (void)SRConnectionDidClose:(SRConnection *)connection

@@ -39,17 +39,25 @@
 #pragma mark -
 #pragma mark SRConnectionTransport Protocol
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))tcs
 {
-    [self onStart:connection data:data];
+    [self onStart:connection data:data initializeCallback:^{ if(tcs) tcs(nil); } 
+    errorCallback:^(SRErrorByReferenceBlock block) {
+        NSError *error = nil;
+        if (tcs && block)
+        {
+            block(&error);
+            tcs(error);
+        }
+    }];
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block
 {       
     NSString *url = connection.url;
     url = [url stringByAppendingString:kSendEndPoint];

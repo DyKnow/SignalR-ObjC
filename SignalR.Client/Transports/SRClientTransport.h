@@ -15,8 +15,8 @@
  **/
 @protocol SRClientTransport <NSObject>
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data;
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void(^)(id))block;
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block;
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block;
 - (void)stop:(SRConnection *)connection;
 
 @end

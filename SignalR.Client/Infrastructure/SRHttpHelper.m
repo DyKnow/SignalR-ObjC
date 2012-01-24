@@ -132,7 +132,14 @@ static id sharedHttpRequestManager = nil;
                 NSLog(@"Code => %d",[request responseStatusCode]);
                 NSLog(@"Status => %@",[request responseStatusMessage]);
 #endif
-                block([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+                if([request responseStatusCode] != 200)
+                {
+                    block([NSError errorWithDomain:[request responseStatusMessage] code:[request responseStatusCode] userInfo:nil]);
+                }
+                else
+                {
+                    block([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+                }
             }];
         }
     }
@@ -144,7 +151,14 @@ static id sharedHttpRequestManager = nil;
         NSLog(@"Status => %@",[request responseStatusMessage]);
 #endif
         if(block){
-            block([request responseString]);
+            if([request responseStatusCode] != 200)
+            {
+                block([NSError errorWithDomain:[request responseStatusMessage] code:[request responseStatusCode] userInfo:nil]);
+            }
+            else
+            {
+                block([request responseString]);
+            }
         }
     }];
     [request setFailedBlock:^{

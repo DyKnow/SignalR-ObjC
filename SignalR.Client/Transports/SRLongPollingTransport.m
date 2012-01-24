@@ -11,9 +11,11 @@
 #import "SRHttpHelper.h"
 #import "SRConnection.h"
 
+typedef void (^onInitialized)(void);
+
 @interface SRLongPollingTransport()
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 #define kTransportName @"longPolling"
 
@@ -30,14 +32,16 @@
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 {
-    [self pollingLoop:connection data:data];
+    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
 //TODO: Check if exception is an IOException
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data
-{
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
+{    
+    if(connection.initialized) initializeCallback = nil;
+    
     NSString *url = connection.url;
     
     if(connection.messageId == nil)
@@ -59,7 +63,6 @@
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
 
-        //TODO:isFaulted is not correct there must be a better way to do this
         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                           [response isEqualToString:@""] || response == nil ||
                           [response isEqualToString:@"null"]);
@@ -82,34 +85,48 @@
             {
                 if([response isKindOfClass:[NSError class]])
                 {
-                    //Figure out if the request is aborted
-                    requestAborted = [self isRequestAborted:response];
-                    
-                    //Sometimes a connection might have been closed by the server before we get to write anything
-                    //So just try again and don't raise an error
-                    //TODO: check for IOException
-                    if(!requestAborted) //&& !(exception is IOExeption))
+                    if([response code] >= 500)
                     {
-                        //Raise Error
-                        [connection didReceiveError:response];
-                        
-                        //If the connection is still active after raising the error wait 2 seconds 
-                        //before polling again so we arent hammering the server
-                        if(connection.isActive)
+                        if (errorCallback)
                         {
-                            NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:)];
-                            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                            [invocation setSelector:@selector(pollingLoop:data:)];
-                            [invocation setTarget:self ];
-                            
-                            NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil];
-                            for(int i =0; i<[args count]; i++)
+                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
-                                int arguementIndex = 2 + i;
-                                NSString *argument = [args objectAtIndex:i];
-                                [invocation setArgument:&argument atIndex:arguementIndex];
+                                *error = response;
+                            };
+                            errorCallback(errorBlock);
+                        }
+                    }
+                    else
+                    {
+                        //Figure out if the request is aborted
+                        requestAborted = [self isRequestAborted:response];
+                        
+                        //Sometimes a connection might have been closed by the server before we get to write anything
+                        //So just try again and don't raise an error
+                        //TODO: check for IOException
+                        if(!requestAborted) //&& !(exception is IOExeption))
+                        {
+                            //Raise Error
+                            [connection didReceiveError:response];
+                            
+                            //If the connection is still active after raising the error wait 2 seconds 
+                            //before polling again so we arent hammering the server
+                            if(connection.isActive)
+                            {
+                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
+                                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                                [invocation setSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
+                                [invocation setTarget:self ];
+                                
+                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback,errorCallback, nil];
+                                for(int i =0; i<[args count]; i++)
+                                {
+                                    int arguementIndex = 2 + i;
+                                    NSString *argument = [args objectAtIndex:i];
+                                    [invocation setArgument:&argument atIndex:arguementIndex];
+                                }
+                                [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
                             }
-                            [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
                         }
                     }
                 }
@@ -118,11 +135,17 @@
             {
                 if (continuePolling && !requestAborted && connection.isActive)
                 {
-                    [self pollingLoop:connection data:data];
+                    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
                 }
             }
         }
     }];
+    
+    if (initializeCallback != nil)
+    {
+        // Only set this the first time
+        initializeCallback();
+    }
 }
 
 @end
