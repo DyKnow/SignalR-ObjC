@@ -18,17 +18,46 @@ See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki)
 NOTE: SignalR-ObjC uses Automatic Reference Counting.
 
 ### Method 1:
-Copy the contents of the SignalR.Client and Vendor Folders into your project and import SignalR.h
-
-Note: While SignalR-ObjC uses arc it makes use of Vendor Projects that do not.
-For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to
--fno-objc-arc 
-for any files that have the prefix ASI and for Reachability.m
-
-You should now be able to click build with no errors.
+1. Copy the contents of the SignalR.Client and Vendor Folders into your project
+	- Note: While SignalR-ObjC uses arc it makes use of Vendor Projects that do not.
+		- For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to ```-fno-objc-arc```
+		- for any files that have the prefix ASI and for Reachability.m
+1. In your pch file or where every you intend to use SignalR ```#import SignalR.h```
+1. Add Framework Dependencies from [ASIHttpRequest](http://allseeing-i.com/ASIHTTPRequest/Setup-instructions)
+	- For iOS
+		- CFNetwork.framework
+		- SystemConfiguration.framework
+ 		- MobileCoreServices.framework
+  		- CoreGraphics.framework
+   		- libz.dylib.
+	- For Mac OSX
+ 		- CoreServices.framework
+ 		- SystemConfiguration.framework
+   		- libz.dylib.
+1. Build and Run your project with no errors
 
 ### Method 2:
+Open the [SignalR.Framework XCode Project](https://github.com/DyKnow/SignalR-ObjC/tree/master/Xcode/SignalR.Framework) 
 
+1. Choose the appropriate build target SignalR-iOS or SignalR-OSX
+1. Verify that the Project's Base SDK setting under Build Settings is correct, Latest iOS for the iOS target, Latest Mac OS for the mac target
+1. Run the target
+1. Expand the Products Group
+1. Right Click on the product that corresponds to the target you built against, and choose show in finder
+1. Copy the SignalR-iOS.framework or SignalR-OSX.framework to your project
+1. In your pch file or where every you intend to use SignalR ```#import <SignalR-iOS/SignalR.h>``` or ```#import <SignalR-OSX/SignalR.h>```
+1. Add Framework Dependencies from [ASIHttpRequest](http://allseeing-i.com/ASIHTTPRequest/Setup-instructions)
+	- For iOS
+		- CFNetwork.framework
+		- SystemConfiguration.framework
+ 		- MobileCoreServices.framework
+  		- CoreGraphics.framework
+   		- libz.dylib.
+	- For Mac OSX
+ 		- CoreServices.framework
+ 		- SystemConfiguration.framework
+   		- libz.dylib.
+1. Build and Run your project with no errors
 
 ## LICENSE
 [MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
