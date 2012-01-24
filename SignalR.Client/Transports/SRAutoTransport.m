@@ -15,7 +15,7 @@
 @property (strong, nonatomic, readonly) NSArray *transports;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data index:(int)index;
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id))block index:(int)index;
 
 @end
 
@@ -34,43 +34,45 @@
     return self;
 }
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
 {
-    [self resolveTransport:connection data:data index:0];
+    [self resolveTransport:connection data:data taskCompletionSource:block index:0];
 }
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data index:(int)index
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id))block index:(int)index
 {
     id <SRClientTransport> transport = [_transports objectAtIndex:index];
     
-    [transport start:connection withData:data];
-    /*continueWith
-    {
-        if (task.isFaulted)
-        {
-            int next = index + 1;
-            if (next < [_transports count])
-            {
-                [self resolveTransport:connection data:data index:next];
-            }
-            else
-            {
-                tcs.setException(task.exception);
-            }
-        }
-        else
-        {
-            //Set the active transport
-            _transport = transport;
-            
-            tcs.setResult(nil);
-        }
-    }*/
+    [transport start:connection withData:data continueWith:
+     ^(id task) {
+         if (task != nil)
+         {
+             int next = index + 1;
+             if (next < [_transports count])
+             {
+                 [self resolveTransport:connection data:data taskCompletionSource:block index:next];
+             }
+             else
+             {
+                 [NSException raise:@"TransportInitializeException" format:@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization."];
+             }
+         }
+         else
+         {
+             //Set the active transport
+             _transport = transport;
+             
+             if(block) 
+             {
+                 block(nil);
+             }
+         }
+     }];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data onCompletion:(void (^)(id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
 {
-    [_transport send:connection withData:data onCompletion:block];
+    [_transport send:connection withData:data continueWith:block];
 }
 
 - (void)stop:(SRConnection *)connection

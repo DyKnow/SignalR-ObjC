@@ -9,15 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
-@class SRLongPollingTransport;
-@class SRServerSentEventsTransport;
-
 @interface SRTransport : NSObject
 
-@property (strong, nonatomic, readonly) id <SRClientTransport> longPolling;
+@property (strong, nonatomic, readwrite) id <SRClientTransport> autoTransport;
 @property (strong, nonatomic, readonly) id <SRClientTransport> serverSentEvents;
+@property (strong, nonatomic, readonly) id <SRClientTransport> longPolling;
 
-+ (id <SRClientTransport>)LongPolling;
++ (id <SRClientTransport>)Auto;
 + (id <SRClientTransport>)ServerSentEvents;
++ (id <SRClientTransport>)LongPolling;
 
 @end
