@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		390505A014D096CA0054EB14 /* SRClientTransport+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 3905059F14D096CA0054EB14 /* SRClientTransport+Constants.h */; };
 		3936506114C671C5009A5142 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3936505F14C671C5009A5142 /* InfoPlist.strings */; };
 		393651D514C676D8009A5142 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 393651D414C676D8009A5142 /* libz.dylib */; };
 		393651D614C6770C009A5142 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393651C614C67465009A5142 /* Cocoa.framework */; };
@@ -203,6 +204,7 @@
 
 /* Begin PBXFileReference section */
 		390123AA14903C7D00BFD302 /* SignalR-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SignalR-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3905059F14D096CA0054EB14 /* SRClientTransport+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SRClientTransport+Constants.h"; sourceTree = "<group>"; };
 		3936505414C671C5009A5142 /* SignalR-OSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "SignalR-OSX.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3936505E14C671C5009A5142 /* SignalR-OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR-OSX-Info.plist"; sourceTree = "<group>"; };
 		3936506014C671C5009A5142 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -478,6 +480,7 @@
 			children = (
 				3936520414C678AA009A5142 /* SRAutoTransport.h */,
 				3936520514C678AA009A5142 /* SRAutoTransport.m */,
+				3905059F14D096CA0054EB14 /* SRClientTransport+Constants.h */,
 				3936520614C678AA009A5142 /* SRClientTransport.h */,
 				3936520714C678AA009A5142 /* SRHttpBasedTransport.h */,
 				3936520814C678AA009A5142 /* SRHttpBasedTransport.m */,
@@ -639,6 +642,7 @@
 				3936530614C678AA009A5142 /* SBJsonTokeniser.h in Headers */,
 				3936530A14C678AA009A5142 /* SBJsonUTF8Stream.h in Headers */,
 				3936530E14C678AA009A5142 /* SBJsonWriter.h in Headers */,
+				390505A014D096CA0054EB14 /* SRClientTransport+Constants.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

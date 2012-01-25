@@ -126,6 +126,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3905059D14D0965D0054EB14 /* SRClientTransport+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SRClientTransport+Constants.h"; sourceTree = "<group>"; };
 		3995198114C63DCA00B33280 /* SignalR.Samples.OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3995198B14C63DCB00B33280 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
 		3995198D14C63DCB00B33280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -412,6 +413,7 @@
 			children = (
 				39951A9E14C6425600B33280 /* SRAutoTransport.h */,
 				39951A9F14C6425600B33280 /* SRAutoTransport.m */,
+				3905059D14D0965D0054EB14 /* SRClientTransport+Constants.h */,
 				39951AA014C6425600B33280 /* SRClientTransport.h */,
 				39951AA114C6425600B33280 /* SRHttpBasedTransport.h */,
 				39951AA214C6425600B33280 /* SRHttpBasedTransport.m */,

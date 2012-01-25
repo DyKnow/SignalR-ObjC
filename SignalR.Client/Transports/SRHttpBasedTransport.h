@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransport.h"
+#import "SRClientTransport+Constants.h"
 
 @class ASIHTTPRequest;
 
