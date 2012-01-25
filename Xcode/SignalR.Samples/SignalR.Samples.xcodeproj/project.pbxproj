@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		395F3ECB14D0508200BD7F20 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 395F3ECA14D0508200BD7F20 /* SRWebSocket.m */; };
+		395F3ECF14D0508A00BD7F20 /* SRWebSocketsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 395F3ECE14D0508A00BD7F20 /* SRWebSocketsTransport.m */; };
+		395F3ED714D0509C00BD7F20 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 395F3ED414D0509C00BD7F20 /* GCDAsyncSocket.m */; };
 		3995198E14C63DCB00B33280 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3995198C14C63DCB00B33280 /* InfoPlist.strings */; };
 		3995199014C63DCB00B33280 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995198F14C63DCB00B33280 /* main.m */; };
 		3995199414C63DCB00B33280 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3995199214C63DCB00B33280 /* Credits.rtf */; };
@@ -126,6 +129,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		395F3EC914D0508200BD7F20 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
+		395F3ECA14D0508200BD7F20 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
+		395F3ECD14D0508A00BD7F20 /* SRWebSocketsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketsTransport.h; sourceTree = "<group>"; };
+		395F3ECE14D0508A00BD7F20 /* SRWebSocketsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketsTransport.m; sourceTree = "<group>"; };
+		395F3ED314D0509C00BD7F20 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
+		395F3ED414D0509C00BD7F20 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
 		3995198114C63DCA00B33280 /* SignalR.Samples.OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3995198B14C63DCB00B33280 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
 		3995198D14C63DCB00B33280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -294,6 +303,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		395F3EC814D0508200BD7F20 /* Websockets */ = {
+			isa = PBXGroup;
+			children = (
+				395F3EC914D0508200BD7F20 /* SRWebSocket.h */,
+				395F3ECA14D0508200BD7F20 /* SRWebSocket.m */,
+			);
+			path = Websockets;
+			sourceTree = "<group>";
+		};
+		395F3ED014D0509C00BD7F20 /* CocoaAsyncSocket */ = {
+			isa = PBXGroup;
+			children = (
+				395F3ED114D0509C00BD7F20 /* GCD */,
+			);
+			path = CocoaAsyncSocket;
+			sourceTree = "<group>";
+		};
+		395F3ED114D0509C00BD7F20 /* GCD */ = {
+			isa = PBXGroup;
+			children = (
+				395F3ED314D0509C00BD7F20 /* GCDAsyncSocket.h */,
+				395F3ED414D0509C00BD7F20 /* GCDAsyncSocket.m */,
+			);
+			path = GCD;
+			sourceTree = "<group>";
+		};
 		3995198914C63DCB00B33280 /* SignalR.Samples.OSX */ = {
 			isa = PBXGroup;
 			children = (
@@ -395,6 +430,7 @@
 		39951A8C14C6425600B33280 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				395F3EC814D0508200BD7F20 /* Websockets */,
 				39951A8D14C6425600B33280 /* NSDictionary+QueryString.h */,
 				39951A8E14C6425600B33280 /* NSDictionary+QueryString.m */,
 				39951A8F14C6425600B33280 /* NSString+QueryString.h */,
@@ -410,6 +446,8 @@
 		39951A9D14C6425600B33280 /* Transports */ = {
 			isa = PBXGroup;
 			children = (
+				395F3ECD14D0508A00BD7F20 /* SRWebSocketsTransport.h */,
+				395F3ECE14D0508A00BD7F20 /* SRWebSocketsTransport.m */,
 				39951A9E14C6425600B33280 /* SRAutoTransport.h */,
 				39951A9F14C6425600B33280 /* SRAutoTransport.m */,
 				39951AA014C6425600B33280 /* SRClientTransport.h */,
@@ -428,6 +466,7 @@
 		39951AA914C6425600B33280 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				395F3ED014D0509C00BD7F20 /* CocoaAsyncSocket */,
 				39951AAA14C6425600B33280 /* ASIHTTPRequest */,
 				39951AC114C6425700B33280 /* DKHttpHelper */,
 				39951AC414C6425700B33280 /* Reachability */,
@@ -807,6 +846,9 @@
 				39951B4014C6425700B33280 /* SBJsonUTF8Stream.m in Sources */,
 				39951B4214C6425700B33280 /* SBJsonWriter.m in Sources */,
 				39951B4C14C6430000B33280 /* Router.m in Sources */,
+				395F3ECB14D0508200BD7F20 /* SRWebSocket.m in Sources */,
+				395F3ECF14D0508A00BD7F20 /* SRWebSocketsTransport.m in Sources */,
+				395F3ED714D0509C00BD7F20 /* GCDAsyncSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
