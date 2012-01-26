@@ -37,6 +37,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 @synthesize initialized = _initialized;
 
 //public
+@synthesize started = _started;
 @synthesize received = _received;
 @synthesize error = _error;
 @synthesize closed = _closed;
@@ -154,6 +155,10 @@ void (^prepareRequest)(ASIHTTPRequest *);
                     NSLog(@"Initialized Task");
                     _initialized = YES;
                     
+                    if(_started != nil)
+                    {
+                        self.started();
+                    }
                     if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
                         [self.delegate SRConnectionDidOpen:self];
                     }

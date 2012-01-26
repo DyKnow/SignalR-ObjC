@@ -22,6 +22,7 @@
 @end
 
 #if NS_BLOCKS_AVAILABLE
+typedef void (^onStarted)();
 typedef NSString* (^onSending)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
@@ -30,6 +31,7 @@ typedef void (^onClosed)();
 
 @interface SRConnection : NSObject 
 
+@property (copy) onStarted started;
 @property (copy) onReceived received;
 @property (copy) onError error; 
 @property (copy) onClosed closed;
