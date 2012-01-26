@@ -54,6 +54,7 @@ static id sharedHttpRequestManager = nil;
     
     [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
     ASIFormDataRequest *_request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:url]];
+    [_request setTimeOutSeconds:20];
     [_request setRequestMethod:@"GET"];
     for(NSString *key in dict)
     {
@@ -103,6 +104,7 @@ static id sharedHttpRequestManager = nil;
     
     [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
     ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
+    [_request setTimeOutSeconds:20];
     [_request setRequestMethod:@"POST"];
     [_request addRequestHeader:@"Accept" value:@"application/json"];
     [_request addRequestHeader:@"Content-Type" value:@"application/x-www-form-urlencoded"];
