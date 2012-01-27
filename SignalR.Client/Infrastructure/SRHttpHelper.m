@@ -13,7 +13,9 @@
 #import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 
-@interface SRHttpHelper()
+@interface SRHttpHelper() <NSStreamDelegate>
+
+@property (copy) SRHttpResponseBlock steamingBlock;
 
 #pragma mark - 
 #pragma mark GET Requests Implementation
@@ -50,6 +52,8 @@
 static id sharedHttpRequestManager = nil;
 
 @implementation SRHttpHelper
+
+@synthesize steamingBlock = _steamingBlock;
 
 + (id)sharedHttpRequestManager
 {
@@ -91,9 +95,31 @@ static id sharedHttpRequestManager = nil;
     {
         requestPreparer(request);
     }
-    //AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    //operation.
-    //[operation start];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
+    [oStream setDelegate:self];
+    if(block)
+    {
+        _steamingBlock = block;
+    }
+    operation.outputStream = oStream;
+    [operation start];
+}
+
+- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
+{
+    if(_steamingBlock)
+    {
+        SRHttpResponse *response = [[SRHttpResponse alloc] init];
+        //response.urlRequest = operation.request;
+        //response.urlResponse = operation.response;
+        NSData *data = [(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+        [(NSOutputStream *)stream setProperty:[NSNumber numberWithInteger:[data length]] forKey:NSStreamFileCurrentOffsetKey];
+        response.response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"NEW DATA %@",response.response);
+
+        //_steamingBlock(response);
+    }
 }
 
 #pragma mark - 

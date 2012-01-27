@@ -10,6 +10,10 @@
 
 @class SRHttpResponse;
 
+#if NS_BLOCKS_AVAILABLE
+typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
+#endif
+
 @interface SRHttpHelper : NSObject
 
 + (id)sharedHttpRequestManager;
