@@ -46,26 +46,99 @@ typedef enum {
 @end
 
 #pragma mark -
+#pragma mark ChunkBuffer
+
+@interface ChunkBuffer : NSObject 
+
+@property (assign, nonatomic, readwrite) int offset;
+@property (strong, nonatomic, readwrite) NSMutableString *buffer;
+@property (strong, nonatomic, readwrite) NSMutableString *lineBuilder;
+
+- (BOOL)hasChunks;
+- (NSString *)readLine;
+- (void)add:(id)buffer length:(int)length;
+
+@end
+
+@implementation ChunkBuffer
+
+@synthesize offset = _offset;
+@synthesize buffer = _buffer;
+@synthesize lineBuilder = _lineBuilder;
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        _buffer = [NSMutableString string];
+        _lineBuilder = [NSMutableString string];
+    }
+    return self;
+}
+
+- (BOOL)hasChunks
+{
+    return (_offset < [_buffer length]);
+}
+
+- (NSString *)readLine
+{
+    for (int i = _offset; i < [_buffer length]; i++, _offset++)
+    {
+        if ([_buffer characterAtIndex:i] == '\n')
+        {
+            NSRange range;
+            range.location = 0;
+            range.length = _offset + 1;
+            [_buffer deleteCharactersInRange:range];
+            NSString *line = [NSString stringWithString:_lineBuilder];
+
+            [_lineBuilder setString:@""];
+            _offset = 0;
+            
+            return line;
+        }
+        [_lineBuilder appendFormat:[NSString stringWithFormat:@"%C",[_buffer characterAtIndex:i]]];        
+    }
+    
+    return nil;
+}
+
+- (void)add:(NSData *)buffer length:(int)length
+{
+    [_buffer appendString:[[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding]];
+}
+
+@end
+
+#pragma mark -
 #pragma mark AsyncStreamReader
 
 #if NS_BLOCKS_AVAILABLE
 typedef void (^onInitialized)(void);
+typedef void (^onClose)(void);
 #endif
 
-@interface AsyncStreamReader : NSObject
+@interface AsyncStreamReader : NSObject <NSStreamDelegate>
 
-@property (strong, nonatomic, readonly)  NSString *stream;
-@property (strong, nonatomic, readonly)  SRConnection *connection;
+@property (strong, nonatomic, readonly)  NSOutputStream *stream;
+@property (strong, nonatomic, readonly)  ChunkBuffer *buffer;
 @property (copy) onInitialized initializeCallback;
-@property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
+@property (copy) onClose closeCallback;
+@property (strong, nonatomic, readonly)  SRConnection *connection;
+@property (assign, nonatomic, readonly)  int processingQueue;
 @property (assign, nonatomic, readonly)  BOOL reading;
+@property (assign, nonatomic, readonly)  BOOL processingBuffer;
+
+@property (strong, nonatomic, readonly)  SRServerSentEventsTransport *transport;
+@property (assign, nonatomic, readwrite) int processedBytes;
 
 - (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport;
 
 - (void)startReading;
 - (void)stopReading;
-- (void)readLoop;
-- (void)processChunks:(NSScanner *)scanner;
+- (void)processBuffer;
+- (void)processChunks;
 - (BOOL)tryParseEvent:(NSString *)line sseEvent:(SseEvent **)sseEvent;
 
 @end
@@ -73,25 +146,34 @@ typedef void (^onInitialized)(void);
 @implementation AsyncStreamReader
 
 @synthesize stream = _stream;
-@synthesize connection = _connection;
+@synthesize buffer = _buffer;
 @synthesize initializeCallback = _initializeCallback;
-@synthesize transport = _transport;
+@synthesize closeCallback = _closeCallback;
+@synthesize connection = _connection;
+@synthesize processingQueue = _processingQueue;
 @synthesize reading = _reading;
+@synthesize processingBuffer = _processingBuffer;
 
-- (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport
+@synthesize transport = _transport;
+@synthesize processedBytes = _processedBytes;
+
+- (id)initWithStream:(NSOutputStream *)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport
 {
     if (self = [super init])
     {
         _stream = steam;
+        _stream.delegate = self;
+        _buffer = [[ChunkBuffer alloc] init];
         _connection = connection;
         _transport = transport;
+        _processedBytes = 0;
     }
     return self;
 }
+
 - (void)startReading
 {
     _reading = YES;
-    [self readLoop];
 }
 
 - (void)stopReading
@@ -99,32 +181,90 @@ typedef void (^onInitialized)(void);
     _reading = NO;
 }
 
-- (void)readLoop
+- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
 {
-    if(!_reading)
+    if(_reading)
+    {
+        NSMutableData *buffer = [NSMutableData dataWithData:[(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
+        [buffer replaceBytesInRange:NSMakeRange(0, _processedBytes) withBytes:NULL length:0];
+        
+        int read = [buffer length];
+                
+        if(read > 0)
+        {
+            // Put chunks in the buffer
+            [_buffer add:buffer length:read];
+            _processedBytes = _processedBytes + [buffer length];
+        }
+        
+        /*if (read == 0)
+        {
+            // Stop any reading we're doing
+            [self stopReading];
+            
+            // Close the stream
+            [stream close];
+            
+            //Call the close callback
+            _closeCallback();
+            return;
+        }*/
+        
+        [self processBuffer];
+    }
+}
+
+- (void)processBuffer
+{
+    if (!_reading)
     {
         return;
     }
     
-    NSScanner *scanner = [[NSScanner alloc] initWithString:_stream];
-    [self processChunks:scanner];
+    if (_processingBuffer)
+    {
+        // Increment the number of times we should process messages
+        _processingQueue++;
+        return;
+    }
+    
+    _processingBuffer = true;
+    
+    int total = MAX(1, _processingQueue);
+
+    for (int i = 0; i < total; i++)
+    {
+        if (!_reading)
+        {
+            return;
+        }
+        
+        [self processChunks];
+    }
+    
+    if (_processingQueue > 0)
+    {
+        _processingQueue -= total;
+    }
+    
+    _processingBuffer = false;
 }
 
-- (void)processChunks:(NSScanner *)scanner
+- (void)processChunks
 {
-    while (_reading && ![scanner isAtEnd]) 
+    while (_reading && [_buffer hasChunks])
     {
-        NSString *line = nil;
-        [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
+        NSString *line = [_buffer readLine];
         
-        if(line == nil)
+        // No new lines in the buffer so stop processing
+        if (line == nil)
         {
             break;
         }
         
-        if(!_reading)
+        if (!_reading)
         {
-            break;
+            return;
         }
         
         SseEvent *sseEvent = nil;
@@ -191,8 +331,6 @@ typedef void (^onInitialized)(void);
 
 @end
 
-
-
 #pragma mark -
 #pragma mark ServerSentEventsTransport
 
@@ -251,89 +389,60 @@ typedef void (^onInitialized)(void);
          NSLog(@"openConnectionDidReceiveResponse: %@",httpResponse.response);
 #endif
         BOOL isFaulted = ([httpResponse.response isKindOfClass:[NSError class]] || 
-                           [httpResponse.response isEqualToString:@""] || httpResponse.response == nil ||
-                           [httpResponse.response isEqualToString:@"null"]);
+                          httpResponse.response == nil);
         
-        @try 
+        if (isFaulted)
         {
-            if([httpResponse.response isKindOfClass:[NSString class]])
+            if ([httpResponse.response isKindOfClass:[NSError class]])
             {
-                if(!isFaulted)
+                if(![self isRequestAborted:httpResponse.response]) //&& some interlocked code
                 {
-                    [self onMessage:connection response:httpResponse.response];
-                }
-            }
-        }
-        @finally 
-        {
-            BOOL requestAborted = NO;
-            
-            if(isFaulted)
-            {
-                if([httpResponse.response isKindOfClass:[NSError class]])
-                {
-                    if([httpResponse.response code] >= 500)
+                    if (errorCallback)
                     {
-                        if (errorCallback && connection.initialized ==NO)
+                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                         {
-                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
-                            {
-                                *error = httpResponse.response;
-                            };
-                            errorCallback(errorBlock);
-                        }
+                            *error = httpResponse.response;
+                        };
+                        errorCallback(errorBlock);
                     }
                     else
                     {
-                        //Figure out if the request is aborted
-                        requestAborted = [self isRequestAborted:httpResponse.response];
-                        
-                        //Sometimes a connection might have been closed by the server before we get to write anything
-                        //So just try again and don't raise an error
-                        //TODO: check for IOException
-                        if(!requestAborted) //&& !(exception is IOExeption))
-                        {
-                            //Raise Error
-                            [connection didReceiveError:httpResponse.response];
-                            
-                            //If the connection is still active after raising the error wait 2 seconds 
-                            //before polling again so we arent hammering the server
-                            if(connection.isActive)
-                            {
-                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
-                                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                                [invocation setSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
-                                [invocation setTarget:self ];
-                                
-                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
-                                for(int i =0; i<[args count]; i++)
-                                {
-                                    int arguementIndex = 2 + i;
-                                    NSString *argument = [args objectAtIndex:i];
-                                    [invocation setArgument:&argument atIndex:arguementIndex];
-                                }
-                                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay invocation:invocation repeats:NO];
-                            }
-                        }
+                        [connection didReceiveError:httpResponse.response];
                     }
                 }
             }
-            else
+        }
+        else
+        {
+            //Get the response stream and read it for messages
+            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:httpResponse.response connection:connection transport:self];
+            reader.initializeCallback = ^()
             {
-                //Get the response stream and read it for messages
-                AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:httpResponse.response connection:connection transport:self];
-                reader.initializeCallback = ^(){
-                    if(initializeCallback != nil)
-                    {
-                        initializeCallback();
-                    }
-                };
+                if(initializeCallback != nil)
+                {
+                    initializeCallback();
+                }
+            };
+            reader.closeCallback = ^()
+            {
+                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
+                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                [invocation setSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
+                [invocation setTarget:self ];
                 
-                [reader startReading];
-                
-                //Set the reader for this connection
-                [connection.items setObject:reader forKey:kReaderKey];
-            }
+                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
+                for(int i =0; i<[args count]; i++)
+                {
+                    int arguementIndex = 2 + i;
+                    NSString *argument = [args objectAtIndex:i];
+                    [invocation setArgument:&argument atIndex:arguementIndex];
+                }
+                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay invocation:invocation repeats:NO];
+            };
+            [reader startReading];
+            
+            //Set the reader for this connection
+            [connection.items setObject:reader forKey:kReaderKey];
         }
     }];
 }
