@@ -10,7 +10,7 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "ASIHTTPRequest.h"
+#import "SRHttpResponse.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 
@@ -57,7 +57,7 @@
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(SRHttpResponse *response))block
 {       
     NSString *url = connection.url;
     url = [url stringByAppendingString:kSendEndPoint];
@@ -73,28 +73,28 @@
     
     if(block == nil)
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+        [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
         {
             [connection prepareRequest:request];
         } 
         postData:postData continueWith:
-         ^(id response) 
+        ^(SRHttpResponse *httpResponse)
         {
 #if DEBUG
-            NSLog(@"sendDidReceiveResponse: %@",response);
+            NSLog(@"sendDidReceiveResponse: %@",httpResponse.response);
 #endif
-            if([response isKindOfClass:[NSString class]])
+            if([httpResponse.response isKindOfClass:[NSString class]])
             {
-                if([response isEqualToString:@""] == NO && response != nil)
+                if([httpResponse.response isEqualToString:@""] == NO && httpResponse.response != nil)
                 {
-                    [connection didReceiveData:response];
+                    [connection didReceiveData:httpResponse.response];
                 }
             }
         }];
     }
     else
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+        [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
         {
             [connection prepareRequest:request];
         }
@@ -102,16 +102,17 @@
     }
 }
 
+//TODO: Handle Cancel Request
 - (void)stop:(SRConnection *)connection
 {
-    ASIHTTPRequest *httpRequest = [connection getValue:kHttpRequestKey];
+    NSMutableURLRequest *httpRequest = [connection getValue:kHttpRequestKey];
     
     if(httpRequest != nil)
     {
         @try 
         {
             [self onBeforeAbort:connection];
-            [httpRequest cancel];
+            //[httpRequest cancel];
         }
         @catch (NSError *error) {
             //NotImplementedException
@@ -122,9 +123,11 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
+//TODO: Handle Request Aborted
 - (BOOL)isRequestAborted:(NSError *)error
 {
-    return (error != nil && (error.code == ASIRequestCancelledErrorType));
+    return NO;
+    //return (error != nil && (error.code == ASIRequestCancelledErrorType));
 }
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
@@ -173,7 +176,7 @@
     return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
 }
 
-- (void)prepareRequest:(ASIHTTPRequest *)request forConnection:(SRConnection *)connection;
+- (void)prepareRequest:(NSMutableURLRequest *)request forConnection:(SRConnection *)connection;
 {
     //Setup the user agent alogn with and other defaults
     [connection prepareRequest:request];

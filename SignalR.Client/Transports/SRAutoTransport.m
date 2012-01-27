@@ -70,7 +70,7 @@
      }];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(SRHttpResponse *response))block
 {
     [_transport send:connection withData:data continueWith:block];
 }

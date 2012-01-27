@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport+Constants.h"
 
-@class ASIHTTPRequest;
-
 #if NS_BLOCKS_AVAILABLE
 typedef void (^SRErrorByReferenceBlock)(NSError **);
 #endif
@@ -29,7 +27,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 - (void)onBeforeAbort:(SRConnection *)connection;
 - (void)onMessage:(SRConnection *)connection response:(NSString *)response;
 
-- (void)prepareRequest:(ASIHTTPRequest *)request forConnection:(SRConnection *)connection;
+- (void)prepareRequest:(NSMutableURLRequest *)request forConnection:(SRConnection *)connection;
 
 #define kHttpRequestKey @"http.Request"
 

@@ -9,6 +9,7 @@
 #import "SRLongPollingTransport.h"
 
 #import "SRHttpHelper.h"
+#import "SRHttpResponse.h"
 #import "SRConnection.h"
 
 typedef void (^onInitialized)(void);
@@ -51,28 +52,28 @@ typedef void (^onInitialized)(void);
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     
-    [SRHttpHelper postAsync:url requestPreparer:^(ASIHTTPRequest * request)
+    [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
     {
         [self prepareRequest:request forConnection:connection];
     } 
-    continueWith:^(id response) 
+    continueWith:^(SRHttpResponse *httpResponse)
     {
 #if DEBUG
-        NSLog(@"pollingLoopDidReceiveResponse: %@",response);
+        NSLog(@"pollingLoopDidReceiveResponse: %@",httpResponse.response);
 #endif
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
 
-        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
-                          [response isEqualToString:@""] || response == nil ||
-                          [response isEqualToString:@"null"]);
+        BOOL isFaulted = ([httpResponse.response isKindOfClass:[NSError class]] || 
+                          [httpResponse.response isEqualToString:@""] || httpResponse.response == nil ||
+                          [httpResponse.response isEqualToString:@"null"]);
         @try 
         {
-            if([response isKindOfClass:[NSString class]])
+            if([httpResponse.response isKindOfClass:[NSString class]])
             {
                 if(!isFaulted)
                 {
-                    [self onMessage:connection response:response];
+                    [self onMessage:connection response:httpResponse.response];
                 }
             }
         }
@@ -83,15 +84,15 @@ typedef void (^onInitialized)(void);
             
             if (isFaulted)
             {
-                if([response isKindOfClass:[NSError class]])
+                if([httpResponse.response isKindOfClass:[NSError class]])
                 {
-                    if([response code] >= 500)
+                    if([httpResponse.response code] >= 500)
                     {
                         if (errorCallback)
                         {
                             SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
-                                *error = response;
+                                *error = httpResponse.response;
                             };
                             errorCallback(errorBlock);
                         }
@@ -99,7 +100,7 @@ typedef void (^onInitialized)(void);
                     else
                     {
                         //Figure out if the request is aborted
-                        requestAborted = [self isRequestAborted:response];
+                        requestAborted = [self isRequestAborted:httpResponse.response];
                         
                         //Sometimes a connection might have been closed by the server before we get to write anything
                         //So just try again and don't raise an error
@@ -107,7 +108,7 @@ typedef void (^onInitialized)(void);
                         if(!requestAborted) //&& !(exception is IOExeption))
                         {
                             //Raise Error
-                            [connection didReceiveError:response];
+                            [connection didReceiveError:httpResponse.response];
                             
                             //If the connection is still active after raising the error wait 2 seconds 
                             //before polling again so we arent hammering the server

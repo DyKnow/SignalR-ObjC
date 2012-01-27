@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
-@class ASIHTTPRequest;
 @class SRConnection;
+@class SRHttpResponse;
 
 @protocol SRConnectionDelegate<NSObject>
 @optional 
@@ -59,12 +59,12 @@ typedef void (^onClosed)();
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
 - (void)send:(NSString *)message;
-- (void)send:(NSString *)message continueWith:(void(^)(id))block;
+- (void)send:(NSString *)message continueWith:(void (^)(SRHttpResponse *response))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
 
-- (void)prepareRequest:(ASIHTTPRequest *)request;
+- (void)prepareRequest:(NSMutableURLRequest *)request;
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end

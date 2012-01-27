@@ -10,13 +10,13 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "ASIHTTPRequest.h"
+#import "SRHttpResponse.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
 #import "NSDictionary+QueryString.h"
 
-void (^prepareRequest)(ASIHTTPRequest *);
+void (^prepareRequest)(NSMutableURLRequest *);
 
 @interface SRConnection ()
 
@@ -109,7 +109,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport Auto]];
+    [self start:[SRTransport LongPolling]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -132,15 +132,15 @@ void (^prepareRequest)(ASIHTTPRequest *);
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
 
-    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(ASIHTTPRequest * request)
+    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(NSMutableURLRequest * request)
     {
         [self prepareRequest:request];
     }
-    continueWith:^(id response) 
+    continueWith:^(SRHttpResponse *httpResponse)
     {
-        if([response isKindOfClass:[NSString class]])
+        if([httpResponse.response isKindOfClass:[NSString class]])
         {        
-            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
+            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:httpResponse.response]];
 #if DEBUG
             NSLog(@"%@",negotiationResponse);
 #endif
@@ -165,12 +165,12 @@ void (^prepareRequest)(ASIHTTPRequest *);
                 }];
             }
         }
-        else if([response isKindOfClass:[NSError class]])
+        else if([httpResponse.response isKindOfClass:[NSError class]])
         {
 #if DEBUG
-            NSLog(@"Negotiation Error: %@",response);
+            NSLog(@"Negotiation Error: %@",httpResponse.response);
 #endif
-            [self didReceiveError:response];
+            [self didReceiveError:httpResponse.response];
         }
     }];
 }
@@ -222,7 +222,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
     [self send:message continueWith:nil];
 }
 
-- (void)send:(NSString *)message continueWith:(void(^)(id))block
+- (void)send:(NSString *)message continueWith:(void (^)(SRHttpResponse *response))block
 {
     if (!_initialized)
     {
@@ -263,17 +263,19 @@ void (^prepareRequest)(ASIHTTPRequest *);
 
 #pragma mark - 
 #pragma mark Prepare Request
-- (void)prepareRequest:(ASIHTTPRequest *)request
+
+//TODO: handle credientials
+- (void)prepareRequest:(NSMutableURLRequest *)request
 {
 #if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-    [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.iOS"]];
+    [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
 #elif TARGET_OS_MAC
-    [request addRequestHeader:@"User-Agent" value:[self createUserAgentString:@"SignalR.Client.MAC"]];
+    [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
 #endif
 
     if(_credentials != nil)
     {
-        [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
+        /*[request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
         
         if(_protectionSpace && [_protectionSpace isProxy])
         {
@@ -299,7 +301,7 @@ void (^prepareRequest)(ASIHTTPRequest *);
             [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
         }
         
-        [request setShouldPresentCredentialsBeforeChallenge:YES];
+        [request setShouldPresentCredentialsBeforeChallenge:YES];*/
     }
 }
 

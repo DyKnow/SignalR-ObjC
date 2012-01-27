@@ -14,6 +14,8 @@
 #import "SRHubServerInvocation.h"
 #import "SRHubResult.h"
 
+#import "SRHttpResponse.h"
+
 @interface SRHubProxy()
 
 @end
@@ -123,15 +125,14 @@
     
     NSString *value = [[SBJsonWriter new] stringWithObject:hubData];
         
-    [_connection send:value continueWith:
-     ^(id response) 
+    [_connection send:value continueWith:^(SRHttpResponse *httpResponse)
     {
 #if DEBUG
-         NSLog(@"hubReceiveResponse: %@",response);
+         NSLog(@"hubReceiveResponse: %@",httpResponse.response);
 #endif
-         if([response isKindOfClass:[NSString class]])
+         if([httpResponse.response isKindOfClass:[NSString class]])
          {
-             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
+             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[[SBJsonParser new] objectWithString:httpResponse.response]];
              if (hubResult != nil) 
              {
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)

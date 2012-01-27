@@ -7,22 +7,49 @@
 //
 
 #import "SRHttpHelper.h"
+#import "SRHttpResponse.h"
 
 #import "SBJson.h"
-#import "ASIFormDataRequest.h"
+#import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 
 @interface SRHttpHelper()
 
-#define DEBUG_VERBOSE 0
+#pragma mark - 
+#pragma mark GET Requests Implementation
+
+/**
+ * Helper for getAsync functions, performs the GET request
+ * Subclasses should override this function 
+ *
+ * @param url: The url relative to the server endpoint
+ * @param parameters: An Object that conforms to proxyForJSON to pass as parameters to the endpoint
+ * @param requestPreparer: A function to be called on the NSMutableURLRequest created for the request
+ * This can be used to modify properties of the POST, for example timeout or cache protocol
+ * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
+ */
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block;
+
+#pragma mark - 
+#pragma mark POST Requests Implementation
+
+/**
+ * Helper for postAsync functions, performs the POST request
+ * Subclasses should override this function 
+ *
+ * @param url: The url relative to the server endpoint
+ * @param postData: An Object that conforms to proxyForJSON to post at the url
+ * @param requestPreparer: A function to be called on the NSMutableURLRequest created for the request
+ * This can be used to modify properties of the POST, for example timeout or cache protocol
+ * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
+ */
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block;
 
 @end
 
 static id sharedHttpRequestManager = nil;
 
 @implementation SRHttpHelper
-
-@synthesize queue = _queue;
 
 + (id)sharedHttpRequestManager
 {
@@ -35,140 +62,101 @@ static id sharedHttpRequestManager = nil;
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void(^)(id))block
++ (void)getAsync:(NSString *)url continueWith:(void (^)(SRHttpResponse *response))block
 {
-    if (!_queue) {
-        _queue = [[NSOperationQueue alloc] init];
-    }
-        
-    NSDictionary *dict = nil;
-    if ([parameters respondsToSelector:@selector(proxyForJson)]) {
-        dict = [parameters proxyForJson];
-    }
-    else if([parameters isKindOfClass:[NSDictionary class]]) {
-        dict = parameters;
-    }
-    else {
-        [NSException raise:@"InvalidParametersException" format:@"Parameters must respond to proxyForJson or be an NSDictionary"];
-    }
-    
-    [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
-    ASIFormDataRequest *_request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:url]];
-    [_request setTimeOutSeconds:20];
-    [_request setRequestMethod:@"GET"];
-    for(NSString *key in dict)
+     [[self class] getAsync:url requestPreparer:nil continueWith:block];
+}
+
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(SRHttpResponse *response))block
+{
+    [[self class] getAsync:url requestPreparer:requestPreparer parameters:[[NSDictionary alloc] init] continueWith:block];
+}
+
++ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block;
+{
+    [[self class] getAsync:url requestPreparer:nil parameters:parameters continueWith:block];
+}
+
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block
+{
+    [[self sharedHttpRequestManager] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
+}
+
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20];
+    [request setHTTPMethod:@"GET"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    if(requestPreparer != nil)
     {
-        [_request setPostValue:[dict objectForKey:key] forKey:key];
+        requestPreparer(request);
     }
-    if(requestPreparer)
-    {
-        requestPreparer(_request);
-    }
-    __weak ASIFormDataRequest *request = _request;
-    
-#if DEBUG_VERBOSE
-    NSLog(@"Url => %@",[request.url absoluteString]);
-    NSLog(@"Headers => %@",[request requestHeaders]);
-    NSLog(@"Cookies => %@",[request requestCookies]);
-    NSLog(@"Method => %@",[request requestMethod]);
-#endif
-    
-    [request setCompletionBlock:^{
-#if DEBUG_VERBOSE
-        NSLog(@"Headers => %@",[request responseHeaders]);
-        NSLog(@"Code => %d",[request responseStatusCode]);
-        NSLog(@"Status => %@",[request responseStatusMessage]);
-#endif
-        if(block){
-            block([request responseData]);
-        }
-    }];
-    [request setFailedBlock:^{
-        if(block){
-            block([request error]);
-        }
-    }];
-    [_queue addOperation:request];
+    //AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    //operation.
+    //[operation start];
 }
 
 #pragma mark - 
 #pragma mark POST Requests Implementation
 
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void(^)(id))block
++ (void)postAsync:(NSString *)url continueWith:(void (^)(SRHttpResponse *response))block
 {
-    if (!_queue) {
-        _queue = [[NSOperationQueue alloc] init];
-    }
+    [[self class] postAsync:url requestPreparer:nil continueWith:block];
+}
 
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(SRHttpResponse *response))block
+{
+    [[self class] postAsync:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
+}
+
++ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block
+{
+    [[self class] postAsync:url requestPreparer:nil postData:postData continueWith:block];
+}
+
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block
+{
+    [[self sharedHttpRequestManager] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
+}
+
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block
+{
     NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
-    [ASIHTTPRequest setShouldUpdateNetworkActivityIndicator:NO];
-    ASIHTTPRequest *_request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
-    [_request setTimeOutSeconds:20];
-    [_request setRequestMethod:@"POST"];
-    [_request addRequestHeader:@"Accept" value:@"application/json"];
-    [_request addRequestHeader:@"Content-Type" value:@"application/x-www-form-urlencoded"];
-    [_request addRequestHeader:@"Content-Length" value:[NSString stringWithFormat:@"%d", [requestData length]]];
-    [_request appendPostData:requestData];
-    if(requestPreparer)
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
+    [request setHTTPBody: requestData];
+    if(requestPreparer != nil)
     {
-        requestPreparer(_request);
+        requestPreparer(request);
     }
-    __weak ASIHTTPRequest *request = _request;
-
-#if DEBUG_VERBOSE
-    NSLog(@"Url => %@",[request.url absoluteString]);
-    NSLog(@"Headers => %@",[request requestHeaders]);
-    NSLog(@"Cookies => %@",[request requestCookies]);
-    NSLog(@"Method => %@",[request requestMethod]);
-#endif
     
-    //When using ServerSentEvents Transport we need to intercept the data
-    if([[_request.requestHeaders objectForKey:@"Accept"] isEqualToString:@"text/event-stream"])
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
-        if(block)
+        if (block)
         {
-            [request setDataReceivedBlock:^(NSData *data) {
-#if DEBUG_VERBOSE
-                NSLog(@"Headers => %@",[request responseHeaders]);
-                NSLog(@"Code => %d",[request responseStatusCode]);
-                NSLog(@"Status => %@",[request responseStatusMessage]);
-#endif
-                if([request responseStatusCode] != 200)
-                {
-                    block([NSError errorWithDomain:[request responseStatusMessage] code:[request responseStatusCode] userInfo:nil]);
-                }
-                else
-                {
-                    block([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-                }
-            }];
+            SRHttpResponse *response = [[SRHttpResponse alloc] init];
+            response.urlRequest = operation.request;
+            response.urlResponse = operation.response;
+            response.response = operation.responseString;
+            block(response);
         }
-    }
-    
-    [request setCompletionBlock:^{
-#if DEBUG_VERBOSE
-        NSLog(@"Headers => %@",[request responseHeaders]);
-        NSLog(@"Code => %d",[request responseStatusCode]);
-        NSLog(@"Status => %@",[request responseStatusMessage]);
-#endif
-        if(block){
-            if([request responseStatusCode] != 200)
-            {
-                block([NSError errorWithDomain:[request responseStatusMessage] code:[request responseStatusCode] userInfo:nil]);
-            }
-            else
-            {
-                block([request responseString]);
-            }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+    {
+        if (block)
+        {
+            SRHttpResponse *response = [[SRHttpResponse alloc] init];
+            response.urlRequest = operation.request;
+            response.urlResponse = operation.response;
+            response.response = error;
+            block(response);
         }
     }];
-    [request setFailedBlock:^{
-        if(block){
-            block([request error]);
-        }
-    }];
-    [_queue addOperation:request];
+    [operation start];
 }
 
 @end
