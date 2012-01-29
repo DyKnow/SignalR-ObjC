@@ -10,6 +10,7 @@
 #import "SRSignalRConfig.h"
 
 #import "SBJson.h"
+#import "AFNetworking.h"
 #import "SRHttpHelper.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
@@ -127,11 +128,9 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
-//TODO: Handle Request Aborted
 - (BOOL)isRequestAborted:(NSError *)error
 {
-    return NO;
-    //return (error != nil && (error.code == ASIRequestCancelledErrorType));
+    return (error != nil && ([error.domain isEqualToString:AFNetworkingErrorDomain]));
 }
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
