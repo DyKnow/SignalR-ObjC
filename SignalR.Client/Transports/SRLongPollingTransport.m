@@ -10,7 +10,6 @@
 #import "SRSignalRConfig.h"
 
 #import "SRHttpHelper.h"
-#import "SRHttpResponse.h"
 #import "SRConnection.h"
 
 typedef void (^onInitialized)(void);
@@ -55,24 +54,24 @@ typedef void (^onInitialized)(void);
     {
         [self prepareRequest:request forConnection:connection];
     } 
-    continueWith:^(SRHttpResponse *httpResponse)
+    continueWith:^(id response)
     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[LONG_POLLING] did receive response %@",httpResponse.response);
+        SR_DEBUG_LOG(@"[LONG_POLLING] did receive response %@",response);
 #endif
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
 
-        BOOL isFaulted = ([httpResponse.response isKindOfClass:[NSError class]] || 
-                          [httpResponse.response isEqualToString:@""] || httpResponse.response == nil ||
-                          [httpResponse.response isEqualToString:@"null"]);
+        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
+                          [response isEqualToString:@""] || response == nil ||
+                          [response isEqualToString:@"null"]);
         @try 
         {
-            if([httpResponse.response isKindOfClass:[NSString class]])
+            if([response isKindOfClass:[NSString class]])
             {
                 if(!isFaulted)
                 {
-                    [self onMessage:connection response:httpResponse.response];
+                    [self onMessage:connection response:response];
                 }
             }
         }
@@ -86,7 +85,7 @@ typedef void (^onInitialized)(void);
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
 #endif
-                if([httpResponse.response isKindOfClass:[NSError class]])
+                if([response isKindOfClass:[NSError class]])
                 {
                     if (errorCallback)
                     {
@@ -95,14 +94,14 @@ typedef void (^onInitialized)(void);
 #endif
                         SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                         {
-                            *error = httpResponse.response;
+                            *error = response;
                         };
                         errorCallback(errorBlock);
                     }
                     else
                     {
                         //Figure out if the request is aborted
-                        requestAborted = [self isRequestAborted:httpResponse.response];
+                        requestAborted = [self isRequestAborted:response];
                         
                         //Sometimes a connection might have been closed by the server before we get to write anything
                         //So just try again and don't raise an error
@@ -110,7 +109,7 @@ typedef void (^onInitialized)(void);
                         if(!requestAborted) //&& !(exception is IOExeption))
                         {
                             //Raise Error
-                            [connection didReceiveError:httpResponse.response];
+                            [connection didReceiveError:response];
                             
                             //If the connection is still active after raising the error wait 2 seconds 
                             //before polling again so we arent hammering the server

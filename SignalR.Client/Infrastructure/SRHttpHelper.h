@@ -8,12 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class SRHttpResponse;
-
-#if NS_BLOCKS_AVAILABLE
-typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
-#endif
-
 @interface SRHttpHelper : NSObject
 
 + (id)sharedHttpRequestManager;
@@ -26,7 +20,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * @param url: The url relative to the server endpoint
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)getAsync:(NSString *)url continueWith:(void (^)(id response))block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -36,7 +30,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -46,7 +40,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(id response))block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -57,7 +51,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block;
 
 #pragma mark -
 #pragma mark POST Requests
@@ -68,7 +62,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * @param url: The url relative to the server endpoint
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)postAsync:(NSString *)url continueWith:(void (^)(id response))block;
 
 /**
  * Creates a POST request with the specified url returns on the given block
@@ -79,7 +73,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block;
 
 /**
  * Creates a POST request with the specified url and payload returns on the given block
@@ -89,7 +83,7 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * @param postData: An Object that conforms to proxyForJSON to post at the url
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(id response))block;
 
 /**
  * Creates a POST request with the specified url and payload returns on the given block
@@ -101,6 +95,6 @@ typedef void (^SRHttpResponseBlock)(SRHttpResponse *response);
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block;
 
 @end

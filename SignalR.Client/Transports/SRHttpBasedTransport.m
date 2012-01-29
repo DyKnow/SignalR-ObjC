@@ -11,7 +11,6 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "SRHttpResponse.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 
@@ -58,7 +57,7 @@
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(SRHttpResponse *response))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {       
     NSString *url = connection.url;
     url = [url stringByAppendingString:kSendEndPoint];
@@ -83,13 +82,13 @@
             [connection prepareRequest:request];
         } 
         postData:postData continueWith:
-        ^(SRHttpResponse *httpResponse)
+        ^(id response)
         {
-            if([httpResponse.response isKindOfClass:[NSString class]])
+            if([response isKindOfClass:[NSString class]])
             {
-                if([httpResponse.response isEqualToString:@""] == NO && httpResponse.response != nil)
+                if([response isEqualToString:@""] == NO && response != nil)
                 {
-                    [connection didReceiveData:httpResponse.response];
+                    [connection didReceiveData:response];
                 }
             }
         }];

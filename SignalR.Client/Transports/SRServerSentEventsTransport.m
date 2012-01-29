@@ -10,7 +10,6 @@
 #import "SRSignalRConfig.h"
 
 #import "SRHttpHelper.h"
-#import "SRHttpResponse.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 #import "NSTimer+Blocks.h"
@@ -238,7 +237,7 @@ typedef void (^onClose)(void);
                 [self stopReading];
                 
                 // Close the stream
-                //[stream close];
+                [stream close];
                 
                 //Call the close callback
                 _closeCallback();
@@ -359,16 +358,16 @@ typedef void (^onClose)(void);
         switch (sseEvent.type) {
             case Id:
             {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did read 'id:'");
-#endif
                 _connection.messageId = [NSNumber numberWithInteger:[sseEvent.data integerValue]];
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did read 'id:'= %@",sseEvent.data);
+#endif
                 break;
             }
             case Data:
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did read 'data:'");
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did read 'data:'= %@",sseEvent.data);
 #endif
                 if([sseEvent.data isEqualToString:@"initialized"])
                 {
@@ -478,37 +477,40 @@ typedef void (^onClose)(void);
 
         [request addValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
     }
-    continueWith:^(SRHttpResponse *httpResponse)
+    continueWith:^(id response)
     {
-        BOOL isFaulted = ([httpResponse.response isKindOfClass:[NSError class]] || 
-                          httpResponse.response == nil);
+        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
+                          response == nil);
         
         if (isFaulted)
         {
-            if ([httpResponse.response isKindOfClass:[NSError class]])
+            if ([response isKindOfClass:[NSError class]])
             {
-                if(![self isRequestAborted:httpResponse.response] && 
-                    connection.initializedCalled == 0)
+                @synchronized(connection) 
                 {
-                    connection.initializedCalled = 0;
-                    
-                    if (errorCallback)
+                    if(![self isRequestAborted:response] && 
+                       connection.initializedCalled == 0)
                     {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
-#endif
-                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                        connection.initializedCalled = 0;
+                        
+                        if (errorCallback)
                         {
-                            *error = httpResponse.response;
-                        };
-                        errorCallback(errorBlock);
-                    }
-                    else
-                    {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
+                            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
 #endif
-                        [connection didReceiveError:httpResponse.response];
+                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                            {
+                                *error = response;
+                            };
+                            errorCallback(errorBlock);
+                        }
+                        else
+                        {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
+#endif
+                            [connection didReceiveError:response];
+                        }
                     }
                 }
             }
@@ -516,17 +518,20 @@ typedef void (^onClose)(void);
         else
         {
             //Get the response stream and read it for messages
-            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:httpResponse.response connection:connection transport:self];
+            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self];
             reader.initializeCallback = ^()
             {
-                if(initializeCallback != nil && connection.initializedCalled == 0)
+                @synchronized(connection) 
                 {
+                    if(initializeCallback != nil && connection.initializedCalled == 0)
+                    {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection is initialized");
+                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection is initialized");
 #endif
-                    connection.initializedCalled = 1;
-                    
-                    initializeCallback();
+                        connection.initializedCalled = 1;
+                        
+                        initializeCallback();
+                    }
                 }
             };
             reader.closeCallback = ^()
@@ -559,27 +564,30 @@ typedef void (^onClose)(void);
     {
         [NSTimer scheduledTimerWithTimeInterval:_connectionTimeout block:
         ^{
-            if(connection.initializedCalled == 0)
+            @synchronized(connection) 
             {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection did timeout");
-#endif
-                connection.initializedCalled = 1;
-                
-                // Stop the connection
-                [connection stop];
-                
-                // Connection timeout occured
-                if (errorCallback != nil)
+                if(connection.initializedCalled == 0)
                 {
-                    SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
-                    {
-                        *error = [NSError errorWithDomain:@"TimeoutException" code:1 userInfo:nil];
-                    };
-                    errorCallback(errorBlock);
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
+                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection did timeout");
 #endif
+                    connection.initializedCalled = 1;
+                    
+                    // Stop the connection
+                    [connection stop];
+                    
+                    // Connection timeout occured
+                    if (errorCallback != nil)
+                    {
+                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                        {
+                            *error = [NSError errorWithDomain:@"TimeoutException" code:1 userInfo:nil];
+                        };
+                        errorCallback(errorBlock);
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
+#endif
+                    }
                 }
             }
         } repeats:NO];

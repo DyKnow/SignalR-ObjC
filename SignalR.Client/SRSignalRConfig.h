@@ -20,12 +20,12 @@
 
 // When set to 1 SignalR will print information about what the connection is doing
 #ifndef DEBUG_CONNECTION
-    #define DEBUG_CONNECTION 1
+    #define DEBUG_CONNECTION 0
 #endif
 
 // When set to 1 SignalR will print information about what the active transport is doing
 #ifndef DEBUG_HTTP_BASED_TRANSPORT
-    #define DEBUG_HTTP_BASED_TRANSPORT 1
+    #define DEBUG_HTTP_BASED_TRANSPORT 0
 #endif
 
 // When set to 1 SignalR will print information about what the auto transport is doing

@@ -11,7 +11,6 @@
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "SRHttpResponse.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
@@ -112,7 +111,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 - (void)start
 {
     // Pick the best transport supported by the client
-    [self start:[SRTransport LongPolling]];
+    [self start:[SRTransport Auto]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -143,14 +142,14 @@ void (^prepareRequest)(NSMutableURLRequest *);
     {
         [self prepareRequest:request];
     }
-    continueWith:^(SRHttpResponse *httpResponse)
+    continueWith:^(id response)
     {
 #if DEBUG_CONNECTION
-        SR_DEBUG_LOG(@"[CONNECTION] negotiation did receive response %@",httpResponse.response);
+        SR_DEBUG_LOG(@"[CONNECTION] negotiation did receive response %@",response);
 #endif
-        if([httpResponse.response isKindOfClass:[NSString class]])
+        if([response isKindOfClass:[NSString class]])
         {        
-            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:httpResponse.response]];
+            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
 #if DEBUG_CONNECTION
             SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
 #endif
@@ -175,12 +174,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
                 }];
             }
         }
-        else if([httpResponse.response isKindOfClass:[NSError class]])
+        else if([response isKindOfClass:[NSError class]])
         {
 #if DEBUG_CONNECTION
-            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed %@",httpResponse.response);
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed %@",response);
 #endif
-            [self didReceiveError:httpResponse.response];
+            [self didReceiveError:response];
         }
     }];
 }
@@ -233,7 +232,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [self send:message continueWith:nil];
 }
 
-- (void)send:(NSString *)message continueWith:(void (^)(SRHttpResponse *response))block
+- (void)send:(NSString *)message continueWith:(void (^)(id response))block
 {
     if (!_initialized)
     {

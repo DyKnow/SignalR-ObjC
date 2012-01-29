@@ -8,15 +8,12 @@
 
 #import "SRHttpHelper.h"
 #import "SRSignalRConfig.h"
-#import "SRHttpResponse.h"
 
 #import "SBJson.h"
 #import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 
 @interface SRHttpHelper ()
-
-@property (copy) SRHttpResponseBlock steamingBlock;
 
 #pragma mark - 
 #pragma mark GET Requests Implementation
@@ -31,7 +28,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block;
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block;
 
 #pragma mark - 
 #pragma mark POST Requests Implementation
@@ -46,15 +43,13 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block;
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block;
 
 @end
 
 static id sharedHttpRequestManager = nil;
 
 @implementation SRHttpHelper
-
-@synthesize steamingBlock = _steamingBlock;
 
 + (id)sharedHttpRequestManager
 {
@@ -67,31 +62,32 @@ static id sharedHttpRequestManager = nil;
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
-+ (void)getAsync:(NSString *)url continueWith:(void (^)(SRHttpResponse *response))block
++ (void)getAsync:(NSString *)url continueWith:(void (^)(id response))block
 {
      [[self class] getAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(SRHttpResponse *response))block
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block
 {
     [[self class] getAsync:url requestPreparer:requestPreparer parameters:[[NSDictionary alloc] init] continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block;
++ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(id response))block;
 {
     [[self class] getAsync:url requestPreparer:nil parameters:parameters continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block
++ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
 {
     [[self sharedHttpRequestManager] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
 }
 
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(SRHttpResponse *response))block
+- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
     if(requestPreparer != nil)
     {
         requestPreparer(request);
@@ -100,11 +96,7 @@ static id sharedHttpRequestManager = nil;
     NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
     if(block)
     {
-        SRHttpResponse *response = [[SRHttpResponse alloc] init];
-        response.urlRequest = operation.request;
-        response.urlResponse = operation.response;
-        response.response = oStream;
-        block(response);
+        block(oStream);
     }
     operation.outputStream = oStream;
     [operation start];
@@ -113,27 +105,27 @@ static id sharedHttpRequestManager = nil;
 #pragma mark - 
 #pragma mark POST Requests Implementation
 
-+ (void)postAsync:(NSString *)url continueWith:(void (^)(SRHttpResponse *response))block
++ (void)postAsync:(NSString *)url continueWith:(void (^)(id response))block
 {
     [[self class] postAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(SRHttpResponse *response))block
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block
 {
     [[self class] postAsync:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block
++ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(id response))block
 {
     [[self class] postAsync:url requestPreparer:nil postData:postData continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block
++ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
 {
     [[self sharedHttpRequestManager] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
 }
 
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(SRHttpResponse *response))block
+- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
 {
     NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
@@ -153,21 +145,13 @@ static id sharedHttpRequestManager = nil;
     {
         if (block)
         {
-            SRHttpResponse *response = [[SRHttpResponse alloc] init];
-            response.urlRequest = operation.request;
-            response.urlResponse = operation.response;
-            response.response = operation.responseString;
-            block(response);
+            block(operation.responseString);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
         if (block)
         {
-            SRHttpResponse *response = [[SRHttpResponse alloc] init];
-            response.urlRequest = operation.request;
-            response.urlResponse = operation.response;
-            response.response = error;
-            block(response);
+            block(error);
         }
     }];
     [operation start];

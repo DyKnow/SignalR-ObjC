@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @class SRConnection;
-@class SRHttpResponse;
 
 /**
  * IClientTransport
@@ -18,7 +17,7 @@
 @protocol SRClientTransport <NSObject>
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block;
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(SRHttpResponse *response))block;
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block;
 - (void)stop:(SRConnection *)connection;
 
 @end
