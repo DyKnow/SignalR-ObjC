@@ -37,6 +37,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 @synthesize initialized = _initialized;
 
 //public
+@synthesize initializedCalled = _initializedCalled;
 @synthesize started = _started;
 @synthesize received = _received;
 @synthesize error = _error;
@@ -109,6 +110,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)start
 {
+    // Pick the best transport supported by the client
     [self start:[SRTransport ServerSentEvents]];
 }
 
@@ -152,7 +154,6 @@ void (^prepareRequest)(NSMutableURLRequest *);
                 [_transport start:self withData:data continueWith:
                  ^(id task) 
                 {
-                    NSLog(@"Initialized Task");
                     _initialized = YES;
                     
                     if(_started != nil)
@@ -188,6 +189,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)stop
 {
+    // Do nothing if the connection was never started
     if (!_initialized)
     {
         return;
@@ -332,6 +334,25 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)dealloc
 {
+    //private
+    _assemblyVersion = nil;
+    _transport = nil;
+    _initialized = NO;
+    _initializedCalled = 0;
+    _started = nil;
+    _received = nil;
+    _error = nil;
+    _closed = nil;
+    _groups = nil;
+    _credentials = nil;
+    _protectionSpace = nil;
+    _sending = nil;
+    _url = nil;
+    _active = NO;
+    _messageId = nil;
+    _connectionId = nil;
+    _items = nil;
+    _queryString = nil;
     _delegate = nil;
 }
 

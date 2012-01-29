@@ -250,4 +250,8 @@
     return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
 }
 
+- (void)dealloc
+{
+    _transport = nil;
+}
 @end

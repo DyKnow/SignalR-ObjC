@@ -149,4 +149,9 @@ typedef void (^onInitialized)(void);
     }
 }
 
+- (void)dealloc
+{
+    
+}
+
 @end

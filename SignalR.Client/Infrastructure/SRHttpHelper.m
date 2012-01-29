@@ -13,7 +13,7 @@
 #import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 
-@interface SRHttpHelper()
+@interface SRHttpHelper ()
 
 @property (copy) SRHttpResponseBlock steamingBlock;
 
@@ -97,7 +97,6 @@ static id sharedHttpRequestManager = nil;
     }
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
-    //[oStream setDelegate:self];
     if(block)
     {
         SRHttpResponse *response = [[SRHttpResponse alloc] init];

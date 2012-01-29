@@ -7,11 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRSBJSON.h"
 
-@interface SRHubRegistrationData : NSObject <SRSBJSON>
+@interface SRHubRegistrationData : NSObject
 
 @property (strong, nonatomic, readwrite) NSString *name;
 @property (strong, nonatomic, readwrite) NSMutableArray *methods;
+
+- (id)initWithDictionary:(NSDictionary*)dict;
+- (void)updateWithDictionary:(NSDictionary *)dict;
+- (id)proxyForJson;
 
 @end

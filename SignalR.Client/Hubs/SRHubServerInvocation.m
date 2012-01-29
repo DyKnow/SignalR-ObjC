@@ -8,7 +8,7 @@
 
 #import "SRHubServerInvocation.h"
 
-@interface SRHubServerInvocation()
+@interface SRHubServerInvocation ()
 
 #define kHub @"Hub"
 #define kAction @"Action"
@@ -24,9 +24,6 @@
 @synthesize data = _data;
 @synthesize state = _state;
 
-#pragma mark -
-#pragma mark SRSBJSON Protocol
-
 - (id) init
 {
     if (self = [super init])
@@ -41,23 +38,22 @@
 
 - (id)initWithDictionary:(NSDictionary*)dict
 {
-	self = [self init];
-	if(self != nil)
+	if (self = [self init])
 	{
-        _hub  = [dict objectForKey:kHub];
-        _action = [dict objectForKey:kState];
-        _data = [dict objectForKey:kData];
-        _state = [dict objectForKey:kState];
+        self.hub  = [NSString stringWithFormat:@"%@",[dict objectForKey:kHub]];
+        self.action = [NSString stringWithFormat:@"%@",[dict objectForKey:kState]];
+        self.data = [dict objectForKey:kData];
+        self.state = [dict objectForKey:kState];
     }
     return self;
 }
 
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	_hub = [dict objectForKey:kHub];
-	_action = [dict objectForKey:kAction];
-    _data = [dict objectForKey:kData];
-    _state = [dict objectForKey:kState];
+    self.hub = ([dict objectForKey:kHub]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kHub]] : _hub;
+    self.action = ([dict objectForKey:kAction]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kAction]] : _action;
+    self.data = ([dict objectForKey:kData]) ? [dict objectForKey:kData] : _data;
+    self.state = ([dict objectForKey:kState]) ? [dict objectForKey:kState] : _state;
 }
 
 - (id)proxyForJson
@@ -77,4 +73,11 @@
     return [NSString stringWithFormat:@"HubData: Hub=%@ Action=%@",_hub,_action];
 }
 
+- (void)dealloc
+{
+    _hub = nil;
+    _action = nil;
+    _data = nil;
+    _state = nil;
+}
 @end

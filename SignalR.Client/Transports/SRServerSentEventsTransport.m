@@ -43,6 +43,11 @@ typedef enum {
     return self;
 }
 
+- (void)dealloc
+{
+    _data = nil;
+}
+
 @end
 
 #pragma mark -
@@ -109,6 +114,13 @@ typedef enum {
     [_buffer appendString:[[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding]];
 }
 
+- (void)dealloc
+{
+    _offset = 0;
+    _buffer = nil;
+    _lineBuilder = nil;
+}
+
 @end
 
 #pragma mark -
@@ -162,7 +174,6 @@ typedef void (^onClose)(void);
     if (self = [super init])
     {
         _stream = steam;
-        _stream.delegate = self;
         _buffer = [[ChunkBuffer alloc] init];
         _connection = connection;
         _transport = transport;
@@ -173,44 +184,82 @@ typedef void (^onClose)(void);
 
 - (void)startReading
 {
-    _reading = YES;
+    _stream.delegate = self;
 }
 
 - (void)stopReading
 {
     _reading = NO;
+    _stream.delegate = nil;
 }
 
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
 {
-    if(_reading)
+    switch (eventCode)
     {
-        NSMutableData *buffer = [NSMutableData dataWithData:[(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
-        [buffer replaceBytesInRange:NSMakeRange(0, _processedBytes) withBytes:NULL length:0];
-        
-        int read = [buffer length];
-                
-        if(read > 0)
+        case NSStreamEventOpenCompleted:
         {
-            // Put chunks in the buffer
-            [_buffer add:buffer length:read];
-            _processedBytes = _processedBytes + [buffer length];
+            _reading = YES;
+            break;
         }
-        
-        /*if (read == 0)
+        case NSStreamEventHasSpaceAvailable:
         {
-            // Stop any reading we're doing
+            if (!_reading)
+            {
+                return;
+            }
+            
+            NSMutableData *buffer = [NSMutableData dataWithData:[(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
+            [buffer replaceBytesInRange:NSMakeRange(0, _processedBytes) withBytes:NULL length:0];
+            
+            int read = [buffer length];
+            
+            if(read > 0)
+            {
+                // Put chunks in the buffer
+                [_buffer add:buffer length:read];
+                _processedBytes = _processedBytes + [buffer length];
+            }
+            
+            if (read == 0)
+            {
+                // Stop any reading we're doing
+                [self stopReading];
+                
+                // Close the stream
+                [stream close];
+                
+                //Call the close callback
+                _closeCallback();
+                return;
+            }
+            
+            [self processBuffer];
+            
+            break;
+        }
+        case NSStreamEventErrorOccurred:
+        {
+            if (![_transport isRequestAborted:[stream streamError]])
+            {
+                [_connection didReceiveError:[stream streamError]];
+            }
+            break;
+        }
+        case NSStreamEventEndEncountered:
+        {
+            if (!_reading)
+            {
+                return;
+            }
+            
             [self stopReading];
-            
-            // Close the stream
-            [stream close];
-            
-            //Call the close callback
-            _closeCallback();
-            return;
-        }*/
-        
-        [self processBuffer];
+            break;
+        }
+        case NSStreamEventNone:
+        case NSStreamEventHasBytesAvailable:
+        default:
+            break;
     }
 }
 
@@ -329,6 +378,20 @@ typedef void (^onClose)(void);
     return NO;
 }
 
+- (void)dealloc
+{
+    _stream = nil;
+    _buffer = nil;
+    _initializeCallback = nil;
+    _closeCallback = nil;
+    _connection = nil;
+    _processingQueue = 0;
+    _reading = NO;
+    _processingBuffer = NO;
+    _transport = nil;
+    _processedBytes = 0;
+}
+
 @end
 
 #pragma mark -
@@ -347,12 +410,14 @@ typedef void (^onClose)(void);
 
 @implementation SRServerSentEventsTransport
 
+@synthesize connectionTimeout = _connectionTimeout;
 @synthesize reconnectDelay = _reconnectDelay;
 
 - (id)init
 {
     if(self = [super initWithTransport:kTransportName])
     {
+        _connectionTimeout = 2;
         _reconnectDelay = 2;
     }
     return self;
@@ -366,16 +431,13 @@ typedef void (^onClose)(void);
 //TODO: Check if exception is an IOException
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
-    if(connection.initialized) initializeCallback = nil;
+    //TODO: Should this be here anymore?
+    //if(connection.initialized) initializeCallback = nil;
 
-    NSString *url = connection.url;
+    // If we're reconnecting add /connect to the url
+    BOOL reconnect = initializeCallback == nil;
     
-    if(connection.messageId == nil)
-    {
-        url = [url stringByAppendingString:kConnectEndPoint];
-    }
-    
-    url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
+    NSString *url = [(reconnect ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
     [SRHttpHelper getAsync:url requestPreparer:^(NSMutableURLRequest * request)
     {
@@ -395,7 +457,8 @@ typedef void (^onClose)(void);
         {
             if ([httpResponse.response isKindOfClass:[NSError class]])
             {
-                if(![self isRequestAborted:httpResponse.response]) //&& some interlocked code
+                if(![self isRequestAborted:httpResponse.response]) //&& 
+                    //Interlocked.CompareExchange(ref connection._initializedCalled, 0, 0) == 0)
                 {
                     if (errorCallback)
                     {
@@ -445,6 +508,28 @@ typedef void (^onClose)(void);
             [connection.items setObject:reader forKey:kReaderKey];
         }
     }];
+    
+    if (initializeCallback != nil)
+    {
+        //TaskAsyncHelper.Delay(ConnectionTimeout).Then(() =>
+        //{
+            //if (Interlocked.CompareExchange(ref connection._initializedCalled, 1, 0) == 0)
+            //{
+                // Stop the connection
+                //[connection stop];
+                                                              
+                // Connection timeout occured
+                //if (errorCallback != nil)
+                //{
+                    //SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                    //{
+                       // *error = [NSError errorWithDomain:TimeoutException code:<#(NSInteger)#> userInfo:<#(NSDictionary *)#>
+                    //};
+                    //errorCallback(errorBlock);
+                //}
+            //}
+        //});
+    }
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection
@@ -459,6 +544,12 @@ typedef void (^onClose)(void);
         //Remove the reader
         [connection.items removeObjectForKey:kReaderKey];
     }
+}
+
+- (void)dealloc
+{
+    _connectionTimeout = 0;
+    _reconnectDelay = 0;
 }
 
 @end

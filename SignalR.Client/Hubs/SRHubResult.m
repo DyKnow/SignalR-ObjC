@@ -8,7 +8,7 @@
 
 #import "SRHubResult.h"
 
-@interface SRHubResult()
+@interface SRHubResult ()
 
 #define kResult @"Result"
 #define kError @"Error"
@@ -22,9 +22,6 @@
 @synthesize error = _error;
 @synthesize state = _state;
 
-#pragma mark -
-#pragma mark SRSBJSON Protocol
-
 - (id) init
 {
     if (self = [super init])
@@ -37,21 +34,20 @@
 
 - (id)initWithDictionary:(NSDictionary*)dict
 {
-	self = [self init];
-	if(self != nil)
+	if (self = [self init])
 	{
-        _result  = [dict objectForKey:kResult];
-        _error = [dict objectForKey:kError];
-        _state = [dict objectForKey:kState];
+        self.result  = [dict objectForKey:kResult];
+        self.error = [NSString stringWithFormat:@"%@",[dict objectForKey:kError]];
+        self.state = [dict objectForKey:kState];
     }
     return self;
 }
 
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	_result = [dict objectForKey:kResult];
-	_error = [dict objectForKey:kError];
-    _state = [dict objectForKey:kState];
+    self.result = ([dict objectForKey:kResult]) ? [dict objectForKey:kResult] : _result;
+    self.error = ([dict objectForKey:kError]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kError]] : _error;
+    self.state = ([dict objectForKey:kState]) ? [dict objectForKey:kState] : _state;
 }
 
 - (id)proxyForJson
@@ -68,6 +64,13 @@
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
+}
+
+- (void)dealloc
+{
+    _result = nil;
+    _error = nil;
+    _state = nil;
 }
 
 @end

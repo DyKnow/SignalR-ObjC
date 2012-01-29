@@ -104,8 +104,6 @@
 		39C14D8514D2EF3F00DFB570 /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D7614D2EF3F00DFB570 /* AFPropertyListRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C14D8614D2EF3F00DFB570 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D7814D2EF3F00DFB570 /* AFURLConnectionOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C14D8714D2EF3F00DFB570 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D7A14D2EF3F00DFB570 /* AFXMLRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		39C14D8814D2EF3F00DFB570 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 39C14D7B14D2EF3F00DFB570 /* LICENSE */; };
-		39C14D8914D2EF3F00DFB570 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 39C14D7C14D2EF3F00DFB570 /* README.md */; };
 		39C14D8A14D2EF3F00DFB570 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D7E14D2EF3F00DFB570 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C14D8D14D300C500DFB570 /* SRHttpResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D8C14D300C500DFB570 /* SRHttpResponse.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
@@ -175,7 +173,6 @@
 		39951A9914C6425600B33280 /* SRConnectionExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnectionExtensions.m; sourceTree = "<group>"; };
 		39951A9A14C6425600B33280 /* SRNegotiationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRNegotiationResponse.h; sourceTree = "<group>"; };
 		39951A9B14C6425600B33280 /* SRNegotiationResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRNegotiationResponse.m; sourceTree = "<group>"; };
-		39951A9C14C6425600B33280 /* SRSBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSBJSON.h; sourceTree = "<group>"; };
 		39951A9E14C6425600B33280 /* SRAutoTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRAutoTransport.h; sourceTree = "<group>"; };
 		39951A9F14C6425600B33280 /* SRAutoTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRAutoTransport.m; sourceTree = "<group>"; };
 		39951AA014C6425600B33280 /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransport.h; sourceTree = "<group>"; };
@@ -237,8 +234,6 @@
 		39C14D7814D2EF3F00DFB570 /* AFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLConnectionOperation.m; sourceTree = "<group>"; };
 		39C14D7914D2EF3F00DFB570 /* AFXMLRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFXMLRequestOperation.h; sourceTree = "<group>"; };
 		39C14D7A14D2EF3F00DFB570 /* AFXMLRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFXMLRequestOperation.m; sourceTree = "<group>"; };
-		39C14D7B14D2EF3F00DFB570 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		39C14D7C14D2EF3F00DFB570 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		39C14D7D14D2EF3F00DFB570 /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
 		39C14D7E14D2EF3F00DFB570 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		39C14D8B14D300C500DFB570 /* SRHttpResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpResponse.h; sourceTree = "<group>"; };
@@ -334,7 +329,6 @@
 				39951A9914C6425600B33280 /* SRConnectionExtensions.m */,
 				39951A9A14C6425600B33280 /* SRNegotiationResponse.h */,
 				39951A9B14C6425600B33280 /* SRNegotiationResponse.m */,
-				39951A9C14C6425600B33280 /* SRSBJSON.h */,
 				39951A9D14C6425600B33280 /* Transports */,
 			);
 			name = SignalR.Client;
@@ -501,8 +495,6 @@
 				39C14D7814D2EF3F00DFB570 /* AFURLConnectionOperation.m */,
 				39C14D7914D2EF3F00DFB570 /* AFXMLRequestOperation.h */,
 				39C14D7A14D2EF3F00DFB570 /* AFXMLRequestOperation.m */,
-				39C14D7B14D2EF3F00DFB570 /* LICENSE */,
-				39C14D7C14D2EF3F00DFB570 /* README.md */,
 				39C14D7D14D2EF3F00DFB570 /* UIImageView+AFNetworking.h */,
 				39C14D7E14D2EF3F00DFB570 /* UIImageView+AFNetworking.m */,
 			);
@@ -649,8 +641,6 @@
 				399519C314C63FF500B33280 /* MainStoryboard.storyboard in Resources */,
 				39951B4A14C6430000B33280 /* Environments.plist in Resources */,
 				39951B6C14C647BB00B33280 /* icon.png in Resources */,
-				39C14D8814D2EF3F00DFB570 /* LICENSE in Resources */,
-				39C14D8914D2EF3F00DFB570 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

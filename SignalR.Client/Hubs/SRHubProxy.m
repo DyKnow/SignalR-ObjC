@@ -16,7 +16,7 @@
 
 #import "SRHttpResponse.h"
 
-@interface SRHubProxy()
+@interface SRHubProxy ()
 
 @end
 
@@ -160,6 +160,14 @@
 - (NSString *)description 
 {     
     return [NSString stringWithFormat:@"HubProxy: Name=%@ State=%@ Subscriptions:%@",_hubName,_state,_subscriptions];
+}
+
+- (void)dealloc
+{
+    _connection = nil;
+    _hubName = nil;
+    _state = nil;
+    _subscriptions = nil;
 }
 
 @end

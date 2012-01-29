@@ -7,12 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRSBJSON.h"
 
-@interface SRNegotiationResponse : NSObject <SRSBJSON>
+@interface SRNegotiationResponse : NSObject
 
 @property (strong, nonatomic, readonly) NSString *connectionId;
 @property (strong, nonatomic, readonly) NSString *url;
 @property (strong, nonatomic, readonly) NSString *protocolVersion;
+
+- (id)initWithDictionary:(NSDictionary*)dict;
+- (void)updateWithDictionary:(NSDictionary *)dict;
+- (id)proxyForJson;
 
 @end

@@ -18,7 +18,7 @@ typedef NSString* (^onConnectionSending)();
 typedef void (^onConnectionReceived)(NSString *);
 #endif
 
-@interface SRHubConnection()
+@interface SRHubConnection ()
 
 - (NSString *)_getUrl:(NSString *)URL;
 
@@ -120,6 +120,11 @@ typedef void (^onConnectionReceived)(NSString *);
     self.sending = nil;
     self.received = nil;
     [super stop];
+}
+
+- (void)dealloc
+{
+    _hubs = nil;
 }
 
 @end

@@ -31,6 +31,7 @@ typedef void (^onClosed)();
 
 @interface SRConnection : NSObject 
 
+@property (assign, nonatomic, readwrite) NSInteger initializedCalled;
 @property (copy) onStarted started;
 @property (copy) onReceived received;
 @property (copy) onError error; 
@@ -47,7 +48,7 @@ typedef void (^onClosed)();
 @property (strong, nonatomic, readonly) NSString *queryString;
 @property (assign, nonatomic, readonly) BOOL initialized;
 
-@property (nonatomic, assign) id<SRConnectionDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id<SRConnectionDelegate> delegate;
 
 + (SRConnection *)connectionWithURL:(NSString *)URL;
 + (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;

@@ -79,4 +79,11 @@
 {
     [_transport stop:connection];
 }
+
+- (void)dealloc
+{
+    _transports = nil;
+    _transport = nil;
+}
+
 @end
