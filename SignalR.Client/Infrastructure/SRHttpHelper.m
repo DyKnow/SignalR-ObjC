@@ -7,6 +7,7 @@
 //
 
 #import "SRHttpHelper.h"
+#import "SRSignalRConfig.h"
 #import "SRHttpResponse.h"
 
 #import "SBJson.h"

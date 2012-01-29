@@ -7,6 +7,7 @@
 //
 
 #import "SRHubProxy.h"
+#import "SRSignalRConfig.h"
 
 #import "SBJson.h"
 #import "SRConnection.h"
@@ -127,8 +128,8 @@
         
     [_connection send:value continueWith:^(SRHttpResponse *httpResponse)
     {
-#if DEBUG
-         NSLog(@"hubReceiveResponse: %@",httpResponse.response);
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] did receive response %@",httpResponse.response);
 #endif
          if([httpResponse.response isKindOfClass:[NSString class]])
          {

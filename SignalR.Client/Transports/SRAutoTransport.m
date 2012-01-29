@@ -7,6 +7,7 @@
 //
 
 #import "SRAutoTransport.h"
+#import "SRSignalRConfig.h"
 
 #import "SRTransport.h"
 
@@ -47,6 +48,9 @@
      ^(id task) {
          if (task != nil)
          {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+             SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will switch to next transport");
+#endif
              int next = index + 1;
              if (next < [_transports count])
              {
@@ -59,6 +63,9 @@
          }
          else
          {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+             SR_DEBUG_LOG(@"[AUTO_TRANSPORT] did set active transport");
+#endif
              //Set the active transport
              _transport = transport;
              

@@ -7,6 +7,7 @@
 //
 
 #import "SRConnection.h"
+#import "SRSignalRConfig.h"
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
@@ -111,7 +112,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 - (void)start
 {
     // Pick the best transport supported by the client
-    [self start:[SRTransport ServerSentEvents]];
+    [self start:[SRTransport LongPolling]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -134,21 +135,29 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
 
+#if DEBUG_CONNECTION
+    SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
+#endif
+    
     [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(NSMutableURLRequest * request)
     {
         [self prepareRequest:request];
     }
     continueWith:^(SRHttpResponse *httpResponse)
     {
+#if DEBUG_CONNECTION
+        SR_DEBUG_LOG(@"[CONNECTION] negotiation did receive response %@",httpResponse.response);
+#endif
         if([httpResponse.response isKindOfClass:[NSString class]])
         {        
             SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:httpResponse.response]];
-#if DEBUG
-            NSLog(@"%@",negotiationResponse);
+#if DEBUG_CONNECTION
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
 #endif
             [self verifyProtocolVersion:negotiationResponse.protocolVersion];
             
-            if(negotiationResponse.connectionId){
+            if(negotiationResponse.connectionId)
+            {
                 _connectionId = negotiationResponse.connectionId;
                 
                 [_transport start:self withData:data continueWith:
@@ -168,8 +177,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
         }
         else if([httpResponse.response isKindOfClass:[NSError class]])
         {
-#if DEBUG
-            NSLog(@"Negotiation Error: %@",httpResponse.response);
+#if DEBUG_CONNECTION
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed %@",httpResponse.response);
 #endif
             [self didReceiveError:httpResponse.response];
         }

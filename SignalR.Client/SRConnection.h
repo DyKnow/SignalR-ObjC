@@ -48,7 +48,7 @@ typedef void (^onClosed)();
 @property (strong, nonatomic, readonly) NSString *queryString;
 @property (assign, nonatomic, readonly) BOOL initialized;
 
-@property (nonatomic, unsafe_unretained) id<SRConnectionDelegate> delegate;
+@property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
 + (SRConnection *)connectionWithURL:(NSString *)URL;
 + (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;

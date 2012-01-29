@@ -7,6 +7,7 @@
 //
 
 #import "SRLongPollingTransport.h"
+#import "SRSignalRConfig.h"
 
 #import "SRHttpHelper.h"
 #import "SRHttpResponse.h"
@@ -41,8 +42,6 @@ typedef void (^onInitialized)(void);
 //TODO: Check if exception is an IOException
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {    
-    if(connection.initialized) initializeCallback = nil;
-    
     NSString *url = connection.url;
     
     if(connection.messageId == nil)
@@ -58,8 +57,8 @@ typedef void (^onInitialized)(void);
     } 
     continueWith:^(SRHttpResponse *httpResponse)
     {
-#if DEBUG
-        NSLog(@"pollingLoopDidReceiveResponse: %@",httpResponse.response);
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[LONG_POLLING] did receive response %@",httpResponse.response);
 #endif
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
@@ -84,18 +83,21 @@ typedef void (^onInitialized)(void);
             
             if (isFaulted)
             {
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
+#endif
                 if([httpResponse.response isKindOfClass:[NSError class]])
                 {
-                    if([httpResponse.response code] >= 500)
+                    if (errorCallback)
                     {
-                        if (errorCallback)
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+                        SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
+#endif
+                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                         {
-                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
-                            {
-                                *error = httpResponse.response;
-                            };
-                            errorCallback(errorBlock);
-                        }
+                            *error = httpResponse.response;
+                        };
+                        errorCallback(errorBlock);
                     }
                     else
                     {
@@ -114,12 +116,15 @@ typedef void (^onInitialized)(void);
                             //before polling again so we arent hammering the server
                             if(connection.isActive)
                             {
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+                                SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in 2 seconds");
+#endif
                                 NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
                                 NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
                                 [invocation setSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
                                 [invocation setTarget:self ];
                                 
-                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,initializeCallback,errorCallback, nil];
+                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
                                 for(int i =0; i<[args count]; i++)
                                 {
                                     int arguementIndex = 2 + i;
@@ -136,7 +141,10 @@ typedef void (^onInitialized)(void);
             {
                 if (continuePolling && !requestAborted && connection.isActive)
                 {
-                    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+                    SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
+#endif
+                    [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
                 }
             }
         }
@@ -144,6 +152,9 @@ typedef void (^onInitialized)(void);
     
     if (initializeCallback != nil)
     {
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[LONG_POLLING] connection is initialized");
+#endif
         // Only set this the first time
         initializeCallback();
     }

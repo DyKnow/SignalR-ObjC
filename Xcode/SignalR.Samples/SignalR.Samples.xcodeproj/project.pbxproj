@@ -106,6 +106,7 @@
 		39C14D8714D2EF3F00DFB570 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D7A14D2EF3F00DFB570 /* AFXMLRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C14D8A14D2EF3F00DFB570 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D7E14D2EF3F00DFB570 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39C14D8D14D300C500DFB570 /* SRHttpResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 39C14D8C14D300C500DFB570 /* SRHttpResponse.m */; };
+		39D412B214D5911500A6FC89 /* NSTimer+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D412B114D5911500A6FC89 /* NSTimer+Blocks.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -238,6 +239,9 @@
 		39C14D7E14D2EF3F00DFB570 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		39C14D8B14D300C500DFB570 /* SRHttpResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpResponse.h; sourceTree = "<group>"; };
 		39C14D8C14D300C500DFB570 /* SRHttpResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHttpResponse.m; sourceTree = "<group>"; };
+		39D412B014D5911500A6FC89 /* NSTimer+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+Blocks.h"; sourceTree = "<group>"; };
+		39D412B114D5911500A6FC89 /* NSTimer+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+Blocks.m"; sourceTree = "<group>"; };
+		39D412B914D5959400A6FC89 /* SRSignalRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSignalRConfig.h; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.Samples.iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -323,6 +327,7 @@
 				39951A7814C6425600B33280 /* Hubs */,
 				39951A8C14C6425600B33280 /* Infrastructure */,
 				39951A9514C6425600B33280 /* SignalR.h */,
+				39D412B914D5959400A6FC89 /* SRSignalRConfig.h */,
 				39951A9614C6425600B33280 /* SRConnection.h */,
 				39951A9714C6425600B33280 /* SRConnection.m */,
 				39951A9814C6425600B33280 /* SRConnectionExtensions.h */,
@@ -374,6 +379,8 @@
 				39C14D8C14D300C500DFB570 /* SRHttpResponse.m */,
 				39951A9314C6425600B33280 /* SRVersion.h */,
 				39951A9414C6425600B33280 /* SRVersion.m */,
+				39D412B014D5911500A6FC89 /* NSTimer+Blocks.h */,
+				39D412B114D5911500A6FC89 /* NSTimer+Blocks.m */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -747,6 +754,7 @@
 				39C14D8714D2EF3F00DFB570 /* AFXMLRequestOperation.m in Sources */,
 				39C14D8A14D2EF3F00DFB570 /* UIImageView+AFNetworking.m in Sources */,
 				39C14D8D14D300C500DFB570 /* SRHttpResponse.m in Sources */,
+				39D412B214D5911500A6FC89 /* NSTimer+Blocks.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

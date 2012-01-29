@@ -7,6 +7,7 @@
 //
 
 #import "SRHttpBasedTransport.h"
+#import "SRSignalRConfig.h"
 
 #import "SBJson.h"
 #import "SRHttpHelper.h"
@@ -71,6 +72,10 @@
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
     [postData setObject:[data stringByEscapingForURLQuery] forKey:kData];
     
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will send data");
+#endif
+    
     if(block == nil)
     {
         [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
@@ -80,9 +85,6 @@
         postData:postData continueWith:
         ^(SRHttpResponse *httpResponse)
         {
-#if DEBUG
-            NSLog(@"sendDidReceiveResponse: %@",httpResponse.response);
-#endif
             if([httpResponse.response isKindOfClass:[NSString class]])
             {
                 if([httpResponse.response isEqualToString:@""] == NO && httpResponse.response != nil)
@@ -105,6 +107,9 @@
 //TODO: Handle Cancel Request
 - (void)stop:(SRConnection *)connection
 {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will stop transport");
+#endif
     NSMutableURLRequest *httpRequest = [connection getValue:kHttpRequestKey];
     
     if(httpRequest != nil)
@@ -238,8 +243,8 @@
         }
     }
     @catch (NSError *ex) {
-#if DEBUG
-        NSLog(@"Failed to respond: %@",ex);
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] error while processing messages %@",ex);
 #endif
         [connection didReceiveError:ex];
     }
