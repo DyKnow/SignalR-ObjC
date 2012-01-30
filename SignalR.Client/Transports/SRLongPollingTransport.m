@@ -11,6 +11,7 @@
 
 #import "SRHttpHelper.h"
 #import "SRConnection.h"
+#import "NSTimer+Blocks.h"
 
 typedef void (^onInitialized)(void);
 
@@ -86,16 +87,23 @@ typedef void (^onInitialized)(void);
 #endif
                 if([response isKindOfClass:[NSError class]])
                 {
+                    // If the error callback isn't null then raise it and don't continue polling
                     if (errorCallback)
                     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                         SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
 #endif
+                        [connection didReceiveError:response];
+                        
+                        //Call the callback
                         SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                         {
                             *error = response;
                         };
                         errorCallback(errorBlock);
+                        
+                        // Don't continue polling if the error is on the first request
+                        continuePolling = NO;
                     }
                     else
                     {
@@ -116,19 +124,13 @@ typedef void (^onInitialized)(void);
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                                 SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in 2 seconds");
 #endif
-                                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
-                                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                                [invocation setSelector:@selector(pollingLoop:data:initializeCallback:errorCallback:)];
-                                [invocation setTarget:self ];
-                                
-                                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
-                                for(int i =0; i<[args count]; i++)
-                                {
-                                    int arguementIndex = 2 + i;
-                                    NSString *argument = [args objectAtIndex:i];
-                                    [invocation setArgument:&argument atIndex:arguementIndex];
-                                }
-                                [NSTimer scheduledTimerWithTimeInterval:2 invocation:invocation repeats:NO];
+                                [NSTimer scheduledTimerWithTimeInterval:2 block:
+                                ^{
+                                    if (continuePolling && !requestAborted && connection.isActive)
+                                    {
+                                        [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+                                    }
+                                } repeats:NO];
                             }
                         }
                     }

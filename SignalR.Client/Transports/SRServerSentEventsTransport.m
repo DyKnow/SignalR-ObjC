@@ -480,7 +480,7 @@ typedef void (^onClose)(void);
                     {
                         connection.initializedCalled = 0;
                         
-                        if (errorCallback)
+                        if (errorCallback != nil)
                         {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                             SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
@@ -499,6 +499,7 @@ typedef void (^onClose)(void);
                             [connection didReceiveError:response];
                         }
                     }
+                    //TODO: need to ensure that the old connection is closed or reused
                     else if(![self isRequestAborted:response] && 
                             connection.initializedCalled == 1)
                     {
@@ -546,19 +547,10 @@ typedef void (^onClose)(void);
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] stream did close, will reopen in %d seconds...",_reconnectDelay);
 #endif
-                NSMethodSignature *signature = [self methodSignatureForSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
-                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                [invocation setSelector:@selector(openConnection:data:initializeCallback:errorCallback:)];
-                [invocation setTarget:self ];
-                
-                NSArray *args = [[NSArray alloc] initWithObjects:connection,data,nil,nil, nil];
-                for(int i =0; i<[args count]; i++)
-                {
-                    int arguementIndex = 2 + i;
-                    NSString *argument = [args objectAtIndex:i];
-                    [invocation setArgument:&argument atIndex:arguementIndex];
-                }
-                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay invocation:invocation repeats:NO];
+                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:
+                ^{
+                    [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
+                } repeats:NO];
             };
             [reader startReading];
             
