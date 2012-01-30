@@ -27,7 +27,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 - (void)onBeforeAbort:(SRConnection *)connection;
 - (void)onMessage:(SRConnection *)connection response:(NSString *)response;
 
-- (void)prepareRequest:(NSMutableURLRequest *)request forConnection:(SRConnection *)connection;
+- (void)prepareRequest:(id)request forConnection:(SRConnection *)connection;
 
 #define kHttpRequestKey @"http.Request"
 

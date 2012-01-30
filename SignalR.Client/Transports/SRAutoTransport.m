@@ -79,11 +79,17 @@
 
 - (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will send data from active transport");
+#endif
     [_transport send:connection withData:data continueWith:block];
 }
 
 - (void)stop:(SRConnection *)connection
 {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will stop transport");
+#endif
     [_transport stop:connection];
 }
 

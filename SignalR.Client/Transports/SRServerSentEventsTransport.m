@@ -471,11 +471,14 @@ typedef void (^onClose)(void);
     
     NSString *url = [(reconnect ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
-    [SRHttpHelper getAsync:url requestPreparer:^(NSMutableURLRequest * request)
+    [SRHttpHelper getAsync:url requestPreparer:^(id request)
     {
         [self prepareRequest:request forConnection:connection];
 
-        [request addValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
+        if([request isKindOfClass:[NSMutableURLRequest class]])
+        {
+            [request addValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
+        }
     }
     continueWith:^(id response)
     {
@@ -574,7 +577,7 @@ typedef void (^onClose)(void);
                     connection.initializedCalled = 1;
                     
                     // Stop the connection
-                    [connection stop];
+                    [self stop:connection];
                     
                     // Connection timeout occured
                     if (errorCallback != nil)

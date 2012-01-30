@@ -50,7 +50,7 @@ typedef void (^onInitialized)(void);
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     
-    [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
+    [SRHttpHelper postAsync:url requestPreparer:^(id request)
     {
         [self prepareRequest:request forConnection:connection];
     } 

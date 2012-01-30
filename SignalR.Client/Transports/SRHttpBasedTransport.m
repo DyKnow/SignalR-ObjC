@@ -78,7 +78,7 @@
     
     if(block == nil)
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
+        [SRHttpHelper postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         } 
@@ -96,7 +96,7 @@
     }
     else
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
+        [SRHttpHelper postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         }
@@ -104,20 +104,19 @@
     }
 }
 
-//TODO: Handle Cancel Request
 - (void)stop:(SRConnection *)connection
 {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
     SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will stop transport");
 #endif
-    NSMutableURLRequest *httpRequest = [connection getValue:kHttpRequestKey];
+    AFHTTPRequestOperation *httpRequest = [connection getValue:kHttpRequestKey];
     
     if(httpRequest != nil)
     {
         @try 
         {
             [self onBeforeAbort:connection];
-            //[httpRequest cancel];
+            [httpRequest cancel];
         }
         @catch (NSError *error) {
             //NotImplementedException
@@ -179,12 +178,15 @@
     return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
 }
 
-- (void)prepareRequest:(NSMutableURLRequest *)request forConnection:(SRConnection *)connection;
+- (void)prepareRequest:(id)request forConnection:(SRConnection *)connection;
 {
     //Setup the user agent alogn with and other defaults
     [connection prepareRequest:request];
     
-    [connection.items setObject:request forKey:kHttpRequestKey];
+    if([request isKindOfClass:[AFHTTPRequestOperation class]])
+    {
+        [connection.items setObject:request forKey:kHttpRequestKey];
+    }
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection

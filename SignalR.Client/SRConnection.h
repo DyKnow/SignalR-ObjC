@@ -64,7 +64,7 @@ typedef void (^onClosed)();
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
 
-- (void)prepareRequest:(NSMutableURLRequest *)request;
+- (void)prepareRequest:(id)request;
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end

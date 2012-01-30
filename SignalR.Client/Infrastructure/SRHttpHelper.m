@@ -92,7 +92,12 @@ static id sharedHttpRequestManager = nil;
     {
         requestPreparer(request);
     }
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    if(requestPreparer != nil)
+    {
+        requestPreparer(operation);
+    }
     NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
     if(block)
     {
@@ -141,6 +146,10 @@ static id sharedHttpRequestManager = nil;
     }
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    if(requestPreparer != nil)
+    {
+        requestPreparer(operation);
+    }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
         if (block)

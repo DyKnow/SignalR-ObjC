@@ -9,6 +9,7 @@
 #import "SRConnection.h"
 #import "SRSignalRConfig.h"
 
+#import "AFNetworking.h"
 #import "SBJson.h"
 #import "SRHttpHelper.h"
 #import "SRTransport.h"
@@ -16,7 +17,7 @@
 #import "SRVersion.h"
 #import "NSDictionary+QueryString.h"
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(id);
 
 @interface SRConnection ()
 
@@ -138,7 +139,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
 #endif
     
-    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(NSMutableURLRequest * request)
+    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(id request)
     {
         [self prepareRequest:request];
     }
@@ -275,43 +276,45 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #pragma mark Prepare Request
 
 //TODO: handle credientials
-- (void)prepareRequest:(NSMutableURLRequest *)request
+- (void)prepareRequest:(id)request
 {
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-    [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
-#elif TARGET_OS_MAC
-    [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
-#endif
-
-    if(_credentials != nil)
+    if([request isKindOfClass:[NSMutableURLRequest class]])
     {
-        /*[request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
-        
-        if(_protectionSpace && [_protectionSpace isProxy])
+#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+        [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+#elif TARGET_OS_MAC
+        [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
+#endif
+        if(_credentials != nil)
         {
-            [request setProxyUsername:_credentials.user];
-            [request setProxyPassword:_credentials.password];
+            /*[request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
+             
+             if(_protectionSpace && [_protectionSpace isProxy])
+             {
+             [request setProxyUsername:_credentials.user];
+             [request setProxyPassword:_credentials.password];
+             }
+             else
+             {
+             [request setUsername:_credentials.user];
+             [request setPassword:_credentials.password];
+             }
+             
+             if(_protectionSpace && [_protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM])
+             {
+             if([_protectionSpace isProxy])
+             {
+             [request setProxyDomain:_protectionSpace.host];
+             }
+             else
+             {
+             [request setDomain:_protectionSpace.host];
+             }
+             [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
+             }
+             
+             [request setShouldPresentCredentialsBeforeChallenge:YES];*/
         }
-        else
-        {
-            [request setUsername:_credentials.user];
-            [request setPassword:_credentials.password];
-        }
-
-        if(_protectionSpace && [_protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM])
-        {
-            if([_protectionSpace isProxy])
-            {
-                [request setProxyDomain:_protectionSpace.host];
-            }
-            else
-            {
-                [request setDomain:_protectionSpace.host];
-            }
-            [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
-        }
-        
-        [request setShouldPresentCredentialsBeforeChallenge:YES];*/
     }
 }
 
