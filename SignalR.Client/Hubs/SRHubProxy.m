@@ -7,6 +7,7 @@
 //
 
 #import "SRHubProxy.h"
+#import "SRSignalRConfig.h"
 
 #import "SBJson.h"
 #import "SRConnection.h"
@@ -14,9 +15,7 @@
 #import "SRHubServerInvocation.h"
 #import "SRHubResult.h"
 
-#import "SRHttpResponse.h"
-
-@interface SRHubProxy()
+@interface SRHubProxy ()
 
 @end
 
@@ -125,14 +124,14 @@
     
     NSString *value = [[SBJsonWriter new] stringWithObject:hubData];
         
-    [_connection send:value continueWith:^(SRHttpResponse *httpResponse)
+    [_connection send:value continueWith:^(id response)
     {
-#if DEBUG
-         NSLog(@"hubReceiveResponse: %@",httpResponse.response);
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] did receive response %@",response);
 #endif
-         if([httpResponse.response isKindOfClass:[NSString class]])
+         if([response isKindOfClass:[NSString class]])
          {
-             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[[SBJsonParser new] objectWithString:httpResponse.response]];
+             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
              if (hubResult != nil) 
              {
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
@@ -160,6 +159,14 @@
 - (NSString *)description 
 {     
     return [NSString stringWithFormat:@"HubProxy: Name=%@ State=%@ Subscriptions:%@",_hubName,_state,_subscriptions];
+}
+
+- (void)dealloc
+{
+    _connection = nil;
+    _hubName = nil;
+    _state = nil;
+    _subscriptions = nil;
 }
 
 @end

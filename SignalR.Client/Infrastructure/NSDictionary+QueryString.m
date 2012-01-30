@@ -13,48 +13,48 @@
 
 + (NSDictionary *)dictionaryWithFormEncodedString:(NSString *)encodedString
 {
-  NSMutableDictionary* result = [NSMutableDictionary dictionary];
-  NSArray* pairs = [encodedString componentsSeparatedByString:@"&"];
-
-  for (NSString* kvp in pairs)
-  {
-    if ([kvp length] == 0)
-      continue;
-
-    NSRange pos = [kvp rangeOfString:@"="];
-    NSString *key;
-    NSString *val;
-
-    if (pos.location == NSNotFound) 
+    NSMutableDictionary* result = [NSMutableDictionary dictionary];
+    NSArray* pairs = [encodedString componentsSeparatedByString:@"&"];
+    
+    for (NSString* kvp in pairs)
     {
-      key = [kvp stringByUnescapingFromURLQuery];
-      val = @"";
-    }
-    else
-    {
-      key = [[kvp substringToIndex:pos.location] stringByUnescapingFromURLQuery];
-      val = [[kvp substringFromIndex:pos.location + pos.length] stringByUnescapingFromURLQuery];
-    }
+        if ([kvp length] == 0)
+            continue;
 
-    if (!key || !val)
-      continue;
+        NSRange pos = [kvp rangeOfString:@"="];
+        NSString *key;
+        NSString *val;
 
-    [result setObject:val forKey:key];
-  }
-  return result;
+        if (pos.location == NSNotFound) 
+        {
+            key = [kvp stringByUnescapingFromURLQuery];
+            val = @"";
+        }
+        else
+        {
+            key = [[kvp substringToIndex:pos.location] stringByUnescapingFromURLQuery];
+            val = [[kvp substringFromIndex:pos.location + pos.length] stringByUnescapingFromURLQuery];
+        }
+
+        if (!key || !val)
+            continue;
+
+        [result setObject:val forKey:key];
+    }
+    return result;
 }
 
 - (NSString *)stringWithFormEncodedComponents
 {
-  NSMutableArray* arguments = [NSMutableArray arrayWithCapacity:[self count]];
-  for (NSString* key in self)
-  {
-    [arguments addObject:[NSString stringWithFormat:@"%@=%@",
-                          [key stringByEscapingForURLQuery],
-                          [[[self objectForKey:key] description] stringByEscapingForURLQuery]]];
-  }
+    NSMutableArray* arguments = [NSMutableArray arrayWithCapacity:[self count]];
+    for (NSString* key in self)
+    {
+        [arguments addObject:[NSString stringWithFormat:@"%@=%@",
+                              [key stringByEscapingForURLQuery],
+                              [[[self objectForKey:key] description] stringByEscapingForURLQuery]]];
+    }
 
-  return [arguments componentsJoinedByString:@"&"];
+    return [arguments componentsJoinedByString:@"&"];
 }
 
 @end

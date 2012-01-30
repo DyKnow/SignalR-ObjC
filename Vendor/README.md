@@ -1,21 +1,12 @@
 # Vendor Projects 
 Other open source projects that must be included in the SignalR Objective C project for it to work properly
 
-## ASIHTTPRequest
-ASIHTTPRequest is an easy to use wrapper around the CFNetwork API that makes some of the more tedious aspects of communicating with web servers easier. It is written in Objective-C and works in both Mac OS X and iPhone applications.
-[Ben Copsey asi-http-request on GitHub](https://github.com/pokeb/asi-http-request)
+## AFNetworking
+AFNetworking is a delightful networking library for iOS and Mac OS X. It's built on top of NSURLConnection, NSOperation, and other familiar Foundation technologies. It has a modular architecture with well-designed, feature-rich APIs that are a joy to use.
+[Gowalla AFNetworking on GitHub](https://github.com/AFNetworking/AFNetworking)
 
 ### What is it for?
-ASIHTTPRequest is used to manage all http requests
-
-
-## Reachability
-A replacement for Apple’s Reachability class.
-[Andrew Donoho Reachablilty](http://blog.ddg.com/?p=24)
-
-### What is it for?
-Reachability is only included as a requirement of ASIHttpRequest
-It allows ASIHTTPRequest to be notified when the network connection changes from WWAN to WiFi, or vice-versa.
+AFNetworking is used to manage all http requests
 
 
 ## SBJSON
@@ -24,14 +15,6 @@ JSON (JavaScript Object Notation) is a light-weight data interchange format that
 
 ### What is it for?
 SBJSON is used to json strinify objects in the Transports before sending to the server
-
-
-## DKHttpHelper
-Simiple wrapper to make http requests easy.  
-This is adopted from the HttpHelper in the SignalR Project and is included in Vendor since I have started using it in multiple projects I am working.
-
-### What is it for?
-SRHttpHelper is as subclass of DKHttpHelper and is used to provide a clean interface to making async post and get requests
 
 
 ## CocoaAysncSocket

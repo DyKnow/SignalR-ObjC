@@ -10,7 +10,6 @@
 #import "SRClientTransport.h"
 
 @class SRConnection;
-@class SRHttpResponse;
 
 @protocol SRConnectionDelegate<NSObject>
 @optional 
@@ -31,6 +30,7 @@ typedef void (^onClosed)();
 
 @interface SRConnection : NSObject 
 
+@property (assign, nonatomic, readwrite) NSInteger initializedCalled;
 @property (copy) onStarted started;
 @property (copy) onReceived received;
 @property (copy) onError error; 
@@ -59,12 +59,12 @@ typedef void (^onClosed)();
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
 - (void)send:(NSString *)message;
-- (void)send:(NSString *)message continueWith:(void (^)(SRHttpResponse *response))block;
+- (void)send:(NSString *)message continueWith:(void (^)(id response))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
 
-- (void)prepareRequest:(NSMutableURLRequest *)request;
+- (void)prepareRequest:(id)request;
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end

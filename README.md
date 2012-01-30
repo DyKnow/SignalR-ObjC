@@ -21,19 +21,8 @@ NOTE: SignalR-ObjC uses Automatic Reference Counting.
 1. Copy the contents of the SignalR.Client and Vendor Folders into your project
 	- Note: While SignalR-ObjC uses arc it makes use of Vendor Projects that do not.
 		- For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to ```-fno-objc-arc```
-		- for any files that have the prefix ASI and for Reachability.m
+		- for any files that have the prefix AF
 1. In your pch file or where every you intend to use SignalR ```#import SignalR.h```
-1. Add Framework Dependencies from [ASIHttpRequest](http://allseeing-i.com/ASIHTTPRequest/Setup-instructions)
-	- For iOS
-		- CFNetwork.framework
-		- SystemConfiguration.framework
- 		- MobileCoreServices.framework
-  		- CoreGraphics.framework
-   		- libz.dylib.
-	- For Mac OSX
- 		- CoreServices.framework
- 		- SystemConfiguration.framework
-   		- libz.dylib.
 1. Build and Run your project with no errors
 
 ### Method 2:
@@ -46,17 +35,6 @@ Open the [SignalR.Framework XCode Project](https://github.com/DyKnow/SignalR-Obj
 1. Right Click on the product that corresponds to the target you built against, and choose show in finder
 1. Copy the SignalR-iOS.framework or SignalR-OSX.framework to your project
 1. In your pch file or where every you intend to use SignalR ```#import <SignalR-iOS/SignalR.h>``` or ```#import <SignalR-OSX/SignalR.h>```
-1. Add Framework Dependencies from [ASIHttpRequest](http://allseeing-i.com/ASIHTTPRequest/Setup-instructions)
-	- For iOS
-		- CFNetwork.framework
-		- SystemConfiguration.framework
- 		- MobileCoreServices.framework
-  		- CoreGraphics.framework
-   		- libz.dylib.
-	- For Mac OSX
- 		- CoreServices.framework
- 		- SystemConfiguration.framework
-   		- libz.dylib.
 1. Build and Run your project with no errors
 
 ## LICENSE

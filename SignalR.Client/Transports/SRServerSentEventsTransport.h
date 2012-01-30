@@ -11,4 +11,6 @@
 
 @interface SRServerSentEventsTransport : SRHttpBasedTransport
 
+@property (assign, nonatomic, readwrite) NSInteger connectionTimeout;
+
 @end

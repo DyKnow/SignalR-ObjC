@@ -8,7 +8,7 @@
 
 #import "SRHubRegistrationData.h"
 
-@interface SRHubRegistrationData()
+@interface SRHubRegistrationData ()
 
 #define kName @"name"
 #define kMethods @"methods"
@@ -19,9 +19,6 @@
 
 @synthesize name = _name;
 @synthesize methods = _methods;
-
-#pragma mark -
-#pragma mark SRSBJSON Protocol
 
 - (id) init
 {
@@ -35,19 +32,18 @@
 
 - (id)initWithDictionary:(NSDictionary*)dict
 {
-	self = [self init];
-	if(self != nil)
+	if (self = [self init])
 	{
-        _name  = [dict objectForKey:kName];
-        _methods = [dict objectForKey:kMethods];
+        self.name  = [NSString stringWithFormat:@"%@",[dict objectForKey:kName]];
+        self.methods = [dict objectForKey:kMethods];
     }
     return self;
 }
 
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
-	_name = [dict objectForKey:kName];
-	_methods = [dict objectForKey:kMethods];
+    self.name = ([dict objectForKey:kName]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kName]] : _name;
+    self.methods = ([dict objectForKey:kMethods]) ? [dict objectForKey:kMethods] : _methods;
 }
 
 - (id)proxyForJson
@@ -63,6 +59,12 @@
 - (NSString *)description 
 {     
     return [NSString stringWithFormat:@"HubRegistrationData: Name=%@ Methods=%@",_name,_methods];
+}
+
+- (void)dealloc
+{
+    _name = nil;
+    _methods = nil;
 }
 
 @end

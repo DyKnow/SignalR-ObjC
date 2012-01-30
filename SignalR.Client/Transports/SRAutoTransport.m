@@ -7,6 +7,7 @@
 //
 
 #import "SRAutoTransport.h"
+#import "SRSignalRConfig.h"
 
 #import "SRTransport.h"
 
@@ -47,6 +48,9 @@
      ^(id task) {
          if (task != nil)
          {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+             SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will switch to next transport");
+#endif
              int next = index + 1;
              if (next < [_transports count])
              {
@@ -59,6 +63,9 @@
          }
          else
          {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+             SR_DEBUG_LOG(@"[AUTO_TRANSPORT] did set active transport");
+#endif
              //Set the active transport
              _transport = transport;
              
@@ -70,13 +77,26 @@
      }];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(SRHttpResponse *response))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will send data from active transport");
+#endif
     [_transport send:connection withData:data continueWith:block];
 }
 
 - (void)stop:(SRConnection *)connection
 {
+#if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will stop transport");
+#endif
     [_transport stop:connection];
 }
+
+- (void)dealloc
+{
+    _transports = nil;
+    _transport = nil;
+}
+
 @end

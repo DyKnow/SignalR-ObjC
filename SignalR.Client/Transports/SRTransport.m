@@ -54,4 +54,11 @@
     return self;
 }
 
+- (void)dealloc
+{
+    _autoTransport = nil;
+    _longPolling = nil;
+    _serverSentEvents = nil;
+}
+
 @end

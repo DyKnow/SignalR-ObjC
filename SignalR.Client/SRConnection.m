@@ -7,16 +7,17 @@
 //
 
 #import "SRConnection.h"
+#import "SRSignalRConfig.h"
 
+#import "AFNetworking.h"
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "SRHttpResponse.h"
 #import "SRTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
 #import "NSDictionary+QueryString.h"
 
-void (^prepareRequest)(NSMutableURLRequest *);
+void (^prepareRequest)(id);
 
 @interface SRConnection ()
 
@@ -37,6 +38,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 @synthesize initialized = _initialized;
 
 //public
+@synthesize initializedCalled = _initializedCalled;
 @synthesize started = _started;
 @synthesize received = _received;
 @synthesize error = _error;
@@ -109,7 +111,8 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)start
 {
-    [self start:[SRTransport LongPolling]];
+    // Pick the best transport supported by the client
+    [self start:[SRTransport Auto]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -132,27 +135,34 @@ void (^prepareRequest)(NSMutableURLRequest *);
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
 
-    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(NSMutableURLRequest * request)
+#if DEBUG_CONNECTION
+    SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
+#endif
+    
+    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(id request)
     {
         [self prepareRequest:request];
     }
-    continueWith:^(SRHttpResponse *httpResponse)
+    continueWith:^(id response)
     {
-        if([httpResponse.response isKindOfClass:[NSString class]])
+#if DEBUG_CONNECTION
+        SR_DEBUG_LOG(@"[CONNECTION] negotiation did receive response %@",response);
+#endif
+        if([response isKindOfClass:[NSString class]])
         {        
-            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:httpResponse.response]];
-#if DEBUG
-            NSLog(@"%@",negotiationResponse);
+            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
+#if DEBUG_CONNECTION
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
 #endif
             [self verifyProtocolVersion:negotiationResponse.protocolVersion];
             
-            if(negotiationResponse.connectionId){
+            if(negotiationResponse.connectionId)
+            {
                 _connectionId = negotiationResponse.connectionId;
                 
                 [_transport start:self withData:data continueWith:
                  ^(id task) 
                 {
-                    NSLog(@"Initialized Task");
                     _initialized = YES;
                     
                     if(_started != nil)
@@ -165,12 +175,12 @@ void (^prepareRequest)(NSMutableURLRequest *);
                 }];
             }
         }
-        else if([httpResponse.response isKindOfClass:[NSError class]])
+        else if([response isKindOfClass:[NSError class]])
         {
-#if DEBUG
-            NSLog(@"Negotiation Error: %@",httpResponse.response);
+#if DEBUG_CONNECTION
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed %@",response);
 #endif
-            [self didReceiveError:httpResponse.response];
+            [self didReceiveError:response];
         }
     }];
 }
@@ -188,6 +198,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)stop
 {
+    // Do nothing if the connection was never started
     if (!_initialized)
     {
         return;
@@ -222,7 +233,7 @@ void (^prepareRequest)(NSMutableURLRequest *);
     [self send:message continueWith:nil];
 }
 
-- (void)send:(NSString *)message continueWith:(void (^)(SRHttpResponse *response))block
+- (void)send:(NSString *)message continueWith:(void (^)(id response))block
 {
     if (!_initialized)
     {
@@ -265,43 +276,45 @@ void (^prepareRequest)(NSMutableURLRequest *);
 #pragma mark Prepare Request
 
 //TODO: handle credientials
-- (void)prepareRequest:(NSMutableURLRequest *)request
+- (void)prepareRequest:(id)request
 {
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
-    [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
-#elif TARGET_OS_MAC
-    [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
-#endif
-
-    if(_credentials != nil)
+    if([request isKindOfClass:[NSMutableURLRequest class]])
     {
-        /*[request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
-        
-        if(_protectionSpace && [_protectionSpace isProxy])
+#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+        [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+#elif TARGET_OS_MAC
+        [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
+#endif
+        if(_credentials != nil)
         {
-            [request setProxyUsername:_credentials.user];
-            [request setProxyPassword:_credentials.password];
+            /*[request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
+             
+             if(_protectionSpace && [_protectionSpace isProxy])
+             {
+             [request setProxyUsername:_credentials.user];
+             [request setProxyPassword:_credentials.password];
+             }
+             else
+             {
+             [request setUsername:_credentials.user];
+             [request setPassword:_credentials.password];
+             }
+             
+             if(_protectionSpace && [_protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM])
+             {
+             if([_protectionSpace isProxy])
+             {
+             [request setProxyDomain:_protectionSpace.host];
+             }
+             else
+             {
+             [request setDomain:_protectionSpace.host];
+             }
+             [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
+             }
+             
+             [request setShouldPresentCredentialsBeforeChallenge:YES];*/
         }
-        else
-        {
-            [request setUsername:_credentials.user];
-            [request setPassword:_credentials.password];
-        }
-
-        if(_protectionSpace && [_protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM])
-        {
-            if([_protectionSpace isProxy])
-            {
-                [request setProxyDomain:_protectionSpace.host];
-            }
-            else
-            {
-                [request setDomain:_protectionSpace.host];
-            }
-            [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
-        }
-        
-        [request setShouldPresentCredentialsBeforeChallenge:YES];*/
     }
 }
 
@@ -332,6 +345,25 @@ void (^prepareRequest)(NSMutableURLRequest *);
 
 - (void)dealloc
 {
+    //private
+    _assemblyVersion = nil;
+    _transport = nil;
+    _initialized = NO;
+    _initializedCalled = 0;
+    _started = nil;
+    _received = nil;
+    _error = nil;
+    _closed = nil;
+    _groups = nil;
+    _credentials = nil;
+    _protectionSpace = nil;
+    _sending = nil;
+    _url = nil;
+    _active = NO;
+    _messageId = nil;
+    _connectionId = nil;
+    _items = nil;
+    _queryString = nil;
     _delegate = nil;
 }
 
