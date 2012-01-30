@@ -21,7 +21,7 @@ NOTE: SignalR-ObjC uses Automatic Reference Counting.
 1. Copy the contents of the SignalR.Client and Vendor Folders into your project
 	- Note: While SignalR-ObjC uses arc it makes use of Vendor Projects that do not.
 		- For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to ```-fno-objc-arc```
-		- for any files that have the prefix AF
+		- for any files that have the prefix AF (This requirement will go away in future release of AFNetworking)
 1. In your pch file or where every you intend to use SignalR ```#import SignalR.h```
 1. Build and Run your project with no errors
 
