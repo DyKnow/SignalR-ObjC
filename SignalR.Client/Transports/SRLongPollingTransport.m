@@ -38,7 +38,6 @@ typedef void (^onInitialized)(void);
     [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-//TODO: Check if exception is an IOException
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {    
     NSString *url = connection.url;
@@ -105,8 +104,7 @@ typedef void (^onInitialized)(void);
                         
                         //Sometimes a connection might have been closed by the server before we get to write anything
                         //So just try again and don't raise an error
-                        //TODO: check for IOException
-                        if(!requestAborted) //&& !(exception is IOExeption))
+                        if(!requestAborted)
                         {
                             //Raise Error
                             [connection didReceiveError:response];

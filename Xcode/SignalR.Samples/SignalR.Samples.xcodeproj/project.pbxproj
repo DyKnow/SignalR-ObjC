@@ -383,18 +383,18 @@
 		39951A9D14C6425600B33280 /* Transports */ = {
 			isa = PBXGroup;
 			children = (
-				39951A9E14C6425600B33280 /* SRAutoTransport.h */,
-				39951A9F14C6425600B33280 /* SRAutoTransport.m */,
+				39951AA714C6425600B33280 /* SRTransport.h */,
+				39951AA814C6425600B33280 /* SRTransport.m */,
 				3905059D14D0965D0054EB14 /* SRClientTransport+Constants.h */,
 				39951AA014C6425600B33280 /* SRClientTransport.h */,
+				39951A9E14C6425600B33280 /* SRAutoTransport.h */,
+				39951A9F14C6425600B33280 /* SRAutoTransport.m */,
 				39951AA114C6425600B33280 /* SRHttpBasedTransport.h */,
 				39951AA214C6425600B33280 /* SRHttpBasedTransport.m */,
 				39951AA314C6425600B33280 /* SRLongPollingTransport.h */,
 				39951AA414C6425600B33280 /* SRLongPollingTransport.m */,
 				39951AA514C6425600B33280 /* SRServerSentEventsTransport.h */,
 				39951AA614C6425600B33280 /* SRServerSentEventsTransport.m */,
-				39951AA714C6425600B33280 /* SRTransport.h */,
-				39951AA814C6425600B33280 /* SRTransport.m */,
 			);
 			path = Transports;
 			sourceTree = "<group>";

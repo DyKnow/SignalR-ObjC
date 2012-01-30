@@ -208,9 +208,6 @@ typedef void (^onClose)(void);
         }
         case NSStreamEventHasSpaceAvailable:
         {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did receive data");
-#endif
             if (!_reading)
             {
                 return;
@@ -228,7 +225,7 @@ typedef void (^onClose)(void);
                 _processedBytes = _processedBytes + [buffer length];
             }
             
-            if (read == 0)
+            if (read == 0 && !_connection.initialized)
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
@@ -273,19 +270,7 @@ typedef void (^onClose)(void);
             break;
         }
         case NSStreamEventNone:
-        {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] no event");
-#endif
-            break;
-        }
         case NSStreamEventHasBytesAvailable:
-        {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] stream has space available");
-#endif
-            break;
-        }
         default:
             break;
     }
@@ -463,7 +448,6 @@ typedef void (^onClose)(void);
     [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-//TODO: Check if exception is an IOException
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     // If we're reconnecting add /connect to the url
@@ -513,6 +497,26 @@ typedef void (^onClose)(void);
                             SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
 #endif
                             [connection didReceiveError:response];
+                        }
+                    }
+                    else if(![self isRequestAborted:response] && 
+                            connection.initializedCalled == 1)
+                    {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did timeout ");
+#endif
+                        //TODO: handle timeout here
+                        AsyncStreamReader *reader = nil;
+                        if((reader = [connection getValue:kReaderKey]))
+                        {
+                            // Stop any reading we're doing
+                            [reader stopReading];
+                        
+                            // Close the stream
+                            [[reader stream] close];
+                        
+                            //Call the close callback
+                            reader.closeCallback();
                         }
                     }
                 }

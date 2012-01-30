@@ -84,7 +84,7 @@ static id sharedHttpRequestManager = nil;
 
 - (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
 {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20];
+     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
@@ -92,7 +92,13 @@ static id sharedHttpRequestManager = nil;
     {
         requestPreparer(request);
     }
-    
+#if DEBUG_HTTP_HELPER
+    NSString *debugOutput = [NSString stringWithFormat:@"%@ %@\n",request.HTTPMethod,[request.URL absoluteString]];
+    debugOutput = [debugOutput stringByAppendingFormat:@"HEADERS=%@ \n",request.allHTTPHeaderFields];
+    debugOutput = [debugOutput stringByAppendingFormat:@"BODY=%@ \n",request.HTTPBody];
+    debugOutput = [debugOutput stringByAppendingFormat:@"TIMEOUT=%@ \n",request.timeoutInterval];
+    SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+#endif
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
@@ -104,6 +110,20 @@ static id sharedHttpRequestManager = nil;
         block(oStream);
     }
     operation.outputStream = oStream;
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
+    {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+    {
+#if DEBUG_HTTP_HELPER
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+#endif
+        if (block)
+        {
+            block(error);
+        }
+    }];
     [operation start];
 }
 
@@ -144,7 +164,13 @@ static id sharedHttpRequestManager = nil;
     {
         requestPreparer(request);
     }
-    
+#if DEBUG_HTTP_HELPER
+    NSString *debugOutput = [NSString stringWithFormat:@"%@ %@\n",request.HTTPMethod,[request.URL absoluteString]];
+    debugOutput = [debugOutput stringByAppendingFormat:@"HEADERS=%@ \n",request.allHTTPHeaderFields];
+    debugOutput = [debugOutput stringByAppendingFormat:@"BODY=%@ \n",request.HTTPBody];
+    debugOutput = [debugOutput stringByAppendingFormat:@"TIMEOUT=%@ \n",request.timeoutInterval];
+    SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+#endif
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
@@ -152,12 +178,22 @@ static id sharedHttpRequestManager = nil;
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
+#if DEBUG_HTTP_HELPER
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+#endif
         if (block)
         {
             block(operation.responseString);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
+#if DEBUG_HTTP_HELPER
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+#endif
         if (block)
         {
             block(error);
