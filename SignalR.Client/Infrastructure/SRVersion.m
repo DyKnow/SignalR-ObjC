@@ -118,4 +118,14 @@
     return success;
 }
 
+- (void)dealloc
+{
+    _build = 0;
+    _major = 0;
+    _majorRevision = 0;
+    _minor = 0;
+    _minorRevision = 0;
+    _revision = 0;
+}
+
 @end

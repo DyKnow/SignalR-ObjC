@@ -7,10 +7,11 @@
 //
 
 #import "SRHttpBasedTransport.h"
+#import "SRSignalRConfig.h"
 
 #import "SBJson.h"
+#import "AFNetworking.h"
 #import "SRHttpHelper.h"
-#import "SRHttpResponse.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 
@@ -57,7 +58,7 @@
     [NSException raise:@"AbstractClassException" format:@"Must use an overriding class of DKHttpBasedTransport"];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(SRHttpResponse *response))block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {       
     NSString *url = connection.url;
     url = [url stringByAppendingString:kSendEndPoint];
@@ -71,30 +72,31 @@
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
     [postData setObject:[data stringByEscapingForURLQuery] forKey:kData];
     
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will send data");
+#endif
+    
     if(block == nil)
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
+        [SRHttpHelper postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         } 
         postData:postData continueWith:
-        ^(SRHttpResponse *httpResponse)
+        ^(id response)
         {
-#if DEBUG
-            NSLog(@"sendDidReceiveResponse: %@",httpResponse.response);
-#endif
-            if([httpResponse.response isKindOfClass:[NSString class]])
+            if([response isKindOfClass:[NSString class]])
             {
-                if([httpResponse.response isEqualToString:@""] == NO && httpResponse.response != nil)
+                if([response isEqualToString:@""] == NO && response != nil)
                 {
-                    [connection didReceiveData:httpResponse.response];
+                    [connection didReceiveData:response];
                 }
             }
         }];
     }
     else
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(NSMutableURLRequest * request)
+        [SRHttpHelper postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         }
@@ -102,17 +104,19 @@
     }
 }
 
-//TODO: Handle Cancel Request
 - (void)stop:(SRConnection *)connection
 {
-    NSMutableURLRequest *httpRequest = [connection getValue:kHttpRequestKey];
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will stop transport");
+#endif
+    AFHTTPRequestOperation *httpRequest = [connection getValue:kHttpRequestKey];
     
     if(httpRequest != nil)
     {
         @try 
         {
             [self onBeforeAbort:connection];
-            //[httpRequest cancel];
+            [httpRequest cancel];
         }
         @catch (NSError *error) {
             //NotImplementedException
@@ -123,11 +127,9 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
-//TODO: Handle Request Aborted
 - (BOOL)isRequestAborted:(NSError *)error
 {
-    return NO;
-    //return (error != nil && (error.code == ASIRequestCancelledErrorType));
+    return (error != nil && ([error.domain isEqualToString:AFNetworkingErrorDomain]));
 }
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
@@ -176,12 +178,15 @@
     return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
 }
 
-- (void)prepareRequest:(NSMutableURLRequest *)request forConnection:(SRConnection *)connection;
+- (void)prepareRequest:(id)request forConnection:(SRConnection *)connection;
 {
     //Setup the user agent alogn with and other defaults
     [connection prepareRequest:request];
     
-    [connection.items setObject:request forKey:kHttpRequestKey];
+    if([request isKindOfClass:[AFHTTPRequestOperation class]])
+    {
+        [connection.items setObject:request forKey:kHttpRequestKey];
+    }
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection
@@ -238,8 +243,8 @@
         }
     }
     @catch (NSError *ex) {
-#if DEBUG
-        NSLog(@"Failed to respond: %@",ex);
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] error while processing messages %@",ex);
 #endif
         [connection didReceiveError:ex];
     }
@@ -250,4 +255,8 @@
     return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
 }
 
+- (void)dealloc
+{
+    _transport = nil;
+}
 @end

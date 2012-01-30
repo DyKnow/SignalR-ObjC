@@ -10,7 +10,7 @@
 #import "SRHubProxy.h"
 #import "SRSubscription.h"
 
-@interface SRHubservable()
+@interface SRHubservable ()
 
 @end
 
@@ -49,6 +49,12 @@
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"Hubservable: Hub:%@ Event=%@",_proxy, _eventName];
+}
+
+- (void)dealloc
+{
+    _proxy = nil;
+    _eventName = nil;
 }
 
 @end

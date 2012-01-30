@@ -177,7 +177,6 @@
     [self refreshMessages];
 }
 
-//TODO: Handle GetUsers Callback
 -(void)refreshRoom:(id)inRoom
 {
     [self clearMessages];

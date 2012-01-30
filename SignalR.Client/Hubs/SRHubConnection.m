@@ -7,6 +7,7 @@
 //
 
 #import "SRHubConnection.h"
+#import "SRSignalRConfig.h"
 
 #import "SBJson.h"
 #import "SRHubProxy.h"
@@ -18,7 +19,7 @@ typedef NSString* (^onConnectionSending)();
 typedef void (^onConnectionReceived)(NSString *);
 #endif
 
-@interface SRHubConnection()
+@interface SRHubConnection ()
 
 - (NSString *)_getUrl:(NSString *)URL;
 
@@ -47,6 +48,9 @@ typedef void (^onConnectionReceived)(NSString *);
 
 - (SRHubProxy *)createProxy:(NSString *)hubName
 {
+#if DEBUG_CONNECTION
+    SR_DEBUG_LOG(@"[CONNECTION] will create proxy %@",hubName);
+#endif
     SRHubProxy *hubProxy;
     if([_hubs objectForKey:hubName] == nil)
     {
@@ -120,6 +124,11 @@ typedef void (^onConnectionReceived)(NSString *);
     self.sending = nil;
     self.received = nil;
     [super stop];
+}
+
+- (void)dealloc
+{
+    _hubs = nil;
 }
 
 @end
