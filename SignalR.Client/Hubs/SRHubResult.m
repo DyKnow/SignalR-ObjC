@@ -37,7 +37,7 @@
 	if (self = [self init])
 	{
         self.result  = [dict objectForKey:kResult];
-        self.error = [NSString stringWithFormat:@"%@",[dict objectForKey:kError]];
+        self.error = [dict objectForKey:kError];
         self.state = [dict objectForKey:kState];
     }
     return self;
@@ -46,7 +46,7 @@
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
     self.result = ([dict objectForKey:kResult]) ? [dict objectForKey:kResult] : _result;
-    self.error = ([dict objectForKey:kError]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kError]] : _error;
+    self.error = ([dict objectForKey:kError]) ? [dict objectForKey:kError] : _error;
     self.state = ([dict objectForKey:kState]) ? [dict objectForKey:kState] : _state;
 }
 
