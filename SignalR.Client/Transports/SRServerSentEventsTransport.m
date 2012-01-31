@@ -9,6 +9,7 @@
 #import "SRServerSentEventsTransport.h"
 #import "SRSignalRConfig.h"
 
+#import "AFNetworking.h"
 #import "SRHttpHelper.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
@@ -134,7 +135,7 @@ typedef void (^onClose)(void);
 
 @interface AsyncStreamReader : NSObject <NSStreamDelegate>
 
-@property (strong, nonatomic, readonly)  NSOutputStream *stream;
+@property (strong, nonatomic, readwrite)  NSOutputStream *stream;
 @property (strong, nonatomic, readonly)  ChunkBuffer *buffer;
 @property (copy) onInitialized initializeCallback;
 @property (copy) onClose closeCallback;
@@ -191,7 +192,7 @@ typedef void (^onClose)(void);
 - (void)stopReading
 {
     _reading = NO;
-    _stream.delegate = nil;
+    //_stream.delegate = nil;
 }
 
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
@@ -225,22 +226,6 @@ typedef void (^onClose)(void);
                 _processedBytes = _processedBytes + [buffer length];
             }
             
-            if (read == 0 && !_connection.initialized)
-            {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
-#endif
-                // Stop any reading we're doing
-                [self stopReading];
-                
-                // Close the stream
-                [stream close];
-                
-                //Call the close callback
-                _closeCallback();
-                return;
-            }
-            
             [self processBuffer];
             
             break;
@@ -257,18 +242,6 @@ typedef void (^onClose)(void);
             break;
         }
         case NSStreamEventEndEncountered:
-        {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] finishd reading");
-#endif
-            if (!_reading)
-            {
-                return;
-            }
-            
-            [self stopReading];
-            break;
-        }
         case NSStreamEventNone:
         case NSStreamEventHasBytesAvailable:
         default:
@@ -504,21 +477,21 @@ typedef void (^onClose)(void);
                             connection.initializedCalled == 1)
                     {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did timeout ");
+                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
 #endif
-                        //TODO: handle timeout here
+                        
                         AsyncStreamReader *reader = nil;
                         if((reader = [connection getValue:kReaderKey]))
                         {
                             // Stop any reading we're doing
                             [reader stopReading];
-                        
+                            
                             // Close the stream
                             [[reader stream] close];
-                        
+                            
                             //Call the close callback
                             reader.closeCallback();
-                        }
+                        }                
                     }
                 }
             }
