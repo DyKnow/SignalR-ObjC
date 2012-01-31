@@ -34,6 +34,7 @@
 {
     SRTransport *transport = [[SRTransport alloc] init];
     
+#warning Before using Server Sent Events see issue 44 https://github.com/DyKnow/SignalR-ObjC/issues/44
     return transport.serverSentEvents;
 }
 

@@ -10,7 +10,7 @@
 	<key>Release</key>
 	<dict>
 		<key>server</key>
-		<string>http://192.168.1.85:9090/</string>
+		<string>http://abillingsley-vm:9090/</string>
 	</dict>
 </dict>
 </plist>
