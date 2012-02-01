@@ -36,7 +36,6 @@ typedef void (^onClosed)();
 @property (copy) onError error; 
 @property (copy) onClosed closed;
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
-@property (strong, nonatomic, readwrite) NSURLProtectionSpace *protectionSpace;
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
 @property (copy) onSending sending;
 @property (strong, nonatomic, readwrite) NSString *url;

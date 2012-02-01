@@ -45,7 +45,6 @@ void (^prepareRequest)(id);
 @synthesize closed = _closed;
 @synthesize groups = _groups;
 @synthesize credentials = _credentials;
-@synthesize protectionSpace = _protectionSpace;
 @synthesize sending = _sending;
 @synthesize url = _url;
 @synthesize active = _active;
@@ -275,7 +274,6 @@ void (^prepareRequest)(id);
 #pragma mark - 
 #pragma mark Prepare Request
 
-//TODO: handle credientials
 - (void)prepareRequest:(id)request
 {
     if([request isKindOfClass:[NSMutableURLRequest class]])
@@ -287,33 +285,12 @@ void (^prepareRequest)(id);
 #endif
         if(_credentials != nil)
         {
-            /*[request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
-             
-             if(_protectionSpace && [_protectionSpace isProxy])
-             {
-             [request setProxyUsername:_credentials.user];
-             [request setProxyPassword:_credentials.password];
-             }
-             else
-             {
-             [request setUsername:_credentials.user];
-             [request setPassword:_credentials.password];
-             }
-             
-             if(_protectionSpace && [_protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodNTLM])
-             {
-             if([_protectionSpace isProxy])
-             {
-             [request setProxyDomain:_protectionSpace.host];
-             }
-             else
-             {
-             [request setDomain:_protectionSpace.host];
-             }
-             [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeNTLM];
-             }
-             
-             [request setShouldPresentCredentialsBeforeChallenge:YES];*/
+            // Create a AFHTTPClient for the sole purpose of generating an authorization header.
+            AFHTTPClient *clientForAuthHeader = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
+            [clientForAuthHeader setAuthorizationHeaderWithUsername:_credentials.user password:_credentials.password];
+            
+            //Set the Authorization header that we just generated to our actual request
+            [request addValue:[clientForAuthHeader defaultValueForHeader:@"Authorization"] forHTTPHeaderField:@"Authorization"];
         }
     }
 }
@@ -356,7 +333,6 @@ void (^prepareRequest)(id);
     _closed = nil;
     _groups = nil;
     _credentials = nil;
-    _protectionSpace = nil;
     _sending = nil;
     _url = nil;
     _active = NO;
