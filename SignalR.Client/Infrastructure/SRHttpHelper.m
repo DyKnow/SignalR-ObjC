@@ -87,6 +87,7 @@ static id sharedHttpRequestManager = nil;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
+    [request setTimeoutInterval:240];
     if(requestPreparer != nil)
     {
         requestPreparer(request);
@@ -111,6 +112,15 @@ static id sharedHttpRequestManager = nil;
     operation.outputStream = oStream;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
+#if DEBUG_HTTP_HELPER
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+#endif
+        if (block)
+        {
+            block(responseObject);
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
 #if DEBUG_HTTP_HELPER
@@ -159,6 +169,7 @@ static id sharedHttpRequestManager = nil;
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody: requestData];
+    [request setTimeoutInterval:240];
     if(requestPreparer != nil)
     {
         requestPreparer(request);

@@ -472,28 +472,26 @@ typedef void (^onClose)(void);
                             [connection didReceiveError:response];
                         }
                     }
-                    //TODO: need to ensure that the old connection is closed or reused
-                    else if(![self isRequestAborted:response] && 
-                            connection.initializedCalled == 1)
-                    {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
-#endif
-                        
-                        AsyncStreamReader *reader = nil;
-                        if((reader = [connection getValue:kReaderKey]))
-                        {
-                            // Stop any reading we're doing
-                            [reader stopReading];
-                            
-                            // Close the stream
-                            [[reader stream] close];
-                            
-                            //Call the close callback
-                            reader.closeCallback();
-                        }                
-                    }
                 }
+            }
+            else if(connection.initializedCalled == 1)
+            {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
+#endif
+                
+                AsyncStreamReader *reader = nil;
+                if((reader = [connection getValue:kReaderKey]))
+                {
+                    // Stop any reading we're doing
+                    [reader stopReading];
+                    
+                    // Close the stream
+                    [[reader stream] close];
+                    
+                    //Call the close callback
+                    reader.closeCallback();
+                }                
             }
         }
         else

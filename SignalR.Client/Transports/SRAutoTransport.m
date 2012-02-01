@@ -30,10 +30,7 @@
     if(self = [super init])
     {
         //List the transports in fallback order
-#warning Before using Server Sent Events see issue 44 https://github.com/DyKnow/SignalR-ObjC/issues/44
-        //_transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
-        _transports = [NSArray arrayWithObjects:[SRTransport LongPolling], nil];
-
+        _transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
     }
     return self;
 }
