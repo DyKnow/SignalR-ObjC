@@ -148,14 +148,7 @@
         [parameters setObject:[NSString stringWithFormat:@""] forKey:kMessageId];
     }
     
-    if([connection.groups count]>0)
-    {
-        [parameters setObject:[connection.groups componentsJoinedByString:@","] forKey:kGroups];
-    }
-    else
-    {
-        [parameters setObject:[NSString stringWithFormat:@""] forKey:kGroups];
-    }
+    [parameters setObject:[[SBJsonWriter new] stringWithObject:connection.groups] forKey:kGroups];
     
     if (data) 
     {
