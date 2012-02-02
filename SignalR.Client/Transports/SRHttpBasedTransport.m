@@ -227,10 +227,7 @@
                 id groups = [transportData objectForKey:kResponse_Groups];
                 if(groups && [groups isKindOfClass:[NSArray class]])
                 {
-                    for (NSString *group in groups) 
-                    {
-                        [connection.groups addObject:group];
-                    }
+                    connection.groups = [NSMutableArray arrayWithArray:groups];
                 }
             }
         }
