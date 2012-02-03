@@ -816,7 +816,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"SignalR\" \\\n--project-company \"DyKnow\" \\\n--company-id \"com.dyknow\" \\\n--docset-atom-filename \"SignalR.atom\" \\\n--docset-feed-url \"http://SignalR.github.com/SignalR/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://SignalR.github.com/SignalR/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://SignalR.github.com/SignalR/\" \\\n--output \"~/help\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--keep-intermediate-files \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n\"/Users/abillingsley/forks/SignalR-ObjC/SignalR.Client\"";
+			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"SignalR\" \\\n--project-company \"DyKnow\" \\\n--company-id \"com.dyknow\" \\\n--docset-atom-filename \"SignalR.atom\" \\\n--docset-feed-url \"http://dyknow.github.com/SignalR/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://dyknow.github.com/SignalR/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://dyknow.github.com/SignalR/\" \\\n--output \"~/Documentation/SignalR-ObjC\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--keep-intermediate-files \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n\"${PROJECT_DIR}/../../SignalR.Client\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1130,6 +1130,7 @@
 				39B70FE114DB92DA00F3DF97 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
