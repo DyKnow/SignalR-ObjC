@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 DyKnow LLC. All rights reserved.
 //
 
+#include <TargetConditionals.h>
 #import "SRConnection.h"
 #import "SRSignalRConfig.h"
 
@@ -278,7 +279,7 @@ void (^prepareRequest)(id);
 {
     if([request isKindOfClass:[NSMutableURLRequest class]])
     {
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
         [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
 #elif TARGET_OS_MAC
         [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
@@ -302,7 +303,7 @@ void (^prepareRequest)(id);
         _assemblyVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     }
    
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
 #elif TARGET_OS_MAC
     NSString *environmentVersion = @"";
