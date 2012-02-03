@@ -22,19 +22,63 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * `SRVersion` represents the signalr protocol version number.
+ */
 @interface SRVersion : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * The value of the build component of the version number for the current `SRVersion` object.
+ */
 @property (assign, nonatomic, readwrite) NSInteger build;
+
+/**
+ * The value of the major component of the version number for the current `SRVersion` object.
+ */
 @property (assign, nonatomic, readwrite) NSInteger major;
+
+/**
+ * The value of the majorRevision component of the version number for the current `SRVersion` object.
+ */
 @property (assign, nonatomic, readwrite) NSInteger majorRevision;
+
+/**
+ * The value of the minor component of the version number for the current `SRVersion` object.
+ */
 @property (assign, nonatomic, readwrite) NSInteger minor;
+
+/**
+ * The value of the minorRevision component of the version number for the current `SRVersion` object.
+ */
 @property (assign, nonatomic, readwrite) NSInteger minorRevision;
+
+/**
+ * The value of the revision component of the version number for the current `SRVersion` object.
+ */
 @property (assign, nonatomic, readwrite) NSInteger revision;
 
+/**
+ * Initializes a new instance of the `SRVersion` class using the specified major and minor values.
+ */
 - (id)initWithMajor:(NSInteger)major minor:(NSInteger)minor;
+
+/**
+ * Initializes a new instance of the `SRVersion` class using the specified major, minor, and build values.
+ */
 - (id)initWithMajor:(NSInteger)major minor:(NSInteger)minor build:(NSInteger)build;
+
+/**
+ * Initializes a new instance of the `SRVersion` class using the specified major, minor, build and revision values.
+ */
 - (id)initWithMajor:(NSInteger)major minor:(NSInteger)minor build:(NSInteger)build revision:(NSInteger)revision;
 
+/**
+ * Tries to convert the string representation of a version number to an equivalent `SRVersion` object, and returns a value that indicates whether the conversion succeeded.
+ */
 + (BOOL)tryParse:(NSString *)input forVersion:(SRVersion **)version;
 
 @end
