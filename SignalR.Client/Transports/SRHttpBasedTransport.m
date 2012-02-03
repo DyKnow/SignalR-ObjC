@@ -187,7 +187,7 @@
 
 - (void)prepareRequest:(id)request forConnection:(SRConnection *)connection;
 {
-    //Setup the user agent alogn with and other defaults
+    //Setup the user agent along with and other defaults
     [connection prepareRequest:request];
     
     if([request isKindOfClass:[AFHTTPRequestOperation class]])

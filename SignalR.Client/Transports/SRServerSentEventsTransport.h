@@ -23,8 +23,26 @@
 #import <Foundation/Foundation.h>
 #import "SRHttpBasedTransport.h"
 
+/**
+ * `SRServerSentEventsTransport` object provides support for using [Server-Sent Events](http://dev.w3.org/html5/eventsource/) when communicating with a SignalR Server.
+ * 
+ * SRServerSentEvents makes an HTTP Get Request with transport="serverSentEvents"  SRServerSentEvents will keep this connection open until it receives a timeout message from the server
+ * once the timeout is received SRServerSentEvents will attempt a reconnect after waiting for 2 seconds
+ * 
+ * @warning *Important:* a client side timeout will occur after 240 seconds, it is important that the ReconnectTimeout defined in DefaultConfigurationManager.cs on the server does not exceed 240 seconds
+ * If a client side timeout occurs before the server side timeout SRServerSentEvents transport will not reconnect
+ */
 @interface SRServerSentEventsTransport : SRHttpBasedTransport
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * Returns an `NSInteger` object with the amount of time in seconds to wait for successful transport initialization
+ *
+ * By default, this is 2 seconds
+ */
 @property (assign, nonatomic, readwrite) NSInteger connectionTimeout;
 
 @end

@@ -25,13 +25,33 @@
 @class SRConnection;
 
 /**
- * IClientTransport
- * Each Client Transport should conform to the following protocol
+ * `SRIClientTransport` defines the protocol each Client Transport should conform to
  **/
 @protocol SRClientTransport <NSObject>
 
+/**
+ * Opens a connection to the server for the active transport
+ *
+ * @param connection the connection to start the transport on
+ * @param data the data to send when starting the transport on, may be nil
+ * @param block the block to be called once start finishes, block may be nil
+ */
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block;
+
+/**
+ * Sends data to the server for the active transport
+ *
+ * @param connection the connection to start the transport on
+ * @param data the data to send the server
+ * @param block the block to be called once send finishes, block may be nil
+ */
 - (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block;
+
+/**
+ * Stops the active transport from receiving data from the server
+ *
+ * @param connection the connection to start the transport on
+ */
 - (void)stop:(SRConnection *)connection;
 
 @end

@@ -23,6 +23,13 @@
 #import <Foundation/Foundation.h>
 #import "SRHttpBasedTransport.h"
 
+/**
+ * `SRLongPollingTransport` object provides support for using Long Polling when communicating with a SignalR Server.
+ * 
+ * SRLongPollingTransport makes an HTTP POST Request with transport="longPolling"  SRLongPollingTransport will keep this connection open until it receives a reasonse or 
+ * a client side timeout once the timeout is received SRLongPollingTransport will attempt a reconnect after waiting for 2 seconds
+ * If the connection receives data successfully from the server, SRLongPollingTransport will poll the server again immediately
+ */
 @interface SRLongPollingTransport : SRHttpBasedTransport
 
 @end

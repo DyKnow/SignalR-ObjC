@@ -23,14 +23,49 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
+/**
+ * `SRTransport` object provides convenient access to all supported transports
+ */
 @interface SRTransport : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * Returns an `SRAutoTransport` object
+ */
 @property (strong, nonatomic, readwrite) id <SRClientTransport> autoTransport;
+
+/**
+ * Returns an `SRServerSentEventsTransport` object
+ */
 @property (strong, nonatomic, readonly) id <SRClientTransport> serverSentEvents;
+
+/**
+ * Returns an `SRLongPollingTransport` object
+ */
 @property (strong, nonatomic, readonly) id <SRClientTransport> longPolling;
 
+/**
+ * Convenience method for returning an instance of `SRAutoTransport`
+ *
+ * @return an instance of `SRAutoTransport`
+ */
 + (id <SRClientTransport>)Auto;
+
+/**
+ * Convenience method for returning an instance of `SRServerSentEventsTransport`
+ *
+ * @return an instance of `SRServerSentEventsTransport`
+ */
 + (id <SRClientTransport>)ServerSentEvents;
+
+/**
+ * Convenience method for returning an instance of `SRLongPollingTransport`
+ *
+ * @return an instance of `SRLongPollingTransport`
+ */
 + (id <SRClientTransport>)LongPolling;
 
 @end
