@@ -14,6 +14,7 @@
 @protocol SRConnectionDelegate<NSObject>
 @optional 
 - (void)SRConnectionDidOpen:(SRConnection *)connection;
+- (void)SRConnectionDidReconnect:(SRConnection *)connection;
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data;
 - (void)SRConnectionDidClose:(SRConnection *)connection;
 - (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error;
@@ -58,11 +59,13 @@ typedef void (^onReconnected)();
 
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
+- (void)negotiate;
 - (void)send:(NSString *)message;
 - (void)send:(NSString *)message continueWith:(void (^)(id response))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
+- (void)didReconnect;
 
 - (void)prepareRequest:(id)request;
 - (NSString *)createUserAgentString:(NSString *)client;

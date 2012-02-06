@@ -19,6 +19,7 @@ typedef void (^onInitialized)(void);
 
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
+- (void)fireReconnected:(SRConnection *)connection reconnectCancelled:(BOOL)cancelled reconnectedFired:(int *)reconnectedFired;
 
 #define kTransportName @"longPolling"
 
@@ -50,18 +51,12 @@ typedef void (^onInitialized)(void);
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect
 { 
     NSString *url = connection.url;
+    __block BOOL reconnectCancelled = NO;
+    __block NSInteger reconnectFired = 0;
     
     if(connection.messageId == nil)
     {
         url = [url stringByAppendingString:kConnectEndPoint];
-    }
-    else if(raiseReconnect)
-    {
-        // If the previous long poll timed out, raise the event
-        if(connection.reconnected)
-        {
-            connection.reconnected();
-        }
     }
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
@@ -90,6 +85,13 @@ typedef void (^onInitialized)(void);
             {
                 if(!isFaulted)
                 {
+                    if(raiseReconnect)
+                    {
+                        // If the timeout for the receonnect hasn't fired as yet just fire the 
+                        // Event here before any incoming messages are processed
+                        [self fireReconnected:connection reconnectCancelled:reconnectCancelled reconnectedFired:&reconnectFired];
+                    }
+                    
                     [self processResponse:connection response:response timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
                 }
             }
@@ -98,6 +100,9 @@ typedef void (^onInitialized)(void);
         {
             if(disconnectedReceived)
             {
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[LONG_POLLING] did disconnect");
+#endif
                 [connection stop];
             }
             else
@@ -110,6 +115,12 @@ typedef void (^onInitialized)(void);
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
 #endif
+                    // Cancel the previous reconnect event
+                    reconnectCancelled = YES;
+                    
+                    // Raise the reconnect event if we successfully reconect after failing
+                    shouldRaiseReconnect = YES;
+                    
                     if([response isKindOfClass:[NSError class]])
                     {
                         // If the error callback isn't null then raise it and don't continue polling
@@ -182,6 +193,26 @@ typedef void (^onInitialized)(void);
 #endif
         // Only set this the first time
         initializeCallback();
+    }
+    
+    if (raiseReconnect)
+    {
+        [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
+        {
+            [self fireReconnected:connection reconnectCancelled:reconnectCancelled reconnectedFired:&reconnectFired];
+        } repeats:NO];
+    }
+}
+
+- (void)fireReconnected:(SRConnection *)connection reconnectCancelled:(BOOL)cancelled reconnectedFired:(int *)reconnectedFired
+{
+    if(!cancelled)
+    {
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[LONG_POLLING] did fire reconnected");
+#endif
+        *reconnectedFired = 1;
+        [connection didReconnect];
     }
 }
 

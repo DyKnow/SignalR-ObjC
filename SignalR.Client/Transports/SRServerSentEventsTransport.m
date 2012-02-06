@@ -150,7 +150,7 @@ typedef void (^onClose)(void);
 - (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport;
 
 - (void)startReading;
-- (void)stopReading;
+- (void)stopReading:(BOOL)raiseCloseCallback;
 - (void)processBuffer;
 - (void)processChunks;
 - (BOOL)tryParseEvent:(NSString *)line sseEvent:(SseEvent **)sseEvent;
@@ -189,10 +189,16 @@ typedef void (^onClose)(void);
     _stream.delegate = self;
 }
 
-- (void)stopReading
+- (void)stopReading:(BOOL)raiseCloseCallback
 {
     _reading = NO;
-    //_stream.delegate = nil;
+    if(raiseCloseCallback)
+    {
+        if(_closeCallback)
+        {
+            _closeCallback();
+        }
+    }
 }
 
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
@@ -240,10 +246,7 @@ typedef void (^onClose)(void);
                 [_connection didReceiveError:[stream streamError]];
             }
             
-            if(_closeCallback)
-            {
-                _closeCallback();
-            }
+            [self stopReading:YES];
             break;
         }
         case NSStreamEventEndEncountered:
@@ -354,9 +357,12 @@ typedef void (^onClose)(void);
                         
                         if(disconnectReceived)
                         {
-                            [self stopReading];
-                            
                             [_connection stop];
+                        }
+                        
+                        if(timedOutReceived)
+                        {
+                            return;
                         }
                     }
                 }
@@ -545,6 +551,13 @@ typedef void (^onClose)(void);
 #endif
                 [self reconnect:connection data:data];
             };
+            
+            if(reconnecting)
+            {
+                // Raise the reconnect event if the connection comes back up
+                [connection didReconnect];
+            }
+            
             [reader startReading];
             
             //Set the reader for this connection
@@ -596,7 +609,7 @@ typedef void (^onClose)(void);
     if((reader = [connection getValue:kReaderKey]))
     {
         //Stop reading data from the stream
-        [reader stopReading];
+        [reader stopReading:NO];
         
         //Remove the reader
         [connection.items removeObjectForKey:kReaderKey];

@@ -215,10 +215,10 @@
                 return;
             }
             
-            id messageId = [result objectForKey:kResponse_MessageId];
-            if(messageId && [messageId isKindOfClass:[NSNumber class]])
+            NSInteger messageId = [[result objectForKey:kResponse_MessageId] integerValue];
+            if(messageId)
             {
-                connection.messageId = messageId;
+                connection.messageId = [NSNumber numberWithInteger:messageId];
             }
             
             id messageData = [result objectForKey:kResponse_Messages];

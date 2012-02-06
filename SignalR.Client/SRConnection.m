@@ -126,6 +126,11 @@ void (^prepareRequest)(id);
         
     _transport = transport;
     
+    [self negotiate];
+}
+
+- (void)negotiate
+{
     NSString *data = nil;
     
     if(_sending != nil)
@@ -134,7 +139,7 @@ void (^prepareRequest)(id);
     }
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
-
+    
 #if DEBUG_CONNECTION
     SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
 #endif
@@ -162,17 +167,17 @@ void (^prepareRequest)(id);
                 
                 [_transport start:self withData:data continueWith:
                  ^(id task) 
-                {
-                    _initialized = YES;
-                    
-                    if(_started != nil)
-                    {
-                        self.started();
-                    }
-                    if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                        [self.delegate SRConnectionDidOpen:self];
-                    }
-                }];
+                 {
+                     _initialized = YES;
+                      
+                     if(_started != nil)
+                     {
+                         self.started();
+                     }
+                     if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                         [self.delegate SRConnectionDidOpen:self];
+                     }
+                 }];
             }
         }
         else if([response isKindOfClass:[NSError class]])
@@ -277,6 +282,11 @@ void (^prepareRequest)(id);
     if(_reconnected != nil)
     {
         self.reconnected();
+    }
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidReconnect:)]) 
+    {
+        [self.delegate SRConnectionDidReconnect:self];
     }
 }
 
