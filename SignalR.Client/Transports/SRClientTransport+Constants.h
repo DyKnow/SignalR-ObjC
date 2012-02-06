@@ -31,3 +31,5 @@
 #define kResponse_TransportData @"TransportData"
 #define kResponse_Groups @"Groups"
 #define kResponse_LongPollDelay @"LongPollDelay"
+#define kResponse_TimedOut @"TimedOut"
+#define kResponse_Disconnected @"Disconnected"

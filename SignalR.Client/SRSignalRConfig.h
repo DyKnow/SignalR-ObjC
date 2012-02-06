@@ -25,7 +25,7 @@
 
 // When set to 1 SignalR will print information about what the active transport is doing
 #ifndef DEBUG_HTTP_BASED_TRANSPORT
-    #define DEBUG_HTTP_BASED_TRANSPORT 0
+    #define DEBUG_HTTP_BASED_TRANSPORT 1
 #endif
 
 // When set to 1 SignalR will print information about what the auto transport is doing

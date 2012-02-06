@@ -25,7 +25,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data;
 - (NSString *)getSendQueryString:(SRConnection *)connection;
 - (void)onBeforeAbort:(SRConnection *)connection;
-- (void)onMessage:(SRConnection *)connection response:(NSString *)response;
+- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
 
 - (void)prepareRequest:(id)request forConnection:(SRConnection *)connection;
 

@@ -26,15 +26,16 @@ typedef NSString* (^onSending)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
+typedef void (^onReconnected)();
 #endif
 
 @interface SRConnection : NSObject 
 
-@property (assign, nonatomic, readwrite) NSInteger initializedCalled;
 @property (copy) onStarted started;
 @property (copy) onReceived received;
 @property (copy) onError error; 
 @property (copy) onClosed closed;
+@property (copy) onReconnected reconnected;
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
 @property (copy) onSending sending;

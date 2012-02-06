@@ -187,8 +187,16 @@
     //override this method
 }
 
-- (void)onMessage:(SRConnection *)connection response:(NSString *)response
+- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected
 {
+    *timedOut = NO;
+    *disconnected = NO;
+    
+    if(response == nil || [response isEqualToString:@""])
+    {
+        return;
+    }
+    
     if(connection.messageId == nil)
     {
         connection.messageId = [NSNumber numberWithInt:0];
@@ -199,6 +207,14 @@
         id result = [[SBJsonParser new] objectWithString:response];
         if([result isKindOfClass:[NSDictionary class]])
         {
+            *timedOut = [[result objectForKey:kResponse_TimedOut] boolValue];
+            *disconnected = [[result objectForKey:kResponse_Disconnected] boolValue];
+            
+            if(*disconnected)
+            {
+                return;
+            }
+            
             id messageId = [result objectForKey:kResponse_MessageId];
             if(messageId && [messageId isKindOfClass:[NSNumber class]])
             {

@@ -13,7 +13,7 @@
 #import "AFNetworking.h"
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "SRTransport.h"
+#import "SRAutoTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
 #import "NSDictionary+QueryString.h"
@@ -39,11 +39,11 @@ void (^prepareRequest)(id);
 @synthesize initialized = _initialized;
 
 //public
-@synthesize initializedCalled = _initializedCalled;
 @synthesize started = _started;
 @synthesize received = _received;
 @synthesize error = _error;
 @synthesize closed = _closed;
+@synthesize reconnected = _reconnected;
 @synthesize groups = _groups;
 @synthesize credentials = _credentials;
 @synthesize sending = _sending;
@@ -112,7 +112,7 @@ void (^prepareRequest)(id);
 - (void)start
 {
     // Pick the best transport supported by the client
-    [self start:[SRTransport Auto]];
+    [self start:[[SRAutoTransport alloc] init]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -272,6 +272,14 @@ void (^prepareRequest)(id);
     }
 }
 
+- (void)didReconnect
+{
+    if(_reconnected != nil)
+    {
+        self.reconnected();
+    }
+}
+
 #pragma mark - 
 #pragma mark Prepare Request
 
@@ -327,7 +335,6 @@ void (^prepareRequest)(id);
     _assemblyVersion = nil;
     _transport = nil;
     _initialized = NO;
-    _initializedCalled = 0;
     _started = nil;
     _received = nil;
     _error = nil;

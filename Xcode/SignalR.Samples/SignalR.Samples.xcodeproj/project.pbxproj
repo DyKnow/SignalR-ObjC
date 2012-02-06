@@ -49,8 +49,6 @@
 		3916E6F814D6FD8B002D967A /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69614D6FD8B002D967A /* SRLongPollingTransport.m */; };
 		3916E6F914D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69814D6FD8B002D967A /* SRServerSentEventsTransport.m */; };
 		3916E6FA14D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69814D6FD8B002D967A /* SRServerSentEventsTransport.m */; };
-		3916E6FB14D6FD8B002D967A /* SRTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69A14D6FD8B002D967A /* SRTransport.m */; };
-		3916E6FC14D6FD8B002D967A /* SRTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69A14D6FD8B002D967A /* SRTransport.m */; };
 		3916E6FD14D6FD8B002D967A /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69E14D6FD8B002D967A /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E6FE14D6FD8B002D967A /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69E14D6FD8B002D967A /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E6FF14D6FD8B002D967A /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E6A014D6FD8B002D967A /* AFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -169,8 +167,6 @@
 		3916E69614D6FD8B002D967A /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
 		3916E69714D6FD8B002D967A /* SRServerSentEventsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRServerSentEventsTransport.h; sourceTree = "<group>"; };
 		3916E69814D6FD8B002D967A /* SRServerSentEventsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEventsTransport.m; sourceTree = "<group>"; };
-		3916E69914D6FD8B002D967A /* SRTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRTransport.h; sourceTree = "<group>"; };
-		3916E69A14D6FD8B002D967A /* SRTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTransport.m; sourceTree = "<group>"; };
 		3916E69D14D6FD8B002D967A /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		3916E69E14D6FD8B002D967A /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
 		3916E69F14D6FD8B002D967A /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -351,8 +347,6 @@
 				3916E69614D6FD8B002D967A /* SRLongPollingTransport.m */,
 				3916E69714D6FD8B002D967A /* SRServerSentEventsTransport.h */,
 				3916E69814D6FD8B002D967A /* SRServerSentEventsTransport.m */,
-				3916E69914D6FD8B002D967A /* SRTransport.h */,
-				3916E69A14D6FD8B002D967A /* SRTransport.m */,
 			);
 			path = Transports;
 			sourceTree = "<group>";
@@ -688,7 +682,6 @@
 				3916E6F614D6FD8B002D967A /* SRHttpBasedTransport.m in Sources */,
 				3916E6F814D6FD8B002D967A /* SRLongPollingTransport.m in Sources */,
 				3916E6FA14D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */,
-				3916E6FC14D6FD8B002D967A /* SRTransport.m in Sources */,
 				3916E6FE14D6FD8B002D967A /* AFHTTPClient.m in Sources */,
 				3916E70014D6FD8B002D967A /* AFHTTPRequestOperation.m in Sources */,
 				3916E70214D6FD8B002D967A /* AFImageRequestOperation.m in Sources */,
@@ -748,7 +741,6 @@
 				3916E6F514D6FD8B002D967A /* SRHttpBasedTransport.m in Sources */,
 				3916E6F714D6FD8B002D967A /* SRLongPollingTransport.m in Sources */,
 				3916E6F914D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */,
-				3916E6FB14D6FD8B002D967A /* SRTransport.m in Sources */,
 				3916E6FD14D6FD8B002D967A /* AFHTTPClient.m in Sources */,
 				3916E6FF14D6FD8B002D967A /* AFHTTPRequestOperation.m in Sources */,
 				3916E70114D6FD8B002D967A /* AFImageRequestOperation.m in Sources */,
