@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 
-@class ASIHTTPRequest;
 @class SRConnection;
 
 @protocol SRConnectionDelegate<NSObject>
 @optional 
 - (void)SRConnectionDidOpen:(SRConnection *)connection;
+- (void)SRConnectionDidReconnect:(SRConnection *)connection;
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data;
 - (void)SRConnectionDidClose:(SRConnection *)connection;
 - (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error;
@@ -22,19 +22,22 @@
 @end
 
 #if NS_BLOCKS_AVAILABLE
+typedef void (^onStarted)();
 typedef NSString* (^onSending)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
+typedef void (^onReconnected)();
 #endif
 
 @interface SRConnection : NSObject 
 
+@property (copy) onStarted started;
 @property (copy) onReceived received;
 @property (copy) onError error; 
 @property (copy) onClosed closed;
+@property (copy) onReconnected reconnected;
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
-@property (strong, nonatomic, readwrite) NSURLProtectionSpace *protectionSpace;
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
 @property (copy) onSending sending;
 @property (strong, nonatomic, readwrite) NSString *url;
@@ -43,6 +46,7 @@ typedef void (^onClosed)();
 @property (strong, nonatomic, readwrite) NSString *connectionId;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 @property (strong, nonatomic, readonly) NSString *queryString;
+@property (assign, nonatomic, readonly) BOOL initialized;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -55,13 +59,15 @@ typedef void (^onClosed)();
 
 - (void)start;
 - (void)start:(id <SRClientTransport>)transport;
+- (void)negotiate;
 - (void)send:(NSString *)message;
-- (void)send:(NSString *)message onCompletion:(void(^)(id))block;
+- (void)send:(NSString *)message continueWith:(void (^)(id response))block;
 - (void)stop;
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
+- (void)didReconnect;
 
-- (void)prepareRequest:(ASIHTTPRequest *)request;
+- (void)prepareRequest:(id)request;
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end

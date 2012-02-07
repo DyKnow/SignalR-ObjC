@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransport.h"
+#import "SRClientTransport+Constants.h"
 
-@class ASIHTTPRequest;
+#if NS_BLOCKS_AVAILABLE
+typedef void (^SRErrorByReferenceBlock)(NSError **);
+#endif
 
 @interface SRHttpBasedTransport : NSObject <SRClientTransport>
 
@@ -17,15 +19,15 @@
 
 - (id) initWithTransport:(NSString *)transport;
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data;
+- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 - (BOOL)isRequestAborted:(NSError *)error;
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data;
 - (NSString *)getSendQueryString:(SRConnection *)connection;
 - (void)onBeforeAbort:(SRConnection *)connection;
-- (void)onMessage:(SRConnection *)connection response:(NSString *)response;
+- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
 
-- (void)prepareRequest:(ASIHTTPRequest *)request forConnection:(SRConnection *)connection;
+- (void)prepareRequest:(id)request forConnection:(SRConnection *)connection;
 
 #define kHttpRequestKey @"http.Request"
 

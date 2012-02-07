@@ -318,7 +318,8 @@ void (^prepareRequest)(id);
 {
     if(_assemblyVersion == nil)
     {
-        _assemblyVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        //Need to manually set this otherwise it will inherit from the project version
+        _assemblyVersion = @"0.4";
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
