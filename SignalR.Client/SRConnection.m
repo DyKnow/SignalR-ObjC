@@ -146,6 +146,10 @@ void (^prepareRequest)(id);
     
     [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(id request)
     {
+        if([request isKindOfClass:[NSMutableURLRequest class]])
+        {
+            [request setTimeoutInterval:30];
+        }
         [self prepareRequest:request];
     }
     continueWith:^(id response)
