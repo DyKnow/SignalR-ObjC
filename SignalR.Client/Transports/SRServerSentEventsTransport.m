@@ -516,13 +516,16 @@ typedef void (^onClose)(void);
                     }
                 }
             }
-            else if(_initializedCalled == 1)
+            
+            if(_initializedCalled == 1)
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
 #endif
                 //Retry
                 [self reconnect:connection data:data];
+                
+                _initializedCalled = 0;
             }
         }
         else
@@ -541,6 +544,10 @@ typedef void (^onClose)(void);
                         _initializedCalled = 1;
                         
                         initializeCallback();
+                    }
+                    else if(_initializedCalled == 0)
+                    {
+                         _initializedCalled = 1;
                     }
                 }
             };
