@@ -27,8 +27,35 @@
 @property (strong, nonatomic, readwrite) NSString *name;
 @property (strong, nonatomic, readwrite) NSMutableArray *methods;
 
+///-------------------------------
+/// @name Initializing an SRHubRegistrationData Object
+///-------------------------------
+
+/**
+ * Initializes a new `SRHubRegistrationData` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `SRHubRegistrationData`
+ */
 - (id)initWithDictionary:(NSDictionary*)dict;
+
+///-------------------------------
+/// @name Updating an SRHubRegistrationData Object
+///-------------------------------
+
+/**
+ * Updates a new `SRHubRegistrationData` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `SRHubRegistrationData`
+ */
 - (void)updateWithDictionary:(NSDictionary *)dict;
+
+///-------------------------------
+/// @name JSON Serialization
+///-------------------------------
+
+/**
+ * Conforms to SBJson (aka json-framework) allowing `SRHubRegistrationData` to be serialized to JSON
+ */
 - (id)proxyForJson;
 
 @end

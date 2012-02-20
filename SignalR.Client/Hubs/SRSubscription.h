@@ -22,9 +22,19 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * An `SRSubscription` can be used to add or remove event handlers for a specific hub event.
+ */
 @interface SRSubscription : NSObject
 
+/**
+ * The receiver to perform @see selector on
+ */
 @property (strong, nonatomic, readwrite) NSObject *object;
+
+/**
+ * A selector identifying the message to send.
+ */
 @property (assign, nonatomic, readwrite) SEL selector;
 
 @end

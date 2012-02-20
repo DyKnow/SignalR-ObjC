@@ -29,8 +29,35 @@
 @property (strong, nonatomic, readwrite) NSMutableArray *args;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *state;
 
+///-------------------------------
+/// @name Initializing an SRHubClientInvocation Object
+///-------------------------------
+
+/**
+ * Initializes a new `SRHubClientInvocation` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `SRHubClientInvocation`
+ */
 - (id)initWithDictionary:(NSDictionary*)dict;
+
+///-------------------------------
+/// @name Updating an SRHubClientInvocation Object
+///-------------------------------
+
+/**
+ * Updates a new `SRHubClientInvocation` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `SRHubClientInvocation`
+ */
 - (void)updateWithDictionary:(NSDictionary *)dict;
+
+///-------------------------------
+/// @name JSON Serialization
+///-------------------------------
+
+/**
+ * Conforms to SBJson (aka json-framework) allowing `SRHubClientInvocation` to be serialized to JSON
+ */
 - (id)proxyForJson;
 
 @end

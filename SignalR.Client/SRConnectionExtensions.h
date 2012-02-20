@@ -25,6 +25,13 @@
 
 @interface SRConnection (Extensions)
 
+/**
+ * A convience method for accessing objects belonging to @code [SRConnection items]
+ *
+ * @param key he key for which to return the corresponding value.
+ * 
+ * @return Returns the value associated with a given key.
+ */
 - (id)getValue:(NSString *)key;
 
 @end

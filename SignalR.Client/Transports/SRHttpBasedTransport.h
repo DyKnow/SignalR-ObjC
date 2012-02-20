@@ -28,7 +28,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 #endif
 
 /**
- * `SRHttpBasedTransport` object is the basis for all HTTP Based transports
+ * `SRHttpBasedTransport` is an abstract class intended to be subclassed. It publishes a programmatic interface that all subclasses must adopt and provide implementations for.
  * 
  * `SRHttpBasedTransport` is responsible for starting, sending data, processing server responses, and stopping the http based transports.
  */

@@ -29,7 +29,7 @@
  * ## Fallback order
  * 1. Server-Sent Events @see SRServerSentEventsTransport
  * 1. Long Polling @see SRLongPollingTransport
- **/
+ */
 @interface SRAutoTransport : NSObject <SRClientTransport>
 
 @end

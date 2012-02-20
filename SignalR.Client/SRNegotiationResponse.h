@@ -22,14 +22,59 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  An `SRNegotiationResponse` object provides access to the negotiation response object received from the server * 
+ */
 @interface SRNegotiationResponse : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * Returns an `NSString` object representing the connectionId belonging to the current client
+ */
 @property (strong, nonatomic, readonly) NSString *connectionId;
+
+/**
+ * Returns an `NSString` object representing the app relative server url the client should use for all subsequent requests
+ */
 @property (strong, nonatomic, readonly) NSString *url;
+
+/**
+ * Returns an `NSString` object representing the protocol version the server is using.
+ */
 @property (strong, nonatomic, readonly) NSString *protocolVersion;
 
+///-------------------------------
+/// @name Initializing an SRNegotiationResponse Object
+///-------------------------------
+
+/**
+ * Initializes a new `SRNegotiationResponse` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `SRNegotiationResponse`
+ */
 - (id)initWithDictionary:(NSDictionary*)dict;
+
+///-------------------------------
+/// @name Updating an SRNegotiationResponse Object
+///-------------------------------
+
+/**
+ * Updates a new `SRNegotiationResponse` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `SRNegotiationResponse`
+ */
 - (void)updateWithDictionary:(NSDictionary *)dict;
+
+///-------------------------------
+/// @name JSON Serialization
+///-------------------------------
+
+/**
+ * Conforms to SBJson (aka json-framework) allowing `SRNegotiationResponse` to be serialized to JSON
+ */
 - (id)proxyForJson;
 
 @end
