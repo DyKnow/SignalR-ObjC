@@ -260,7 +260,13 @@ void (^prepareRequest)(id);
 {
     if (!_initialized)
     {
-        [NSException raise:@"InvalidOperationException" format:@"Start must be called before data can be sent"];
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+        [userInfo setObject:[NSString stringWithFormat:@"InvalidOperationException"] forKey:NSLocalizedFailureReasonErrorKey];
+        [userInfo setObject:[NSString stringWithFormat:@"Start must be called before data can be sent"] forKey:NSLocalizedDescriptionKey];
+        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
+                                             code:0 
+                                         userInfo:userInfo];
+        [self didReceiveError:error];
     }
 
     [_transport send:self withData:message continueWith:block];

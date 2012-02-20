@@ -31,8 +31,6 @@
 
 @interface SRHubProxy ()
 
-#define InvalidOperationException 1
-
 @end
 
 @implementation SRHubProxy
@@ -152,7 +150,12 @@
              {
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
                  {
-                     NSError *error = [NSError errorWithDomain:hubResult.error code:InvalidOperationException userInfo:nil];
+                     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                     [userInfo setObject:[NSString stringWithFormat:@"InvalidOperationException"] forKey:NSLocalizedFailureReasonErrorKey];
+                     [userInfo setObject:[NSString stringWithFormat:@"%@",hubResult.error] forKey:NSLocalizedDescriptionKey];
+                     NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
+                                                          code:0 
+                                                      userInfo:userInfo];
                      [_connection didReceiveError:error];
                  }
                  
