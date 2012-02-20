@@ -107,6 +107,7 @@
     connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createProxy:@"SignalR.Samples.Hubs.ConnectDisconnect.Status"];
     [hub on:@"joined" perform:self selector:@selector(joined:when:)];
+    [hub on:@"rejoined" perform:self selector:@selector(rejoined:when:)];
     [hub on:@"leave" perform:self selector:@selector(leave:when:)];
     
     [connection setDelegate:self];
@@ -133,6 +134,13 @@
     }
     [messageTable reloadData];
 }
+
+- (void)rejoined:(NSString *)id when:(NSString *)when
+{
+    [messagesReceived insertObject:[NSString stringWithFormat:@"reconnected at: %@",when] atIndex:0];
+    [messageTable reloadData];
+}
+
 
 - (void)leave:(NSString *)id when:(NSString *)when
 {

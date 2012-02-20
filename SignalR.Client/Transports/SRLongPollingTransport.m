@@ -32,6 +32,8 @@ typedef void (^onInitialized)(void);
 @interface SRLongPollingTransport()
 
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
+- (void)fireReconnected:(SRConnection *)connection reconnectCancelled:(BOOL)cancelled reconnectedFired:(int *)reconnectedFired;
 
 #define kTransportName @"longPolling"
 
@@ -39,11 +41,13 @@ typedef void (^onInitialized)(void);
 
 @implementation SRLongPollingTransport
 
+@synthesize reconnectDelay = _reconnectDelay;
+
 - (id)init
 {
     if(self = [super initWithTransport:kTransportName])
     {
-        
+        _reconnectDelay = 5;
     }
     return self;
 }
@@ -55,7 +59,14 @@ typedef void (^onInitialized)(void);
 
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {    
+    [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback raiseReconnect:NO];
+}
+
+- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect
+{ 
     NSString *url = connection.url;
+    __block BOOL reconnectCancelled = NO;
+    __block NSInteger reconnectFired = 0;
     
     if(connection.messageId == nil)
     {
@@ -76,6 +87,9 @@ typedef void (^onInitialized)(void);
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
 
+        BOOL shouldRaiseReconnect = NO;
+        BOOL disconnectedReceived = NO;
+        
         BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
                           [response isEqualToString:@""] || response == nil ||
                           [response isEqualToString:@"null"]);
@@ -85,79 +99,102 @@ typedef void (^onInitialized)(void);
             {
                 if(!isFaulted)
                 {
-                    [self onMessage:connection response:response];
+                    if(raiseReconnect)
+                    {
+                        // If the timeout for the receonnect hasn't fired as yet just fire the 
+                        // Event here before any incoming messages are processed
+                        [self fireReconnected:connection reconnectCancelled:reconnectCancelled reconnectedFired:&reconnectFired];
+                    }
+                    
+                    [self processResponse:connection response:response timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
                 }
             }
         }
         @finally 
         {
-            BOOL requestAborted = NO;
-            BOOL continuePolling = YES;
-            
-            if (isFaulted)
+            if(disconnectedReceived)
             {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
+                SR_DEBUG_LOG(@"[LONG_POLLING] did disconnect");
 #endif
-                if([response isKindOfClass:[NSError class]])
+                [connection stop];
+            }
+            else
+            {
+                BOOL requestAborted = NO;
+                BOOL continuePolling = YES;
+                
+                if (isFaulted)
                 {
-                    // If the error callback isn't null then raise it and don't continue polling
-                    if (errorCallback)
-                    {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
+                    SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
 #endif
-                        [connection didReceiveError:response];
-                        
-                        //Call the callback
-                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
-                        {
-                            *error = response;
-                        };
-                        errorCallback(errorBlock);
-                        
-                        // Don't continue polling if the error is on the first request
-                        continuePolling = NO;
-                    }
-                    else
+                    // Cancel the previous reconnect event
+                    reconnectCancelled = YES;
+                    
+                    // Raise the reconnect event if we successfully reconect after failing
+                    shouldRaiseReconnect = YES;
+                    
+                    if([response isKindOfClass:[NSError class]])
                     {
-                        //Figure out if the request is aborted
-                        requestAborted = [self isRequestAborted:response];
-                        
-                        //Sometimes a connection might have been closed by the server before we get to write anything
-                        //So just try again and don't raise an error
-                        if(!requestAborted)
+                        // If the error callback isn't null then raise it and don't continue polling
+                        if (errorCallback)
                         {
-                            //Raise Error
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+                            SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
+#endif
                             [connection didReceiveError:response];
                             
-                            //If the connection is still active after raising the error wait 2 seconds 
-                            //before polling again so we arent hammering the server
-                            if(connection.isActive)
+                            //Call the callback
+                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
+                                *error = response;
+                            };
+                            errorCallback(errorBlock);
+                            
+                            // Don't continue polling if the error is on the first request
+                            continuePolling = NO;
+                        }
+                        else
+                        {
+                            //Figure out if the request is aborted
+                            requestAborted = [self isRequestAborted:response];
+                            
+                            //Sometimes a connection might have been closed by the server before we get to write anything
+                            //So just try again and don't raise an error
+                            if(!requestAborted)
+                            {
+                                //Raise Error
+                                [connection didReceiveError:response];
+                                
+                                //If the connection is still active after raising the error wait 2 seconds 
+                                //before polling again so we arent hammering the server
+                                if(connection.isActive)
+                                {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                                SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in 2 seconds");
+                                    SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in 2 seconds");
 #endif
-                                [NSTimer scheduledTimerWithTimeInterval:2 block:
-                                ^{
-                                    if (continuePolling && !requestAborted && connection.isActive)
-                                    {
-                                        [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
-                                    }
-                                } repeats:NO];
+                                    [NSTimer scheduledTimerWithTimeInterval:2 block:
+                                     ^{
+                                         if (continuePolling && !requestAborted && connection.isActive)
+                                         {
+                                             [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
+                                         }
+                                     } repeats:NO];
+                                }
                             }
                         }
                     }
                 }
-            }
-            else
-            {
-                if (continuePolling && !requestAborted && connection.isActive)
+                else
                 {
+                    if (continuePolling && !requestAborted && connection.isActive)
+                    {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
+                        SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
 #endif
-                    [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil];
+                        [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
+                    }
                 }
             }
         }
@@ -170,6 +207,26 @@ typedef void (^onInitialized)(void);
 #endif
         // Only set this the first time
         initializeCallback();
+    }
+    
+    if (raiseReconnect)
+    {
+        [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
+        {
+            [self fireReconnected:connection reconnectCancelled:reconnectCancelled reconnectedFired:&reconnectFired];
+        } repeats:NO];
+    }
+}
+
+- (void)fireReconnected:(SRConnection *)connection reconnectCancelled:(BOOL)cancelled reconnectedFired:(int *)reconnectedFired
+{
+    if(!cancelled)
+    {
+#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[LONG_POLLING] did fire reconnected");
+#endif
+        *reconnectedFired = 1;
+        [connection didReconnect];
     }
 }
 

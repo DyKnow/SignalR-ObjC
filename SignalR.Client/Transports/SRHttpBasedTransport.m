@@ -201,8 +201,16 @@
     //override this method
 }
 
-- (void)onMessage:(SRConnection *)connection response:(NSString *)response
+- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected
 {
+    *timedOut = NO;
+    *disconnected = NO;
+    
+    if(response == nil || [response isEqualToString:@""])
+    {
+        return;
+    }
+    
     if(connection.messageId == nil)
     {
         connection.messageId = [NSNumber numberWithInt:0];
@@ -213,10 +221,18 @@
         id result = [[SBJsonParser new] objectWithString:response];
         if([result isKindOfClass:[NSDictionary class]])
         {
-            id messageId = [result objectForKey:kResponse_MessageId];
-            if(messageId && [messageId isKindOfClass:[NSNumber class]])
+            *timedOut = [[result objectForKey:kResponse_TimedOut] boolValue];
+            *disconnected = [[result objectForKey:kResponse_Disconnected] boolValue];
+            
+            if(*disconnected)
             {
-                connection.messageId = messageId;
+                return;
+            }
+            
+            NSInteger messageId = [[result objectForKey:kResponse_MessageId] integerValue];
+            if(messageId)
+            {
+                connection.messageId = [NSNumber numberWithInteger:messageId];
             }
             
             id messageData = [result objectForKey:kResponse_Messages];

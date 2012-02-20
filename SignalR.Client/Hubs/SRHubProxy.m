@@ -31,6 +31,8 @@
 
 @interface SRHubProxy ()
 
+#define InvalidOperationException 1
+
 @end
 
 @implementation SRHubProxy
@@ -150,7 +152,8 @@
              {
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
                  {
-                     [NSException raise:@"InvalidOperationException" format:hubResult.error];
+                     NSError *error = [NSError errorWithDomain:hubResult.error code:InvalidOperationException userInfo:nil];
+                     [_connection didReceiveError:error];
                  }
                  
                  if(![hubResult.state isKindOfClass:[NSNull class]] && hubResult.state != nil)

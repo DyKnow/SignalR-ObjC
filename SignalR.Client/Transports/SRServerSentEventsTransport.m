@@ -164,7 +164,7 @@ typedef void (^onClose)(void);
 - (id)initWithStream:(id)steam connection:(SRConnection *)connection transport:(SRServerSentEventsTransport *)transport;
 
 - (void)startReading;
-- (void)stopReading;
+- (void)stopReading:(BOOL)raiseCloseCallback;
 - (void)processBuffer;
 - (void)processChunks;
 - (BOOL)tryParseEvent:(NSString *)line sseEvent:(SseEvent **)sseEvent;
@@ -203,10 +203,16 @@ typedef void (^onClose)(void);
     _stream.delegate = self;
 }
 
-- (void)stopReading
+- (void)stopReading:(BOOL)raiseCloseCallback
 {
     _reading = NO;
-    //_stream.delegate = nil;
+    if(raiseCloseCallback)
+    {
+        if(_closeCallback)
+        {
+            _closeCallback();
+        }
+    }
 }
 
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
@@ -253,6 +259,8 @@ typedef void (^onClose)(void);
             {
                 [_connection didReceiveError:[stream streamError]];
             }
+            
+            [self stopReading:YES];
             break;
         }
         case NSStreamEventEndEncountered:
@@ -353,7 +361,23 @@ typedef void (^onClose)(void);
                 {
                     if(_reading)
                     {
-                        [_transport onMessage:_connection response:sseEvent.data];
+                        //We don't care about timeout message here since it will just reconnect
+                        //as part of being a long running request
+                        
+                        BOOL timedOutReceived = NO;
+                        BOOL disconnectReceived = NO;
+                        
+                        [_transport processResponse:_connection response:sseEvent.data timedOut:&timedOutReceived disconnected:&disconnectReceived];
+                        
+                        if(disconnectReceived)
+                        {
+                            [_connection stop];
+                        }
+                        
+                        if(timedOutReceived)
+                        {
+                            return;
+                        }
                     }
                 }
                 break;
@@ -407,6 +431,7 @@ typedef void (^onClose)(void);
 @interface SRServerSentEventsTransport ()
 
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+@property (assign, nonatomic, readwrite) NSInteger initializedCalled;
 
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
@@ -419,6 +444,7 @@ typedef void (^onClose)(void);
 
 @synthesize connectionTimeout = _connectionTimeout;
 @synthesize reconnectDelay = _reconnectDelay;
+@synthesize initializedCalled = _initializedCalled;
 
 - (id)init
 {
@@ -435,12 +461,27 @@ typedef void (^onClose)(void);
     [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
+- (void)reconnect:(SRConnection *)connection data:(NSString *)data
+{
+    if(!connection.isActive)
+    {
+        return;
+    }
+    
+    //Wait for a bit before reconnecting
+    [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
+    {
+        //Now attempt a reconnect
+        [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
+    } repeats:NO];
+}
+
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     // If we're reconnecting add /connect to the url
-    BOOL reconnect = initializeCallback == nil;
+    BOOL reconnecting = initializeCallback == nil;
     
-    NSString *url = [(reconnect ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
+    NSString *url = [(reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
     [SRHttpHelper getAsync:url requestPreparer:^(id request)
     {
@@ -462,50 +503,43 @@ typedef void (^onClose)(void);
             {
                 @synchronized(connection) 
                 {
-                    if(![self isRequestAborted:response] && 
-                       connection.initializedCalled == 0)
-                    {
-                        connection.initializedCalled = 0;
-                        
-                        if (errorCallback != nil)
+                    if(![self isRequestAborted:response])
+                    {                        
+                        if (errorCallback != nil && 
+                            _initializedCalled == 0)
                         {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                             SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
 #endif
+                            _initializedCalled = 1;
+
                             SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
                                 *error = response;
                             };
                             errorCallback(errorBlock);
                         }
-                        else
+                        else if(reconnecting)
                         {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                             SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
 #endif
+                            // Only raise the error event if we failed to reconnect
                             [connection didReceiveError:response];
                         }
                     }
                 }
             }
-            else if(connection.initializedCalled == 1)
+            
+            if(_initializedCalled == 1)
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
 #endif
+                //Retry
+                [self reconnect:connection data:data];
                 
-                AsyncStreamReader *reader = nil;
-                if((reader = [connection getValue:kReaderKey]))
-                {
-                    // Stop any reading we're doing
-                    [reader stopReading];
-                    
-                    // Close the stream
-                    [[reader stream] close];
-                    
-                    //Call the close callback
-                    reader.closeCallback();
-                }                
+                _initializedCalled = 0;
             }
         }
         else
@@ -516,14 +550,18 @@ typedef void (^onClose)(void);
             {
                 @synchronized(connection) 
                 {
-                    if(initializeCallback != nil && connection.initializedCalled == 0)
+                    if(initializeCallback != nil && _initializedCalled == 0)
                     {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                         SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection is initialized");
 #endif
-                        connection.initializedCalled = 1;
+                        _initializedCalled = 1;
                         
                         initializeCallback();
+                    }
+                    else if(_initializedCalled == 0)
+                    {
+                         _initializedCalled = 1;
                     }
                 }
             };
@@ -532,11 +570,15 @@ typedef void (^onClose)(void);
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] stream did close, will reopen in %d seconds...",_reconnectDelay);
 #endif
-                [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:
-                ^{
-                    [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
-                } repeats:NO];
+                [self reconnect:connection data:data];
             };
+            
+            if(reconnecting)
+            {
+                // Raise the reconnect event if the connection comes back up
+                [connection didReconnect];
+            }
+            
             [reader startReading];
             
             //Set the reader for this connection
@@ -550,12 +592,12 @@ typedef void (^onClose)(void);
         ^{
             @synchronized(connection) 
             {
-                if(connection.initializedCalled == 0)
+                if(_initializedCalled == 0)
                 {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection did timeout");
 #endif
-                    connection.initializedCalled = 1;
+                    _initializedCalled = 1;
                     
                     // Stop the connection
                     [self stop:connection];
@@ -588,7 +630,7 @@ typedef void (^onClose)(void);
     if((reader = [connection getValue:kReaderKey]))
     {
         //Stop reading data from the stream
-        [reader stopReading];
+        [reader stopReading:NO];
         
         //Remove the reader
         [connection.items removeObjectForKey:kReaderKey];
@@ -599,6 +641,7 @@ typedef void (^onClose)(void);
 {
     _connectionTimeout = 0;
     _reconnectDelay = 0;
+    _initializedCalled = 0;
 }
 
 @end

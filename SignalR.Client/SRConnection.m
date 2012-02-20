@@ -20,13 +20,14 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#include <TargetConditionals.h>
 #import "SRConnection.h"
 #import "SRSignalRConfig.h"
 
 #import "AFNetworking.h"
 #import "SBJson.h"
 #import "SRHttpHelper.h"
-#import "SRTransport.h"
+#import "SRAutoTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
 #import "NSDictionary+QueryString.h"
@@ -52,11 +53,11 @@ void (^prepareRequest)(id);
 @synthesize initialized = _initialized;
 
 //public
-@synthesize initializedCalled = _initializedCalled;
 @synthesize started = _started;
 @synthesize received = _received;
 @synthesize error = _error;
 @synthesize closed = _closed;
+@synthesize reconnected = _reconnected;
 @synthesize groups = _groups;
 @synthesize credentials = _credentials;
 @synthesize sending = _sending;
@@ -125,7 +126,7 @@ void (^prepareRequest)(id);
 - (void)start
 {
     // Pick the best transport supported by the client
-    [self start:[SRTransport Auto]];
+    [self start:[[SRAutoTransport alloc] init]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -139,6 +140,11 @@ void (^prepareRequest)(id);
         
     _transport = transport;
     
+    [self negotiate];
+}
+
+- (void)negotiate
+{
     NSString *data = nil;
     
     if(_sending != nil)
@@ -147,13 +153,17 @@ void (^prepareRequest)(id);
     }
     
     NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
-
+    
 #if DEBUG_CONNECTION
     SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
 #endif
     
     [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(id request)
     {
+        if([request isKindOfClass:[NSMutableURLRequest class]])
+        {
+            [request setTimeoutInterval:30];
+        }
         [self prepareRequest:request];
     }
     continueWith:^(id response)
@@ -175,17 +185,17 @@ void (^prepareRequest)(id);
                 
                 [_transport start:self withData:data continueWith:
                  ^(id task) 
-                {
-                    _initialized = YES;
-                    
-                    if(_started != nil)
-                    {
-                        self.started();
-                    }
-                    if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                        [self.delegate SRConnectionDidOpen:self];
-                    }
-                }];
+                 {
+                     _initialized = YES;
+                      
+                     if(_started != nil)
+                     {
+                         self.started();
+                     }
+                     if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                         [self.delegate SRConnectionDidOpen:self];
+                     }
+                 }];
             }
         }
         else if([response isKindOfClass:[NSError class]])
@@ -285,6 +295,19 @@ void (^prepareRequest)(id);
     }
 }
 
+- (void)didReconnect
+{
+    if(_reconnected != nil)
+    {
+        self.reconnected();
+    }
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidReconnect:)]) 
+    {
+        [self.delegate SRConnectionDidReconnect:self];
+    }
+}
+
 #pragma mark - 
 #pragma mark Prepare Request
 
@@ -292,7 +315,7 @@ void (^prepareRequest)(id);
 {
     if([request isKindOfClass:[NSMutableURLRequest class]])
     {
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
         [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
 #elif TARGET_OS_MAC
         [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
@@ -313,10 +336,11 @@ void (^prepareRequest)(id);
 {
     if(_assemblyVersion == nil)
     {
-        _assemblyVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        //Need to manually set this otherwise it will inherit from the project version
+        _assemblyVersion = @"0.4";
     }
    
-#if TARGET_IPHONE || TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     return [NSString stringWithFormat:@"%@/%@ (%@ %@)",client,_assemblyVersion,[[UIDevice currentDevice] localizedModel],[[UIDevice currentDevice] systemVersion]];
 #elif TARGET_OS_MAC
     NSString *environmentVersion = @"";
@@ -340,7 +364,6 @@ void (^prepareRequest)(id);
     _assemblyVersion = nil;
     _transport = nil;
     _initialized = NO;
-    _initializedCalled = 0;
     _started = nil;
     _received = nil;
     _error = nil;

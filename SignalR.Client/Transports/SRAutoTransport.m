@@ -23,7 +23,8 @@
 #import "SRAutoTransport.h"
 #import "SRSignalRConfig.h"
 
-#import "SRTransport.h"
+#import "SRServerSentEventsTransport.h"
+#import "SRLongPollingTransport.h"
 
 @interface SRAutoTransport ()
 
@@ -44,7 +45,7 @@
     if(self = [super init])
     {
         //List the transports in fallback order
-        _transports = [NSArray arrayWithObjects:[SRTransport ServerSentEvents],[SRTransport LongPolling], nil];
+        _transports = [NSArray arrayWithObjects:[[SRServerSentEventsTransport alloc] init],[[SRLongPollingTransport alloc] init], nil];
     }
     return self;
 }

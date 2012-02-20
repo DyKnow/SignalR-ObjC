@@ -115,100 +115,96 @@
 		3916E5EC14D5EC14002D967A /* SRServerSentEventsTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55714D5EC14002D967A /* SRServerSentEventsTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3916E5ED14D5EC14002D967A /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E55814D5EC14002D967A /* SRServerSentEventsTransport.m */; };
 		3916E5EE14D5EC14002D967A /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E55814D5EC14002D967A /* SRServerSentEventsTransport.m */; };
-		3916E5EF14D5EC14002D967A /* SRTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55914D5EC14002D967A /* SRTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3916E5F014D5EC14002D967A /* SRTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55914D5EC14002D967A /* SRTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3916E5F114D5EC14002D967A /* SRTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E55A14D5EC14002D967A /* SRTransport.m */; };
-		3916E5F214D5EC14002D967A /* SRTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E55A14D5EC14002D967A /* SRTransport.m */; };
-		3916E5F314D5EC14002D967A /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55D14D5EC14002D967A /* AFHTTPClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E5F414D5EC14002D967A /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55D14D5EC14002D967A /* AFHTTPClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E5F314D5EC14002D967A /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55D14D5EC14002D967A /* AFHTTPClient.h */; settings = {ATTRIBUTES = (); }; };
+		3916E5F414D5EC14002D967A /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55D14D5EC14002D967A /* AFHTTPClient.h */; settings = {ATTRIBUTES = (); }; };
 		3916E5F514D5EC14002D967A /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E55E14D5EC14002D967A /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E5F614D5EC14002D967A /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E55E14D5EC14002D967A /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E5F714D5EC14002D967A /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55F14D5EC14002D967A /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E5F814D5EC14002D967A /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55F14D5EC14002D967A /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E5F714D5EC14002D967A /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55F14D5EC14002D967A /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
+		3916E5F814D5EC14002D967A /* AFHTTPRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E55F14D5EC14002D967A /* AFHTTPRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
 		3916E5F914D5EC14002D967A /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56014D5EC14002D967A /* AFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E5FA14D5EC14002D967A /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56014D5EC14002D967A /* AFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E5FB14D5EC14002D967A /* AFImageRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56114D5EC14002D967A /* AFImageRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E5FC14D5EC14002D967A /* AFImageRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56114D5EC14002D967A /* AFImageRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E5FB14D5EC14002D967A /* AFImageRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56114D5EC14002D967A /* AFImageRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
+		3916E5FC14D5EC14002D967A /* AFImageRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56114D5EC14002D967A /* AFImageRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
 		3916E5FD14D5EC14002D967A /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56214D5EC14002D967A /* AFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E5FE14D5EC14002D967A /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56214D5EC14002D967A /* AFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E5FF14D5EC14002D967A /* AFJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56314D5EC14002D967A /* AFJSONRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E60014D5EC14002D967A /* AFJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56314D5EC14002D967A /* AFJSONRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E5FF14D5EC14002D967A /* AFJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56314D5EC14002D967A /* AFJSONRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
+		3916E60014D5EC14002D967A /* AFJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56314D5EC14002D967A /* AFJSONRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
 		3916E60114D5EC14002D967A /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56414D5EC14002D967A /* AFJSONRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E60214D5EC14002D967A /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56414D5EC14002D967A /* AFJSONRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E60314D5EC14002D967A /* AFJSONUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56514D5EC14002D967A /* AFJSONUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E60414D5EC14002D967A /* AFJSONUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56514D5EC14002D967A /* AFJSONUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E60314D5EC14002D967A /* AFJSONUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56514D5EC14002D967A /* AFJSONUtilities.h */; settings = {ATTRIBUTES = (); }; };
+		3916E60414D5EC14002D967A /* AFJSONUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56514D5EC14002D967A /* AFJSONUtilities.h */; settings = {ATTRIBUTES = (); }; };
 		3916E60514D5EC14002D967A /* AFJSONUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56614D5EC14002D967A /* AFJSONUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E60614D5EC14002D967A /* AFJSONUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56614D5EC14002D967A /* AFJSONUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E60714D5EC14002D967A /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56714D5EC14002D967A /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E60814D5EC14002D967A /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56714D5EC14002D967A /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E60714D5EC14002D967A /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56714D5EC14002D967A /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (); }; };
+		3916E60814D5EC14002D967A /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56714D5EC14002D967A /* AFNetworkActivityIndicatorManager.h */; settings = {ATTRIBUTES = (); }; };
 		3916E60914D5EC14002D967A /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56814D5EC14002D967A /* AFNetworkActivityIndicatorManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E60A14D5EC14002D967A /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56814D5EC14002D967A /* AFNetworkActivityIndicatorManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E60B14D5EC14002D967A /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56914D5EC14002D967A /* AFNetworking.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E60C14D5EC14002D967A /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56914D5EC14002D967A /* AFNetworking.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E60D14D5EC14002D967A /* AFPropertyListRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56A14D5EC14002D967A /* AFPropertyListRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E60E14D5EC14002D967A /* AFPropertyListRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56A14D5EC14002D967A /* AFPropertyListRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E60B14D5EC14002D967A /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56914D5EC14002D967A /* AFNetworking.h */; settings = {ATTRIBUTES = (); }; };
+		3916E60C14D5EC14002D967A /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56914D5EC14002D967A /* AFNetworking.h */; settings = {ATTRIBUTES = (); }; };
+		3916E60D14D5EC14002D967A /* AFPropertyListRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56A14D5EC14002D967A /* AFPropertyListRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
+		3916E60E14D5EC14002D967A /* AFPropertyListRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56A14D5EC14002D967A /* AFPropertyListRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
 		3916E60F14D5EC14002D967A /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56B14D5EC14002D967A /* AFPropertyListRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E61014D5EC14002D967A /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56B14D5EC14002D967A /* AFPropertyListRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E61114D5EC14002D967A /* AFURLConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56C14D5EC14002D967A /* AFURLConnectionOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E61214D5EC14002D967A /* AFURLConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56C14D5EC14002D967A /* AFURLConnectionOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E61114D5EC14002D967A /* AFURLConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56C14D5EC14002D967A /* AFURLConnectionOperation.h */; settings = {ATTRIBUTES = (); }; };
+		3916E61214D5EC14002D967A /* AFURLConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56C14D5EC14002D967A /* AFURLConnectionOperation.h */; settings = {ATTRIBUTES = (); }; };
 		3916E61314D5EC14002D967A /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56D14D5EC14002D967A /* AFURLConnectionOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E61414D5EC14002D967A /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56D14D5EC14002D967A /* AFURLConnectionOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E61514D5EC14002D967A /* AFXMLRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56E14D5EC14002D967A /* AFXMLRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E61614D5EC14002D967A /* AFXMLRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56E14D5EC14002D967A /* AFXMLRequestOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E61514D5EC14002D967A /* AFXMLRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56E14D5EC14002D967A /* AFXMLRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
+		3916E61614D5EC14002D967A /* AFXMLRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E56E14D5EC14002D967A /* AFXMLRequestOperation.h */; settings = {ATTRIBUTES = (); }; };
 		3916E61714D5EC14002D967A /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56F14D5EC14002D967A /* AFXMLRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E61814D5EC14002D967A /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E56F14D5EC14002D967A /* AFXMLRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E61D14D5EC14002D967A /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57214D5EC14002D967A /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E61E14D5EC14002D967A /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57214D5EC14002D967A /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E61D14D5EC14002D967A /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57214D5EC14002D967A /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (); }; };
+		3916E61E14D5EC14002D967A /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57214D5EC14002D967A /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (); }; };
 		3916E61F14D5EC14002D967A /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57314D5EC14002D967A /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3916E62014D5EC14002D967A /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57314D5EC14002D967A /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3916E62514D5EC14002D967A /* NSObject+SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57714D5EC14002D967A /* NSObject+SBJson.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E62614D5EC14002D967A /* NSObject+SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57714D5EC14002D967A /* NSObject+SBJson.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E62514D5EC14002D967A /* NSObject+SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57714D5EC14002D967A /* NSObject+SBJson.h */; settings = {ATTRIBUTES = (); }; };
+		3916E62614D5EC14002D967A /* NSObject+SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57714D5EC14002D967A /* NSObject+SBJson.h */; settings = {ATTRIBUTES = (); }; };
 		3916E62714D5EC14002D967A /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57814D5EC14002D967A /* NSObject+SBJson.m */; };
 		3916E62814D5EC14002D967A /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57814D5EC14002D967A /* NSObject+SBJson.m */; };
-		3916E62B14D5EC14002D967A /* SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57A14D5EC14002D967A /* SBJson.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E62C14D5EC14002D967A /* SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57A14D5EC14002D967A /* SBJson.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E62D14D5EC14002D967A /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57B14D5EC14002D967A /* SBJsonParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E62E14D5EC14002D967A /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57B14D5EC14002D967A /* SBJsonParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E62B14D5EC14002D967A /* SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57A14D5EC14002D967A /* SBJson.h */; settings = {ATTRIBUTES = (); }; };
+		3916E62C14D5EC14002D967A /* SBJson.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57A14D5EC14002D967A /* SBJson.h */; settings = {ATTRIBUTES = (); }; };
+		3916E62D14D5EC14002D967A /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57B14D5EC14002D967A /* SBJsonParser.h */; settings = {ATTRIBUTES = (); }; };
+		3916E62E14D5EC14002D967A /* SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57B14D5EC14002D967A /* SBJsonParser.h */; settings = {ATTRIBUTES = (); }; };
 		3916E62F14D5EC14002D967A /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57C14D5EC14002D967A /* SBJsonParser.m */; };
 		3916E63014D5EC14002D967A /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57C14D5EC14002D967A /* SBJsonParser.m */; };
-		3916E63114D5EC14002D967A /* SBJsonStreamParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57D14D5EC14002D967A /* SBJsonStreamParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E63214D5EC14002D967A /* SBJsonStreamParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57D14D5EC14002D967A /* SBJsonStreamParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E63114D5EC14002D967A /* SBJsonStreamParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57D14D5EC14002D967A /* SBJsonStreamParser.h */; settings = {ATTRIBUTES = (); }; };
+		3916E63214D5EC14002D967A /* SBJsonStreamParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57D14D5EC14002D967A /* SBJsonStreamParser.h */; settings = {ATTRIBUTES = (); }; };
 		3916E63314D5EC14002D967A /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57E14D5EC14002D967A /* SBJsonStreamParser.m */; };
 		3916E63414D5EC14002D967A /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E57E14D5EC14002D967A /* SBJsonStreamParser.m */; };
-		3916E63514D5EC14002D967A /* SBJsonStreamParserAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57F14D5EC14002D967A /* SBJsonStreamParserAccumulator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E63614D5EC14002D967A /* SBJsonStreamParserAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57F14D5EC14002D967A /* SBJsonStreamParserAccumulator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E63514D5EC14002D967A /* SBJsonStreamParserAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57F14D5EC14002D967A /* SBJsonStreamParserAccumulator.h */; settings = {ATTRIBUTES = (); }; };
+		3916E63614D5EC14002D967A /* SBJsonStreamParserAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E57F14D5EC14002D967A /* SBJsonStreamParserAccumulator.h */; settings = {ATTRIBUTES = (); }; };
 		3916E63714D5EC14002D967A /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58014D5EC14002D967A /* SBJsonStreamParserAccumulator.m */; };
 		3916E63814D5EC14002D967A /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58014D5EC14002D967A /* SBJsonStreamParserAccumulator.m */; };
-		3916E63914D5EC14002D967A /* SBJsonStreamParserAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58114D5EC14002D967A /* SBJsonStreamParserAdapter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E63A14D5EC14002D967A /* SBJsonStreamParserAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58114D5EC14002D967A /* SBJsonStreamParserAdapter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E63914D5EC14002D967A /* SBJsonStreamParserAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58114D5EC14002D967A /* SBJsonStreamParserAdapter.h */; settings = {ATTRIBUTES = (); }; };
+		3916E63A14D5EC14002D967A /* SBJsonStreamParserAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58114D5EC14002D967A /* SBJsonStreamParserAdapter.h */; settings = {ATTRIBUTES = (); }; };
 		3916E63B14D5EC14002D967A /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58214D5EC14002D967A /* SBJsonStreamParserAdapter.m */; };
 		3916E63C14D5EC14002D967A /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58214D5EC14002D967A /* SBJsonStreamParserAdapter.m */; };
-		3916E63D14D5EC14002D967A /* SBJsonStreamParserState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58314D5EC14002D967A /* SBJsonStreamParserState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E63E14D5EC14002D967A /* SBJsonStreamParserState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58314D5EC14002D967A /* SBJsonStreamParserState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E63D14D5EC14002D967A /* SBJsonStreamParserState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58314D5EC14002D967A /* SBJsonStreamParserState.h */; settings = {ATTRIBUTES = (); }; };
+		3916E63E14D5EC14002D967A /* SBJsonStreamParserState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58314D5EC14002D967A /* SBJsonStreamParserState.h */; settings = {ATTRIBUTES = (); }; };
 		3916E63F14D5EC14002D967A /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58414D5EC14002D967A /* SBJsonStreamParserState.m */; };
 		3916E64014D5EC14002D967A /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58414D5EC14002D967A /* SBJsonStreamParserState.m */; };
-		3916E64114D5EC14002D967A /* SBJsonStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58514D5EC14002D967A /* SBJsonStreamWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E64214D5EC14002D967A /* SBJsonStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58514D5EC14002D967A /* SBJsonStreamWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E64114D5EC14002D967A /* SBJsonStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58514D5EC14002D967A /* SBJsonStreamWriter.h */; settings = {ATTRIBUTES = (); }; };
+		3916E64214D5EC14002D967A /* SBJsonStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58514D5EC14002D967A /* SBJsonStreamWriter.h */; settings = {ATTRIBUTES = (); }; };
 		3916E64314D5EC14002D967A /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58614D5EC14002D967A /* SBJsonStreamWriter.m */; };
 		3916E64414D5EC14002D967A /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58614D5EC14002D967A /* SBJsonStreamWriter.m */; };
-		3916E64514D5EC14002D967A /* SBJsonStreamWriterAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58714D5EC14002D967A /* SBJsonStreamWriterAccumulator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E64614D5EC14002D967A /* SBJsonStreamWriterAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58714D5EC14002D967A /* SBJsonStreamWriterAccumulator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E64514D5EC14002D967A /* SBJsonStreamWriterAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58714D5EC14002D967A /* SBJsonStreamWriterAccumulator.h */; settings = {ATTRIBUTES = (); }; };
+		3916E64614D5EC14002D967A /* SBJsonStreamWriterAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58714D5EC14002D967A /* SBJsonStreamWriterAccumulator.h */; settings = {ATTRIBUTES = (); }; };
 		3916E64714D5EC14002D967A /* SBJsonStreamWriterAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58814D5EC14002D967A /* SBJsonStreamWriterAccumulator.m */; };
 		3916E64814D5EC14002D967A /* SBJsonStreamWriterAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58814D5EC14002D967A /* SBJsonStreamWriterAccumulator.m */; };
-		3916E64914D5EC14002D967A /* SBJsonStreamWriterState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58914D5EC14002D967A /* SBJsonStreamWriterState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E64A14D5EC14002D967A /* SBJsonStreamWriterState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58914D5EC14002D967A /* SBJsonStreamWriterState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E64914D5EC14002D967A /* SBJsonStreamWriterState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58914D5EC14002D967A /* SBJsonStreamWriterState.h */; settings = {ATTRIBUTES = (); }; };
+		3916E64A14D5EC14002D967A /* SBJsonStreamWriterState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58914D5EC14002D967A /* SBJsonStreamWriterState.h */; settings = {ATTRIBUTES = (); }; };
 		3916E64B14D5EC14002D967A /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58A14D5EC14002D967A /* SBJsonStreamWriterState.m */; };
 		3916E64C14D5EC14002D967A /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58A14D5EC14002D967A /* SBJsonStreamWriterState.m */; };
-		3916E64D14D5EC14002D967A /* SBJsonTokeniser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58B14D5EC14002D967A /* SBJsonTokeniser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E64E14D5EC14002D967A /* SBJsonTokeniser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58B14D5EC14002D967A /* SBJsonTokeniser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E64D14D5EC14002D967A /* SBJsonTokeniser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58B14D5EC14002D967A /* SBJsonTokeniser.h */; settings = {ATTRIBUTES = (); }; };
+		3916E64E14D5EC14002D967A /* SBJsonTokeniser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58B14D5EC14002D967A /* SBJsonTokeniser.h */; settings = {ATTRIBUTES = (); }; };
 		3916E64F14D5EC14002D967A /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58C14D5EC14002D967A /* SBJsonTokeniser.m */; };
 		3916E65014D5EC14002D967A /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58C14D5EC14002D967A /* SBJsonTokeniser.m */; };
-		3916E65114D5EC14002D967A /* SBJsonUTF8Stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58D14D5EC14002D967A /* SBJsonUTF8Stream.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E65214D5EC14002D967A /* SBJsonUTF8Stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58D14D5EC14002D967A /* SBJsonUTF8Stream.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E65114D5EC14002D967A /* SBJsonUTF8Stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58D14D5EC14002D967A /* SBJsonUTF8Stream.h */; settings = {ATTRIBUTES = (); }; };
+		3916E65214D5EC14002D967A /* SBJsonUTF8Stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58D14D5EC14002D967A /* SBJsonUTF8Stream.h */; settings = {ATTRIBUTES = (); }; };
 		3916E65314D5EC14002D967A /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58E14D5EC14002D967A /* SBJsonUTF8Stream.m */; };
 		3916E65414D5EC14002D967A /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E58E14D5EC14002D967A /* SBJsonUTF8Stream.m */; };
-		3916E65514D5EC14002D967A /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58F14D5EC14002D967A /* SBJsonWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3916E65614D5EC14002D967A /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58F14D5EC14002D967A /* SBJsonWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3916E65514D5EC14002D967A /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58F14D5EC14002D967A /* SBJsonWriter.h */; settings = {ATTRIBUTES = (); }; };
+		3916E65614D5EC14002D967A /* SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3916E58F14D5EC14002D967A /* SBJsonWriter.h */; settings = {ATTRIBUTES = (); }; };
 		3916E65714D5EC14002D967A /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E59014D5EC14002D967A /* SBJsonWriter.m */; };
 		3916E65814D5EC14002D967A /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E59014D5EC14002D967A /* SBJsonWriter.m */; };
 		393651D614C6770C009A5142 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393651C614C67465009A5142 /* Cocoa.framework */; };
@@ -263,8 +259,6 @@
 		3916E55614D5EC14002D967A /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
 		3916E55714D5EC14002D967A /* SRServerSentEventsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRServerSentEventsTransport.h; sourceTree = "<group>"; };
 		3916E55814D5EC14002D967A /* SRServerSentEventsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEventsTransport.m; sourceTree = "<group>"; };
-		3916E55914D5EC14002D967A /* SRTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRTransport.h; sourceTree = "<group>"; };
-		3916E55A14D5EC14002D967A /* SRTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTransport.m; sourceTree = "<group>"; };
 		3916E55D14D5EC14002D967A /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		3916E55E14D5EC14002D967A /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
 		3916E55F14D5EC14002D967A /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -456,8 +450,6 @@
 				3916E55614D5EC14002D967A /* SRLongPollingTransport.m */,
 				3916E55714D5EC14002D967A /* SRServerSentEventsTransport.h */,
 				3916E55814D5EC14002D967A /* SRServerSentEventsTransport.m */,
-				3916E55914D5EC14002D967A /* SRTransport.h */,
-				3916E55A14D5EC14002D967A /* SRTransport.m */,
 			);
 			path = Transports;
 			sourceTree = "<group>";
@@ -601,7 +593,6 @@
 				3916E5E314D5EC14002D967A /* SRHttpBasedTransport.h in Headers */,
 				3916E5E714D5EC14002D967A /* SRLongPollingTransport.h in Headers */,
 				3916E5EB14D5EC14002D967A /* SRServerSentEventsTransport.h in Headers */,
-				3916E5EF14D5EC14002D967A /* SRTransport.h in Headers */,
 				3916E5B714D5EC14002D967A /* NSDictionary+QueryString.h in Headers */,
 				3916E5BB14D5EC14002D967A /* NSString+QueryString.h in Headers */,
 				3916E5BF14D5EC14002D967A /* NSTimer+Blocks.h in Headers */,
@@ -659,7 +650,6 @@
 				3916E5E414D5EC14002D967A /* SRHttpBasedTransport.h in Headers */,
 				3916E5E814D5EC14002D967A /* SRLongPollingTransport.h in Headers */,
 				3916E5EC14D5EC14002D967A /* SRServerSentEventsTransport.h in Headers */,
-				3916E5F014D5EC14002D967A /* SRTransport.h in Headers */,
 				3916E5B814D5EC14002D967A /* NSDictionary+QueryString.h in Headers */,
 				3916E5BC14D5EC14002D967A /* NSString+QueryString.h in Headers */,
 				3916E5C014D5EC14002D967A /* NSTimer+Blocks.h in Headers */,
@@ -846,7 +836,6 @@
 				3916E5E514D5EC14002D967A /* SRHttpBasedTransport.m in Sources */,
 				3916E5E914D5EC14002D967A /* SRLongPollingTransport.m in Sources */,
 				3916E5ED14D5EC14002D967A /* SRServerSentEventsTransport.m in Sources */,
-				3916E5F114D5EC14002D967A /* SRTransport.m in Sources */,
 				3916E5F514D5EC14002D967A /* AFHTTPClient.m in Sources */,
 				3916E5F914D5EC14002D967A /* AFHTTPRequestOperation.m in Sources */,
 				3916E5FD14D5EC14002D967A /* AFImageRequestOperation.m in Sources */,
@@ -897,7 +886,6 @@
 				3916E5E614D5EC14002D967A /* SRHttpBasedTransport.m in Sources */,
 				3916E5EA14D5EC14002D967A /* SRLongPollingTransport.m in Sources */,
 				3916E5EE14D5EC14002D967A /* SRServerSentEventsTransport.m in Sources */,
-				3916E5F214D5EC14002D967A /* SRTransport.m in Sources */,
 				3916E5F614D5EC14002D967A /* AFHTTPClient.m in Sources */,
 				3916E5FA14D5EC14002D967A /* AFHTTPRequestOperation.m in Sources */,
 				3916E5FE14D5EC14002D967A /* AFImageRequestOperation.m in Sources */,
@@ -941,7 +929,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -958,7 +946,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -966,7 +954,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -976,7 +964,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 				VALIDATE_PRODUCT = NO;
 			};
 			name = Release;

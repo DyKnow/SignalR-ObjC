@@ -32,4 +32,6 @@
  */
 @interface SRLongPollingTransport : SRHttpBasedTransport
 
+@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+
 @end

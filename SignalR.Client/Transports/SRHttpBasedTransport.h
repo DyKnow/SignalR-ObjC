@@ -125,7 +125,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
  * @param response an `NSString` representation of the server's JSON response object 
  */
-- (void)onMessage:(SRConnection *)connection response:(NSString *)response;
+- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
 
 #define kHttpRequestKey @"http.Request"
 
