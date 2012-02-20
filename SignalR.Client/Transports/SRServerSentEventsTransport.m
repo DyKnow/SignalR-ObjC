@@ -598,10 +598,10 @@ typedef void (^onClose)(void);
                     SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                     {
                         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                        [userInfo setObject:[NSString stringWithFormat:@"TimeoutException"] forKey:NSLocalizedDescriptionKey];
-                        [userInfo setObject:[NSString stringWithFormat:@"Transport took longer than %d to connect",_connectionTimeout] forKey:NSLocalizedFailureReasonErrorKey];
+                        [userInfo setObject:[NSString stringWithFormat:@"TimeoutException"] forKey:NSLocalizedFailureReasonErrorKey];
+                        [userInfo setObject:[NSString stringWithFormat:@"Transport took longer than %d to connect",_connectionTimeout] forKey:NSLocalizedDescriptionKey];
                         *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
-                                                             code:0 
+                                                             code:NSURLErrorTimedOut 
                                                          userInfo:userInfo];
                     };
                     errorCallback(errorBlock);
