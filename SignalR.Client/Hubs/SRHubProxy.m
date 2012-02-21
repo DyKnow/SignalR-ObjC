@@ -9,7 +9,7 @@
 #import "SRHubProxy.h"
 #import "SRSignalRConfig.h"
 
-#import "SBJson.h"
+#import "NSObject+SRJSON.h"
 #import "SRConnection.h"
 #import "SRSubscription.h"
 #import "SRHubServerInvocation.h"
@@ -124,7 +124,7 @@
     hubData.data = [NSMutableArray arrayWithArray:args];
     hubData.state = _state;
     
-    NSString *value = [[SBJsonWriter new] stringWithObject:hubData];
+    NSString *value = [hubData SRJSONRepresentation];
         
     [_connection send:value continueWith:^(id response)
     {
@@ -133,7 +133,7 @@
 #endif
          if([response isKindOfClass:[NSString class]])
          {
-             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
+             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:[response SRJSONValue]];
              if (hubResult != nil) 
              {
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)

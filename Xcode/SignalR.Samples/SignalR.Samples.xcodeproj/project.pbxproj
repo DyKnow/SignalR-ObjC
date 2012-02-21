@@ -93,6 +93,7 @@
 		3916E73014D6FD8B002D967A /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E6CE14D6FD8B002D967A /* SBJsonUTF8Stream.m */; };
 		3916E73114D6FD8B002D967A /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E6D014D6FD8B002D967A /* SBJsonWriter.m */; };
 		3916E73214D6FD8B002D967A /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E6D014D6FD8B002D967A /* SBJsonWriter.m */; };
+		3922D37014F4625800EBAEE9 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3922D36F14F4625800EBAEE9 /* NSObject+SRJSON.m */; };
 		3995198E14C63DCB00B33280 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3995198C14C63DCB00B33280 /* InfoPlist.strings */; };
 		3995199014C63DCB00B33280 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995198F14C63DCB00B33280 /* main.m */; };
 		3995199414C63DCB00B33280 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3995199214C63DCB00B33280 /* Credits.rtf */; };
@@ -213,6 +214,8 @@
 		3916E6CE14D6FD8B002D967A /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		3916E6CF14D6FD8B002D967A /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		3916E6D014D6FD8B002D967A /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		3922D36E14F4625800EBAEE9 /* NSObject+SRJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SRJSON.h"; sourceTree = "<group>"; };
+		3922D36F14F4625800EBAEE9 /* NSObject+SRJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SRJSON.m"; sourceTree = "<group>"; };
 		3995198114C63DCA00B33280 /* SignalR.Samples.OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3995198B14C63DCB00B33280 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
 		3995198D14C63DCB00B33280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -330,6 +333,8 @@
 				3916E68314D6FD8B002D967A /* SRHttpHelper.m */,
 				3916E68414D6FD8B002D967A /* SRVersion.h */,
 				3916E68514D6FD8B002D967A /* SRVersion.m */,
+				3922D36E14F4625800EBAEE9 /* NSObject+SRJSON.h */,
+				3922D36F14F4625800EBAEE9 /* NSObject+SRJSON.m */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -763,6 +768,7 @@
 				3916E72D14D6FD8B002D967A /* SBJsonTokeniser.m in Sources */,
 				3916E72F14D6FD8B002D967A /* SBJsonUTF8Stream.m in Sources */,
 				3916E73114D6FD8B002D967A /* SBJsonWriter.m in Sources */,
+				3922D37014F4625800EBAEE9 /* NSObject+SRJSON.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
