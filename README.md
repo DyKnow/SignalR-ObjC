@@ -26,8 +26,7 @@ NOTE: SignalR-ObjC uses Automatic Reference Counting.
 1. Build and Run your project with no errors
 
 ### Method 2:
-Open the [SignalR.Framework XCode Project](https://github.com/DyKnow/SignalR-ObjC/tree/master/Xcode/SignalR.Framework) 
-
+1. Open the [SignalR.Framework XCode Project](https://github.com/DyKnow/SignalR-ObjC/tree/master/Xcode/SignalR.Framework) 
 1. Choose the appropriate build target SignalR-iOS or SignalR-OSX
 1. Verify that the Project's Base SDK setting under Build Settings is correct, Latest iOS for the iOS target, Latest Mac OS for the mac target
 1. Run the target

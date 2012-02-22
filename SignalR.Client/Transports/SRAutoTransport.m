@@ -9,6 +9,7 @@
 #import "SRAutoTransport.h"
 #import "SRSignalRConfig.h"
 
+#import "SRConnection.h"
 #import "SRServerSentEventsTransport.h"
 #import "SRLongPollingTransport.h"
 
@@ -59,7 +60,13 @@
              }
              else
              {
-                 [NSException raise:@"TransportInitializeException" format:@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization."];
+                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                 [userInfo setObject:[NSString stringWithFormat:@"TransportInitializeException"] forKey:NSLocalizedFailureReasonErrorKey];
+                 [userInfo setObject:[NSString stringWithFormat:@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization."] forKey:NSLocalizedDescriptionKey];
+                 NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
+                                              code:0 
+                                          userInfo:userInfo];
+                 [connection didReceiveError:error];
              }
          }
          else
