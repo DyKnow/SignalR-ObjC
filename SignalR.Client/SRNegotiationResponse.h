@@ -17,6 +17,5 @@
 - (id)initWithDictionary:(NSDictionary*)dict;
 - (void)updateWithDictionary:(NSDictionary *)dict;
 - (id)proxyForJson;
-- (id)JSON;
 
 @end

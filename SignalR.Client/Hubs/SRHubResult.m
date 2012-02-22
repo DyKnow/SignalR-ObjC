@@ -61,11 +61,6 @@
     return dict;
 }
 
-- (id)JSON
-{
-    return [self proxyForJson];
-}
-
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
