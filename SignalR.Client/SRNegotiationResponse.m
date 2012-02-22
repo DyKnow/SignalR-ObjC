@@ -62,6 +62,11 @@
     return dict;
 }
 
+- (id)JSON
+{
+    return [self proxyForJson];
+}
+
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];

@@ -68,6 +68,11 @@
     return dict;
 }
 
+- (id)JSON
+{
+    return [self proxyForJson];
+}
+
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"HubData: Hub=%@ Action=%@",_hub,_action];
