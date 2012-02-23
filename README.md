@@ -36,6 +36,18 @@ NOTE: SignalR-ObjC uses Automatic Reference Counting.
 1. In your pch file or where every you intend to use SignalR ```#import <SignalR-iOS/SignalR.h>``` or ```#import <SignalR-OSX/SignalR.h>```
 1. Build and Run your project with no errors
 
+## Requirements
+
+SignalR-ObjC uses [`NSJSONSerialization`](http://developer.apple.com/library/mac/#documentation/Foundation/Reference/NSJSONSerialization_Class/Reference/Reference.html) if it is available. You can include one of the following JSON libraries to your project for SignalR-ObjC to automatically detect and use.
+
+* [JSONKit](https://github.com/johnezang/JSONKit)
+* [SBJson](http://stig.github.com/json-framework/)
+* [YAJL](http://lloyd.github.com/yajl/)
+
+### ARC Support
+
+SignalR-ObjC requires ARC
+
 ## LICENSE
 [MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
 

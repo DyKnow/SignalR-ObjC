@@ -23,7 +23,7 @@
 #import "SRHubConnection.h"
 #import "SRSignalRConfig.h"
 
-#import "SBJson.h"
+#import "NSObject+SRJSON.h"
 #import "SRHubProxy.h"
 #import "SRHubRegistrationData.h"
 #import "SRHubClientInvocation.h"
@@ -105,7 +105,7 @@ typedef void (^onConnectionReceived)(NSString *);
             [dataFromHub addObject:registration];
         }
         
-        NSString *data = [[SBJsonWriter new] stringWithObject:dataFromHub];
+        NSString *data = [dataFromHub SRJSONRepresentation];
         
         return data;
     };
@@ -114,7 +114,7 @@ typedef void (^onConnectionReceived)(NSString *);
     {
         if([data isKindOfClass:[NSString class]])
         {
-            SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[[SBJsonParser new] objectWithString:data]];
+            SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[data SRJSONValue]];
             SRHubProxy *hubProxy = [hubs_ objectForKey:invocation.hub];
             if(hubProxy)
             {

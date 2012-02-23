@@ -23,7 +23,6 @@
 #import "SRHttpHelper.h"
 #import "SRSignalRConfig.h"
 
-#import "SBJson.h"
 #import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 

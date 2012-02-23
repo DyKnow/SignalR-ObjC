@@ -25,7 +25,7 @@
 #import "SRSignalRConfig.h"
 
 #import "AFNetworking.h"
-#import "SBJson.h"
+#import "NSObject+SRJSON.h"
 #import "SRHttpHelper.h"
 #import "SRAutoTransport.h"
 #import "SRNegotiationResponse.h"
@@ -173,7 +173,7 @@ void (^prepareRequest)(id);
 #endif
         if([response isKindOfClass:[NSString class]])
         {        
-            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[[SBJsonParser new] objectWithString:response]];
+            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
 #if DEBUG_CONNECTION
             SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
 #endif
