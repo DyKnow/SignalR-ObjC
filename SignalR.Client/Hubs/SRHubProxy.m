@@ -83,7 +83,7 @@
         for(int i =0; i<[args count]; i++)
         {
             int arguementIndex = 2 + i;
-            NSString *argument = [args objectAtIndex:i];
+            __unsafe_unretained NSString *argument = [args objectAtIndex:i];
             [invocation setArgument:&argument atIndex:arguementIndex];
         }
         [invocation invoke];

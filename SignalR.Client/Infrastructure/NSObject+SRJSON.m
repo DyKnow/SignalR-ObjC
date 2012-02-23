@@ -13,7 +13,7 @@
     #define DEBUG_JSON 1
 #endif
 
-//TODO: Add to mac project, test, make arc compatibile if possible
+//TODO: make arc compatibile if possible
 @implementation NSObject (SRJSON)
 
 - (id)ensureFoundationObject:(id)object 
@@ -60,29 +60,37 @@
         
         if (_SBJSONSelector && [object respondsToSelector:_SBJSONSelector]) 
         {
-            id jsonObject;
+            NSObject *json;
+            __unsafe_unretained NSObject *jsonTemp = nil;
+            
             NSMethodSignature *signature = [object methodSignatureForSelector:_SBJSONSelector];
             NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
             [invocation setTarget:object];
             [invocation setSelector:_SBJSONSelector];
             
             [invocation invoke];
-            [invocation getReturnValue:&jsonObject];
+            [invocation getReturnValue:&jsonTemp];
             
-            return [self ensureFoundationObject:jsonObject];
+            json = jsonTemp;
+            
+            return [self ensureFoundationObject:json];
         }
         else if (_YAJLSelector && [object respondsToSelector:_YAJLSelector]) 
         { 
-            id jsonObject;
+            NSObject *json;
+            __unsafe_unretained NSObject *jsonTemp = nil;
+            
             NSMethodSignature *signature = [object methodSignatureForSelector:_YAJLSelector];
             NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
             [invocation setTarget:object];
             [invocation setSelector:_YAJLSelector];
             
             [invocation invoke];
-            [invocation getReturnValue:&jsonObject];
+            [invocation getReturnValue:&jsonTemp];
             
-            return [self ensureFoundationObject:jsonObject];
+            json = jsonTemp;
+            
+            return [self ensureFoundationObject:json];
         }
     }
     return nil;
@@ -90,7 +98,9 @@
 
 - (NSString *)SRJSONRepresentation 
 {
-    NSString *json = nil;  
+    NSString *json;
+    __unsafe_unretained NSString *jsonTemp = nil;  
+
     id jsonObject = [self ensureFoundationObject:self];
     
     SEL _JSONKitSelector = NSSelectorFromString(@"JSONString"); 
@@ -111,7 +121,9 @@
         [invocation setSelector:_JSONKitSelector];
         
         [invocation invoke];
-        [invocation getReturnValue:&json];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
     }
     else if (_SBJSONSelector && [jsonObject respondsToSelector:_SBJSONSelector]) 
     {
@@ -124,7 +136,9 @@
         [invocation setSelector:_SBJSONSelector];
         
         [invocation invoke];
-        [invocation getReturnValue:&json];     
+        [invocation getReturnValue:&jsonTemp]; 
+        
+        json = jsonTemp;
     } 
     else if (_YAJLSelector && [jsonObject respondsToSelector:_YAJLSelector]) 
     {
@@ -137,30 +151,33 @@
         [invocation setSelector:_YAJLSelector];
         
         [invocation invoke];
-        [invocation getReturnValue:&json];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
     } 
     else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
     {
 #if DEBUG_JSON
         SR_DEBUG_LOG(@"[JSON] NSJSONSerialization: dataWithJSONObject:options:error:");
 #endif
-        NSData *JSONData = nil;
+        __unsafe_unretained NSString *jsonString = jsonObject;
+        __unsafe_unretained NSData *JSONData = nil;
 
         NSUInteger writeOptions = 0;
-        NSError *error;
+        __unsafe_unretained NSError *error;
         
         NSMethodSignature *signature = [_NSJSONSerializationClass methodSignatureForSelector:_NSJSONSerializationSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:_NSJSONSerializationClass];
         [invocation setSelector:_NSJSONSerializationSelector];
         
-        [invocation setArgument:&jsonObject atIndex:2]; // arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+        [invocation setArgument:&jsonString atIndex:2];
         [invocation setArgument:&writeOptions atIndex:3];
         [invocation setArgument:&error atIndex:4];
         
         [invocation invoke];
         [invocation getReturnValue:&JSONData];
-        
+
         json = [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding];
     }
     else 
@@ -179,7 +196,8 @@
 
 - (id)SRJSONValue 
 {
-    id json = nil;
+    NSObject *json;
+    __unsafe_unretained NSObject *jsonTemp = nil;
     
     SEL _JSONKitSelector = NSSelectorFromString(@"objectFromJSONString"); 
     SEL _SBJSONSelector = NSSelectorFromString(@"JSONValue");
@@ -199,7 +217,9 @@
         [invocation setSelector:_JSONKitSelector];
         
         [invocation invoke];
-        [invocation getReturnValue:&json];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
     }
     else if (_SBJSONSelector &&  [self respondsToSelector:_SBJSONSelector])
     {
@@ -212,7 +232,9 @@
         [invocation setSelector:_SBJSONSelector];
         
         [invocation invoke];
-        [invocation getReturnValue:&json]; 
+        [invocation getReturnValue:&jsonTemp]; 
+        
+        json = jsonTemp;
     } 
     else if (_YAJLSelector && [self respondsToSelector:_YAJLSelector]) 
     {
@@ -225,16 +247,19 @@
         [invocation setSelector:_YAJLSelector];
 
         [invocation invoke];
-        [invocation getReturnValue:&json];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
     }
     else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
     {
 #if DEBUG_JSON
         SR_DEBUG_LOG(@"[JSON] NSJSONSerialization: JSONObjectWithData:options:error");
 #endif
+        __unsafe_unretained NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+
         NSUInteger readOptions = 0;
-        NSError *error;
-        NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+        __unsafe_unretained NSError *error;
         
         NSMethodSignature *signature = [_NSJSONSerializationClass methodSignatureForSelector:_NSJSONSerializationSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -246,7 +271,9 @@
         [invocation setArgument:&error atIndex:4];
         
         [invocation invoke];
-        [invocation getReturnValue:&json];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
     }
     else 
     {
