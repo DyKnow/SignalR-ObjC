@@ -7,13 +7,7 @@
 //
 
 #import "NSObject+SRJSON.h"
-#import "SRSignalRConfig.h"
 
-#ifndef DEBUG_JSON
-    #define DEBUG_JSON 1
-#endif
-
-//TODO: make arc compatibile if possible
 @implementation NSObject (SRJSON)
 
 - (id)ensureFoundationObject:(id)object 
@@ -112,9 +106,6 @@
     
     if (_JSONKitSelector && [jsonObject respondsToSelector:_JSONKitSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] JSONKit: JSONString");
-#endif
         NSMethodSignature *signature = [jsonObject methodSignatureForSelector:_JSONKitSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:jsonObject];
@@ -127,9 +118,6 @@
     }
     else if (_SBJSONSelector && [jsonObject respondsToSelector:_SBJSONSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] SBJson: JSONRepresentation");
-#endif
         NSMethodSignature *signature = [jsonObject methodSignatureForSelector:_SBJSONSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:jsonObject];
@@ -142,9 +130,6 @@
     } 
     else if (_YAJLSelector && [jsonObject respondsToSelector:_YAJLSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] YAJL: yajl_JSONString");
-#endif
         NSMethodSignature *signature = [jsonObject methodSignatureForSelector:_YAJLSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:jsonObject];
@@ -157,9 +142,6 @@
     } 
     else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] NSJSONSerialization: dataWithJSONObject:options:error:");
-#endif
         __unsafe_unretained NSString *jsonString = jsonObject;
         __unsafe_unretained NSData *JSONData = nil;
 
@@ -208,9 +190,6 @@
 
     if (_JSONKitSelector && [self respondsToSelector:_JSONKitSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] JSONKit: objectFromJSONString");
-#endif
         NSMethodSignature *signature = [self methodSignatureForSelector:_JSONKitSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:self];
@@ -223,9 +202,6 @@
     }
     else if (_SBJSONSelector &&  [self respondsToSelector:_SBJSONSelector])
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] SBJson: JSONValue");
-#endif
         NSMethodSignature *signature = [self methodSignatureForSelector:_SBJSONSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:self];
@@ -238,9 +214,6 @@
     } 
     else if (_YAJLSelector && [self respondsToSelector:_YAJLSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] YAJL: yajl_JSON");
-#endif
         NSMethodSignature *signature = [self methodSignatureForSelector:_YAJLSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:self];
@@ -253,9 +226,6 @@
     }
     else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
     {
-#if DEBUG_JSON
-        SR_DEBUG_LOG(@"[JSON] NSJSONSerialization: JSONObjectWithData:options:error");
-#endif
         __unsafe_unretained NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
 
         NSUInteger readOptions = 0;
