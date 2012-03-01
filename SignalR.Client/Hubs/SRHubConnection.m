@@ -77,7 +77,7 @@ typedef void (^onConnectionReceived)(NSString *);
 
 - (void)start:(id<SRClientTransport>)transport
 {
-    __weak NSMutableDictionary *hubs_ = _hubs;
+    __unsafe_unretained NSMutableDictionary *hubs_ = _hubs;
 
     self.sending = ^()
     {    
