@@ -9,7 +9,7 @@
 #import "SRHttpBasedTransport.h"
 #import "SRSignalRConfig.h"
 
-#import "SBJson.h"
+#import "NSObject+SRJSON.h"
 #import "AFNetworking.h"
 #import "SRHttpHelper.h"
 #import "SRConnection.h"
@@ -148,7 +148,7 @@
         [parameters setObject:[NSString stringWithFormat:@""] forKey:kMessageId];
     }
     
-    [parameters setObject:[[SBJsonWriter new] stringWithObject:connection.groups] forKey:kGroups];
+    [parameters setObject:[connection.groups SRJSONRepresentation] forKey:kGroups];
     
     if (data) 
     {
@@ -204,7 +204,7 @@
     
     @try 
     {
-        id result = [[SBJsonParser new] objectWithString:response];
+        id result = [response SRJSONValue];
         if([result isKindOfClass:[NSDictionary class]])
         {
             *timedOut = [[result objectForKey:kResponse_TimedOut] boolValue];
@@ -228,7 +228,7 @@
                 {   
                     if([message isKindOfClass:[NSDictionary class]])
                     {
-                        [connection didReceiveData:[[SBJsonWriter new] stringWithObject:message]];
+                        [connection didReceiveData:[message SRJSONRepresentation]];
                     }
                     else if([message isKindOfClass:[NSString class]])
                     {

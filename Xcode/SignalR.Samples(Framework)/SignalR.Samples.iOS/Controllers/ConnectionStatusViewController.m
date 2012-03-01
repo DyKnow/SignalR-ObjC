@@ -107,6 +107,7 @@
     connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createProxy:@"SignalR.Samples.Hubs.ConnectDisconnect.Status"];
     [hub on:@"joined" perform:self selector:@selector(joined:when:)];
+    [hub on:@"rejoined" perform:self selector:@selector(rejoined:when:)];
     [hub on:@"leave" perform:self selector:@selector(leave:when:)];
     
     [connection setDelegate:self];
@@ -123,21 +124,28 @@
 
 - (void)joined:(NSString *)id when:(NSString *)when
 {
-    if([id isEqualToString:connection.connectionId])
-    {
-        [messagesReceived addObject:[NSString stringWithFormat:@"I joined at: %@",when]];
-    }
-    else
-    {
-        [messagesReceived addObject:[NSString stringWithFormat:@"%@ joined at: %@",id,when]];
-    }
-    [messageTable reloadData];
+if([id isEqualToString:connection.connectionId])
+{
+    [messagesReceived insertObject:[NSString stringWithFormat:@"I joined at: %@",when] atIndex:0];
 }
+else
+{
+    [messagesReceived insertObject:[NSString stringWithFormat:@"%@ joined at: %@",id,when] atIndex:0];
+}
+[messageTable reloadData];
+}
+
+- (void)rejoined:(NSString *)id when:(NSString *)when
+{
+[messagesReceived insertObject:[NSString stringWithFormat:@"reconnected at: %@",when] atIndex:0];
+[messageTable reloadData];
+}
+
 
 - (void)leave:(NSString *)id when:(NSString *)when
 {
-    [messagesReceived addObject:[NSString stringWithFormat:@"%@ left at: %@",id,when]];
-    [messageTable reloadData];
+[messagesReceived insertObject:[NSString stringWithFormat:@"%@ left at: %@",id,when] atIndex:0];
+[messageTable reloadData];
 }
 
 #pragma mark - 
@@ -151,8 +159,8 @@
 
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
 {
-    [messagesReceived insertObject:data atIndex:0];
-    [messageTable reloadData];
+    //[messagesReceived insertObject:data atIndex:0];
+    //[messageTable reloadData];
 }
 
 - (void)SRConnectionDidClose:(SRConnection *)connection
