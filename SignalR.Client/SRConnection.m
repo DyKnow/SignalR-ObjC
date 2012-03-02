@@ -302,10 +302,9 @@ void (^prepareRequest)(id);
     }
 }
 
-
-- (void) setHeader:(NSString *)header toValue:(NSString *)value
+- (void)addValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
-    [_headers setValue:value forKey:header];
+    [_headers setValue:value forKey:field];
 }
 
 #pragma mark - 

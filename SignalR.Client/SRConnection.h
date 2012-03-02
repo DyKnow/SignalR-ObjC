@@ -67,7 +67,7 @@ typedef void (^onReconnected)();
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
 - (void)didReconnect;
-- (void)setHeader:(NSString *)header toValue:(NSString *)value;
+- (void)addValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 
 - (void)prepareRequest:(id)request;
 - (NSString *)createUserAgentString:(NSString *)client;
