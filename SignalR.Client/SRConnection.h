@@ -47,6 +47,7 @@ typedef void (^onReconnected)();
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 @property (strong, nonatomic, readonly) NSString *queryString;
 @property (assign, nonatomic, readonly) BOOL initialized;
+@property (strong, nonatomic, readonly) NSMutableDictionary *headers;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -66,6 +67,7 @@ typedef void (^onReconnected)();
 - (void)didReceiveData:(NSString *)data;
 - (void)didReceiveError:(NSError *)ex;
 - (void)didReconnect;
+- (void)setHeader:(NSString *)header toValue:(NSString *)value;
 
 - (void)prepareRequest:(id)request;
 - (NSString *)createUserAgentString:(NSString *)client;
