@@ -67,6 +67,7 @@ void (^prepareRequest)(id);
 @synthesize connectionId = _connectionId;
 @synthesize items = _items;
 @synthesize queryString = _queryString;
+@synthesize headers = _headers;
 
 @synthesize delegate = _delegate;
 
@@ -116,6 +117,7 @@ void (^prepareRequest)(id);
         _queryString = queryString;
         _groups = [[NSMutableArray alloc] init];
         _items = [NSMutableDictionary dictionary];
+        _headers = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -314,6 +316,11 @@ void (^prepareRequest)(id);
     }
 }
 
+- (void)addValue:(NSString *)value forHTTPHeaderField:(NSString *)field
+{
+    [_headers setValue:value forKey:field];
+}
+
 #pragma mark - 
 #pragma mark Prepare Request
 
@@ -334,6 +341,10 @@ void (^prepareRequest)(id);
             
             //Set the Authorization header that we just generated to our actual request
             [request addValue:[clientForAuthHeader defaultValueForHeader:@"Authorization"] forHTTPHeaderField:@"Authorization"];
+        }
+        for(NSString *header in _headers) 
+        {
+            [request addValue:[_headers valueForKey:header] forHTTPHeaderField:header];
         }
     }
 }

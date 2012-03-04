@@ -92,9 +92,18 @@
     {
         NSMethodSignature *signature = [eventObj.object methodSignatureForSelector:eventObj.selector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        NSUInteger numberOfArguments = [signature numberOfArguments] - 2;
+        
+        if (args.count != numberOfArguments)
+        {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
+            SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] Callback for event '%@' is configured with %d arguments, received %d parameters instead.",eventName, numberOfArguments, args.count);
+#endif            
+        }
+        
         [invocation setSelector:eventObj.selector];
         [invocation setTarget:eventObj.object];
-        for(int i =0; i<[args count]; i++)
+        for(int i =0; i< MIN([args count], numberOfArguments); i++)
         {
             int arguementIndex = 2 + i;
             __unsafe_unretained NSString *argument = [args objectAtIndex:i];
