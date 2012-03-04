@@ -1,8 +1,8 @@
 //
 //  NSTimer+Blocks.m
-//  SignalR.Samples
+//  SignalR
 //
-//  Created by Alex Billingsley on 1/29/12.
+//  Created by Alex Billingsley on 10/18/11.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 

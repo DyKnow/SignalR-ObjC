@@ -24,7 +24,18 @@
 
 @interface SRHubRegistrationData : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * The `NSString` object cooresponding to the hub name
+ */
 @property (strong, nonatomic, readwrite) NSString *name;
+
+/**
+ * The `NSMutableArray` object cooresponding to the subscriptions that the client can subscribe to
+ */
 @property (strong, nonatomic, readwrite) NSMutableArray *methods;
 
 ///-------------------------------

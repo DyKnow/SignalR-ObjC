@@ -20,9 +20,24 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+/**
+ * A category on @see `NSDictionary` which url form encodes/decodes NSDictionary objects
+ */
 @interface NSDictionary (QueryString)
 
+/**
+ * Decodes a URL Form encoded NSString to NSDictionary
+ *
+ * @param encodedString An NSString encoded with URL form encoding
+ * @return An NSDictionary representation of the form encoded string
+ */
 + (NSDictionary *)dictionaryWithFormEncodedString:(NSString *)encodedString;
+
+/**
+ * Encodes an NSDictionary to NSString with URL Form encoding
+ *
+ * @return An NSString encoded as URL Form encoding
+ */
 - (NSString *)stringWithFormEncodedComponents;
 
 @end

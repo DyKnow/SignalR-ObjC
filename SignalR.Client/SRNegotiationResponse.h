@@ -23,7 +23,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  An `SRNegotiationResponse` object provides access to the negotiation response object received from the server * 
+ *  An `SRNegotiationResponse` object provides access to the negotiation response object received from the server 
  */
 @interface SRNegotiationResponse : NSObject
 

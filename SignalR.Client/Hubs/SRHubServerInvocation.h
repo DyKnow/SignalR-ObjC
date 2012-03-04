@@ -24,9 +24,28 @@
 
 @interface SRHubServerInvocation : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * The `NSString` object cooresponding to the hub to preform an invocation on
+ */
 @property (strong, nonatomic, readwrite) NSString *hub;
+
+/**
+ * The `NSString` object cooresponding to the method to invoke on the hub
+ */
 @property (strong, nonatomic, readwrite) NSString *action;
+
+/**
+ * The `NSMutableArray` object cooresponding to the arguments to be passed as part of the invocation
+ */
 @property (strong, nonatomic, readwrite) NSMutableArray *data;
+
+/**
+ * The `NSMutableDictionary` object cooresponding to the client state
+ */
 @property (strong, nonatomic, readwrite) NSMutableDictionary *state;
 
 ///-------------------------------

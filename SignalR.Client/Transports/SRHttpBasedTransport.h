@@ -124,6 +124,8 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  *
  * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
  * @param response an `NSString` representation of the server's JSON response object 
+ * @param timedOut a `BOOL` respresenting if the connection received a server side timeout
+ * @param disconnected a `BOOL` respresenting if the connection received a disconnect from the server
  */
 - (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
 

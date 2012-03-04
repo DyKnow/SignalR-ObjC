@@ -25,7 +25,7 @@
 @class SRConnection;
 
 /**
- * `SRIClientTransport` defines the protocol each Client Transport should conform to
+ * `SRClientTransport` defines the protocol each Client Transport should conform to
  **/
 @protocol SRClientTransport <NSObject>
 
