@@ -37,7 +37,7 @@
 /**
  * The `SRConnection` object corresponding to underlying `SRConnection`
  */
-@property (strong, nonatomic, readonly) SRConnection *connection;
+@property (assign, nonatomic, readonly) SRConnection *connection;
 
 /**
  * The `NSString` object corresponding to the hubname
