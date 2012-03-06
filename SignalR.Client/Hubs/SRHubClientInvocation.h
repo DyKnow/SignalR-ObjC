@@ -22,6 +22,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * An `SRHubClientInvocation` object defines the interface for invoking methods on the SignalR Client using a Hubs implementation
+ */
 @interface SRHubClientInvocation : NSObject
 
 ///-------------------------------

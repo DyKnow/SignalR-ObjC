@@ -25,13 +25,66 @@
 @class SRHubProxy;
 @class SRSubscription;
 
+/**
+ * An `SRHubservable` object provides interface for adding Subscriptions to an SRHubProxy
+ */
 @interface SRHubservable : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * An `NSString` object representing the name of the subscription event
+ */
 @property (strong, nonatomic, readonly) NSString *eventName;
+
+/**
+ * An `SRHubProxy` object representing the Hub to be observed
+ */
 @property (strong, nonatomic, readonly) SRHubProxy *proxy;
 
+///-------------------------------
+/// @name Initializing an SRHubservable Object
+///-------------------------------
+
+/**
+ * A convenience method for initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName;
+ *
+ * <code>
+ *  SRHubservable *observable = [SRHubservable observe:myHub event:@"myEvent"];
+ * </code>
+ *
+ * @param proxy the `SRHubProxy` object representing the Hub to be observed
+ * @param eventName the `NSString` object representing the name of the subscription event
+ * @return an `SRHubservable` object 
+ */
 + (id)observe:(SRHubProxy *)proxy event:(NSString *)eventName;
+
+/**
+ * Initializes a new `SRHubservable` object
+ *
+ * <code>
+ *  SRHubservable *observable = [SRHubservable observe:myHub event:@"myEvent"];
+ * </code>
+ *
+ * @param proxy the `SRHubProxy` object representing the Hub to be observed
+ * @param eventName the `NSString` object representing the name of the subscription event
+ * @return an `SRHubservable` object 
+ */
 - (id)initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName;
+
+///-------------------------------
+/// @name Adding Subscriptions
+///-------------------------------
+
+/**
+ * Adds a new Subscription to the underlying proxy for eventName
+ *
+ * @param object The receiver to perform selector on
+ * @param selector A selector identifying the message to send.
+ * @return the `SRSubscription` object created
+ */
 - (SRSubscription *)subscribe:(NSObject *)object selector:(SEL)selector;
 
 @end

@@ -22,6 +22,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * An `SRHubRegistrationData` object defines the interface for registering subscriptions with a SignalR Hub
+ */
 @interface SRHubRegistrationData : NSObject
 
 ///-------------------------------

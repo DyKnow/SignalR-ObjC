@@ -46,6 +46,13 @@
  * @return An instance of an `SRSubscription` object
  */
 - (SRSubscription *)on:(NSString *)eventName perform:(NSObject *)object selector:(SEL)selector;
+
+/**
+ * Initalizes an `SRHubservable` with the specified eventName
+ *
+ * @param eventName the `NSString` object representing the name of the subscription event
+ * @return an `SRHubservable` object 
+ */
 - (SRHubservable *)observe:(NSString *)eventName;
 
 @end

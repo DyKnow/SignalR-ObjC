@@ -22,10 +22,28 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * An `SRHubResult` object represents a SignalR Server Hub Response
+ */
 @interface SRHubResult : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * A generic result object received from the server
+ */
 @property (strong, nonatomic, readwrite) id result;
+
+/**
+ * An `NSString` represnting an error received from the server
+ */
 @property (strong, nonatomic, readwrite) NSString *error;
+
+/**
+ * An `NSDictionary` represnting a server state object
+ */
 @property (strong, nonatomic, readwrite) NSDictionary *state;
 
 ///-------------------------------

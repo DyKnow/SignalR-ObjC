@@ -27,6 +27,10 @@
  */
 @interface SRSubscription : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
 /**
  * The receiver to perform selector on
  */
