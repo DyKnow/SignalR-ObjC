@@ -32,7 +32,7 @@
 /**
  * Opens a connection to the server for the active transport
  *
- * @param connection the connection to start the transport on
+ * @param connection the `SRConnection` to start the transport on
  * @param data the data to send when starting the transport on, may be nil
  * @param block the block to be called once start finishes, block may be nil
  */
@@ -41,7 +41,7 @@
 /**
  * Sends data to the server for the active transport
  *
- * @param connection the connection to start the transport on
+ * @param connection the `SRConnection` to send the message on
  * @param data the data to send the server
  * @param block the block to be called once send finishes, block may be nil
  */
@@ -50,7 +50,7 @@
 /**
  * Stops the active transport from receiving data from the server
  *
- * @param connection the connection to start the transport on
+ * @param connection the `SRConnection` owning the transport that should be stopped
  */
 - (void)stop:(SRConnection *)connection;
 

@@ -32,17 +32,17 @@
 ///-------------------------------
 
 /**
- * Returns an `NSString` object representing the connectionId belonging to the current client
+ * An `NSString` object representing the connectionId belonging to the current client
  */
 @property (strong, nonatomic, readonly) NSString *connectionId;
 
 /**
- * Returns an `NSString` object representing the app relative server url the client should use for all subsequent requests
+ * An `NSString` object representing the app relative server url the client should use for all subsequent requests
  */
 @property (strong, nonatomic, readonly) NSString *url;
 
 /**
- * Returns an `NSString` object representing the protocol version the server is using.
+ * An `NSString` object representing the protocol version the server is using.
  */
 @property (strong, nonatomic, readonly) NSString *protocolVersion;
 

@@ -21,21 +21,21 @@
 //
 
 /**
- * A category on @see `NSString` which url encodes/decodes NSString objects
+ * A category on @see `NSString` which url encodes/decodes `NSString` objects
  */
 @interface NSString (QueryString)
 
 /**
- * Encodes an NSString Object for URL
+ * Encodes an `NSString` Object for URL
  *
- * @return The URL encoded representation of a NSString
+ * @return The URL encoded representation of a `NSString`
  */
 - (NSString*)stringByEscapingForURLQuery;
 
 /**
- * Decodes a URL encoded NSString object
+ * Decodes a URL encoded `NSString` object
  *
- * @return The URL decoded representation of a NSString
+ * @return The URL decoded representation of a `NSString`
  */
 - (NSString*)stringByUnescapingFromURLQuery;
 

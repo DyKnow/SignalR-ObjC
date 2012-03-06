@@ -32,7 +32,7 @@
 ///-------------------------------
 
 /**
- * The `SRConnection` object cooresponding to underlying SRConnection
+ * The `SRConnection` object cooresponding to underlying `SRConnection`
  */
 @property (strong, nonatomic, readonly) SRConnection *connection;
 

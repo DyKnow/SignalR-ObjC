@@ -75,7 +75,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * Prepares http requests to be sent to the server
  * 
  * if the request is an `NSMutableURLRequest`, [SRConneciton prepareRequest] is called
- * if the request is an `AFHTTPRequestOperation the request object is stored in SRConnection.items as a value for the key @see kHttpRequest
+ * if the request is an `AFHTTPRequestOperation the request object is stored in SRConnection.items as a value for the key kHttpRequest
  * the `AFHTTPRequestOperation` is stored so it can be easily retreived when the `SRHttpBasedTransport` is stopped and the underlying request cancelled
  *
  * @param request will either be an `NSMutableURLRequest` or an `AFHTTPRequestOperation`

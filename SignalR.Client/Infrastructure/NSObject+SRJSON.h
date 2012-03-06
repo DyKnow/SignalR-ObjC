@@ -25,7 +25,7 @@
 #pragma mark JSON Writing
 
 /**
- * A category on @see `NSObject` which adds JSON generation to NSObject
+ * A category on `NSObject` which adds JSON generation to `NSObject`
  */
 @interface NSObject (SRJSON)
 
@@ -41,14 +41,14 @@
 #pragma mark JSON Parsing
 
 /**
- * A category on @see `NSString` which adds JSON parsing methods to NSString
+ * A category on `NSString` which adds JSON parsing methods to `NSString`
  */
 @interface NSString (SRJSON)
 
 /**
  * Decodes the receiver's JSON text
  *
- * the NSDictionary or NSArray represented by the receiver, or nil on error.
+ * the NSDictionary` or `NSArray` represented by the receiver, or nil on error.
  */
 - (id)SRJSONValue;
 

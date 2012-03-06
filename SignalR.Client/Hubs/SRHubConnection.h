@@ -24,6 +24,9 @@
 
 @class SRHubProxy;
 
+/**
+ * An `SRHubConnection` object provides an abstraction over `SRConnection` and provides support for publishing and subscribing to custom events
+ */
 @interface SRHubConnection : SRConnection
 
 ///-------------------------------
@@ -31,7 +34,7 @@
 ///-------------------------------
 
 /**
- * The `NSMutableDictionary` object containing the SRHubProxy objects
+ * The `NSMutableDictionary` object containing the `SRHubProxy` objects
  */
 @property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
 

@@ -29,7 +29,7 @@
 @interface SRHubProxy (Extensions)
 
 /**
- * A convenience method for accessing objects contained in the SRHubProxy state dictionary
+ * An extension method for accessing objects contained in the `SRHubProxy` state dictionary
  *
  * @param name the key for which to return the corresponding value.
  * 
@@ -38,12 +38,12 @@
 - (id)getValue:(NSString *)name;
 
 /**
- * Creates a new SRSubscription object
+ * Creates a new `SRSubscription` object
  *
  * @param eventName the name of the event to subscribe to
  * @param object The receiver to perform selector on
  * @param selector A selector identifying the message to send.
- * @return An instance of an SRSubscription object
+ * @return An instance of an `SRSubscription` object
  */
 - (SRSubscription *)on:(NSString *)eventName perform:(NSObject *)object selector:(SEL)selector;
 - (SRHubservable *)observe:(NSString *)eventName;

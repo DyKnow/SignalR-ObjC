@@ -25,43 +25,48 @@
 
 @class SRConnection;
 
+/**
+ * The delegate of a `SRConnection` object can optionally adapt the `SRConnectionDelegate` protocol. 
+ * The methods of the protocol allow the delegate to receive update when events occur on the `SRConnection` object some of these event include; 
+ * the connection being opened, reconnected, closed and when data or an error is received.
+ */
 @protocol SRConnectionDelegate<NSObject>
 @optional 
 
 /**
- * Called when the SRConnection is opened
+ * Called when the `SRConnection` is opened
  *
- * @param connection the SRConnection object dispatching the event
+ * @param connection the `SRConnection` object dispatching the event
  */
 - (void)SRConnectionDidOpen:(SRConnection *)connection;
 
 /**
- * Called when the SRConnection is reconnected
+ * Called when the `SRConnection` is reconnected
  *
- * @param connection the SRConnection object dispatching the event
+ * @param connection the `SRConnection` object dispatching the event
  */
 - (void)SRConnectionDidReconnect:(SRConnection *)connection;
 
 /**
- * Called when the SRConnection receives data
+ * Called when the `SRConnection` receives data
  *
- * @param connection the SRConnection object dispatching the event
+ * @param connection the `SRConnection` object dispatching the event
  * @param data the data received
  */
 - (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data;
 
 /**
- * Called when the SRConnection is closed
+ * Called when the `SRConnection` is closed
  *
- * @param connection the SRConnection object dispatching the event
+ * @param connection the `SRConnection` object dispatching the event
  */
 - (void)SRConnectionDidClose:(SRConnection *)connection;
 
 /**
- * Called when the SRConnection receives an error
+ * Called when the `SRConnection` receives an error
  *
- * @param connection the SRConnection object dispatching the event
- * @param error the NSError received
+ * @param connection the `SRConnection` object dispatching the event
+ * @param error the `NSError` received
  */
 - (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error;
 
@@ -76,6 +81,11 @@ typedef void (^onClosed)();
 typedef void (^onReconnected)();
 #endif
 
+/**
+ * An `SRConnection` object provides support to open a persistent connection with a SignalR Server.
+ *
+ * `SRConnection`’s delegate methods—defined by the `SRConnectionDelegate` protocol allows an object to receive informational callbacks when events occur on the `SRConnection` object
+ */
 @interface SRConnection : NSObject 
 
 ///-------------------------------
@@ -83,7 +93,7 @@ typedef void (^onReconnected)();
 ///-------------------------------
 
 /**
- * A block to be called when the connection's underlying transport is initialized the first time
+ * A block to be called when the connection's underlying transport is `initialized` the first time
  */
 @property (copy) onStarted started;
 
@@ -109,11 +119,12 @@ typedef void (^onReconnected)();
 
 /**
  * The authentication credential to be applied to each request
+ * Support is limited to HTTP Basic Authentication
  */
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
 
 /**
- * A NSMutableArray of the connected groups
+ * A `NSMutableArray` of the connected groups
  */
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
 
@@ -128,40 +139,44 @@ typedef void (^onReconnected)();
 @property (strong, nonatomic, readwrite) NSString *url;
 
 /**
- * A bool representing the status of the connection
+ * A `BOOL` representing the status of the connection
  * when TRUE the connection has been started
  */
 @property (assign, nonatomic, readonly, getter=isActive) BOOL active;
 
 /**
- * An NSNumber representing the current messageId 
+ * An `NSNumber` representing the current message id 
  */
 @property (strong, nonatomic, readwrite) NSNumber *messageId;
 
 /**
- * An NSString representing the current connectionId established during negotiation 
+ * An `NSString` representing the current connectionId established during negotiation 
  */
 @property (strong, nonatomic, readwrite) NSString *connectionId;
+
+/**
+ * An `NSMutableDictionary` containing objects that need to be persisted by the underlying transport for example the last httprequest.
+ */
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 
 /**
- * An NSString representing the custom query string to be applied to each request
+ * An `NSString` representing the custom query string to be applied to each request
  */
 @property (strong, nonatomic, readonly) NSString *queryString;
 
 /**
- * A bool representing the status of the connection underlying transport
+ * A `BOOL` representing the status of the connection underlying transport
  * when TRUE the connection's underlying transport has been started
  */
 @property (assign, nonatomic, readonly) BOOL initialized;
 
 /**
- * An NSMutableDictionary representing the headers to be applied to each request 
+ * An `NSMutableDictionary` representing the headers to be applied to each request 
  */
 @property (strong, nonatomic, readonly) NSMutableDictionary *headers;
 
 /**
- * The object that acts as the delegate of the receiving SRConnection.
+ * The object that acts as the delegate of the receiving `SRConnection`.
  */
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -177,73 +192,61 @@ typedef void (^onReconnected)();
  * </code>
  *
  * @param URL the endpoint to initialize the new connection to
- * @return an SRConnection object 
+ * @return an `SRConnection` object 
  */
 + (SRConnection *)connectionWithURL:(NSString *)URL;
 
 /**
- * A convenience method for initWithURL:(NSString *)url;
+ * A convenience method for initWithURL:(NSString *)url query:(NSDictionary *)queryString;
  *
  * <code>
  *  SRConnection *connection = [SRConnection connectionWithURL:@"http://mysite/echo"];
  * </code>
  *
  * @param url the endpoint to initialize the new connection to
- * @param queryString an NSDictionary representation of a custom query string to be appended to the SRConnection endpoint
- * @return an SRConnection object 
+ * @param queryString an `NSDictionary` representation of a custom query string to be appended to the `SRConnection` endpoint
+ * @return an `SRConnection` object 
  */
 + (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
 
 /**
- * A convenience method for initWithURL:(NSString *)url;
- *
- * <code>
- *  SRConnection *connection = [SRConnection connectionWithURL:@"http://mysite/echo"];
- * </code>
+ * A convenience method for initWithURL:(NSString *)url queryString:(NSString *)queryString;;
  *
  * @param url the endpoint to initialize the new connection to
- * @param queryString an NSString representation of a custom query string to be appended to the SRConnection endpoint
+ * @param queryString an `NSString` representation of a custom query string to be appended to the `SRConnection` endpoint
  * @warning *Important* Url cannot contain a QueryString directly. Namely the string should not contain the prefix '?' It is recommended that (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString; is used instead
- * @return an SRConnection object 
+ * @return an `SRConnection` object 
  */
 + (SRConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
 
 /**
  * Initializes a new `SRConnection` object at the specified URL
- * 
+ *
  * <code>
  *  SRConnection *connection = [[SRConnection alloc] initWithURL:@"http://mysite/echo"];
  * </code>
  *
  * @param url the endpoint to initialize the new connection to
- * @return an SRConnection object 
+ * @return an `SRConnection` object 
  */
 - (id)initWithURL:(NSString *)url;
 
 /**
  * Initializes a new `SRConnection` object at the specified URL
- * 
- * <code>
- *  SRConnection *connection = [[SRConnection alloc] initWithURL:@"http://mysite/echo"];
- * </code>
  *
  * @param url the endpoint to initialize the new connection to
- * @param queryString an NSDictionary representation of a custom query string to be appended to the SRConnection endpoint
- * @return an SRConnection object 
+ * @param queryString an `NSDictionary` representation of a custom query string to be appended to the `SRConnection` endpoint
+ * @return an `SRConnection` object 
  */
 - (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString;
 
 /**
  * Initializes a new `SRConnection` object at the specified URL
  *
- * <code>
- *  SRConnection *connection = [SRConnection connectionWithURL:@"http://mysite/echo"];
- * </code>
- *
  * @param url the endpoint to initialize the new connection to
- * @param queryString an NSString representation of a custom query string to be appended to the SRConnection endpoint
+ * @param queryString an `NSString` representation of a custom query string to be appended to the `SRConnection` endpoint
  * @warning *Important* Url cannot contain a QueryString directly. Namely the string should not contain the prefix '?' It is recommended that (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString;; is used instead
- * @return an SRConnection object 
+ * @return an `SRConnection` object 
  */
 - (id)initWithURL:(NSString *)url queryString:(NSString *)queryString;
 
@@ -253,29 +256,34 @@ typedef void (^onReconnected)();
 
 /**
  * Starts the connection using SRAutoTransport
+ *
+ * sets `active` to YES
  */
 - (void)start;
 
 /**
  * Starts the connection
+ *
+ * sets `active` to YES
+ *
  * @param transport the transport to use for the connection
  */
 - (void)start:(id <SRClientTransport>)transport;
 
 /**
  * Perfromed prior to starting the underlying transport, a negoitate establishes the initial connection with the server
- * by making a request to url/negotiate a sucessful response returns an SRNegotation object which establishes the connectionId
+ * by making a request to url/negotiate a sucessful response returns an SRNegotiationResponse object which establishes the connectionId
  * at which time the underlying transport will be started.
- * dispatches the opened event to either the SRConnectionDelegate by calling [self.delegate SRConnectionDidOpen:self];
+ * dispatches the opened event to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidOpen:self];
  * or to the self.started callback once the transport is successfully initialized
  */
 - (void)negotiate;
 
 /**
  * Stops the connection
- * dispatches the closed event to either the SRConnectionDelegate by calling [self.delegate SRConnectionDidClose:self];
+ * dispatches the closed event to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidClose:self];
  * or to the self.closed callback 
- * sets active and initialized to NO
+ * sets `active` and `initialized` to NO
  */
 - (void)stop;
 
@@ -307,7 +315,7 @@ typedef void (^onReconnected)();
 
 /**
  * Called when the connection receives new data
- * dispatches the response to either the SRConnectionDelegate by calling [self.delegate SRConnection:self didReceiveData:message];
+ * dispatches the response to either the `SRConnectionDelegate` by calling [self.delegate SRConnection:self didReceiveData:message];
  * or to the self.received callback 
  *
  * @param data the data received from the server
@@ -316,7 +324,7 @@ typedef void (^onReconnected)();
 
 /**
  * Called when the connection receives an error
- * dispatches the error to either the SRConnectionDelegate by calling [self.delegate SRConnection:self didReceiveError:ex];
+ * dispatches the error to either the `SRConnectionDelegate` by calling [self.delegate SRConnection:self didReceiveError:ex];
  * or to the self.error callback 
  *
  * @param ex the error received from the server
@@ -325,7 +333,7 @@ typedef void (^onReconnected)();
 
 /**
  * Called when the connection reconnects after a server side timeout
- * dispatches the reconnect to either the SRConnectionDelegate by calling [self.delegate SRConnectionDidReconnect:self];
+ * dispatches the reconnect to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidReconnect:self];
  * or to the self.reconnected callback 
  */
 - (void)didReconnect;
@@ -345,7 +353,7 @@ typedef void (^onReconnected)();
 /**
  * Sets the user agent, crediential information and other relevant header values on each connection
  *
- * @param request The NSMutableURLRequest that will be sent to the server
+ * @param request The `NSMutableURLRequest` that will be sent to the server
  */
 - (void)prepareRequest:(id)request;
 
