@@ -27,7 +27,18 @@
 
 @interface SRHubProxy : NSObject
 
+///-------------------------------
+/// @name Properties
+///-------------------------------
+
+/**
+ * The `SRConnection` object cooresponding to underlying SRConnection
+ */
 @property (strong, nonatomic, readonly) SRConnection *connection;
+
+/**
+ * The `NSString` object cooresponding to the hubname
+ */
 @property (strong, nonatomic, readonly) NSString *hubName;
 @property (strong, nonatomic, readonly) NSMutableDictionary *state;
 @property (strong, nonatomic, readonly) NSMutableDictionary *subscriptions;

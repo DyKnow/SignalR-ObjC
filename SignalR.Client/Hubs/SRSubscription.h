@@ -28,7 +28,7 @@
 @interface SRSubscription : NSObject
 
 /**
- * The receiver to perform @see selector on
+ * The receiver to perform selector on
  */
 @property (strong, nonatomic, readwrite) NSObject *object;
 

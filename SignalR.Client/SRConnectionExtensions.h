@@ -26,7 +26,7 @@
 @interface SRConnection (Extensions)
 
 /**
- * A convience method for accessing objects belonging to @code [SRConnection items]
+ * A convenience method for accessing objects belonging to @code [SRConnection items]
  *
  * @param key he key for which to return the corresponding value.
  * 

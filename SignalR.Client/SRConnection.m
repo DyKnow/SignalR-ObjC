@@ -50,7 +50,6 @@ void (^prepareRequest)(id);
 //private
 @synthesize assemblyVersion = _assemblyVersion;
 @synthesize transport = _transport;
-@synthesize initialized = _initialized;
 
 //public
 @synthesize started = _started;
@@ -67,6 +66,7 @@ void (^prepareRequest)(id);
 @synthesize connectionId = _connectionId;
 @synthesize items = _items;
 @synthesize queryString = _queryString;
+@synthesize initialized = _initialized;
 @synthesize headers = _headers;
 
 @synthesize delegate = _delegate;
@@ -232,14 +232,15 @@ void (^prepareRequest)(id);
     @try 
     {
         [_transport stop:self];
+    }
+    @finally 
+    {
         
         if(_closed != nil)
         {
             self.closed();
         }
-    }
-    @finally 
-    {
+
         if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) 
         {
             [self.delegate SRConnectionDidClose:self];
