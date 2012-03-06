@@ -25,7 +25,7 @@
 /**
  * `SRSignalRConfig` is intended to be used for debugging the SignalR Client.
  * 
- * @warning For the most verbose logging set @see DEBUG_CONNECTION, @see DEBUG_HTTP_BASED_TRANSPORT, and @see DEBUG_HTTP_HELPER to 1
+ * @warning For the most verbose logging set DEBUG_CONNECTION, DEBUG_HTTP_BASED_TRANSPORT, and DEBUG_HTTP_HELPER to 1
  */
 
 ///-------------------------------

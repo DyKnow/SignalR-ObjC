@@ -21,7 +21,7 @@
 //
 
 /**
- * A category on @see `NSString` which url encodes/decodes `NSString` objects
+ * A category on `NSString` which url encodes/decodes `NSString` objects
  */
 @interface NSString (QueryString)
 

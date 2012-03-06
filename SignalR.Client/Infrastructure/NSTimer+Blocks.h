@@ -23,7 +23,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * A category on @see `NSTimer` allowing the `NSTimer` object to execute a block when fired
+ * A category on `NSTimer` allowing the `NSTimer` object to execute a block when fired
  */
 @interface NSTimer (Blocks)
 

@@ -21,7 +21,7 @@
 //
 
 /**
- * A category on @see `NSDictionary` which url form encodes/decodes `NSDictionary` objects
+ * A category on `NSDictionary` which url form encodes/decodes `NSDictionary` objects
  */
 @interface NSDictionary (QueryString)
 
