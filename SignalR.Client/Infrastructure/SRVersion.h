@@ -61,6 +61,10 @@
  */
 @property (assign, nonatomic, readwrite) NSInteger revision;
 
+///-------------------------------
+/// @name Initializing an SRVersion Object
+///-------------------------------
+
 /**
  * Initializes a new instance of the `SRVersion` class using the specified major and minor values.
  *

@@ -32,12 +32,12 @@
 ///-------------------------------
 
 /**
- * The `NSString` object cooresponding to the hub name
+ * The `NSString` object corresponding to the hub name
  */
 @property (strong, nonatomic, readwrite) NSString *name;
 
 /**
- * The `NSMutableArray` object cooresponding to the subscriptions that the client can subscribe to
+ * The `NSMutableArray` object corresponding to the subscriptions that the client can subscribe to
  */
 @property (strong, nonatomic, readwrite) NSMutableArray *methods;
 

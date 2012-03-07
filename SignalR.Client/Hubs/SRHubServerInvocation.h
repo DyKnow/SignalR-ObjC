@@ -32,22 +32,22 @@
 ///-------------------------------
 
 /**
- * The `NSString` object cooresponding to the hub to preform an invocation on
+ * The `NSString` object corresponding to the hub to preform an invocation on
  */
 @property (strong, nonatomic, readwrite) NSString *hub;
 
 /**
- * The `NSString` object cooresponding to the method to invoke on the hub
+ * The `NSString` object corresponding to the method to invoke on the hub
  */
 @property (strong, nonatomic, readwrite) NSString *action;
 
 /**
- * The `NSMutableArray` object cooresponding to the arguments to be passed as part of the invocation
+ * The `NSMutableArray` object corresponding to the arguments to be passed as part of the invocation
  */
 @property (strong, nonatomic, readwrite) NSMutableArray *data;
 
 /**
- * The `NSMutableDictionary` object cooresponding to the client state
+ * The `NSMutableDictionary` object corresponding to the client state
  */
 @property (strong, nonatomic, readwrite) NSMutableDictionary *state;
 

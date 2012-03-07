@@ -35,12 +35,12 @@
 ///-------------------------------
 
 /**
- * The `SRConnection` object cooresponding to underlying `SRConnection`
+ * The `SRConnection` object corresponding to underlying `SRConnection`
  */
 @property (strong, nonatomic, readonly) SRConnection *connection;
 
 /**
- * The `NSString` object cooresponding to the hubname
+ * The `NSString` object corresponding to the hubname
  */
 @property (strong, nonatomic, readonly) NSString *hubName;
 
@@ -87,7 +87,7 @@
 - (NSArray *)getSubscriptions;
 
 /**
- * Invokes a the `SRSubscription` object that corresponds to eventName
+ * Invokes the `SRSubscription` object that corresponds to eventName
  *
  * @param eventName the `NSString` object representing the name of the subscription event
  * @param args the arguments to pass as part of the invocation

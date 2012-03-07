@@ -38,6 +38,7 @@
 
 /**
  * Creates and returns a new `NSTimer` object initialized with the specified invocation object.
+ *
  * @param inTimeInterval The number of seconds between firings of the timer. If seconds is less than or equal to 0.0, this method chooses the nonnegative value of 0.1 milliseconds instead.
  * @param inBlock The block to use when the timer fires.
  * @param inRepeats If YES, the timer will repeatedly reschedule itself until invalidated. If NO, the timer will be invalidated after it fires.
