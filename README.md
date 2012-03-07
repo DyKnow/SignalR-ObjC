@@ -55,5 +55,5 @@ SignalR-ObjC uses 3rd-party code, see [ACKNOWLEDGEMENTS](https://github.com/DyKn
 [Vendor](https://github.com/DyKnow/SignalR-ObjC/tree/master/Vendor) for specific usage
 
 ## Questions?
-- The SignalR team hangs out in the **signalr** room at http://jabbr.net.
-- The SignalR-ObjC team hangs out in the **signalr-objc** room at http://jabbr.net
+- The SignalR team hangs out in the **signalr** room at http://jabbr.net/
+- The SignalR-ObjC team hangs out in the **signalr-objc** room at http://jabbr.net/
