@@ -8,3 +8,4 @@
 * uses __unsafe_unretained in place of __weak to support iOS 4.3 (with ARC)
 * Expose Headers/Cookies on SRConnection
 * Gracefully handle parameter mismatch in SRHubProxy invokeEvent
+* Adds AppleDoc Style Documentation to the project
