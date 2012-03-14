@@ -223,29 +223,28 @@ void (^prepareRequest)(id);
 
 - (void)stop
 {
-    // Do nothing if the connection was never started
-    if (!_initialized)
-    {
-        return;
-    }
-    
     @try 
     {
+        // Do nothing if the connection was never started
+        if (!_initialized)
+        {
+            return;
+        }
+        
         [_transport stop:self];
-    }
-    @finally 
-    {
         
         if(_closed != nil)
         {
             self.closed();
         }
-
+        
         if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) 
         {
             [self.delegate SRConnectionDidClose:self];
         }
-        
+    }
+    @finally 
+    {
         _active = NO;
         _initialized = NO;
     }
