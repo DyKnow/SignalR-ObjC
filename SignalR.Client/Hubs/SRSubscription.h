@@ -34,7 +34,7 @@
 /**
  * The receiver to perform selector on
  */
-@property (strong, nonatomic, readwrite) NSObject *object;
+@property (assign, nonatomic, readwrite) NSObject *object;
 
 /**
  * A selector identifying the message to send.
