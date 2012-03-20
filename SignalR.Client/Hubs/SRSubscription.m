@@ -33,7 +33,7 @@
 
 - (NSString *)description 
 {  
-    return [NSString stringWithFormat:@"Subscription: Object:%@ Selector=%@",_object, _selector];
+    return [NSString stringWithFormat:@"Subscription: Object:%@ Selector=%@",_object, NSStringFromSelector(_selector)];
 }
 
 - (void)dealloc
