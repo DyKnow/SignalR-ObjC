@@ -23,7 +23,7 @@
 #import "SRLongPollingTransport.h"
 #import "SRSignalRConfig.h"
 
-#import "SRHttpHelper.h"
+#import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
 #import "NSTimer+Blocks.h"
 
@@ -45,7 +45,15 @@ typedef void (^onInitialized)(void);
 
 - (id)init
 {
-    if(self = [super initWithTransport:kTransportName])
+    if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]])
+    {
+    }
+    return self;
+}
+
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient
+{
+    if (self = [super initWithHttpClient:httpClient transport:kTransportName])
     {
         _reconnectDelay = 5;
     }
@@ -75,7 +83,7 @@ typedef void (^onInitialized)(void);
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     
-    [SRHttpHelper postAsync:url requestPreparer:^(id request)
+    [self.httpClient postAsync:url requestPreparer:^(id request)
     {
         [self prepareRequest:request forConnection:connection];
     } 

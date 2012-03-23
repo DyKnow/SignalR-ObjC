@@ -25,9 +25,9 @@
 
 #import "NSObject+SRJSON.h"
 #import "AFNetworking.h"
-#import "SRHttpHelper.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
+#import "SRNegotiationResponse.h"
 
 #import "NSDictionary+QueryString.h"
 #import "NSString+QueryString.h"
@@ -40,15 +40,51 @@
 
 @implementation SRHttpBasedTransport
 
+@synthesize httpClient = _httpClient;
 @synthesize transport = _transport;
 
-- (id) initWithTransport:(NSString *)transport
+- (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport
 {
     if (self = [super init])
     {
+        _httpClient = httpClient;
         _transport = transport;
     }
     return self;
+}
+
+- (void)negotiate:(SRConnection *)connection forUrl:(NSString *)url continueWith:(void (^)(id))block
+{
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection url:url continueWith:block];
+}
+
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection url:(NSString *)url continueWith:(void (^)(id))block
+{
+    NSString *negotiateUrl = [url stringByAppendingString:kNegotiateRequest];
+    
+    [httpClient postAsync:negotiateUrl requestPreparer:^(id request)
+    {
+        if([request isKindOfClass:[NSMutableURLRequest class]])
+        {
+            [request setTimeoutInterval:30];
+        }
+        [connection prepareRequest:request];
+    }
+    continueWith:^(id response)
+    {
+#if DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",response);
+#endif
+        if([response isKindOfClass:[NSString class]])
+        {
+            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
+            
+            if(block)
+            {
+                block(negotiationResponse);
+            }
+        }
+    }];
 }
 
 #pragma mark -
@@ -92,7 +128,7 @@
     
     if(block == nil)
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(id request)
+        [_httpClient postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         } 
@@ -110,7 +146,7 @@
     }
     else
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(id request)
+        [_httpClient postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         }

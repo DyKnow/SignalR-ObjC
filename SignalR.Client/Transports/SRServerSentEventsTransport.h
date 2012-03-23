@@ -45,4 +45,6 @@
  */
 @property (assign, nonatomic, readwrite) NSInteger connectionTimeout;
 
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
+
 @end

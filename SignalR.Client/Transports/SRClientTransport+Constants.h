@@ -26,6 +26,7 @@
 
 #pragma  mark - Transport Constants
 
+#define kNegotiateRequest @"negotiate"
 #define kConnectEndPoint @"connect"
 #define kSendEndPoint @"send"
 

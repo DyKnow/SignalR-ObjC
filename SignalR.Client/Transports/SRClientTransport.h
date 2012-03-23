@@ -29,6 +29,8 @@
  **/
 @protocol SRClientTransport <NSObject>
 
+- (void)negotiate:(SRConnection *)connection forUrl:(NSString *)url continueWith:(void(^)(id))block;
+
 /**
  * Opens a connection to the server for the active transport
  *

@@ -276,8 +276,10 @@ typedef void (^onReconnected)();
  * at which time the underlying transport will be started.
  * dispatches the opened event to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidOpen:self];
  * or to the self.started callback once the transport is successfully initialized
+ *
+ * @param transport the transport to use during negotiation
  */
-- (void)negotiate;
+- (void)negotiate:(id <SRClientTransport>)transport;
 
 /**
  * Stops the connection

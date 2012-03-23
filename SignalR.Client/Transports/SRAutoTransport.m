@@ -24,11 +24,13 @@
 #import "SRSignalRConfig.h"
 
 #import "SRConnection.h"
+#import "SRDefaultHttpClient.h"
 #import "SRServerSentEventsTransport.h"
 #import "SRLongPollingTransport.h"
 
 @interface SRAutoTransport ()
 
+// List of transports in fallback order
 @property (strong, nonatomic, readonly) NSArray *transports;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
 
@@ -38,17 +40,32 @@
 
 @implementation SRAutoTransport
 
+@synthesize httpClient = _httpClient;
+
 @synthesize transports = _transports;
 @synthesize transport = _transport;
 
 - (id)init
 {
+    if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]])
+    {
+    }
+    return self;
+}
+
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
+{
     if(self = [super init])
     {
-        //List the transports in fallback order
+        _httpClient = httpClient;
         _transports = [NSArray arrayWithObjects:[[SRServerSentEventsTransport alloc] init],[[SRLongPollingTransport alloc] init], nil];
     }
     return self;
+}
+
+- (void)negotiate:(SRConnection *)connection forUrl:(NSString *)url continueWith:(void (^)(id))block
+{
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection url:url continueWith:block];
 }
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block

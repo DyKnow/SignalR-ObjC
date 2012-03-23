@@ -24,7 +24,7 @@
 #import "SRSignalRConfig.h"
 
 #import "AFNetworking.h"
-#import "SRHttpHelper.h"
+#import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 #import "NSTimer+Blocks.h"
@@ -454,13 +454,22 @@ typedef void (^onClose)(void);
 
 - (id)init
 {
-    if(self = [super initWithTransport:kTransportName])
+    if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]])
+    {
+    }
+    return self;
+}
+
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient
+{
+    if (self = [super initWithHttpClient:httpClient transport:kTransportName])
     {
         _connectionTimeout = 2;
         _reconnectDelay = 2;
     }
     return self;
 }
+
 
 - (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
@@ -489,7 +498,7 @@ typedef void (^onClose)(void);
     
     NSString *url = [(reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
-    [SRHttpHelper getAsync:url requestPreparer:^(id request)
+    [self.httpClient getAsync:url requestPreparer:^(id request)
     {
         [self prepareRequest:request forConnection:connection];
 
