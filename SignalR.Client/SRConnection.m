@@ -150,14 +150,12 @@ void (^prepareRequest)(id);
     {
         data = self.sending();
     }
-    
-    //NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
-    
+        
 #if DEBUG_CONNECTION
     SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
 #endif
     
-    [transport negotiate:self forUrl:_url continueWith:^(SRNegotiationResponse *negotiationResponse) 
+    [transport negotiate:self continueWith:^(SRNegotiationResponse *negotiationResponse) 
     {
 #if DEBUG_CONNECTION
         SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);

@@ -63,9 +63,9 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection forUrl:(NSString *)url continueWith:(void (^)(id))block
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id))block
 {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection url:url continueWith:block];
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id))block

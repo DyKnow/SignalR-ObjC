@@ -53,14 +53,14 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection forUrl:(NSString *)url continueWith:(void (^)(id))block
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id))block
 {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection url:url continueWith:block];
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection url:(NSString *)url continueWith:(void (^)(id))block
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id))block
 {
-    NSString *negotiateUrl = [url stringByAppendingString:kNegotiateRequest];
+    NSString *negotiateUrl = [connection.url stringByAppendingString:kNegotiateRequest];
     
     [httpClient postAsync:negotiateUrl requestPreparer:^(id request)
     {
