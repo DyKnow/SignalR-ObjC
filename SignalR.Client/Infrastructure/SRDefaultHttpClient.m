@@ -17,11 +17,6 @@
     [SRHttpHelper getAsync:url requestPreparer:prepareRequest continueWith:block];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
-{
-    [SRHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:block];
-}
-
 - (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block
 {
     [SRHttpHelper postAsync:url requestPreparer:prepareRequest postData:postData continueWith:block];

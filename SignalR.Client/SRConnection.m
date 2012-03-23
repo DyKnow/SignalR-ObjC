@@ -26,6 +26,7 @@
 
 #import "AFNetworking.h"
 #import "NSObject+SRJSON.h"
+#import "SRDefaultHttpClient.h"
 #import "SRAutoTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
@@ -124,8 +125,13 @@ void (^prepareRequest)(id);
 
 - (void)start
 {
+    [self startHttpClient:[[SRDefaultHttpClient alloc] init]];
+}
+
+- (void)startHttpClient:(id <SRHttpClient>)httpClient
+{
     // Pick the best transport supported by the client
-    [self start:[[SRAutoTransport alloc] init]];
+    [self start:[[SRAutoTransport alloc] initWithHttpClient:httpClient]];
 }
 
 - (void)start:(id <SRClientTransport>)transport

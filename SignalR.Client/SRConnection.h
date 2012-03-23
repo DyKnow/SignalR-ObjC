@@ -22,6 +22,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
+#import "SRHttpClient.h"
 
 @class SRConnection;
 
@@ -260,6 +261,8 @@ typedef void (^onReconnected)();
  * sets `active` to YES
  */
 - (void)start;
+
+- (void)startHttpClient:(id <SRHttpClient>)httpClient;
 
 /**
  * Starts the connection

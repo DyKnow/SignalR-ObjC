@@ -45,14 +45,6 @@
 @synthesize transports = _transports;
 @synthesize transport = _transport;
 
-- (id)init
-{
-    if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]])
-    {
-    }
-    return self;
-}
-
 - (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
 {
     if(self = [super init])
