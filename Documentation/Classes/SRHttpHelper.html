@@ -1,0 +1,850 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SRHttpHelper Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<meta name="viewport" content="width=550" />
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.0.5 (build 752)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">SignalR-ObjC </a></h1>
+				<a id="developerHome" href="../index.html">DyKnow</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SRHttpHelper Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/getAsync:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ getAsync:continueWith:</option>
+	
+	<option value="//api/name/getAsync:parameters:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ getAsync:parameters:continueWith:</option>
+	
+	<option value="//api/name/getAsync:requestPreparer:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ getAsync:requestPreparer:continueWith:</option>
+	
+	<option value="//api/name/getAsync:requestPreparer:parameters:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ getAsync:requestPreparer:parameters:continueWith:</option>
+	
+	<option value="//api/name/postAsync:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ postAsync:continueWith:</option>
+	
+	<option value="//api/name/postAsync:postData:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ postAsync:postData:continueWith:</option>
+	
+	<option value="//api/name/postAsync:requestPreparer:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ postAsync:requestPreparer:continueWith:</option>
+	
+	<option value="//api/name/postAsync:requestPreparer:postData:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;+ postAsync:requestPreparer:postData:continueWith:</option>
+	
+	<option value="//api/name/sharedHttpRequestManager">&nbsp;&nbsp;&nbsp;&nbsp;+ sharedHttpRequestManager</option>
+	
+	
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initialization">Initialization</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_GET Requests">GET Requests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_POST Requests">POST Requests</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getAsync:continueWith:">getAsync:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getAsync:parameters:continueWith:">getAsync:parameters:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getAsync:requestPreparer:continueWith:">getAsync:requestPreparer:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getAsync:requestPreparer:parameters:continueWith:">getAsync:requestPreparer:parameters:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/postAsync:continueWith:">postAsync:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/postAsync:postData:continueWith:">postAsync:postData:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/postAsync:requestPreparer:continueWith:">postAsync:requestPreparer:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/postAsync:requestPreparer:postData:continueWith:">postAsync:requestPreparer:postData:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sharedHttpRequestManager">sharedHttpRequestManager</a></span></li>
+	
+</ul></li>
+
+
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SRHttpHelper Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SRHttpHelper Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SRHttpHelper.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><a href="SRHttpHelper.html"><code>SRHttpHelper</code></a> is an object used to create HttpRequest objects that are configured for the various http request methods (GET, PUT etc)</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Initialization" name="task_Initialization"></a>
+						<h3 class="subsubtitle task-title">Initialization</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sharedHttpRequestManager">+&nbsp;sharedHttpRequestManager</a></code>
+		<span class="tooltip"><p>Initializes a Singleton for <a href="SRHttpHelper.html"><code>SRHttpHelper</code></a></p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="GET Requests" name="task_GET Requests"></a>
+						<h3 class="subsubtitle task-title">GET Requests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getAsync:continueWith:">+&nbsp;getAsync:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a GET request with the specified url returns on the given block</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getAsync:requestPreparer:continueWith:">+&nbsp;getAsync:requestPreparer:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a GET request with the specified url returns on the given block</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getAsync:parameters:continueWith:">+&nbsp;getAsync:parameters:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a GET request with the specified url returns on the given block</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getAsync:requestPreparer:parameters:continueWith:">+&nbsp;getAsync:requestPreparer:parameters:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a GET request with the specified url returns on the given block</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="POST Requests" name="task_POST Requests"></a>
+						<h3 class="subsubtitle task-title">POST Requests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/postAsync:continueWith:">+&nbsp;postAsync:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a POST request with the specified url returns on the given block
+This POST will contain no payload</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/postAsync:requestPreparer:continueWith:">+&nbsp;postAsync:requestPreparer:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a POST request with the specified url returns on the given block
+This POST will contain no payload</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/postAsync:postData:continueWith:">+&nbsp;postAsync:postData:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a POST request with the specified url and payload returns on the given block
+This POST will have a payload that is generated from @postData</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/postAsync:requestPreparer:postData:continueWith:">+&nbsp;postAsync:requestPreparer:postData:continueWith:</a></code>
+		<span class="tooltip"><p>Creates a POST request with the specified url and payload returns on the given block
+This POST will have a payload that is generated from @postData</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/getAsync:continueWith:" title="getAsync:continueWith:"></a>
+	<h3 class="subsubtitle method-title">getAsync:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a GET request with the specified url returns on the given block</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)getAsync:(NSString *)<em>url</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/getAsync:parameters:continueWith:" title="getAsync:parameters:continueWith:"></a>
+	<h3 class="subsubtitle method-title">getAsync:parameters:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a GET request with the specified url returns on the given block</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)getAsync:(NSString *)<em>url</em> parameters:(id)<em>parameters</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>parameters</em></dt>
+			<dd><p>An Object that conforms to proxyForJSON to pass as parameters to the endpoint
+This can be used to modify properties of the POST, for example timeout or cache protocol</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/getAsync:requestPreparer:continueWith:" title="getAsync:requestPreparer:continueWith:"></a>
+	<h3 class="subsubtitle method-title">getAsync:requestPreparer:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a GET request with the specified url returns on the given block</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)getAsync:(NSString *)<em>url</em> requestPreparer:(void ( ^ ) ( id ))<em>requestPreparer</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>requestPreparer</em></dt>
+			<dd><p>A function to be called on the NSMutableURLRequest created for the request
+This can be used to modify properties of the POST, for example timeout or cache protocol</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/getAsync:requestPreparer:parameters:continueWith:" title="getAsync:requestPreparer:parameters:continueWith:"></a>
+	<h3 class="subsubtitle method-title">getAsync:requestPreparer:parameters:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a GET request with the specified url returns on the given block</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)getAsync:(NSString *)<em>url</em> requestPreparer:(void ( ^ ) ( id ))<em>requestPreparer</em> parameters:(id)<em>parameters</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>requestPreparer</em></dt>
+			<dd><p>A function to be called on the NSMutableURLRequest created for the request
+This can be used to modify properties of the POST, for example timeout or cache protocol</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>parameters</em></dt>
+			<dd><p>An Object that conforms to proxyForJSON to pass as parameters to the endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/postAsync:continueWith:" title="postAsync:continueWith:"></a>
+	<h3 class="subsubtitle method-title">postAsync:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a POST request with the specified url returns on the given block
+This POST will contain no payload</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)postAsync:(NSString *)<em>url</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/postAsync:postData:continueWith:" title="postAsync:postData:continueWith:"></a>
+	<h3 class="subsubtitle method-title">postAsync:postData:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a POST request with the specified url and payload returns on the given block
+This POST will have a payload that is generated from @postData</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)postAsync:(NSString *)<em>url</em> postData:(id)<em>postData</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>postData</em></dt>
+			<dd><p>An Object that conforms to proxyForJSON to post at the url</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/postAsync:requestPreparer:continueWith:" title="postAsync:requestPreparer:continueWith:"></a>
+	<h3 class="subsubtitle method-title">postAsync:requestPreparer:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a POST request with the specified url returns on the given block
+This POST will contain no payload</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)postAsync:(NSString *)<em>url</em> requestPreparer:(void ( ^ ) ( id ))<em>requestPreparer</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>requestPreparer</em></dt>
+			<dd><p>A function to be called on the NSMutableURLRequest created for the request
+This can be used to modify properties of the POST, for example timeout or cache protocol</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/postAsync:requestPreparer:postData:continueWith:" title="postAsync:requestPreparer:postData:continueWith:"></a>
+	<h3 class="subsubtitle method-title">postAsync:requestPreparer:postData:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates a POST request with the specified url and payload returns on the given block
+This POST will have a payload that is generated from @postData</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)postAsync:(NSString *)<em>url</em> requestPreparer:(void ( ^ ) ( id ))<em>requestPreparer</em> postData:(id)<em>postData</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url relative to the server endpoint</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>requestPreparer</em></dt>
+			<dd><p>A function to be called on the NSMutableURLRequest created for the request
+This can be used to modify properties of the POST, for example timeout or cache protocol</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>postData</em></dt>
+			<dd><p>An Object that conforms to proxyForJSON to post at the url</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/sharedHttpRequestManager" title="sharedHttpRequestManager"></a>
+	<h3 class="subsubtitle method-title">sharedHttpRequestManager</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes a Singleton for <a href="SRHttpHelper.html"><code>SRHttpHelper</code></a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (id)sharedHttpRequestManager</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpHelper.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2012 DyKnow. All rights reserved. (Last updated: 2012-03-06)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 752)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+		</script>
+	</body>
+</html>

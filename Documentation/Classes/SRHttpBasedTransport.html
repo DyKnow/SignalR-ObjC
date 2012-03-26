@@ -1,0 +1,858 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SRHttpBasedTransport Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<meta name="viewport" content="width=550" />
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.0.5 (build 752)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">SignalR-ObjC </a></h1>
+				<a id="developerHome" href="../index.html">DyKnow</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SRHttpBasedTransport Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/transport">&nbsp;&nbsp;&nbsp;&nbsp;transport</option>
+	
+	
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/getReceiveQueryString:data:">&nbsp;&nbsp;&nbsp;&nbsp;- getReceiveQueryString:data:</option>
+	
+	<option value="//api/name/getSendQueryString:">&nbsp;&nbsp;&nbsp;&nbsp;- getSendQueryString:</option>
+	
+	<option value="//api/name/initWithTransport:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithTransport:</option>
+	
+	<option value="//api/name/isRequestAborted:">&nbsp;&nbsp;&nbsp;&nbsp;- isRequestAborted:</option>
+	
+	<option value="//api/name/onBeforeAbort:">&nbsp;&nbsp;&nbsp;&nbsp;- onBeforeAbort:</option>
+	
+	<option value="//api/name/onStart:data:initializeCallback:errorCallback:">&nbsp;&nbsp;&nbsp;&nbsp;- onStart:data:initializeCallback:errorCallback:</option>
+	
+	<option value="//api/name/prepareRequest:forConnection:">&nbsp;&nbsp;&nbsp;&nbsp;- prepareRequest:forConnection:</option>
+	
+	<option value="//api/name/processResponse:response:timedOut:disconnected:">&nbsp;&nbsp;&nbsp;&nbsp;- processResponse:response:timedOut:disconnected:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Properties">Properties</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializing an SRHttpBasedTransport Object">Initializing an SRHttpBasedTransport Object</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Preparing requests">Preparing requests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Processing a response">Processing a response</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/transport">transport</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getReceiveQueryString:data:">getReceiveQueryString:data:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getSendQueryString:">getSendQueryString:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithTransport:">initWithTransport:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isRequestAborted:">isRequestAborted:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/onBeforeAbort:">onBeforeAbort:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/onStart:data:initializeCallback:errorCallback:">onStart:data:initializeCallback:errorCallback:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/prepareRequest:forConnection:">prepareRequest:forConnection:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/processResponse:response:timedOut:disconnected:">processResponse:response:timedOut:disconnected:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SRHttpBasedTransport Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SRHttpBasedTransport Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Conforms to</td>
+	<td class="specification-value"><a href="../Protocols/SRClientTransport.html">SRClientTransport</a></td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SRHttpBasedTransport.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> is an abstract class intended to be subclassed. It publishes a programmatic interface that all subclasses must adopt and provide implementations for.</p>
+
+<p><a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> is responsible for starting, sending data, processing server responses, and stopping the http based transports.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Properties" name="task_Properties"></a>
+						<h3 class="subsubtitle task-title">Properties</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/transport">&nbsp;&nbsp;transport</a></code>
+		<span class="tooltip"><p>Returns an <code>NSString</code> object with the name of the active <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Initializing an SRHttpBasedTransport Object" name="task_Initializing an SRHttpBasedTransport Object"></a>
+						<h3 class="subsubtitle task-title">Initializing an SRHttpBasedTransport Object</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithTransport:">&ndash;&nbsp;initWithTransport:</a></code>
+		<span class="tooltip"><p>Initializes a new <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a>.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/onStart:data:initializeCallback:errorCallback:">&ndash;&nbsp;onStart:data:initializeCallback:errorCallback:</a></code>
+		<span class="tooltip"><p><em>Important:</em> this method should only be called from a subclass of <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Preparing requests" name="task_Preparing requests"></a>
+						<h3 class="subsubtitle task-title">Preparing requests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/prepareRequest:forConnection:">&ndash;&nbsp;prepareRequest:forConnection:</a></code>
+		<span class="tooltip"><p>Prepares http requests to be sent to the server</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getReceiveQueryString:data:">&ndash;&nbsp;getReceiveQueryString:data:</a></code>
+		<span class="tooltip"><p>Generates a query string for request made to receive data from the server</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getSendQueryString:">&ndash;&nbsp;getSendQueryString:</a></code>
+		<span class="tooltip"><p>Generates a query string for request made to send data from the server</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isRequestAborted:">&ndash;&nbsp;isRequestAborted:</a></code>
+		<span class="tooltip"><p>Performs a check to see if the underlying HTTP request was cancelled</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/onBeforeAbort:">&ndash;&nbsp;onBeforeAbort:</a></code>
+		<span class="tooltip"><p>Subclasses of <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> should override this method if the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> needs to perform cleanup before closing</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Processing a response" name="task_Processing a response"></a>
+						<h3 class="subsubtitle task-title">Processing a response</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/processResponse:response:timedOut:disconnected:">&ndash;&nbsp;processResponse:response:timedOut:disconnected:</a></code>
+		<span class="tooltip"><p>Processes a successful server response by updating relevant connection properties and dispatching calls to [SRConnection didReceiveData]</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/transport" title="transport"></a>
+	<h3 class="subsubtitle method-title">transport</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns an <code>NSString</code> object with the name of the active <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readonly) NSString *transport</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/getReceiveQueryString:data:" title="getReceiveQueryString:data:"></a>
+	<h3 class="subsubtitle method-title">getReceiveQueryString:data:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Generates a query string for request made to receive data from the server</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSString *)getReceiveQueryString:(SRConnection *)<em>connection</em> data:(NSString *)<em>data</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>connection</em></dt>
+			<dd><p>the <a href="../Classes/SRConnection.html"><code>SRConnection</code></a> object that initialized the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>data</em></dt>
+			<dd><p>the additional data to be sent to the server</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an URL encoded <code>NSString</code> object of the form ?transport=<transportname>&amp;connectionId=<connectionId>&amp;messageId=&lt;messageId_or_Null>&amp;groups=<groups>&amp;connectionData=<data><customquerystring></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/getSendQueryString:" title="getSendQueryString:"></a>
+	<h3 class="subsubtitle method-title">getSendQueryString:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Generates a query string for request made to send data from the server</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSString *)getSendQueryString:(SRConnection *)<em>connection</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>connection</em></dt>
+			<dd><p>the <a href="../Classes/SRConnection.html"><code>SRConnection</code></a> object that initialized the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an URL encoded <code>NSString</code> object of the form ?transport=<transportname>&amp;connectionId=<connectionId><customquerystring></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithTransport:" title="initWithTransport:"></a>
+	<h3 class="subsubtitle method-title">initWithTransport:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes a new <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a>.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithTransport:(NSString *)<em>transport</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>transport</em></dt>
+			<dd><p>the name of the <a href="#//api/name/transport">transport</a></p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><a href="#//api/name/transport">transport</a> name is included in the query string of all <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a>
+some acceptible <a href="#//api/name/transport">transport</a> names include &ldquo;serverSentEvents&rdquo; and &ldquo;longPolling&rdquo;</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isRequestAborted:" title="isRequestAborted:"></a>
+	<h3 class="subsubtitle method-title">isRequestAborted:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Performs a check to see if the underlying HTTP request was cancelled</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)isRequestAborted:(NSError *)<em>error</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>error</em></dt>
+			<dd><p>an error returned from the underlying HTTP request <a href="../Classes/SRHttpHelper.html"><code>SRHttpHelper</code></a></p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>YES if the request was aborted, NO if not</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/onBeforeAbort:" title="onBeforeAbort:"></a>
+	<h3 class="subsubtitle method-title">onBeforeAbort:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Subclasses of <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> should override this method if the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> needs to perform cleanup before closing</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)onBeforeAbort:(SRConnection *)<em>connection</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>connection</em></dt>
+			<dd><p>the <a href="../Classes/SRConnection.html"><code>SRConnection</code></a> object that initialized the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/onStart:data:initializeCallback:errorCallback:" title="onStart:data:initializeCallback:errorCallback:"></a>
+	<h3 class="subsubtitle method-title">onStart:data:initializeCallback:errorCallback:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p><em>Important:</em> this method should only be called from a subclass of <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)onStart:(SRConnection *)<em>connection</em> data:(NSString *)<em>data</em> initializeCallback:(void ( ^ ) ( void ))<em>initializeCallback</em> errorCallback:(void ( ^ ) ( SRErrorByReferenceBlock ))<em>errorCallback</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>connection</em></dt>
+			<dd><p>the <a href="../Classes/SRConnection.html"><code>SRConnection</code></a> object that initialized the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>data</em></dt>
+			<dd><p>the additional data to be sent to the server</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>initializeCallback</em></dt>
+			<dd><p>a block to call when the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> has been initialized successfully</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>errorCallback</em></dt>
+			<dd><p>a block to call when the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a> failed to initialize successfully</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<div class="warning"><p><em>Important:</em> this method should only be called from a subclass of <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/prepareRequest:forConnection:" title="prepareRequest:forConnection:"></a>
+	<h3 class="subsubtitle method-title">prepareRequest:forConnection:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Prepares http requests to be sent to the server</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)prepareRequest:(id)<em>request</em> forConnection:(SRConnection *)<em>connection</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>request</em></dt>
+			<dd><p>will either be an <code>NSMutableURLRequest</code> or an <code>AFHTTPRequestOperation</code></p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>connection</em></dt>
+			<dd><p>the <a href="../Classes/SRConnection.html"><code>SRConnection</code></a> object that initialized the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>if the request is an <code>NSMutableURLRequest</code>, [SRConneciton prepareRequest] is called
+if the request is an <code>AFHTTPRequestOperation the request object is stored in </code>SRConnection<code>.items as a value for the key kHttpRequest
+the</code>AFHTTPRequestOperation<code>is stored so it can be easily retreived when the</code>SRHttpBasedTransport` is stopped and the underlying request cancelled</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/processResponse:response:timedOut:disconnected:" title="processResponse:response:timedOut:disconnected:"></a>
+	<h3 class="subsubtitle method-title">processResponse:response:timedOut:disconnected:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Processes a successful server response by updating relevant connection properties and dispatching calls to [SRConnection didReceiveData]</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)processResponse:(SRConnection *)<em>connection</em> response:(NSString *)<em>response</em> timedOut:(BOOL *)<em>timedOut</em> disconnected:(BOOL *)<em>disconnected</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>connection</em></dt>
+			<dd><p>the <a href="../Classes/SRConnection.html"><code>SRConnection</code></a> object that initialized the <a href="SRHttpBasedTransport.html"><code>SRHttpBasedTransport</code></a></p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>response</em></dt>
+			<dd><p>an <code>NSString</code> representation of the server&rsquo;s JSON response object</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>timedOut</em></dt>
+			<dd><p>a <code>BOOL</code> respresenting if the connection received a server side timeout</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>disconnected</em></dt>
+			<dd><p>a <code>BOOL</code> respresenting if the connection received a disconnect from the server</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHttpBasedTransport.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2012 DyKnow. All rights reserved. (Last updated: 2012-03-06)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 752)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+		</script>
+	</body>
+</html>

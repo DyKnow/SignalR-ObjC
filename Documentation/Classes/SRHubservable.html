@@ -1,0 +1,597 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SRHubservable Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<meta name="viewport" content="width=550" />
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.0.5 (build 752)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">SignalR-ObjC </a></h1>
+				<a id="developerHome" href="../index.html">DyKnow</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SRHubservable Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/eventName">&nbsp;&nbsp;&nbsp;&nbsp;eventName</option>
+	
+	<option value="//api/name/proxy">&nbsp;&nbsp;&nbsp;&nbsp;proxy</option>
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/observe:event:">&nbsp;&nbsp;&nbsp;&nbsp;+ observe:event:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/initWithProxy:eventName:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithProxy:eventName:</option>
+	
+	<option value="//api/name/subscribe:selector:">&nbsp;&nbsp;&nbsp;&nbsp;- subscribe:selector:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Properties">Properties</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializing an SRHubservable Object">Initializing an SRHubservable Object</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Adding Subscriptions">Adding Subscriptions</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/eventName">eventName</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/proxy">proxy</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/observe:event:">observe:event:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithProxy:eventName:">initWithProxy:eventName:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/subscribe:selector:">subscribe:selector:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SRHubservable Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SRHubservable Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SRHubservable.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>An <a href="SRHubservable.html"><code>SRHubservable</code></a> object provides interface for adding Subscriptions to an <a href="../Classes/SRHubProxy.html">SRHubProxy</a></p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Properties" name="task_Properties"></a>
+						<h3 class="subsubtitle task-title">Properties</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/eventName">&nbsp;&nbsp;eventName</a></code>
+		<span class="tooltip"><p>An <code>NSString</code> object representing the name of the subscription event</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/proxy">&nbsp;&nbsp;proxy</a></code>
+		<span class="tooltip"><p>An <a href="../Classes/SRHubProxy.html"><code>SRHubProxy</code></a> object representing the Hub to be observed</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Initializing an SRHubservable Object" name="task_Initializing an SRHubservable Object"></a>
+						<h3 class="subsubtitle task-title">Initializing an SRHubservable Object</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/observe:event:">+&nbsp;observe:event:</a></code>
+		<span class="tooltip"><p>A convenience method for initWithProxy:(<a href="../Classes/SRHubProxy.html">SRHubProxy</a> <em>)<a href="#//api/name/proxy">proxy</a> eventName:(NSString </em>)<a href="#//api/name/eventName">eventName</a>;</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithProxy:eventName:">&ndash;&nbsp;initWithProxy:eventName:</a></code>
+		<span class="tooltip"><p>Initializes a new <a href="SRHubservable.html"><code>SRHubservable</code></a> object</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Adding Subscriptions" name="task_Adding Subscriptions"></a>
+						<h3 class="subsubtitle task-title">Adding Subscriptions</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/subscribe:selector:">&ndash;&nbsp;subscribe:selector:</a></code>
+		<span class="tooltip"><p>Adds a new Subscription to the underlying <a href="#//api/name/proxy">proxy</a> for <a href="#//api/name/eventName">eventName</a></p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/eventName" title="eventName"></a>
+	<h3 class="subsubtitle method-title">eventName</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <code>NSString</code> object representing the name of the subscription event</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readonly) NSString *eventName</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHubservable.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/proxy" title="proxy"></a>
+	<h3 class="subsubtitle method-title">proxy</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <a href="../Classes/SRHubProxy.html"><code>SRHubProxy</code></a> object representing the Hub to be observed</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readonly) SRHubProxy *proxy</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHubservable.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/observe:event:" title="observe:event:"></a>
+	<h3 class="subsubtitle method-title">observe:event:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A convenience method for initWithProxy:(<a href="../Classes/SRHubProxy.html">SRHubProxy</a> <em>)<a href="#//api/name/proxy">proxy</a> eventName:(NSString </em>)<a href="#//api/name/eventName">eventName</a>;</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (id)observe:(SRHubProxy *)<em>proxy</em> event:(NSString *)<em>eventName</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>proxy</em></dt>
+			<dd><p>the <a href="../Classes/SRHubProxy.html"><code>SRHubProxy</code></a> object representing the Hub to be observed</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>eventName</em></dt>
+			<dd><p>the <code>NSString</code> object representing the name of the subscription event</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRHubservable.html"><code>SRHubservable</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>
+<a href="SRHubservable.html">SRHubservable</a> *observable = [<a href="SRHubservable.html">SRHubservable</a> observe:myHub event:@&ldquo;myEvent&rdquo;];
+</code></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHubservable.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithProxy:eventName:" title="initWithProxy:eventName:"></a>
+	<h3 class="subsubtitle method-title">initWithProxy:eventName:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes a new <a href="SRHubservable.html"><code>SRHubservable</code></a> object</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithProxy:(SRHubProxy *)<em>proxy</em> eventName:(NSString *)<em>eventName</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>proxy</em></dt>
+			<dd><p>the <a href="../Classes/SRHubProxy.html"><code>SRHubProxy</code></a> object representing the Hub to be observed</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>eventName</em></dt>
+			<dd><p>the <code>NSString</code> object representing the name of the subscription event</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRHubservable.html"><code>SRHubservable</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>
+<a href="SRHubservable.html">SRHubservable</a> *observable = [<a href="SRHubservable.html">SRHubservable</a> observe:myHub event:@&ldquo;myEvent&rdquo;];
+</code></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHubservable.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/subscribe:selector:" title="subscribe:selector:"></a>
+	<h3 class="subsubtitle method-title">subscribe:selector:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Adds a new Subscription to the underlying <a href="#//api/name/proxy">proxy</a> for <a href="#//api/name/eventName">eventName</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (SRSubscription *)subscribe:(NSObject *)<em>object</em> selector:(SEL)<em>selector</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>object</em></dt>
+			<dd><p>The receiver to perform selector on</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>selector</em></dt>
+			<dd><p>A selector identifying the message to send.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>the <a href="../Classes/SRSubscription.html"><code>SRSubscription</code></a> object created</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRHubservable.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2012 DyKnow. All rights reserved. (Last updated: 2012-03-06)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 752)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+		</script>
+	</body>
+</html>

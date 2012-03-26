@@ -1,0 +1,2260 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SRConnection Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<meta name="viewport" content="width=550" />
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.0.5 (build 752)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">SignalR-ObjC </a></h1>
+				<a id="developerHome" href="../index.html">DyKnow</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SRConnection Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/active">&nbsp;&nbsp;&nbsp;&nbsp;active</option>
+	
+	<option value="//api/name/closed">&nbsp;&nbsp;&nbsp;&nbsp;closed</option>
+	
+	<option value="//api/name/connectionId">&nbsp;&nbsp;&nbsp;&nbsp;connectionId</option>
+	
+	<option value="//api/name/credentials">&nbsp;&nbsp;&nbsp;&nbsp;credentials</option>
+	
+	<option value="//api/name/delegate">&nbsp;&nbsp;&nbsp;&nbsp;delegate</option>
+	
+	<option value="//api/name/error">&nbsp;&nbsp;&nbsp;&nbsp;error</option>
+	
+	<option value="//api/name/groups">&nbsp;&nbsp;&nbsp;&nbsp;groups</option>
+	
+	<option value="//api/name/headers">&nbsp;&nbsp;&nbsp;&nbsp;headers</option>
+	
+	<option value="//api/name/initialized">&nbsp;&nbsp;&nbsp;&nbsp;initialized</option>
+	
+	<option value="//api/name/items">&nbsp;&nbsp;&nbsp;&nbsp;items</option>
+	
+	<option value="//api/name/messageId">&nbsp;&nbsp;&nbsp;&nbsp;messageId</option>
+	
+	<option value="//api/name/queryString">&nbsp;&nbsp;&nbsp;&nbsp;queryString</option>
+	
+	<option value="//api/name/received">&nbsp;&nbsp;&nbsp;&nbsp;received</option>
+	
+	<option value="//api/name/reconnected">&nbsp;&nbsp;&nbsp;&nbsp;reconnected</option>
+	
+	<option value="//api/name/sending">&nbsp;&nbsp;&nbsp;&nbsp;sending</option>
+	
+	<option value="//api/name/started">&nbsp;&nbsp;&nbsp;&nbsp;started</option>
+	
+	<option value="//api/name/url">&nbsp;&nbsp;&nbsp;&nbsp;url</option>
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/connectionWithURL:">&nbsp;&nbsp;&nbsp;&nbsp;+ connectionWithURL:</option>
+	
+	<option value="//api/name/connectionWithURL:query:">&nbsp;&nbsp;&nbsp;&nbsp;+ connectionWithURL:query:</option>
+	
+	<option value="//api/name/connectionWithURL:queryString:">&nbsp;&nbsp;&nbsp;&nbsp;+ connectionWithURL:queryString:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/addValue:forHTTPHeaderField:">&nbsp;&nbsp;&nbsp;&nbsp;- addValue:forHTTPHeaderField:</option>
+	
+	<option value="//api/name/createUserAgentString:">&nbsp;&nbsp;&nbsp;&nbsp;- createUserAgentString:</option>
+	
+	<option value="//api/name/didReceiveData:">&nbsp;&nbsp;&nbsp;&nbsp;- didReceiveData:</option>
+	
+	<option value="//api/name/didReceiveError:">&nbsp;&nbsp;&nbsp;&nbsp;- didReceiveError:</option>
+	
+	<option value="//api/name/didReconnect">&nbsp;&nbsp;&nbsp;&nbsp;- didReconnect</option>
+	
+	<option value="//api/name/getValue:">&nbsp;&nbsp;&nbsp;&nbsp;- getValue:</option>
+	
+	<option value="//api/name/initWithURL:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithURL:</option>
+	
+	<option value="//api/name/initWithURL:query:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithURL:query:</option>
+	
+	<option value="//api/name/initWithURL:queryString:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithURL:queryString:</option>
+	
+	<option value="//api/name/negotiate">&nbsp;&nbsp;&nbsp;&nbsp;- negotiate</option>
+	
+	<option value="//api/name/prepareRequest:">&nbsp;&nbsp;&nbsp;&nbsp;- prepareRequest:</option>
+	
+	<option value="//api/name/send:">&nbsp;&nbsp;&nbsp;&nbsp;- send:</option>
+	
+	<option value="//api/name/send:continueWith:">&nbsp;&nbsp;&nbsp;&nbsp;- send:continueWith:</option>
+	
+	<option value="//api/name/start">&nbsp;&nbsp;&nbsp;&nbsp;- start</option>
+	
+	<option value="//api/name/start:">&nbsp;&nbsp;&nbsp;&nbsp;- start:</option>
+	
+	<option value="//api/name/stop">&nbsp;&nbsp;&nbsp;&nbsp;- stop</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Properties">Properties</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializing an SRConnection Object">Initializing an SRConnection Object</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Connection Management">Connection Management</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Sending Data">Sending Data</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Receiving Data">Receiving Data</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Preparing Requests">Preparing Requests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Extensions Methods">Extensions Methods</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/active">active</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/closed">closed</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/connectionId">connectionId</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/credentials">credentials</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/delegate">delegate</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/error">error</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/groups">groups</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/headers">headers</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initialized">initialized</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/items">items</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/messageId">messageId</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/queryString">queryString</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/received">received</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/reconnected">reconnected</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sending">sending</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/started">started</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/url">url</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/connectionWithURL:">connectionWithURL:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/connectionWithURL:query:">connectionWithURL:query:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/connectionWithURL:queryString:">connectionWithURL:queryString:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/addValue:forHTTPHeaderField:">addValue:forHTTPHeaderField:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/createUserAgentString:">createUserAgentString:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/didReceiveData:">didReceiveData:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/didReceiveError:">didReceiveError:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/didReconnect">didReconnect</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/getValue:">getValue:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithURL:">initWithURL:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithURL:query:">initWithURL:query:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithURL:queryString:">initWithURL:queryString:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/negotiate">negotiate</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/prepareRequest:">prepareRequest:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/send:">send:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/send:continueWith:">send:continueWith:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/start">start</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/start:">start:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/stop">stop</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SRConnection Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SRConnection Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SRConnection.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>An <a href="SRConnection.html"><code>SRConnection</code></a> object provides support to open a persistent connection with a SignalR Server.</p>
+
+<p><a href="SRConnection.html"><code>SRConnection</code></a>’s <a href="#//api/name/delegate">delegate</a> methods—defined by the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> protocol allows an object to receive informational callbacks when events occur on the <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Properties" name="task_Properties"></a>
+						<h3 class="subsubtitle task-title">Properties</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/started">&nbsp;&nbsp;started</a></code>
+		<span class="tooltip"><p>A block to be called when the connection&rsquo;s underlying transport is <a href="#//api/name/initialized"><code>initialized</code></a> the first time</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/received">&nbsp;&nbsp;received</a></code>
+		<span class="tooltip"><p>A block to be called when the connection&rsquo;s underlying transport receives new data</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/error">&nbsp;&nbsp;error</a></code>
+		<span class="tooltip"><p>A block to be called when the connection&rsquo;s underlying transport receives a <a href="#//api/name/error">error</a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/closed">&nbsp;&nbsp;closed</a></code>
+		<span class="tooltip"><p>A block to be called when the connection&rsquo;s underlying transport is <a href="#//api/name/closed">closed</a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/reconnected">&nbsp;&nbsp;reconnected</a></code>
+		<span class="tooltip"><p>A block to be called when the connection&rsquo;s underlying transport is <a href="#//api/name/reconnected">reconnected</a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/credentials">&nbsp;&nbsp;credentials</a></code>
+		<span class="tooltip"><p>The authentication credential to be applied to each request
+Support is limited to HTTP Basic Authentication</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/groups">&nbsp;&nbsp;groups</a></code>
+		<span class="tooltip"><p>A <code>NSMutableArray</code> of the connected <a href="#//api/name/groups">groups</a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sending">&nbsp;&nbsp;sending</a></code>
+		<span class="tooltip"><p>A block to be called prior to <a href="#//api/name/sending">sending</a> data</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/url">&nbsp;&nbsp;url</a></code>
+		<span class="tooltip"><p>The endpoint at which the connection is <a href="#//api/name/initialized">initialized</a> to</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/active">&nbsp;&nbsp;active</a></code>
+		<span class="tooltip"><p>A <code>BOOL</code> representing the status of the connection
+when TRUE the connection has been <a href="#//api/name/started">started</a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/messageId">&nbsp;&nbsp;messageId</a></code>
+		<span class="tooltip"><p>An <code>NSNumber</code> representing the current message id</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/connectionId">&nbsp;&nbsp;connectionId</a></code>
+		<span class="tooltip"><p>An <code>NSString</code> representing the current <a href="#//api/name/connectionId">connectionId</a> established during negotiation</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/items">&nbsp;&nbsp;items</a></code>
+		<span class="tooltip"><p>An <code>NSMutableDictionary</code> containing objects that need to be persisted by the underlying transport for example the last httprequest.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/queryString">&nbsp;&nbsp;queryString</a></code>
+		<span class="tooltip"><p>An <code>NSString</code> representing the custom query string to be applied to each request</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initialized">&nbsp;&nbsp;initialized</a></code>
+		<span class="tooltip"><p>A <code>BOOL</code> representing the status of the connection underlying transport
+when TRUE the connection&rsquo;s underlying transport has been <a href="#//api/name/started">started</a></p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/headers">&nbsp;&nbsp;headers</a></code>
+		<span class="tooltip"><p>An <code>NSMutableDictionary</code> representing the <a href="#//api/name/headers">headers</a> to be applied to each request</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/delegate">&nbsp;&nbsp;delegate</a></code>
+		<span class="tooltip"><p>The object that acts as the <a href="#//api/name/delegate">delegate</a> of the receiving <a href="SRConnection.html"><code>SRConnection</code></a>.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Initializing an SRConnection Object" name="task_Initializing an SRConnection Object"></a>
+						<h3 class="subsubtitle task-title">Initializing an SRConnection Object</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/connectionWithURL:">+&nbsp;connectionWithURL:</a></code>
+		<span class="tooltip"><p>A convenience method for <a href="#//api/name/initWithURL:">initWithURL:</a>(NSString *)<a href="#//api/name/url">url</a>;</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/connectionWithURL:query:">+&nbsp;connectionWithURL:query:</a></code>
+		<span class="tooltip"><p>A convenience method for <a href="#//api/name/initWithURL:">initWithURL:</a>(NSString <em>)<a href="#//api/name/url">url</a> query:(NSDictionary </em>)<a href="#//api/name/queryString">queryString</a>;</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/connectionWithURL:queryString:">+&nbsp;connectionWithURL:queryString:</a></code>
+		<span class="tooltip"><p>A convenience method for <a href="#//api/name/initWithURL:">initWithURL:</a>(NSString <em>)<a href="#//api/name/url">url</a> queryString:(NSString </em>)<a href="#//api/name/queryString">queryString</a>;;</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithURL:">&ndash;&nbsp;initWithURL:</a></code>
+		<span class="tooltip"><p>Initializes a new <a href="SRConnection.html"><code>SRConnection</code></a> object at the specified URL</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithURL:query:">&ndash;&nbsp;initWithURL:query:</a></code>
+		<span class="tooltip"><p>Initializes a new <a href="SRConnection.html"><code>SRConnection</code></a> object at the specified URL</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initWithURL:queryString:">&ndash;&nbsp;initWithURL:queryString:</a></code>
+		<span class="tooltip"><p>Initializes a new <a href="SRConnection.html"><code>SRConnection</code></a> object at the specified URL</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Connection Management" name="task_Connection Management"></a>
+						<h3 class="subsubtitle task-title">Connection Management</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/start">&ndash;&nbsp;start</a></code>
+		<span class="tooltip"><p>Starts the connection using <a href="../Classes/SRAutoTransport.html">SRAutoTransport</a></p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/start:">&ndash;&nbsp;start:</a></code>
+		<span class="tooltip"><p>Starts the connection</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/negotiate">&ndash;&nbsp;negotiate</a></code>
+		<span class="tooltip"><p>Perfromed prior to starting the underlying transport, a negoitate establishes the initial connection with the server
+by making a request to url/<a href="#//api/name/negotiate">negotiate</a> a sucessful response returns an <a href="../Classes/SRNegotiationResponse.html">SRNegotiationResponse</a> object which establishes the <a href="#//api/name/connectionId">connectionId</a>
+at which time the underlying transport will be <a href="#//api/name/started">started</a>.
+dispatches the opened event to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.delegate SRConnectionDidOpen:self];
+or to the self.<a href="#//api/name/started">started</a> callback once the transport is successfully <a href="#//api/name/initialized">initialized</a></p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/stop">&ndash;&nbsp;stop</a></code>
+		<span class="tooltip"><p>Stops the connection
+dispatches the <a href="#//api/name/closed">closed</a> event to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.delegate SRConnectionDidClose:self];
+or to the self.<a href="#//api/name/closed">closed</a> callback
+sets <a href="#//api/name/active"><code>active</code></a> and <a href="#//api/name/initialized"><code>initialized</code></a> to NO</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Sending Data" name="task_Sending Data"></a>
+						<h3 class="subsubtitle task-title">Sending Data</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/send:">&ndash;&nbsp;send:</a></code>
+		<span class="tooltip"><p>Sends data over the connection.
+calls [self send:message continueWith:nil];</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/send:continueWith:">&ndash;&nbsp;send:continueWith:</a></code>
+		<span class="tooltip"><p>Sends data over the connection.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Receiving Data" name="task_Receiving Data"></a>
+						<h3 class="subsubtitle task-title">Receiving Data</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/didReceiveData:">&ndash;&nbsp;didReceiveData:</a></code>
+		<span class="tooltip"><p>Called when the connection receives new data
+dispatches the response to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.<a href="#//api/name/delegate">delegate</a> <a href="SRConnection.html">SRConnection</a>:self didReceiveData:message];
+or to the self.<a href="#//api/name/received">received</a> callback</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/didReceiveError:">&ndash;&nbsp;didReceiveError:</a></code>
+		<span class="tooltip"><p>Called when the connection receives an <a href="#//api/name/error">error</a>
+dispatches the <a href="#//api/name/error">error</a> to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.<a href="#//api/name/delegate">delegate</a> <a href="SRConnection.html">SRConnection</a>:self didReceiveError:ex];
+or to the self.<a href="#//api/name/error">error</a> callback</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/didReconnect">&ndash;&nbsp;didReconnect</a></code>
+		<span class="tooltip"><p>Called when the connection reconnects after a server side timeout
+dispatches the reconnect to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.delegate SRConnectionDidReconnect:self];
+or to the self.<a href="#//api/name/reconnected">reconnected</a> callback</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Preparing Requests" name="task_Preparing Requests"></a>
+						<h3 class="subsubtitle task-title">Preparing Requests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/addValue:forHTTPHeaderField:">&ndash;&nbsp;addValue:forHTTPHeaderField:</a></code>
+		<span class="tooltip"><p>Adds an HTTP header to the receiver’s HTTP header dictionary.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/prepareRequest:">&ndash;&nbsp;prepareRequest:</a></code>
+		<span class="tooltip"><p>Sets the user agent, crediential information and other relevant header values on each connection</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/createUserAgentString:">&ndash;&nbsp;createUserAgentString:</a></code>
+		<span class="tooltip"><p>Generates the client UserAgent header field</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Extensions Methods" name="task_Extensions Methods"></a>
+						<h3 class="subsubtitle task-title">Extensions Methods</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/getValue:">&ndash;&nbsp;getValue:</a></code>
+		<span class="tooltip"><p>An extension method for accessing objects belonging to <a href="#//api/name/items">[SRConnection items]</a></p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/active" title="active"></a>
+	<h3 class="subsubtitle method-title">active</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A <code>BOOL</code> representing the status of the connection
+when TRUE the connection has been <a href="#//api/name/started">started</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (assign, nonatomic, readonly, getter=isActive) BOOL active</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/closed" title="closed"></a>
+	<h3 class="subsubtitle method-title">closed</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A block to be called when the connection&rsquo;s underlying transport is <a href="#//api/name/closed">closed</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (copy) onClosed closed</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/connectionId" title="connectionId"></a>
+	<h3 class="subsubtitle method-title">connectionId</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <code>NSString</code> representing the current <a href="#//api/name/connectionId">connectionId</a> established during negotiation</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readwrite) NSString *connectionId</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/credentials" title="credentials"></a>
+	<h3 class="subsubtitle method-title">credentials</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The authentication credential to be applied to each request
+Support is limited to HTTP Basic Authentication</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readwrite) NSURLCredential *credentials</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/delegate" title="delegate"></a>
+	<h3 class="subsubtitle method-title">delegate</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The object that acts as the <a href="#//api/name/delegate">delegate</a> of the receiving <a href="SRConnection.html"><code>SRConnection</code></a>.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) id&lt;&gt; delegate</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/error" title="error"></a>
+	<h3 class="subsubtitle method-title">error</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A block to be called when the connection&rsquo;s underlying transport receives a <a href="#//api/name/error">error</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (copy) onError error</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/groups" title="groups"></a>
+	<h3 class="subsubtitle method-title">groups</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A <code>NSMutableArray</code> of the connected <a href="#//api/name/groups">groups</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readwrite) NSMutableArray *groups</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/headers" title="headers"></a>
+	<h3 class="subsubtitle method-title">headers</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <code>NSMutableDictionary</code> representing the <a href="#//api/name/headers">headers</a> to be applied to each request</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readonly) NSMutableDictionary *headers</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initialized" title="initialized"></a>
+	<h3 class="subsubtitle method-title">initialized</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A <code>BOOL</code> representing the status of the connection underlying transport
+when TRUE the connection&rsquo;s underlying transport has been <a href="#//api/name/started">started</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (assign, nonatomic, readonly) BOOL initialized</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/items" title="items"></a>
+	<h3 class="subsubtitle method-title">items</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <code>NSMutableDictionary</code> containing objects that need to be persisted by the underlying transport for example the last httprequest.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readwrite) NSMutableDictionary *items</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/messageId" title="messageId"></a>
+	<h3 class="subsubtitle method-title">messageId</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <code>NSNumber</code> representing the current message id</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readwrite) NSNumber *messageId</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/queryString" title="queryString"></a>
+	<h3 class="subsubtitle method-title">queryString</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An <code>NSString</code> representing the custom query string to be applied to each request</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readonly) NSString *queryString</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/received" title="received"></a>
+	<h3 class="subsubtitle method-title">received</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A block to be called when the connection&rsquo;s underlying transport receives new data</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (copy) onReceived received</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/reconnected" title="reconnected"></a>
+	<h3 class="subsubtitle method-title">reconnected</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A block to be called when the connection&rsquo;s underlying transport is <a href="#//api/name/reconnected">reconnected</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (copy) onReconnected reconnected</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/sending" title="sending"></a>
+	<h3 class="subsubtitle method-title">sending</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A block to be called prior to <a href="#//api/name/sending">sending</a> data</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (copy) onSending sending</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/started" title="started"></a>
+	<h3 class="subsubtitle method-title">started</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A block to be called when the connection&rsquo;s underlying transport is <a href="#//api/name/initialized"><code>initialized</code></a> the first time</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (copy) onStarted started</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/url" title="url"></a>
+	<h3 class="subsubtitle method-title">url</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The endpoint at which the connection is <a href="#//api/name/initialized">initialized</a> to</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (strong, nonatomic, readwrite) NSString *url</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/connectionWithURL:" title="connectionWithURL:"></a>
+	<h3 class="subsubtitle method-title">connectionWithURL:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A convenience method for <a href="#//api/name/initWithURL:">initWithURL:</a>(NSString *)<a href="#//api/name/url">url</a>;</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (SRConnection *)connectionWithURL:(NSString *)<em>URL</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>URL</em></dt>
+			<dd><p>the endpoint to initialize the new connection to</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>
+SRConnection *connection = [SRConnection connectionWithURL:@&ldquo;http://mysite/echo&rdquo;]<a href="http://mysite/echo">http://mysite/echo</a>&ldquo;];
+</code></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/connectionWithURL:query:" title="connectionWithURL:query:"></a>
+	<h3 class="subsubtitle method-title">connectionWithURL:query:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A convenience method for <a href="#//api/name/initWithURL:">initWithURL:</a>(NSString <em>)<a href="#//api/name/url">url</a> query:(NSDictionary </em>)<a href="#//api/name/queryString">queryString</a>;</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (SRConnection *)connectionWithURL:(NSString *)<em>url</em> query:(NSDictionary *)<em>queryString</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>the endpoint to initialize the new connection to</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>queryString</em></dt>
+			<dd><p>an <code>NSDictionary</code> representation of a custom query string to be appended to the <a href="SRConnection.html"><code>SRConnection</code></a> endpoint</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>
+SRConnection *connection = [SRConnection connectionWithURL:@&ldquo;http://mysite/echo&rdquo;]<a href="http://mysite/echo">http://mysite/echo</a>&ldquo;];
+</code></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/connectionWithURL:queryString:" title="connectionWithURL:queryString:"></a>
+	<h3 class="subsubtitle method-title">connectionWithURL:queryString:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A convenience method for <a href="#//api/name/initWithURL:">initWithURL:</a>(NSString <em>)<a href="#//api/name/url">url</a> queryString:(NSString </em>)<a href="#//api/name/queryString">queryString</a>;;</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (SRConnection *)connectionWithURL:(NSString *)<em>url</em> queryString:(NSString *)<em>queryString</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>the endpoint to initialize the new connection to</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>queryString</em></dt>
+			<dd><p>an <code>NSString</code> representation of a custom query string to be appended to the <a href="SRConnection.html"><code>SRConnection</code></a> endpoint</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<div class="warning"><p><em>Important</em> Url cannot contain a QueryString directly. Namely the string should not contain the prefix &lsquo;?&rsquo; It is recommended that (<a href="SRConnection.html">SRConnection</a> <em>)<a href="#//api/name/connectionWithURL:">connectionWithURL:</a>(NSString </em>)<a href="#//api/name/url">url</a> query:(NSDictionary *)<a href="#//api/name/queryString">queryString</a>; is used instead</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/addValue:forHTTPHeaderField:" title="addValue:forHTTPHeaderField:"></a>
+	<h3 class="subsubtitle method-title">addValue:forHTTPHeaderField:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Adds an HTTP header to the receiver’s HTTP header dictionary.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)addValue:(NSString *)<em>value</em> forHTTPHeaderField:(NSString *)<em>field</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>value</em></dt>
+			<dd><p>The value for the header field.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>field</em></dt>
+			<dd><p>the name of the header field.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/createUserAgentString:" title="createUserAgentString:"></a>
+	<h3 class="subsubtitle method-title">createUserAgentString:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Generates the client UserAgent header field</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSString *)createUserAgentString:(NSString *)<em>client</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>client</em></dt>
+			<dd><p>the client name</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The user agent will be of the form client/version (DeviceModel/DeviceVersion)</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/didReceiveData:" title="didReceiveData:"></a>
+	<h3 class="subsubtitle method-title">didReceiveData:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called when the connection receives new data
+dispatches the response to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.<a href="#//api/name/delegate">delegate</a> <a href="SRConnection.html">SRConnection</a>:self didReceiveData:message];
+or to the self.<a href="#//api/name/received">received</a> callback</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)didReceiveData:(NSString *)<em>data</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>data</em></dt>
+			<dd><p>the data <a href="#//api/name/received">received</a> from the server</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/didReceiveError:" title="didReceiveError:"></a>
+	<h3 class="subsubtitle method-title">didReceiveError:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called when the connection receives an <a href="#//api/name/error">error</a>
+dispatches the <a href="#//api/name/error">error</a> to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.<a href="#//api/name/delegate">delegate</a> <a href="SRConnection.html">SRConnection</a>:self didReceiveError:ex];
+or to the self.<a href="#//api/name/error">error</a> callback</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)didReceiveError:(NSError *)<em>ex</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>ex</em></dt>
+			<dd><p>the <a href="#//api/name/error">error</a> <a href="#//api/name/received">received</a> from the server</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/didReconnect" title="didReconnect"></a>
+	<h3 class="subsubtitle method-title">didReconnect</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called when the connection reconnects after a server side timeout
+dispatches the reconnect to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.delegate SRConnectionDidReconnect:self];
+or to the self.<a href="#//api/name/reconnected">reconnected</a> callback</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)didReconnect</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/getValue:" title="getValue:"></a>
+	<h3 class="subsubtitle method-title">getValue:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>An extension method for accessing objects belonging to <a href="#//api/name/items">[SRConnection items]</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)getValue:(NSString *)<em>key</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>key</em></dt>
+			<dd><p>he key for which to return the corresponding value.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>Returns the value associated with a given key.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnectionExtensions.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithURL:" title="initWithURL:"></a>
+	<h3 class="subsubtitle method-title">initWithURL:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes a new <a href="SRConnection.html"><code>SRConnection</code></a> object at the specified URL</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithURL:(NSString *)<em>url</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>the endpoint to initialize the new connection to</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>
+SRConnection *connection = [[SRConnection alloc] initWithURL:@&ldquo;<a href="http://mysite/echo">http://mysite/echo</a>&rdquo;];
+</code></p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithURL:query:" title="initWithURL:query:"></a>
+	<h3 class="subsubtitle method-title">initWithURL:query:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes a new <a href="SRConnection.html"><code>SRConnection</code></a> object at the specified URL</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithURL:(NSString *)<em>url</em> query:(NSDictionary *)<em>queryString</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>the endpoint to initialize the new connection to</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>queryString</em></dt>
+			<dd><p>an <code>NSDictionary</code> representation of a custom query string to be appended to the <a href="SRConnection.html"><code>SRConnection</code></a> endpoint</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/initWithURL:queryString:" title="initWithURL:queryString:"></a>
+	<h3 class="subsubtitle method-title">initWithURL:queryString:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Initializes a new <a href="SRConnection.html"><code>SRConnection</code></a> object at the specified URL</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initWithURL:(NSString *)<em>url</em> queryString:(NSString *)<em>queryString</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>the endpoint to initialize the new connection to</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>queryString</em></dt>
+			<dd><p>an <code>NSString</code> representation of a custom query string to be appended to the <a href="SRConnection.html"><code>SRConnection</code></a> endpoint</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>an <a href="SRConnection.html"><code>SRConnection</code></a> object</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<div class="warning"><p><em>Important</em> Url cannot contain a QueryString directly. Namely the string should not contain the prefix &lsquo;?&rsquo; It is recommended that (id)<a href="#//api/name/initWithURL:">initWithURL:</a>(NSString <em>)<a href="#//api/name/url">url</a> query:(NSDictionary </em>)<a href="#//api/name/queryString">queryString</a>;; is used instead</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/negotiate" title="negotiate"></a>
+	<h3 class="subsubtitle method-title">negotiate</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Perfromed prior to starting the underlying transport, a negoitate establishes the initial connection with the server
+by making a request to url/<a href="#//api/name/negotiate">negotiate</a> a sucessful response returns an <a href="../Classes/SRNegotiationResponse.html">SRNegotiationResponse</a> object which establishes the <a href="#//api/name/connectionId">connectionId</a>
+at which time the underlying transport will be <a href="#//api/name/started">started</a>.
+dispatches the opened event to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.delegate SRConnectionDidOpen:self];
+or to the self.<a href="#//api/name/started">started</a> callback once the transport is successfully <a href="#//api/name/initialized">initialized</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)negotiate</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/prepareRequest:" title="prepareRequest:"></a>
+	<h3 class="subsubtitle method-title">prepareRequest:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sets the user agent, crediential information and other relevant header values on each connection</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)prepareRequest:(id)<em>request</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>request</em></dt>
+			<dd><p>The <code>NSMutableURLRequest</code> that will be sent to the server</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/send:" title="send:"></a>
+	<h3 class="subsubtitle method-title">send:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sends data over the connection.
+calls [self send:message continueWith:nil];</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)send:(NSString *)<em>message</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>message</em></dt>
+			<dd><p>the message to send</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/send:continueWith:" title="send:continueWith:"></a>
+	<h3 class="subsubtitle method-title">send:continueWith:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sends data over the connection.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)send:(NSString *)<em>message</em> continueWith:(void ( ^ ) ( id response ))<em>block</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>message</em></dt>
+			<dd><p>the message to send</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>the callback to be called once the message is sent.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<div class="warning"><p><em>Important</em> Start must be called before <a href="#//api/name/sending">sending</a> data</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/start" title="start"></a>
+	<h3 class="subsubtitle method-title">start</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Starts the connection using <a href="../Classes/SRAutoTransport.html">SRAutoTransport</a></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)start</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>sets <a href="#//api/name/active"><code>active</code></a> to YES</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/start:" title="start:"></a>
+	<h3 class="subsubtitle method-title">start:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Starts the connection</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)start:(id&lt;SRClientTransport&gt;)<em>transport</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>transport</em></dt>
+			<dd><p>the transport to use for the connection</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>sets <a href="#//api/name/active"><code>active</code></a> to YES</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/stop" title="stop"></a>
+	<h3 class="subsubtitle method-title">stop</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Stops the connection
+dispatches the <a href="#//api/name/closed">closed</a> event to either the <a href="../Protocols/SRConnectionDelegate.html"><code>SRConnectionDelegate</code></a> by calling [self.delegate SRConnectionDidClose:self];
+or to the self.<a href="#//api/name/closed">closed</a> callback
+sets <a href="#//api/name/active"><code>active</code></a> and <a href="#//api/name/initialized"><code>initialized</code></a> to NO</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)stop</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SRConnection.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2012 DyKnow. All rights reserved. (Last updated: 2012-03-06)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 752)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+		</script>
+	</body>
+</html>
