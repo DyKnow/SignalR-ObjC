@@ -12,7 +12,7 @@ it dead easy and handles all the heavy lifting for you.
 
 
 ## Documentation
-See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki)
+See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) and [api reference](http://dyknow.github.com/SignalR-ObjC/Documentation/index.html)
 	
 ## Installation
 NOTE: SignalR-ObjC uses Automatic Reference Counting.
