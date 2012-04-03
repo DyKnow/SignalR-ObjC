@@ -31,6 +31,8 @@ typedef void (^onInitialized)(void);
 
 @interface SRLongPollingTransport()
 
+@property (assign, nonatomic, readwrite) NSInteger errorDelay;
+
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
 - (void)fireReconnected:(SRConnection *)connection reconnectCancelled:(BOOL)cancelled reconnectedFired:(int *)reconnectedFired;
@@ -42,6 +44,7 @@ typedef void (^onInitialized)(void);
 @implementation SRLongPollingTransport
 
 @synthesize reconnectDelay = _reconnectDelay;
+@synthesize errorDelay = _errorDelay;
 
 - (id)init
 {
@@ -56,6 +59,7 @@ typedef void (^onInitialized)(void);
     if (self = [super initWithHttpClient:httpClient transport:kTransportName])
     {
         _reconnectDelay = 5;
+        _errorDelay = 2;
     }
     return self;
 }
@@ -130,7 +134,6 @@ typedef void (^onInitialized)(void);
             else
             {
                 BOOL requestAborted = NO;
-                BOOL continuePolling = YES;
                 
                 if (isFaulted)
                 {
@@ -159,9 +162,6 @@ typedef void (^onInitialized)(void);
                                 *error = response;
                             };
                             errorCallback(errorBlock);
-                            
-                            // Don't continue polling if the error is on the first request
-                            continuePolling = NO;
                         }
                         else
                         {
@@ -177,26 +177,24 @@ typedef void (^onInitialized)(void);
                                 
                                 //If the connection is still active after raising the error wait 2 seconds 
                                 //before polling again so we arent hammering the server
-                                if(connection.isActive)
-                                {
+                                
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                                    SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in 2 seconds");
+                                SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in %d seconds",_errorDelay);
 #endif
-                                    [NSTimer scheduledTimerWithTimeInterval:2 block:
-                                     ^{
-                                         if (continuePolling && !requestAborted && connection.isActive)
-                                         {
-                                             [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
-                                         }
-                                     } repeats:NO];
-                                }
+                                [NSTimer scheduledTimerWithTimeInterval:_errorDelay block:
+                                 ^{
+                                     if (connection.isActive)
+                                     {
+                                         [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
+                                     }
+                                 } repeats:NO];    
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (continuePolling && !requestAborted && connection.isActive)
+                    if (connection.isActive)
                     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                         SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
