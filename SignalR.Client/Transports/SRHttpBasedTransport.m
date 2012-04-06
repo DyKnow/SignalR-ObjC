@@ -75,14 +75,29 @@
 #if DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",response);
 #endif
+        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
+                          [response isEqualToString:@""] || response == nil ||
+                          [response isEqualToString:@"null"]);
+        
         if([response isKindOfClass:[NSString class]])
         {
-            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
-            
-            if(block)
+            if(!isFaulted)
             {
-                block(negotiationResponse);
+                SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
+                
+                if(block)
+                {
+                    block(negotiationResponse);
+                }
             }
+        }
+        
+        if(isFaulted)
+        {
+#if DEBUG_CONNECTION
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed, connection will stop");
+#endif
+            [connection stop];
         }
     }];
 }
