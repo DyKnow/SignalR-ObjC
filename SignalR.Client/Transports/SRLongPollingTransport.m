@@ -84,6 +84,10 @@ typedef void (^onInitialized)(void);
     {
         url = [url stringByAppendingString:kConnectEndPoint];
     }
+    else if (raiseReconnect)
+    {
+        url = [url stringByAppendingString:kReconnectEndPoint];
+    }
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     

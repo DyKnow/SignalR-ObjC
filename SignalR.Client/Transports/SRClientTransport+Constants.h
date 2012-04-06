@@ -28,6 +28,7 @@
 
 #define kNegotiateRequest @"negotiate"
 #define kConnectEndPoint @"connect"
+#define kReconnectEndPoint @"reconnect"
 #define kSendEndPoint @"send"
 
 #pragma  mark - Request Constants
