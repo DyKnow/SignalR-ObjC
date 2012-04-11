@@ -9,3 +9,5 @@
 * Expose Headers/Cookies on SRConnection
 * Gracefully handle parameter mismatch in SRHubProxy invokeEvent
 * Adds AppleDoc Style Documentation to the project
+* Bug Fixes
+* Changes from the SignalR.Client project see [issue 67](https://github.com/DyKnow/SignalR-ObjC/issues/67) for details
