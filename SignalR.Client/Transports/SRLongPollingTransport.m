@@ -80,6 +80,9 @@ typedef void (^onInitialized)(void);
     __block BOOL reconnectCancelled = NO;
     __block NSInteger reconnectFired = 0;
     
+    // This is only necessary for the initial request where initializeCallback and errorCallback are non-null
+    __block int callbackFired = 0;
+    
     if(connection.messageId == nil)
     {
         url = [url stringByAppendingString:kConnectEndPoint];
@@ -153,11 +156,13 @@ typedef void (^onInitialized)(void);
                     if([response isKindOfClass:[NSError class]])
                     {
                         // If the error callback isn't null then raise it and don't continue polling
-                        if (errorCallback)
+                        if (errorCallback && callbackFired == 0)
                         {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                             SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
 #endif
+                            callbackFired = 1;
+                            
                             [connection didReceiveError:response];
                             
                             //Call the callback
@@ -210,11 +215,12 @@ typedef void (^onInitialized)(void);
         }
     }];
     
-    if (initializeCallback != nil)
+    if (initializeCallback != nil && callbackFired == 0)
     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[LONG_POLLING] connection is initialized");
 #endif
+        callbackFired = 1;
         // Only set this the first time
         initializeCallback();
     }
