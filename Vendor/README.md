@@ -7,3 +7,10 @@ AFNetworking is a delightful networking library for iOS and Mac OS X. It's built
 
 ### What is it for?
 AFNetworking is used to manage all http requests
+
+## SocketRocket
+A conforming Objective-C WebSocket client library.
+[Square's SocketRocket on GitHub](https://github.com/square/SocketRocket)
+
+### What is it for?
+It will be used for the Websockets Transport once supported
