@@ -7,12 +7,3 @@ AFNetworking is a delightful networking library for iOS and Mac OS X. It's built
 
 ### What is it for?
 AFNetworking is used to manage all http requests
-
-
-## CocoaAysncSocket
-CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries for Mac and iOS. The classes are described below.
-[Robbie Hanson CocoaAsyncSocket on GitHub](https://github.com/robbiehanson/CocoaAsyncSocket)
-
-### What is it for?
-CocoaAysncSocket will be used with the WebsocketsTransport when supported
-* Including this project is optional if longpolling or serversentevents transports are used (currently only supported transports)
