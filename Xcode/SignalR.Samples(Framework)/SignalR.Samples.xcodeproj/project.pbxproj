@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3914DAD7153F267E003BC07E /* SignalR-OSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3914DAD6153F267E003BC07E /* SignalR-OSX.framework */; };
 		39538BDE14E1624500250821 /* SignalR-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39538BDD14E1624500250821 /* SignalR-iOS.framework */; };
 		3995198E14C63DCB00B33280 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3995198C14C63DCB00B33280 /* InfoPlist.strings */; };
 		3995199014C63DCB00B33280 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995198F14C63DCB00B33280 /* main.m */; };
@@ -30,12 +31,12 @@
 		39951B6C14C647BB00B33280 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39951B6A14C6476800B33280 /* icon.png */; };
 		39951B8014C64B8300B33280 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 39951B7F14C64B8300B33280 /* icon.icns */; };
 		39D7634114F6F524008F24C9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D7634014F6F524008F24C9 /* Cocoa.framework */; };
-		39D7634514F6F773008F24C9 /* SignalR-OSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D7634414F6F773008F24C9 /* SignalR-OSX.framework */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3914DAD6153F267E003BC07E /* SignalR-OSX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SignalR-OSX.framework"; path = "../../../../../../Library/Frameworks/SignalR-OSX.framework"; sourceTree = "<group>"; };
 		39538BDD14E1624500250821 /* SignalR-iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SignalR-iOS.framework"; path = "SignalR.Samples.iOS/SignalR-iOS.framework"; sourceTree = "<group>"; };
 		3995198114C63DCA00B33280 /* SignalR.Samples.OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3995198B14C63DCB00B33280 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
@@ -70,7 +71,6 @@
 		39951B6A14C6476800B33280 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		39951B7F14C64B8300B33280 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		39D7634014F6F524008F24C9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		39D7634414F6F773008F24C9 /* SignalR-OSX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SignalR-OSX.framework"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/Library/Frameworks/SignalR-OSX.framework"; sourceTree = DEVELOPER_DIR; };
 		39FE4E451468164300B111BF /* SignalR.Samples.iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -81,8 +81,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39D7634514F6F773008F24C9 /* SignalR-OSX.framework in Frameworks */,
 				39D7634114F6F524008F24C9 /* Cocoa.framework in Frameworks */,
+				3914DAD7153F267E003BC07E /* SignalR-OSX.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,7 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				39D7634014F6F524008F24C9 /* Cocoa.framework */,
-				39D7634414F6F773008F24C9 /* SignalR-OSX.framework */,
+				3914DAD6153F267E003BC07E /* SignalR-OSX.framework */,
 			);
 			name = Frameworks.OSX;
 			sourceTree = "<group>";

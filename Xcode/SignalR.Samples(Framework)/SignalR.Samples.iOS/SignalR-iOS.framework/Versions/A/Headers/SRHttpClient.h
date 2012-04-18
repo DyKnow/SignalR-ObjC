@@ -1,8 +1,8 @@
 //
-//  SRHubs.h
-//  SignalR
+//  SRHttpClient.h
+//  SignalR.Samples
 //
-//  Created by Alex Billingsley on 11/4/11.
+//  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,12 +20,13 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubConnection.h"
-#import "SRHubServerInvocation.h"
-#import "SRHubClientInvocation.h"
-#import "SRHubProxy.h"
-#import "SRHubProxyExtensions.h"
-#import "SRHubRegistrationData.h"
-#import "SRHubResult.h"
-#import "SRHubservable.h"
-#import "SRSubscription.h"
+#import <Foundation/Foundation.h>
+
+@protocol SRHttpClient <NSObject>
+
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block;
+
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block;
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block;
+
+@end

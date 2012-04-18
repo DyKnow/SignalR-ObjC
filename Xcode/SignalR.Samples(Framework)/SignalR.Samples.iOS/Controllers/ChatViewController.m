@@ -116,7 +116,7 @@
 {
     NSString *server = [Router sharedRouter].server_url;
     connection = [SRHubConnection connectionWithURL:server];
-    hub = [connection createProxy:@"SignalR.Samples.Hubs.Chat.Chat"];
+    hub = [connection createProxy:@"Chat"];
     
     [hub setMember:@"focus" object:[NSNumber numberWithBool:YES]];
     [hub setMember:@"unread" object:[NSNumber numberWithInt:0]];

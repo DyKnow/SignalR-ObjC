@@ -1,8 +1,8 @@
 //
-//  SRHubs.h
-//  SignalR
+//  DefaultHttpClient.h
+//  SignalR.Samples
 //
-//  Created by Alex Billingsley on 11/4/11.
+//  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,12 +20,9 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubConnection.h"
-#import "SRHubServerInvocation.h"
-#import "SRHubClientInvocation.h"
-#import "SRHubProxy.h"
-#import "SRHubProxyExtensions.h"
-#import "SRHubRegistrationData.h"
-#import "SRHubResult.h"
-#import "SRHubservable.h"
-#import "SRSubscription.h"
+#import <Foundation/Foundation.h>
+#import "SRHttpClient.h"
+
+@interface SRDefaultHttpClient : NSObject <SRHttpClient>
+
+@end
