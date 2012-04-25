@@ -1,8 +1,8 @@
 //
-//  SRClientTransport+Constants.h
-//  SignalR
+//  SRHttpClient.h
+//  SignalR.Samples
 //
-//  Created by Alex Billingsley on 10/18/11.
+//  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -22,30 +22,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SRClientTransport.h"
+@protocol SRHttpClient <NSObject>
 
-#pragma  mark - Transport Constants
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block;
 
-#define kNegotiateRequest @"negotiate"
-#define kConnectEndPoint @"connect"
-#define kReconnectEndPoint @"reconnect"
-#define kSendEndPoint @"send"
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block;
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block;
 
-#pragma  mark - Request Constants
-
-#define kConnectionData @"connectionData"
-#define kData @"data"
-#define kMessageId @"messageId"
-#define kConnectionId @"connectionId"
-#define kTransport @"transport"
-#define kGroups @"groups"
-
-#pragma  mark - Response Constants
-
-#define kResponse_MessageId @"MessageId"
-#define kResponse_Messages @"Messages"
-#define kResponse_TransportData @"TransportData"
-#define kResponse_Groups @"Groups"
-#define kResponse_LongPollDelay @"LongPollDelay"
-#define kResponse_TimedOut @"TimedOut"
-#define kResponse_Disconnected @"Disconnect"
+@end

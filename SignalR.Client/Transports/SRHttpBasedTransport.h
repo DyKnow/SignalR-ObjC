@@ -22,6 +22,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SRClientTransport+Constants.h"
+#import "SRHttpClient.h"
 
 #if NS_BLOCKS_AVAILABLE
 typedef void (^SRErrorByReferenceBlock)(NSError **);
@@ -37,6 +38,8 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 ///-------------------------------
 /// @name Properties
 ///-------------------------------
+
+@property (strong, nonatomic, readonly) id <SRHttpClient> httpClient;
 
 /**
  * Returns an `NSString` object with the name of the active `SRHttpBasedTransport`
@@ -55,7 +58,9 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  *
  * @param transport the name of the transport
  */
-- (id) initWithTransport:(NSString *)transport;
+- (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport;
+
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id))block;
 
 /**
  * @warning *Important:* this method should only be called from a subclass of `SRHttpBasedTransport` 

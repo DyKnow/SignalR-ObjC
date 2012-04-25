@@ -26,7 +26,7 @@
 
 #import "AFNetworking.h"
 #import "NSObject+SRJSON.h"
-#import "SRHttpHelper.h"
+#import "SRDefaultHttpClient.h"
 #import "SRAutoTransport.h"
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
@@ -42,8 +42,6 @@ void (^prepareRequest)(id);
 - (void)verifyProtocolVersion:(NSString *)versionString;
 
 @end
-
-#define kNegotiateRequest @"negotiate"
 
 @implementation SRConnection
 
@@ -127,8 +125,13 @@ void (^prepareRequest)(id);
 
 - (void)start
 {
+    [self startHttpClient:[[SRDefaultHttpClient alloc] init]];
+}
+
+- (void)startHttpClient:(id <SRHttpClient>)httpClient
+{
     // Pick the best transport supported by the client
-    [self start:[[SRAutoTransport alloc] init]];
+    [self start:[[SRAutoTransport alloc] initWithHttpClient:httpClient]];
 }
 
 - (void)start:(id <SRClientTransport>)transport
@@ -142,10 +145,10 @@ void (^prepareRequest)(id);
         
     _transport = transport;
     
-    [self negotiate];
+    [self negotiate:transport];
 }
 
-- (void)negotiate
+- (void)negotiate:(id<SRClientTransport>)transport
 {
     NSString *data = nil;
     
@@ -153,59 +156,35 @@ void (^prepareRequest)(id);
     {
         data = self.sending();
     }
-    
-    NSString *negotiateUrl = [_url stringByAppendingString:kNegotiateRequest];
-    
+        
 #if DEBUG_CONNECTION
     SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
 #endif
     
-    [SRHttpHelper postAsync:negotiateUrl requestPreparer:^(id request)
+    [transport negotiate:self continueWith:^(SRNegotiationResponse *negotiationResponse) 
     {
-        if([request isKindOfClass:[NSMutableURLRequest class]])
+#if DEBUG_CONNECTION
+        SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
+#endif
+        [self verifyProtocolVersion:negotiationResponse.protocolVersion];
+        
+        if(negotiationResponse.connectionId)
         {
-            [request setTimeoutInterval:30];
-        }
-        [self prepareRequest:request];
-    }
-    continueWith:^(id response)
-    {
-#if DEBUG_CONNECTION
-        SR_DEBUG_LOG(@"[CONNECTION] negotiation did receive response %@",response);
-#endif
-        if([response isKindOfClass:[NSString class]])
-        {        
-            SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
-#if DEBUG_CONNECTION
-            SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
-#endif
-            [self verifyProtocolVersion:negotiationResponse.protocolVersion];
+            _connectionId = negotiationResponse.connectionId;
             
-            if(negotiationResponse.connectionId)
+            [_transport start:self withData:data continueWith:
+             ^(id task) 
             {
-                _connectionId = negotiationResponse.connectionId;
-                
-                [_transport start:self withData:data continueWith:
-                 ^(id task) 
-                 {
-                     _initialized = YES;
-                      
-                     if(_started != nil)
-                     {
-                         self.started();
-                     }
-                     if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
-                         [self.delegate SRConnectionDidOpen:self];
-                     }
-                 }];
-            }
-        }
-        else if([response isKindOfClass:[NSError class]])
-        {
-#if DEBUG_CONNECTION
-            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed %@",response);
-#endif
-            [self didReceiveError:response];
+                _initialized = YES;
+                 
+                if(_started != nil)
+                {
+                    self.started();
+                }
+                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                    [self.delegate SRConnectionDidOpen:self];
+                }
+            }];
         }
     }];
 }

@@ -65,6 +65,7 @@
     {
         SEL _YAJLSelector = NSSelectorFromString(@"JSON");
         SEL _SBJSONSelector = NSSelectorFromString(@"proxyForJson");
+        SEL _NXJsonSelector = NSSelectorFromString(@"serialize");
         
         if (_SBJSONSelector && [object respondsToSelector:_SBJSONSelector]) 
         {
@@ -100,6 +101,23 @@
             
             return [self ensureFoundationObject:json];
         }
+        else if (_NXJsonSelector && [object respondsToSelector:_NXJsonSelector]) 
+        { 
+            NSObject *json;
+            __unsafe_unretained NSObject *jsonTemp = nil;
+            
+            NSMethodSignature *signature = [object methodSignatureForSelector:_NXJsonSelector];
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+            [invocation setTarget:object];
+            [invocation setSelector:_NXJsonSelector];
+            
+            [invocation invoke];
+            [invocation getReturnValue:&jsonTemp];
+            
+            json = jsonTemp;
+            
+            return [self ensureFoundationObject:json];
+        }
     }
     return nil;
 }
@@ -115,6 +133,9 @@
     SEL _SBJSONSelector = NSSelectorFromString(@"JSONRepresentation");
     SEL _YAJLSelector = NSSelectorFromString(@"yajl_JSONString");
     
+    id _NXJsonSerializerClass = NSClassFromString(@"NXJsonSerializer");
+    SEL _NXJsonSerializerSelector = NSSelectorFromString(@"serialize:");
+
     id _NSJSONSerializationClass = NSClassFromString(@"NSJSONSerialization");
     SEL _NSJSONSerializationSelector = NSSelectorFromString(@"dataWithJSONObject:options:error:");
     
@@ -154,6 +175,22 @@
         
         json = jsonTemp;
     } 
+    else if (_NXJsonSerializerClass && [_NXJsonSerializerClass respondsToSelector:_NXJsonSerializerSelector])
+    {
+        __unsafe_unretained NSString *jsonString = jsonObject;
+        
+        NSMethodSignature *signature = [_NXJsonSerializerClass methodSignatureForSelector:_NXJsonSerializerSelector];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setTarget:_NXJsonSerializerClass];
+        [invocation setSelector:_NXJsonSerializerSelector];
+        
+        [invocation setArgument:&jsonString atIndex:2];
+        
+        [invocation invoke];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
+    }
     else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
     {
         __unsafe_unretained NSString *jsonString = jsonObject;
@@ -199,6 +236,9 @@
     SEL _SBJSONSelector = NSSelectorFromString(@"JSONValue");
     SEL _YAJLSelector = NSSelectorFromString(@"yajl_JSON");
     
+    id _NXJsonParserClass = NSClassFromString(@"NXJsonParser");
+    SEL _NXJsonParserSelector = NSSelectorFromString(@"parseData:error:ignoreNulls:");
+
     id _NSJSONSerializationClass = NSClassFromString(@"NSJSONSerialization");
     SEL _NSJSONSerializationSelector = NSSelectorFromString(@"JSONObjectWithData:options:error:");
 
@@ -233,6 +273,26 @@
         [invocation setTarget:self];
         [invocation setSelector:_YAJLSelector];
 
+        [invocation invoke];
+        [invocation getReturnValue:&jsonTemp];
+        
+        json = jsonTemp;
+    }
+    else if (_NXJsonParserClass && [_NXJsonParserClass respondsToSelector:_NXJsonParserSelector]) 
+    {
+        __unsafe_unretained NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+        __unsafe_unretained NSError *error;
+        
+        NSNumber *nullOption = [NSNumber numberWithBool:YES];
+        NSMethodSignature *signature = [_NXJsonParserClass methodSignatureForSelector:_NXJsonParserSelector];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setTarget:_NXJsonParserClass];
+        [invocation setSelector:_NXJsonParserSelector];
+        
+        [invocation setArgument:&data atIndex:2];
+        [invocation setArgument:&error atIndex:3];
+        [invocation setArgument:&nullOption atIndex:4];
+        
         [invocation invoke];
         [invocation getReturnValue:&jsonTemp];
         

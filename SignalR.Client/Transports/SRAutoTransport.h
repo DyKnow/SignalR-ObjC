@@ -22,6 +22,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
+#import "SRHttpClient.h"
 
 /**
  * `SRAutoTransport` object provides support for choosing the best transport for the client
@@ -31,5 +32,9 @@
  * 1. Long Polling SRLongPollingTransport
  */
 @interface SRAutoTransport : NSObject <SRClientTransport>
+
+@property (strong, nonatomic, readonly) id <SRHttpClient> httpClient;
+
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
 
 @end

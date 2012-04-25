@@ -112,7 +112,7 @@
 {
     NSString *server = [Router sharedRouter].server_url;
     connection = [SRHubConnection connectionWithURL:server];
-    hub = [connection createProxy:@"SignalR.Samples.Hubs.MouseTracking.MouseTracking"]; 
+    hub = [connection createProxy:@"MouseTracking"]; 
     [hub on:@"moveMouse" perform:self selector:@selector(moveMouse:x:y:)];
     [hub on:@"join" perform:self selector:@selector(join)];
     [connection start];

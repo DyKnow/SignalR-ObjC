@@ -23,13 +23,15 @@
 #import "SRLongPollingTransport.h"
 #import "SRSignalRConfig.h"
 
-#import "SRHttpHelper.h"
+#import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
 #import "NSTimer+Blocks.h"
 
 typedef void (^onInitialized)(void);
 
 @interface SRLongPollingTransport()
+
+@property (assign, nonatomic, readwrite) NSInteger errorDelay;
 
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
@@ -42,12 +44,22 @@ typedef void (^onInitialized)(void);
 @implementation SRLongPollingTransport
 
 @synthesize reconnectDelay = _reconnectDelay;
+@synthesize errorDelay = _errorDelay;
 
 - (id)init
 {
-    if(self = [super initWithTransport:kTransportName])
+    if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]])
+    {
+    }
+    return self;
+}
+
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient
+{
+    if (self = [super initWithHttpClient:httpClient transport:kTransportName])
     {
         _reconnectDelay = 5;
+        _errorDelay = 2;
     }
     return self;
 }
@@ -68,14 +80,21 @@ typedef void (^onInitialized)(void);
     __block BOOL reconnectCancelled = NO;
     __block NSInteger reconnectFired = 0;
     
+    // This is only necessary for the initial request where initializeCallback and errorCallback are non-null
+    __block int callbackFired = 0;
+    
     if(connection.messageId == nil)
     {
         url = [url stringByAppendingString:kConnectEndPoint];
     }
+    else if (raiseReconnect)
+    {
+        url = [url stringByAppendingString:kReconnectEndPoint];
+    }
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     
-    [SRHttpHelper postAsync:url requestPreparer:^(id request)
+    [self.httpClient postAsync:url requestPreparer:^(id request)
     {
         [self prepareRequest:request forConnection:connection];
     } 
@@ -122,7 +141,6 @@ typedef void (^onInitialized)(void);
             else
             {
                 BOOL requestAborted = NO;
-                BOOL continuePolling = YES;
                 
                 if (isFaulted)
                 {
@@ -138,11 +156,13 @@ typedef void (^onInitialized)(void);
                     if([response isKindOfClass:[NSError class]])
                     {
                         // If the error callback isn't null then raise it and don't continue polling
-                        if (errorCallback)
+                        if (errorCallback && callbackFired == 0)
                         {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                             SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
 #endif
+                            callbackFired = 1;
+                            
                             [connection didReceiveError:response];
                             
                             //Call the callback
@@ -151,9 +171,6 @@ typedef void (^onInitialized)(void);
                                 *error = response;
                             };
                             errorCallback(errorBlock);
-                            
-                            // Don't continue polling if the error is on the first request
-                            continuePolling = NO;
                         }
                         else
                         {
@@ -169,26 +186,24 @@ typedef void (^onInitialized)(void);
                                 
                                 //If the connection is still active after raising the error wait 2 seconds 
                                 //before polling again so we arent hammering the server
-                                if(connection.isActive)
-                                {
+                                
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                                    SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in 2 seconds");
+                                SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in %d seconds",_errorDelay);
 #endif
-                                    [NSTimer scheduledTimerWithTimeInterval:2 block:
-                                     ^{
-                                         if (continuePolling && !requestAborted && connection.isActive)
-                                         {
-                                             [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
-                                         }
-                                     } repeats:NO];
-                                }
+                                [NSTimer scheduledTimerWithTimeInterval:_errorDelay block:
+                                 ^{
+                                     if (connection.isActive)
+                                     {
+                                         [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
+                                     }
+                                 } repeats:NO];    
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (continuePolling && !requestAborted && connection.isActive)
+                    if (connection.isActive)
                     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                         SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
@@ -200,11 +215,12 @@ typedef void (^onInitialized)(void);
         }
     }];
     
-    if (initializeCallback != nil)
+    if (initializeCallback != nil && callbackFired == 0)
     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[LONG_POLLING] connection is initialized");
 #endif
+        callbackFired = 1;
         // Only set this the first time
         initializeCallback();
     }

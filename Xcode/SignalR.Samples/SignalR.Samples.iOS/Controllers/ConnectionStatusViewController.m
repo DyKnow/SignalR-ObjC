@@ -105,7 +105,7 @@
 {
     NSString *server = [Router sharedRouter].server_url;
     connection = [SRHubConnection connectionWithURL:server];
-    hub = [connection createProxy:@"SignalR.Samples.Hubs.ConnectDisconnect.Status"];
+    hub = [connection createProxy:@"Status"];
     [hub on:@"joined" perform:self selector:@selector(joined:when:)];
     [hub on:@"rejoined" perform:self selector:@selector(rejoined:when:)];
     [hub on:@"leave" perform:self selector:@selector(leave:when:)];

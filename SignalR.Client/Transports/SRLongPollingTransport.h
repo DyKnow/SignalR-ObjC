@@ -43,4 +43,6 @@
  */
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
 
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
+
 @end

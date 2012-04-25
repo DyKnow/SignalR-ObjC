@@ -1,8 +1,8 @@
 //
-//  SRClientTransport+Constants.h
-//  SignalR
+//  DefaultHttpClient.m
+//  SignalR.Samples
 //
-//  Created by Alex Billingsley on 10/18/11.
+//  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,32 +20,25 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import "SRDefaultHttpClient.h"
 
-#import "SRClientTransport.h"
+#import "SRHttpHelper.h"
 
-#pragma  mark - Transport Constants
+@implementation SRDefaultHttpClient
 
-#define kNegotiateRequest @"negotiate"
-#define kConnectEndPoint @"connect"
-#define kReconnectEndPoint @"reconnect"
-#define kSendEndPoint @"send"
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
+{
+    [SRHttpHelper getAsync:url requestPreparer:prepareRequest continueWith:block];
+}
 
-#pragma  mark - Request Constants
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
+{
+    [SRHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:block];
+}
 
-#define kConnectionData @"connectionData"
-#define kData @"data"
-#define kMessageId @"messageId"
-#define kConnectionId @"connectionId"
-#define kTransport @"transport"
-#define kGroups @"groups"
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block
+{
+    [SRHttpHelper postAsync:url requestPreparer:prepareRequest postData:postData continueWith:block];
+}
 
-#pragma  mark - Response Constants
-
-#define kResponse_MessageId @"MessageId"
-#define kResponse_Messages @"Messages"
-#define kResponse_TransportData @"TransportData"
-#define kResponse_Groups @"Groups"
-#define kResponse_LongPollDelay @"LongPollDelay"
-#define kResponse_TimedOut @"TimedOut"
-#define kResponse_Disconnected @"Disconnect"
+@end

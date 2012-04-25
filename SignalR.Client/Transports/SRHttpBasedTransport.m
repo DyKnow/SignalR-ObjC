@@ -25,9 +25,9 @@
 
 #import "NSObject+SRJSON.h"
 #import "AFNetworking.h"
-#import "SRHttpHelper.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
+#import "SRNegotiationResponse.h"
 
 #import "NSDictionary+QueryString.h"
 #import "NSString+QueryString.h"
@@ -40,15 +40,66 @@
 
 @implementation SRHttpBasedTransport
 
+@synthesize httpClient = _httpClient;
 @synthesize transport = _transport;
 
-- (id) initWithTransport:(NSString *)transport
+- (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport
 {
     if (self = [super init])
     {
+        _httpClient = httpClient;
         _transport = transport;
     }
     return self;
+}
+
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id))block
+{
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
+}
+
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id))block
+{
+    NSString *negotiateUrl = [connection.url stringByAppendingString:kNegotiateRequest];
+    
+    [httpClient postAsync:negotiateUrl requestPreparer:^(id request)
+    {
+        if([request isKindOfClass:[NSMutableURLRequest class]])
+        {
+            [request setTimeoutInterval:30];
+        }
+        [connection prepareRequest:request];
+    }
+    continueWith:^(id response)
+    {
+#if DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",response);
+#endif
+        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
+                          [response isEqualToString:@""] || response == nil ||
+                          [response isEqualToString:@"null"]);
+        
+        if([response isKindOfClass:[NSString class]])
+        {
+            if(!isFaulted)
+            {
+                SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
+                
+                if(block)
+                {
+                    block(negotiationResponse);
+                }
+            }
+        }
+        
+        if(isFaulted)
+        {
+#if DEBUG_CONNECTION
+            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed, connection will stop");
+#endif
+            [connection stop];
+        }
+    }];
 }
 
 #pragma mark -
@@ -74,13 +125,7 @@
 
 - (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {       
-    NSString *url = connection.url;
-    url = [url stringByAppendingString:kSendEndPoint];
-    
-    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    [parameters setObject:connection.connectionId forKey:kConnectionId];
-    [parameters setObject:_transport forKey:kTransport];
-    
+    NSString *url = [connection.url stringByAppendingString:kSendEndPoint];
     url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
 
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
@@ -92,7 +137,7 @@
     
     if(block == nil)
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(id request)
+        [_httpClient postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         } 
@@ -110,7 +155,7 @@
     }
     else
     {
-        [SRHttpHelper postAsync:url requestPreparer:^(id request)
+        [_httpClient postAsync:url requestPreparer:^(id request)
         {
             [connection prepareRequest:request];
         }

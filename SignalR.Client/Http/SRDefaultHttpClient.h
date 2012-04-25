@@ -1,8 +1,8 @@
 //
-//  SRClientTransport+Constants.h
-//  SignalR
+//  DefaultHttpClient.h
+//  SignalR.Samples
 //
-//  Created by Alex Billingsley on 10/18/11.
+//  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,31 +21,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRHttpClient.h"
 
-#import "SRClientTransport.h"
+@interface SRDefaultHttpClient : NSObject <SRHttpClient>
 
-#pragma  mark - Transport Constants
-
-#define kNegotiateRequest @"negotiate"
-#define kConnectEndPoint @"connect"
-#define kReconnectEndPoint @"reconnect"
-#define kSendEndPoint @"send"
-
-#pragma  mark - Request Constants
-
-#define kConnectionData @"connectionData"
-#define kData @"data"
-#define kMessageId @"messageId"
-#define kConnectionId @"connectionId"
-#define kTransport @"transport"
-#define kGroups @"groups"
-
-#pragma  mark - Response Constants
-
-#define kResponse_MessageId @"MessageId"
-#define kResponse_Messages @"Messages"
-#define kResponse_TransportData @"TransportData"
-#define kResponse_Groups @"Groups"
-#define kResponse_LongPollDelay @"LongPollDelay"
-#define kResponse_TimedOut @"TimedOut"
-#define kResponse_Disconnected @"Disconnect"
+@end
