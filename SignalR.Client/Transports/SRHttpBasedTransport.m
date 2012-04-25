@@ -125,13 +125,7 @@
 
 - (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {       
-    NSString *url = connection.url;
-    url = [url stringByAppendingString:kSendEndPoint];
-    
-    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    [parameters setObject:connection.connectionId forKey:kConnectionId];
-    [parameters setObject:_transport forKey:kTransport];
-    
+    NSString *url = [connection.url stringByAppendingString:kSendEndPoint];
     url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
 
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
