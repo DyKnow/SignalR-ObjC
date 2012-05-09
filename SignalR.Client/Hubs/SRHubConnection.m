@@ -28,13 +28,15 @@
 #import "SRHubRegistrationData.h"
 #import "SRHubInvocation.h"
 
+#import "NSDictionary+QueryString.h"
+
 #if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onConnectionSending)();
 #endif
 
 @interface SRHubConnection ()
 
-- (NSString *)_getUrl:(NSString *)URL;
+- (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
 
 @end
 
@@ -50,9 +52,42 @@ typedef NSString* (^onConnectionSending)();
     return [[SRHubConnection alloc] initWithURL:URL];
 }
 
++ (SRHubConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
+{
+    return [[SRHubConnection alloc] initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
+}
+
++ (SRHubConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
+{
+    return [[SRHubConnection alloc] initWithURL:url queryString:queryString];
+}
+
 - (id)initWithURL:(NSString *)URL
 {
-    if ((self = [super initWithURL:[self _getUrl:URL]])) 
+    return [self initWithURL:URL useDefault:YES];
+}
+
+- (id)initWithURL:(NSString *)URL useDefault:(BOOL)useDefault
+{
+    if ((self = [super initWithURL:[self _getUrl:URL useDefault:useDefault]])) 
+    {
+        _hubs = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString
+{
+    if ((self = [super initWithURL:url queryString:queryString])) 
+    {
+        _hubs = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString
+{
+    if ((self = [super initWithURL:url query:queryString])) 
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
@@ -76,13 +111,19 @@ typedef NSString* (^onConnectionSending)();
 #pragma mark - 
 #pragma mark Private
 
-- (NSString *)_getUrl:(NSString *)URL
+- (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault
 {
     if([URL hasSuffix:@"/"] == false)
     {
         URL = [URL stringByAppendingString:@"/"];
     }
-    return [URL stringByAppendingString:@"signalr"];
+    
+    if(useDefault)
+    {
+        return [URL stringByAppendingString:@"signalr"];
+    }
+    
+    return URL;
 }
 
 #pragma mark - 
