@@ -117,12 +117,18 @@ static id sharedHttpRequestManager = nil;
     {
         requestPreparer(operation);
     }
-    NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
-    if(block)
+    
+    //This is a little hacky but it allows us to only use the output stream for SSE only
+    BOOL useOutputStream = ([[request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]);
+    if(useOutputStream)
     {
-        block(oStream);
+        NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
+        if(block)
+        {
+            block(oStream);
+        }
+        operation.outputStream = oStream;
     }
-    operation.outputStream = oStream;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
 #if DEBUG_HTTP_HELPER
@@ -132,7 +138,7 @@ static id sharedHttpRequestManager = nil;
 #endif
         if (block)
         {
-            block(responseObject);
+            block((useOutputStream) ? nil : operation.responseString);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
