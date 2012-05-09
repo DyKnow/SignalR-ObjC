@@ -64,7 +64,7 @@
  * When set to 1 SignalR will print information about what the ServerSentEvents Transport is doing
  */
 #ifndef DEBUG_SERVER_SENT_EVENTS
-    #define DEBUG_SERVER_SENT_EVENTS 0
+    #define DEBUG_SERVER_SENT_EVENTS 1
 #endif
 
 /**
@@ -78,6 +78,6 @@
  * When set to 1 SignalR will print information about the contents of the messages being sent to the server
  */
 #ifndef DEBUG_HTTP_HELPER
-    #define DEBUG_HTTP_HELPER 0
+    #define DEBUG_HTTP_HELPER 1
 #endif
 

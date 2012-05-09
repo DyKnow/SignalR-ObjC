@@ -30,7 +30,6 @@
 
 #if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onConnectionSending)();
-typedef void (^onConnectionReceived)(NSString *);
 #endif
 
 @interface SRHubConnection ()
@@ -109,34 +108,36 @@ typedef void (^onConnectionReceived)(NSString *);
         return data;
     };
     
-    self.received = ^(NSString * data) 
-    {
-        if([data isKindOfClass:[NSString class]])
-        {
-            SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[data SRJSONValue]];
-            SRHubProxy *hubProxy = [hubs_ objectForKey:invocation.hub];
-            if(hubProxy)
-            {
-                if(invocation.state != nil)
-                {
-                    for (id key in invocation.state)
-                    {
-                        
-                        [hubProxy setMember:key object:[invocation.state objectForKey:key]];
-                    }
-                }
-                [hubProxy invokeEvent:invocation.method withArgs:invocation.args];
-            }
-        }
-    };
     [super start:transport];
 }
 
 - (void)stop
 {
     self.sending = nil;
-    self.received = nil;
     [super stop];
+}
+
+- (void)didReceiveData:(NSString *)data
+{
+    if([data isKindOfClass:[NSString class]])
+    {
+        SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[data SRJSONValue]];
+        SRHubProxy *hubProxy = [_hubs objectForKey:invocation.hub];
+        if(hubProxy)
+        {
+            if(invocation.state != nil)
+            {
+                for (id key in invocation.state)
+                {
+                    
+                    [hubProxy setMember:key object:[invocation.state objectForKey:key]];
+                }
+            }
+            [hubProxy invokeEvent:invocation.method withArgs:invocation.args];
+        }
+    }
+    
+    [super didReceiveData:data];
 }
 
 - (void)dealloc
