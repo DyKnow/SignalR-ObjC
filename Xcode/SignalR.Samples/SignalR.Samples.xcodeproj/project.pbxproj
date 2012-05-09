@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3916E6D114D6FD8B002D967A /* SRHubClientInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66914D6FD8B002D967A /* SRHubClientInvocation.m */; };
-		3916E6D214D6FD8B002D967A /* SRHubClientInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66914D6FD8B002D967A /* SRHubClientInvocation.m */; };
+		3916E6D114D6FD8B002D967A /* SRHubInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66914D6FD8B002D967A /* SRHubInvocation.m */; };
+		3916E6D214D6FD8B002D967A /* SRHubInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66914D6FD8B002D967A /* SRHubInvocation.m */; };
 		3916E6D314D6FD8B002D967A /* SRHubConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66B14D6FD8B002D967A /* SRHubConnection.m */; };
 		3916E6D414D6FD8B002D967A /* SRHubConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66B14D6FD8B002D967A /* SRHubConnection.m */; };
 		3916E6D514D6FD8B002D967A /* SRHubProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E66D14D6FD8B002D967A /* SRHubProxy.m */; };
@@ -21,8 +21,6 @@
 		3916E6DC14D6FD8B002D967A /* SRHubResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67314D6FD8B002D967A /* SRHubResult.m */; };
 		3916E6DD14D6FD8B002D967A /* SRHubservable.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67614D6FD8B002D967A /* SRHubservable.m */; };
 		3916E6DE14D6FD8B002D967A /* SRHubservable.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67614D6FD8B002D967A /* SRHubservable.m */; };
-		3916E6DF14D6FD8B002D967A /* SRHubServerInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67814D6FD8B002D967A /* SRHubServerInvocation.m */; };
-		3916E6E014D6FD8B002D967A /* SRHubServerInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67814D6FD8B002D967A /* SRHubServerInvocation.m */; };
 		3916E6E114D6FD8B002D967A /* SRSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67A14D6FD8B002D967A /* SRSubscription.m */; };
 		3916E6E214D6FD8B002D967A /* SRSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67A14D6FD8B002D967A /* SRSubscription.m */; };
 		3916E6E314D6FD8B002D967A /* NSDictionary+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E67D14D6FD8B002D967A /* NSDictionary+QueryString.m */; };
@@ -87,8 +85,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3916E66814D6FD8B002D967A /* SRHubClientInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubClientInvocation.h; sourceTree = "<group>"; };
-		3916E66914D6FD8B002D967A /* SRHubClientInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubClientInvocation.m; sourceTree = "<group>"; };
+		3916E66814D6FD8B002D967A /* SRHubInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubInvocation.h; sourceTree = "<group>"; };
+		3916E66914D6FD8B002D967A /* SRHubInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubInvocation.m; sourceTree = "<group>"; };
 		3916E66A14D6FD8B002D967A /* SRHubConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubConnection.h; sourceTree = "<group>"; };
 		3916E66B14D6FD8B002D967A /* SRHubConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubConnection.m; sourceTree = "<group>"; };
 		3916E66C14D6FD8B002D967A /* SRHubProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubProxy.h; sourceTree = "<group>"; };
@@ -102,8 +100,6 @@
 		3916E67414D6FD8B002D967A /* SRHubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubs.h; sourceTree = "<group>"; };
 		3916E67514D6FD8B002D967A /* SRHubservable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubservable.h; sourceTree = "<group>"; };
 		3916E67614D6FD8B002D967A /* SRHubservable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubservable.m; sourceTree = "<group>"; };
-		3916E67714D6FD8B002D967A /* SRHubServerInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHubServerInvocation.h; sourceTree = "<group>"; };
-		3916E67814D6FD8B002D967A /* SRHubServerInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHubServerInvocation.m; sourceTree = "<group>"; };
 		3916E67914D6FD8B002D967A /* SRSubscription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSubscription.h; sourceTree = "<group>"; };
 		3916E67A14D6FD8B002D967A /* SRSubscription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSubscription.m; sourceTree = "<group>"; };
 		3916E67C14D6FD8B002D967A /* NSDictionary+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+QueryString.h"; sourceTree = "<group>"; };
@@ -242,8 +238,8 @@
 		3916E66714D6FD8B002D967A /* Hubs */ = {
 			isa = PBXGroup;
 			children = (
-				3916E66814D6FD8B002D967A /* SRHubClientInvocation.h */,
-				3916E66914D6FD8B002D967A /* SRHubClientInvocation.m */,
+				3916E66814D6FD8B002D967A /* SRHubInvocation.h */,
+				3916E66914D6FD8B002D967A /* SRHubInvocation.m */,
 				3916E66A14D6FD8B002D967A /* SRHubConnection.h */,
 				3916E66B14D6FD8B002D967A /* SRHubConnection.m */,
 				3916E66C14D6FD8B002D967A /* SRHubProxy.h */,
@@ -257,8 +253,6 @@
 				3916E67414D6FD8B002D967A /* SRHubs.h */,
 				3916E67514D6FD8B002D967A /* SRHubservable.h */,
 				3916E67614D6FD8B002D967A /* SRHubservable.m */,
-				3916E67714D6FD8B002D967A /* SRHubServerInvocation.h */,
-				3916E67814D6FD8B002D967A /* SRHubServerInvocation.m */,
 				3916E67914D6FD8B002D967A /* SRSubscription.h */,
 				3916E67A14D6FD8B002D967A /* SRSubscription.m */,
 			);
@@ -596,14 +590,13 @@
 				3995199014C63DCB00B33280 /* main.m in Sources */,
 				3995199714C63DCB00B33280 /* AppDelegate.m in Sources */,
 				39951B4D14C6430000B33280 /* Router.m in Sources */,
-				3916E6D214D6FD8B002D967A /* SRHubClientInvocation.m in Sources */,
+				3916E6D214D6FD8B002D967A /* SRHubInvocation.m in Sources */,
 				3916E6D414D6FD8B002D967A /* SRHubConnection.m in Sources */,
 				3916E6D614D6FD8B002D967A /* SRHubProxy.m in Sources */,
 				3916E6D814D6FD8B002D967A /* SRHubProxyExtensions.m in Sources */,
 				3916E6DA14D6FD8B002D967A /* SRHubRegistrationData.m in Sources */,
 				3916E6DC14D6FD8B002D967A /* SRHubResult.m in Sources */,
 				3916E6DE14D6FD8B002D967A /* SRHubservable.m in Sources */,
-				3916E6E014D6FD8B002D967A /* SRHubServerInvocation.m in Sources */,
 				3916E6E214D6FD8B002D967A /* SRSubscription.m in Sources */,
 				3916E6E414D6FD8B002D967A /* NSDictionary+QueryString.m in Sources */,
 				3916E6E614D6FD8B002D967A /* NSString+QueryString.m in Sources */,
@@ -632,14 +625,13 @@
 				399519B714C63E5000B33280 /* StreamingViewController.m in Sources */,
 				399519BE14C63E6D00B33280 /* main.m in Sources */,
 				39951B4C14C6430000B33280 /* Router.m in Sources */,
-				3916E6D114D6FD8B002D967A /* SRHubClientInvocation.m in Sources */,
+				3916E6D114D6FD8B002D967A /* SRHubInvocation.m in Sources */,
 				3916E6D314D6FD8B002D967A /* SRHubConnection.m in Sources */,
 				3916E6D514D6FD8B002D967A /* SRHubProxy.m in Sources */,
 				3916E6D714D6FD8B002D967A /* SRHubProxyExtensions.m in Sources */,
 				3916E6D914D6FD8B002D967A /* SRHubRegistrationData.m in Sources */,
 				3916E6DB14D6FD8B002D967A /* SRHubResult.m in Sources */,
 				3916E6DD14D6FD8B002D967A /* SRHubservable.m in Sources */,
-				3916E6DF14D6FD8B002D967A /* SRHubServerInvocation.m in Sources */,
 				3916E6E114D6FD8B002D967A /* SRSubscription.m in Sources */,
 				3916E6E314D6FD8B002D967A /* NSDictionary+QueryString.m in Sources */,
 				3916E6E514D6FD8B002D967A /* NSString+QueryString.m in Sources */,

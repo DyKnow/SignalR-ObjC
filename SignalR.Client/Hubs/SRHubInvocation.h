@@ -1,5 +1,5 @@
 //
-//  SRHubServerInvocation.h
+//  SRHubInvocation.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 11/7/11.
@@ -23,9 +23,9 @@
 #import <Foundation/Foundation.h>
 
 /**
- * An `SRHubServerInvocation` object defines the interface for invoking methods on the SignalR Server Hub
+ * An `SRHubInvocation` object defines the interface for invoking methods on the SignalR Client using a Hubs implementation
  */
-@interface SRHubServerInvocation : NSObject
+@interface SRHubInvocation : NSObject
 
 ///-------------------------------
 /// @name Properties
@@ -39,37 +39,38 @@
 /**
  * The `NSString` object corresponding to the method to invoke on the hub
  */
-@property (strong, nonatomic, readwrite) NSString *action;
+@property (strong, nonatomic, readwrite) NSString *method;
 
 /**
  * The `NSMutableArray` object corresponding to the arguments to be passed as part of the invocation
  */
-@property (strong, nonatomic, readwrite) NSMutableArray *data;
+@property (strong, nonatomic, readwrite) NSMutableArray *args;
 
 /**
  * The `NSMutableDictionary` object corresponding to the client state
  */
 @property (strong, nonatomic, readwrite) NSMutableDictionary *state;
 
+
 ///-------------------------------
-/// @name Initializing an SRHubServerInvocation Object
+/// @name Initializing an SRHubInvocation Object
 ///-------------------------------
 
 /**
- * Initializes a new `SRHubServerInvocation` from a `NSDictionary` object deserialized from a JSON server response
+ * Initializes a new `SRHubInvocation` from a `NSDictionary` object deserialized from a JSON server response
  *
- * @param dict a dictionary representing an `SRHubServerInvocation`
+ * @param dict a dictionary representing an `SRHubInvocation`
  */
 - (id)initWithDictionary:(NSDictionary*)dict;
 
 ///-------------------------------
-/// @name Updating an SRHubServerInvocation Object
+/// @name Updating an SRHubInvocation Object
 ///-------------------------------
 
 /**
- * Updates a new `SRHubServerInvocation` from a `NSDictionary` object deserialized from a JSON server response
+ * Updates a new `SRHubInvocation` from a `NSDictionary` object deserialized from a JSON server response
  *
- * @param dict a dictionary representing an `SRHubServerInvocation`
+ * @param dict a dictionary representing an `SRHubInvocation`
  */
 - (void)updateWithDictionary:(NSDictionary *)dict;
 
@@ -78,7 +79,7 @@
 ///-------------------------------
 
 /**
- * Conforms to SBJson (aka json-framework) allowing `SRHubServerInvocation` to be serialized to JSON
+ * Conforms to SBJson (aka json-framework) allowing `SRHubInvocation` to be serialized to JSON
  */
 - (id)proxyForJson;
 

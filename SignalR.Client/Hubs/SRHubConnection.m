@@ -26,7 +26,7 @@
 #import "NSObject+SRJSON.h"
 #import "SRHubProxy.h"
 #import "SRHubRegistrationData.h"
-#import "SRHubClientInvocation.h"
+#import "SRHubInvocation.h"
 
 #if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onConnectionSending)();
@@ -121,7 +121,7 @@ typedef NSString* (^onConnectionSending)();
 {
     if([data isKindOfClass:[NSString class]])
     {
-        SRHubClientInvocation *invocation = [[SRHubClientInvocation alloc] initWithDictionary:[data SRJSONValue]];
+        SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:[data SRJSONValue]];
         SRHubProxy *hubProxy = [_hubs objectForKey:invocation.hub];
         if(hubProxy)
         {
