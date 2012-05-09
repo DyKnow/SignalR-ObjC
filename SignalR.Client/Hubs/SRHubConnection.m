@@ -100,10 +100,10 @@ typedef NSString* (^onConnectionSending)();
     SR_DEBUG_LOG(@"[CONNECTION] will create proxy %@",hubName);
 #endif
     SRHubProxy *hubProxy;
-    if([_hubs objectForKey:hubName] == nil)
+    if([_hubs objectForKey:[hubName lowercaseString]] == nil)
     {
-        hubProxy = [[SRHubProxy alloc] initWithConnection:self hubName:hubName];
-        [_hubs setObject:hubProxy forKey:hubName];
+        hubProxy = [[SRHubProxy alloc] initWithConnection:self hubName:[hubName lowercaseString]];
+        [_hubs setObject:hubProxy forKey:[hubName lowercaseString]];
     }
     return hubProxy;
 }
@@ -163,7 +163,7 @@ typedef NSString* (^onConnectionSending)();
     if([data isKindOfClass:[NSString class]])
     {
         SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:[data SRJSONValue]];
-        SRHubProxy *hubProxy = [_hubs objectForKey:invocation.hub];
+        SRHubProxy *hubProxy = [_hubs objectForKey:[invocation.hub lowercaseString]];
         if(hubProxy)
         {
             if(invocation.state != nil)
