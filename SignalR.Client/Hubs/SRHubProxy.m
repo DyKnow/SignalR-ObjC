@@ -80,11 +80,6 @@
     return subscription;
 }
 
-- (NSArray *)getSubscriptions
-{
-    return [_subscriptions allKeys];
-}
-
 - (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args
 {
     SRSubscription *eventObj = [_subscriptions objectForKey:eventName];

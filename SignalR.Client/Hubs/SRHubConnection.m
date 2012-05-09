@@ -101,7 +101,6 @@ typedef void (^onConnectionReceived)(NSString *);
         {
             SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
             registration.name = [[hubs_ objectForKey:key] hubName];
-            registration.methods = [NSMutableArray arrayWithArray:[[hubs_ objectForKey:key] getSubscriptions]];
             [dataFromHub addObject:registration];
         }
         
