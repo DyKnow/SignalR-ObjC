@@ -26,7 +26,7 @@
 #import "NSObject+SRJSON.h"
 #import "SRConnection.h"
 #import "SRSubscription.h"
-#import "SRHubServerInvocation.h"
+#import "SRHubInvocation.h"
 #import "SRHubResult.h"
 
 @interface SRHubProxy ()
@@ -78,11 +78,6 @@
     }
     
     return subscription;
-}
-
-- (NSArray *)getSubscriptions
-{
-    return [_subscriptions allKeys];
 }
 
 - (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args
@@ -139,10 +134,10 @@
         [NSException raise:@"ArgumentNullException" format:@"Argument %@ is null", @"method"];
     }
     
-    SRHubServerInvocation *hubData = [[SRHubServerInvocation alloc] init];
+    SRHubInvocation *hubData = [[SRHubInvocation alloc] init];
     hubData.hub = _hubName;
-    hubData.action = method;
-    hubData.data = [NSMutableArray arrayWithArray:args];
+    hubData.method = method;
+    hubData.args = [NSMutableArray arrayWithArray:args];
     hubData.state = _state;
     
     NSString *value = [hubData SRJSONRepresentation];

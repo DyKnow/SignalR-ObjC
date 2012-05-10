@@ -62,7 +62,7 @@
 {
     NSString *negotiateUrl = [connection.url stringByAppendingString:kNegotiateRequest];
     
-    [httpClient postAsync:negotiateUrl requestPreparer:^(id request)
+    [httpClient getAsync:negotiateUrl requestPreparer:^(id request)
     {
         if([request isKindOfClass:[NSMutableURLRequest class]])
         {

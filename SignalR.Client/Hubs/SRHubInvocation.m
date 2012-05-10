@@ -1,5 +1,5 @@
 //
-//  SRHubClientInvocation.m
+//  SRHubInvocation.m
 //  SignalR
 //
 //  Created by Alex Billingsley on 11/7/11.
@@ -20,9 +20,9 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubClientInvocation.h"
+#import "SRHubInvocation.h"
 
-@interface SRHubClientInvocation ()
+@interface SRHubInvocation ()
 
 #define kHub @"Hub"
 #define kMethod @"Method"
@@ -31,7 +31,7 @@
 
 @end
 
-@implementation SRHubClientInvocation
+@implementation SRHubInvocation
 
 @synthesize hub = _hub;
 @synthesize method = _method;

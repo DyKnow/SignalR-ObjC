@@ -32,14 +32,12 @@
 @implementation SRHubRegistrationData
 
 @synthesize name = _name;
-@synthesize methods = _methods;
 
 - (id) init
 {
     if (self = [super init])
     {
         _name = [NSString stringWithFormat:@""];
-		_methods = [NSMutableArray array];
     }
     return self;
 }
@@ -49,7 +47,6 @@
 	if (self = [self init])
 	{
         self.name  = [NSString stringWithFormat:@"%@",[dict objectForKey:kName]];
-        self.methods = [dict objectForKey:kMethods];
     }
     return self;
 }
@@ -57,7 +54,6 @@
 - (void)updateWithDictionary:(NSDictionary *)dict
 {
     self.name = ([dict objectForKey:kName]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kName]] : _name;
-    self.methods = ([dict objectForKey:kMethods]) ? [dict objectForKey:kMethods] : _methods;
 }
 
 - (id)proxyForJson
@@ -65,20 +61,18 @@
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     
     [dict setObject:[NSString stringWithFormat:@"%@",_name] forKey:kName];
-    [dict setObject:_methods forKey:kMethods];
     
     return dict;
 }
 
 - (NSString *)description 
 {     
-    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@ Methods=%@",_name,_methods];
+    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@",_name];
 }
 
 - (void)dealloc
 {
     _name = nil;
-    _methods = nil;
 }
 
 @end

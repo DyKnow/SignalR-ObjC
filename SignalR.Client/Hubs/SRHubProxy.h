@@ -82,11 +82,6 @@
 - (SRSubscription *)subscribe:(NSString *)eventName;
 
 /**
- * @return an `NSArray` object of the subscription event names
- */
-- (NSArray *)getSubscriptions;
-
-/**
  * Invokes the `SRSubscription` object that corresponds to eventName
  *
  * @param eventName the `NSString` object representing the name of the subscription event
