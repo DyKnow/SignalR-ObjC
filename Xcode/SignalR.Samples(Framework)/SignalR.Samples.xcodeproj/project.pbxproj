@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3914DAD7153F267E003BC07E /* SignalR-OSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3914DAD6153F267E003BC07E /* SignalR-OSX.framework */; };
 		39538BDE14E1624500250821 /* SignalR-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39538BDD14E1624500250821 /* SignalR-iOS.framework */; };
+		397DA450155C019800A91949 /* SignalR-OSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397DA44F155C019800A91949 /* SignalR-OSX.framework */; };
 		3995198E14C63DCB00B33280 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3995198C14C63DCB00B33280 /* InfoPlist.strings */; };
 		3995199014C63DCB00B33280 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3995198F14C63DCB00B33280 /* main.m */; };
 		3995199414C63DCB00B33280 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3995199214C63DCB00B33280 /* Credits.rtf */; };
@@ -36,8 +36,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3914DAD6153F267E003BC07E /* SignalR-OSX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SignalR-OSX.framework"; path = "../../../../../../Library/Frameworks/SignalR-OSX.framework"; sourceTree = "<group>"; };
 		39538BDD14E1624500250821 /* SignalR-iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SignalR-iOS.framework"; path = "SignalR.Samples.iOS/SignalR-iOS.framework"; sourceTree = "<group>"; };
+		397DA44F155C019800A91949 /* SignalR-OSX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SignalR-OSX.framework"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/Library/Frameworks/SignalR-OSX.framework"; sourceTree = DEVELOPER_DIR; };
 		3995198114C63DCA00B33280 /* SignalR.Samples.OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3995198B14C63DCB00B33280 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
 		3995198D14C63DCB00B33280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -81,8 +81,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				397DA450155C019800A91949 /* SignalR-OSX.framework in Frameworks */,
 				39D7634114F6F524008F24C9 /* Cocoa.framework in Frameworks */,
-				3914DAD7153F267E003BC07E /* SignalR-OSX.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,8 +173,8 @@
 		39951B5814C6446600B33280 /* Frameworks.OSX */ = {
 			isa = PBXGroup;
 			children = (
+				397DA44F155C019800A91949 /* SignalR-OSX.framework */,
 				39D7634014F6F524008F24C9 /* Cocoa.framework */,
-				3914DAD6153F267E003BC07E /* SignalR-OSX.framework */,
 			);
 			name = Frameworks.OSX;
 			sourceTree = "<group>";

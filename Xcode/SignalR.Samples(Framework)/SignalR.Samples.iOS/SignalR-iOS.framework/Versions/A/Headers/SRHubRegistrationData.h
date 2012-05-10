@@ -36,11 +36,6 @@
  */
 @property (strong, nonatomic, readwrite) NSString *name;
 
-/**
- * The `NSMutableArray` object corresponding to the subscriptions that the client can subscribe to
- */
-@property (strong, nonatomic, readwrite) NSMutableArray *methods;
-
 ///-------------------------------
 /// @name Initializing an SRHubRegistrationData Object
 ///-------------------------------

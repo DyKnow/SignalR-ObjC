@@ -51,6 +51,10 @@
  */
 + (SRHubConnection *)connectionWithURL:(NSString *)URL;
 
++ (SRHubConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
+
++ (SRHubConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
+
 /**
  * Initializes a new `SRHubConnection` object at the specified URL
  * 
@@ -63,6 +67,13 @@
  * @return an SRHubConnection object 
  */
 - (id)initWithURL:(NSString *)url;
+
+- (id)initWithURL:(NSString *)URL useDefault:(BOOL)useDefault;
+
+- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString;
+
+- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString;
+
 
 /**
  * Creates a client side proxy to the hub on the server side.
