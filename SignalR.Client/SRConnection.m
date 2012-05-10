@@ -333,7 +333,7 @@ void (^prepareRequest)(id);
     if(_assemblyVersion == nil)
     {
         //Need to manually set this otherwise it will inherit from the project version
-        _assemblyVersion = @"0.4";
+        _assemblyVersion = @"0.5";
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
