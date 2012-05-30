@@ -188,7 +188,7 @@
 
 - (BOOL)isRequestAborted:(NSError *)error
 {
-    return (error != nil && ([error.domain isEqualToString:AFNetworkingErrorDomain]));
+    return (error != nil && (error.code == NSURLErrorCancelled));
 }
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
