@@ -67,7 +67,7 @@
 {
     if([eventName isEqualToString:@""] || eventName == nil)
     {
-        [NSException raise:@"ArgumentNullException" format:@"Argument %@ is null", @"eventName"];
+        [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument eventName is null",@"NSInvalidArgumentException")];
     }
     
     SRSubscription *subscription = [_subscriptions objectForKey:eventName];
@@ -131,7 +131,7 @@
 {
     if([method isEqualToString:@""] || method == nil)
     {
-        [NSException raise:@"ArgumentNullException" format:@"Argument %@ is null", @"method"];
+        [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument method is null",@"NSInvalidArgumentException")];
     }
     
     SRHubInvocation *hubData = [[SRHubInvocation alloc] init];
@@ -155,9 +155,9 @@
                  if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
                  {
                      NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                     [userInfo setObject:[NSString stringWithFormat:@"InvalidOperationException"] forKey:NSLocalizedFailureReasonErrorKey];
+                     [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
                      [userInfo setObject:[NSString stringWithFormat:@"%@",hubResult.error] forKey:NSLocalizedDescriptionKey];
-                     NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
+                     NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                                           code:0 
                                                       userInfo:userInfo];
                      [_connection didReceiveError:error];

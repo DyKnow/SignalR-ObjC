@@ -58,7 +58,7 @@
         
         if(_major < 0 || _minor < 0)
         {
-            [NSException raise:@"ArgumentOutOfRangeException" format:@"Component cannot be less than 0"];
+            [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Component cannot be less than 0",@"NSInvalidArgumentException")];
         }
     }
     return self;
@@ -72,7 +72,7 @@
         
         if(_build < 0)
         {
-            [NSException raise:@"ArgumentOutOfRangeException" format:@"Component cannot be less than 0"];
+            [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Component cannot be less than 0",@"NSInvalidArgumentException")];
         }
     }
     return self;
@@ -86,7 +86,7 @@
         
         if(_revision < 0)
         {
-            [NSException raise:@"ArgumentOutOfRangeException" format:@"Component cannot be less than 0"];
+            [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Component cannot be less than 0",@"NSInvalidArgumentException")];
         }
     }
     return self;

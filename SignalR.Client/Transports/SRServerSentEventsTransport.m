@@ -621,9 +621,9 @@ static NSString * const kReaderKey = @"sse.reader";
                     SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                     {
                         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                        [userInfo setObject:[NSString stringWithFormat:@"TimeoutException"] forKey:NSLocalizedFailureReasonErrorKey];
-                        [userInfo setObject:[NSString stringWithFormat:@"Transport took longer than %d to connect",_connectionTimeout] forKey:NSLocalizedDescriptionKey];
-                        *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
+                        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+                        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
+                        *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                                              code:NSURLErrorTimedOut 
                                                          userInfo:userInfo];
                     };

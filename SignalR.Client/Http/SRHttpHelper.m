@@ -140,7 +140,8 @@ static id sharedHttpRequestManager = nil;
         {
             block((useOutputStream) ? nil : operation.responseString);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+    } 
+    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
 #if DEBUG_HTTP_HELPER
         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
@@ -216,7 +217,8 @@ static id sharedHttpRequestManager = nil;
         {
             block(operation.responseString);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+    } 
+    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
 #if DEBUG_HTTP_HELPER
         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];

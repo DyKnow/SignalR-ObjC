@@ -104,7 +104,7 @@ void (^prepareRequest)(id);
         NSRange range = [queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch];
         if(range.location != NSNotFound) 
         {
-            [NSException raise:@"ArgumentException" format:@"Url cannot contain QueryString directly. Pass QueryString values in using available overload."];
+            [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url cannot contain QueryString directly. Pass QueryString values in using available overload.",@"")];
         }
         
         if([url hasSuffix:@"/"] == false){
@@ -196,7 +196,7 @@ void (^prepareRequest)(id);
        ![SRVersion tryParse:versionString forVersion:&version] ||
        !(version.major == 1 && version.minor == 0))
     {
-        [NSException raise:@"InvalidOperationException" format:@"Incompatible Protocol Version"];
+        [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Incompatible Protocol Version",@"NSInternalInconsistencyException")];
     }
 }
 
@@ -242,9 +242,9 @@ void (^prepareRequest)(id);
     if (!_initialized)
     {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:[NSString stringWithFormat:@"InvalidOperationException"] forKey:NSLocalizedFailureReasonErrorKey];
-        [userInfo setObject:[NSString stringWithFormat:@"Start must be called before data can be sent"] forKey:NSLocalizedDescriptionKey];
-        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:@"com.SignalR-ObjC.%@",NSStringFromClass([self class])] 
+        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Start must be called before data can be sent",@"NSInternalInconsistencyException")] forKey:NSLocalizedDescriptionKey];
+        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                              code:0 
                                          userInfo:userInfo];
         [self didReceiveError:error];
@@ -308,9 +308,9 @@ void (^prepareRequest)(id);
     if([request isKindOfClass:[NSMutableURLRequest class]])
     {
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request addValue:[self createUserAgentString:@"SignalR.Client.iOS"] forHTTPHeaderField:@"User-Agent"];
+        [request addValue:[self createUserAgentString:NSLocalizedString(@"SignalR.Client.iOS",@"")] forHTTPHeaderField:@"User-Agent"];
 #elif TARGET_OS_MAC
-        [request addValue:[self createUserAgentString:@"SignalR.Client.OSX"] forHTTPHeaderField:@"User-Agent"];
+        [request addValue:[self createUserAgentString:NSLocalizedString(@"SignalR.Client.OSX",@"")] forHTTPHeaderField:@"User-Agent"];
 #endif
         if(_credentials != nil)
         {
