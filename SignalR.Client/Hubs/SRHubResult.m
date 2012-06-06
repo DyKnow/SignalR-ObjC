@@ -24,10 +24,6 @@
 
 @interface SRHubResult ()
 
-#define kResult @"Result"
-#define kError @"Error"
-#define kState @"State"
-
 @end
 
 @implementation SRHubResult
@@ -35,6 +31,10 @@
 @synthesize result = _result;
 @synthesize error = _error;
 @synthesize state = _state;
+
+static NSString * const kResult = @"Result";
+static NSString * const kError = @"Error";
+static NSString * const kState = @"State";
 
 - (id) init
 {

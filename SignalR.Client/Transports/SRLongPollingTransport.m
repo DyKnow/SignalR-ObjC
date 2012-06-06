@@ -37,14 +37,14 @@ typedef void (^onInitialized)(void);
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
 - (void)fireReconnected:(SRConnection *)connection reconnectCancelled:(BOOL)cancelled reconnectedFired:(int *)reconnectedFired;
 
-#define kTransportName @"longPolling"
-
 @end
 
 @implementation SRLongPollingTransport
 
 @synthesize reconnectDelay = _reconnectDelay;
 @synthesize errorDelay = _errorDelay;
+
+static NSString * const kTransportName = @"longPolling";
 
 - (id)init
 {

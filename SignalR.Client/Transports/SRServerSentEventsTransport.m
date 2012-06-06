@@ -441,9 +441,6 @@ typedef void (^onClose)(void);
 
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
-#define kTransportName @"serverSentEvents"
-#define kReaderKey @"sse.reader"
-
 @end
 
 @implementation SRServerSentEventsTransport
@@ -451,6 +448,9 @@ typedef void (^onClose)(void);
 @synthesize connectionTimeout = _connectionTimeout;
 @synthesize reconnectDelay = _reconnectDelay;
 @synthesize initializedCalled = _initializedCalled;
+
+static NSString * const kTransportName = @"serverSentEvents";
+static NSString * const kReaderKey = @"sse.reader";
 
 - (id)init
 {

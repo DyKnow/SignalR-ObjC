@@ -24,10 +24,6 @@
 
 @interface SRNegotiationResponse ()
 
-#define kConnectionId @"ConnectionId"
-#define kUrl @"Url"
-#define kProtocolVersion @"ProtocolVersion"
-
 @end
 
 @implementation SRNegotiationResponse
@@ -35,6 +31,10 @@
 @synthesize connectionId = _connectionId;
 @synthesize url = _url;
 @synthesize protocolVersion = _protocolVersion;
+
+static NSString * const kConnectionId = @"ConnectionId";
+static NSString * const kUrl = @"Url";
+static NSString * const kProtocolVersion = @"ProtocolVersion";
 
 - (id) init
 {

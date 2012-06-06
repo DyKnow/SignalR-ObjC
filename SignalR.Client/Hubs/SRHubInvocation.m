@@ -24,11 +24,6 @@
 
 @interface SRHubInvocation ()
 
-#define kHub @"Hub"
-#define kMethod @"Method"
-#define kArgs @"Args"
-#define kState @"State"
-
 @end
 
 @implementation SRHubInvocation
@@ -37,6 +32,11 @@
 @synthesize method = _method;
 @synthesize args = _args;
 @synthesize state = _state;
+
+static NSString * const kHub = @"Hub";
+static NSString * const kMethod = @"Method";
+static NSString * const kArgs = @"Args";
+static NSString * const kState = @"State";
 
 - (id) init
 {
