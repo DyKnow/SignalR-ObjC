@@ -65,17 +65,6 @@ static NSString * const kProtocolVersion = @"ProtocolVersion";
     _protocolVersion = ([dict objectForKey:kProtocolVersion]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kProtocolVersion]] : _protocolVersion;
 }
 
-- (id)proxyForJson
-{
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-    
-    [dict setObject:[NSString stringWithFormat:@"%@",_connectionId] forKey:kConnectionId];
-    [dict setObject:[NSString stringWithFormat:@"%@",_url] forKey:kUrl];
-    [dict setObject:[NSString stringWithFormat:@"%@",_protocolVersion] forKey:kProtocolVersion];
-    
-    return dict;
-}
-
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];

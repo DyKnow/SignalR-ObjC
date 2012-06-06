@@ -1,6 +1,6 @@
 //
 //  DefaultHttpClient.h
-//  SignalR.Samples
+//  SignalR
 //
 //  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)

@@ -1,8 +1,8 @@
 //
-//  SRHubRegistrationData.m
+//  SRDeserializable.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 11/2/11.
+//  Created by Alex Billingsley on 6/6/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,45 +20,22 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubRegistrationData.h"
+#import <Foundation/Foundation.h>
 
-@interface SRHubRegistrationData ()
+@protocol SRDeserializable <NSObject>
 
-@end
+/**
+ * Initializes a new `NSObject` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `NSObject`
+ */
+- (id)initWithDictionary:(NSDictionary *)dictionary;
 
-@implementation SRHubRegistrationData
-
-@synthesize name = _name;
-
-static NSString * const kName = @"name";
-static NSString * const kMethods = @"methods";
-
-- (id) init
-{
-    if (self = [super init])
-    {
-        _name = [NSString stringWithFormat:@""];
-    }
-    return self;
-}
-
-- (id)proxyForJson
-{
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-    
-    [dict setObject:[NSString stringWithFormat:@"%@",_name] forKey:kName];
-    
-    return dict;
-}
-
-- (NSString *)description 
-{     
-    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@",_name];
-}
-
-- (void)dealloc
-{
-    _name = nil;
-}
+/**
+ * Updates a new `NSObject` from a `NSDictionary` object deserialized from a JSON server response
+ *
+ * @param dict a dictionary representing an `NSObject`
+ */
+- (void)updateWithDictionary:(NSDictionary *)dictionary;
 
 @end

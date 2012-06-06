@@ -1,8 +1,8 @@
 //
-//  SRHubRegistrationData.m
+//  SRSerializable.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 11/2/11.
+//  Created by Alex Billingsley on 6/6/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,45 +20,34 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubRegistrationData.h"
+#import <Foundation/Foundation.h>
 
-@interface SRHubRegistrationData ()
+/**
+ * An `SRSerializable` defines the protocol that should be enforced if an NSObject is intended to be sent to a transport
+ *
+ * It should be noted that while all functions are optional at least one should be used for auto detected JSON serialization to work properly
+ */
+@protocol SRSerializable <NSObject>
 
-@end
+@optional
 
-@implementation SRHubRegistrationData
+///-------------------------------
+/// @name JSON Serialization
+///-------------------------------
 
-@synthesize name = _name;
+/**
+ * Conforms to SBJson (aka json-framework) allowing `NSObjects` to be serialized to JSON
+ */
+- (id) proxyForJson;
 
-static NSString * const kName = @"name";
-static NSString * const kMethods = @"methods";
+/**
+ * Conforms to YAJL allowing `NSObjects` to be serialized to JSON
+ */
+- (id) JSON;
 
-- (id) init
-{
-    if (self = [super init])
-    {
-        _name = [NSString stringWithFormat:@""];
-    }
-    return self;
-}
-
-- (id)proxyForJson
-{
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-    
-    [dict setObject:[NSString stringWithFormat:@"%@",_name] forKey:kName];
-    
-    return dict;
-}
-
-- (NSString *)description 
-{     
-    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@",_name];
-}
-
-- (void)dealloc
-{
-    _name = nil;
-}
+/**
+ * Conforms to NXJSON allowing `NSObjects` to be serialized to JSON
+ */
+- (id) serialize;
 
 @end

@@ -21,11 +21,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRDeserializable.h"
 
 /**
  * An `SRHubResult` object represents a SignalR Server Hub Response
  */
-@interface SRHubResult : NSObject
+@interface SRHubResult : NSObject <SRDeserializable>
 
 ///-------------------------------
 /// @name Properties
@@ -45,36 +46,5 @@
  * An `NSDictionary` represnting a server state object
  */
 @property (strong, nonatomic, readwrite) NSDictionary *state;
-
-///-------------------------------
-/// @name Initializing an SRHubResult Object
-///-------------------------------
-
-/**
- * Initializes a new `SRHubResult` from a `NSDictionary` object deserialized from a JSON server response
- *
- * @param dict a dictionary representing an `SRHubResult`
- */
-- (id)initWithDictionary:(NSDictionary*)dict;
-
-///-------------------------------
-/// @name Updating an SRHubResult Object
-///-------------------------------
-
-/**
- * Updates a new `SRHubResult` from a `NSDictionary` object deserialized from a JSON server response
- *
- * @param dict a dictionary representing an `SRHubResult`
- */
-- (void)updateWithDictionary:(NSDictionary *)dict;
-
-///-------------------------------
-/// @name JSON Serialization
-///-------------------------------
-
-/**
- * Conforms to SBJson (aka json-framework) allowing `SRHubResult` to be serialized to JSON
- */
-- (id)proxyForJson;
 
 @end

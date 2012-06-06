@@ -190,6 +190,8 @@
 		39951B6A14C6476800B33280 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		39951B7F14C64B8300B33280 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		39E52EA4157F932400A3A75C /* SRConnectionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionState.h; sourceTree = "<group>"; };
+		39E52EB5157F9F9400A3A75C /* SRSerializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRSerializable.h; sourceTree = "<group>"; };
+		39E52EB7157F9FA100A3A75C /* SRDeserializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRDeserializable.h; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.Samples.iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -264,6 +266,8 @@
 		3916E67B14D6FD8B002D967A /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				39E52EB5157F9F9400A3A75C /* SRSerializable.h */,
+				39E52EB7157F9FA100A3A75C /* SRDeserializable.h */,
 				392524721524EC5A00312374 /* NSObject+SRJSON.h */,
 				392524731524EC5A00312374 /* NSObject+SRJSON.m */,
 				3916E67C14D6FD8B002D967A /* NSDictionary+QueryString.h */,

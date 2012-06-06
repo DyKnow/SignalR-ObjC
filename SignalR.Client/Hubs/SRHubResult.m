@@ -64,17 +64,6 @@ static NSString * const kState = @"State";
     self.state = ([dict objectForKey:kState]) ? [dict objectForKey:kState] : _state;
 }
 
-- (id)proxyForJson
-{
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-    
-    [dict setObject:_result forKey:kResult];
-    [dict setObject:[NSString stringWithFormat:@"%@",_error] forKey:kError];
-    [dict setObject:_state forKey:kState];
-    
-    return dict;
-}
-
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];

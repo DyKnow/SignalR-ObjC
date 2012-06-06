@@ -1,6 +1,6 @@
 //
 //  SRSignalRConfig.h
-//  SignalR.Samples
+//  SignalR
 //
 //  Created by Alex Billingsley on 1/29/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)

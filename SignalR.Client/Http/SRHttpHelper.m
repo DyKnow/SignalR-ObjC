@@ -36,7 +36,7 @@
  * Subclasses should override this function 
  *
  * @param url: The url relative to the server endpoint
- * @param parameters: An Object that conforms to proxyForJSON to pass as parameters to the endpoint
+ * @param parameters: An Object that conforms to SRSerializable to pass as parameters to the endpoint
  * @param requestPreparer: A function to be called on the NSMutableURLRequest created for the request
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
@@ -51,7 +51,7 @@
  * Subclasses should override this function 
  *
  * @param url: The url relative to the server endpoint
- * @param postData: An Object that conforms to proxyForJSON to post at the url
+ * @param postData: An Object that conforms to SRSerializable to post at the url
  * @param requestPreparer: A function to be called on the NSMutableURLRequest created for the request
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE

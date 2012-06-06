@@ -21,11 +21,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRSerializable.h"
+#import "SRDeserializable.h"
 
 /**
  * An `SRHubInvocation` object defines the interface for invoking methods on the SignalR Client using a Hubs implementation
  */
-@interface SRHubInvocation : NSObject
+@interface SRHubInvocation : NSObject <SRDeserializable, SRSerializable>
 
 ///-------------------------------
 /// @name Properties
@@ -50,37 +52,5 @@
  * The `NSMutableDictionary` object corresponding to the client state
  */
 @property (strong, nonatomic, readwrite) NSMutableDictionary *state;
-
-
-///-------------------------------
-/// @name Initializing an SRHubInvocation Object
-///-------------------------------
-
-/**
- * Initializes a new `SRHubInvocation` from a `NSDictionary` object deserialized from a JSON server response
- *
- * @param dict a dictionary representing an `SRHubInvocation`
- */
-- (id)initWithDictionary:(NSDictionary*)dict;
-
-///-------------------------------
-/// @name Updating an SRHubInvocation Object
-///-------------------------------
-
-/**
- * Updates a new `SRHubInvocation` from a `NSDictionary` object deserialized from a JSON server response
- *
- * @param dict a dictionary representing an `SRHubInvocation`
- */
-- (void)updateWithDictionary:(NSDictionary *)dict;
-
-///-------------------------------
-/// @name JSON Serialization
-///-------------------------------
-
-/**
- * Conforms to SBJson (aka json-framework) allowing `SRHubInvocation` to be serialized to JSON
- */
-- (id)proxyForJson;
 
 @end
