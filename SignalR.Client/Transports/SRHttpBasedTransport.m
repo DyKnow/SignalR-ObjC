@@ -172,14 +172,12 @@
     
     if(httpRequest != nil)
     {
-        @try 
-        {
-            [self onBeforeAbort:connection];
-            [httpRequest cancel];
-        }
-        @catch (NSError *error) {
-            //NotImplementedException
-        }
+        [self onBeforeAbort:connection];
+        
+        // Abort the server side connection
+        [self abortConnection:connection];
+        
+        [httpRequest cancel];
     }
 }
 
@@ -239,6 +237,14 @@
     {
         [connection.items setObject:request forKey:kHttpRequestKey];
     }
+}
+
+- (void)abortConnection:(SRConnection *)connection
+{
+    NSString *url = [connection.url stringByAppendingString:kAbortEndPoint];
+    url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
+    
+    [_httpClient postAsync:url requestPreparer:^(id request){ [connection prepareRequest:request]; } continueWith:nil];
 }
 
 - (void)onBeforeAbort:(SRConnection *)connection

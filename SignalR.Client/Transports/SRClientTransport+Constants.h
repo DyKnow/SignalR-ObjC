@@ -30,6 +30,7 @@
 #define kConnectEndPoint @"connect"
 #define kReconnectEndPoint @"reconnect"
 #define kSendEndPoint @"send"
+#define kAbortEndPoint @"abort"
 
 #pragma  mark - Request Constants
 
