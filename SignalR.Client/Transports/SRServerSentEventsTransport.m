@@ -23,7 +23,6 @@
 #import "SRServerSentEventsTransport.h"
 #import "SRSignalRConfig.h"
 
-#import "AFNetworking.h"
 #import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
