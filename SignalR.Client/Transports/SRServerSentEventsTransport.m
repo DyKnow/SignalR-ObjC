@@ -478,7 +478,7 @@ static NSString * const kReaderKey = @"sse.reader";
 
 - (void)reconnect:(SRConnection *)connection data:(NSString *)data
 {
-    if(!connection.isActive)
+    if([connection isDisconnecting])
     {
         return;
     }
@@ -547,6 +547,8 @@ static NSString * const kReaderKey = @"sse.reader";
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
 #endif
+                    connection.state = reconnecting;
+                    
                     //Retry
                     [self reconnect:connection data:data];
                 }
@@ -585,11 +587,16 @@ static NSString * const kReaderKey = @"sse.reader";
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] stream did close, will reopen in %d seconds...",_reconnectDelay);
 #endif
+                connection.state = reconnecting;
+                
                 [self reconnect:connection data:data];
             };
             
             if(reconnecting)
             {
+                //Change the status to connected
+                connection.state = connected;
+                
                 // Raise the reconnect event if the connection comes back up
                 [connection didReconnect];
             }

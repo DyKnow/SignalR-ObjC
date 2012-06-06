@@ -25,6 +25,7 @@
 
 #import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
+#import "SRConnectionExtensions.h"
 #import "NSTimer+Blocks.h"
 
 typedef void (^onInitialized)(void);
@@ -90,6 +91,8 @@ static NSString * const kTransportName = @"longPolling";
     else if (raiseReconnect)
     {
         url = [url stringByAppendingString:kReconnectEndPoint];
+        
+        connection.state = reconnecting;
     }
     
     url = [url stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
@@ -162,9 +165,7 @@ static NSString * const kTransportName = @"longPolling";
                             SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
 #endif
                             callbackFired = 1;
-                            
-                            [connection didReceiveError:response];
-                            
+
                             //Call the callback
                             SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
@@ -192,7 +193,7 @@ static NSString * const kTransportName = @"longPolling";
 #endif
                                 [NSTimer scheduledTimerWithTimeInterval:_errorDelay block:
                                  ^{
-                                     if (connection.isActive)
+                                     if (![connection isDisconnecting])
                                      {
                                          [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
                                      }
@@ -203,7 +204,7 @@ static NSString * const kTransportName = @"longPolling";
                 }
                 else
                 {
-                    if (connection.isActive)
+                    if (![connection isDisconnecting])
                     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                         SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
@@ -242,6 +243,10 @@ static NSString * const kTransportName = @"longPolling";
         SR_DEBUG_LOG(@"[LONG_POLLING] did fire reconnected");
 #endif
         *reconnectedFired = 1;
+        
+        //Mark the connection as connected
+        connection.state = connected;
+        
         [connection didReconnect];
     }
 }

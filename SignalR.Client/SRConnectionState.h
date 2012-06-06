@@ -1,8 +1,8 @@
 //
-//  SRConnectionExtensions.h
+//  SRConnectionState.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 1/7/12.
+//  Created by Alex Billingsley on 10/17/11.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -21,20 +21,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnection.h"
 
-@interface SRConnection (Extensions)
-
-/**
- * An extension method for accessing objects belonging to [SRConnection items]
- *
- * @param key he key for which to return the corresponding value.
- * 
- * @return Returns the value associated with a given key.
- */
-- (id)getValue:(NSString *)key;
-
-- (BOOL)isDisconnecting;
-- (BOOL)isActive;
-
-@end
+typedef enum 
+{
+    none,
+    connecting,
+    connected,
+    reconnecting,
+    disconnecting,
+    disconnected
+} connectionState;

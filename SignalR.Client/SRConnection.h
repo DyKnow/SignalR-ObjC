@@ -23,6 +23,7 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
 #import "SRHttpClient.h"
+#import "SRConnectionState.h"
 
 @class SRConnection;
 
@@ -140,12 +141,6 @@ typedef void (^onReconnected)();
 @property (strong, nonatomic, readwrite) NSString *url;
 
 /**
- * A `BOOL` representing the status of the connection
- * when TRUE the connection has been started
- */
-@property (assign, nonatomic, readonly, getter=isActive) BOOL active;
-
-/**
  * An `NSNumber` representing the current message id 
  */
 @property (strong, nonatomic, readwrite) NSNumber *messageId;
@@ -165,11 +160,7 @@ typedef void (^onReconnected)();
  */
 @property (strong, nonatomic, readonly) NSString *queryString;
 
-/**
- * A `BOOL` representing the status of the connection underlying transport
- * when TRUE the connection's underlying transport has been started
- */
-@property (assign, nonatomic, readonly) BOOL initialized;
+@property (assign, nonatomic, readwrite) connectionState state;
 
 /**
  * An `NSMutableDictionary` representing the headers to be applied to each request 

@@ -21,6 +21,7 @@
 //
 
 #import "SRConnectionExtensions.h"
+#import "SRConnectionState.h"
 
 @implementation SRConnection (Extensions)
 
@@ -30,6 +31,19 @@
     value = [self.items objectForKey:key];
     
     return value;
+}
+
+- (BOOL)isDisconnecting
+{
+    return (self.state == disconnecting ||
+            self.state == disconnected);
+    
+}
+
+- (BOOL)isActive
+{
+    return (self.state == connected ||
+            self.state == connecting);
 }
 
 @end

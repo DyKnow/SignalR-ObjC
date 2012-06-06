@@ -22,6 +22,7 @@
 
 #include <TargetConditionals.h>
 #import "SRConnection.h"
+#import "SRConnectionExtensions.h"
 #import "SRSignalRConfig.h"
 
 #import "AFNetworking.h"
@@ -59,12 +60,11 @@ void (^prepareRequest)(id);
 @synthesize credentials = _credentials;
 @synthesize sending = _sending;
 @synthesize url = _url;
-@synthesize active = _active;
 @synthesize messageId = _messageId;
 @synthesize connectionId = _connectionId;
 @synthesize items = _items;
 @synthesize queryString = _queryString;
-@synthesize initialized = _initialized;
+@synthesize state = _state;
 @synthesize headers = _headers;
 
 @synthesize delegate = _delegate;
@@ -136,12 +136,12 @@ void (^prepareRequest)(id);
 
 - (void)start:(id <SRClientTransport>)transport
 {
-    if (self.isActive)
+    if ([self isActive])
     {
         return;
     }
     
-    _active = YES;
+    _state = connecting;
         
     _transport = transport;
     
@@ -175,7 +175,7 @@ void (^prepareRequest)(id);
             [_transport start:self withData:data continueWith:
              ^(id task) 
             {
-                _initialized = YES;
+                _state = connected;
                  
                 if(_started != nil)
                 {
@@ -204,11 +204,13 @@ void (^prepareRequest)(id);
 {
     @try 
     {
-        // Do nothing if the connection was never started
-        if (!_initialized)
+        // Do nothing if the connection is offline
+        if ([self isDisconnecting])
         {
             return;
         }
+        
+        _state = disconnecting;
         
         [_transport stop:self];
         
@@ -224,8 +226,7 @@ void (^prepareRequest)(id);
     }
     @finally 
     {
-        _active = NO;
-        _initialized = NO;
+        _state = disconnected;
     }
 }
 
@@ -239,7 +240,7 @@ void (^prepareRequest)(id);
 
 - (void)send:(NSString *)message continueWith:(void (^)(id response))block
 {
-    if (!_initialized)
+    if ([self isDisconnecting])
     {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
@@ -359,7 +360,6 @@ void (^prepareRequest)(id);
     //private
     _assemblyVersion = nil;
     _transport = nil;
-    _initialized = NO;
     _started = nil;
     _received = nil;
     _error = nil;
@@ -368,7 +368,6 @@ void (^prepareRequest)(id);
     _credentials = nil;
     _sending = nil;
     _url = nil;
-    _active = NO;
     _messageId = nil;
     _connectionId = nil;
     _items = nil;
