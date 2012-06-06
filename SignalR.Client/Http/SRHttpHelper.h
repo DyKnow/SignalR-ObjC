@@ -23,21 +23,13 @@
 #import <Foundation/Foundation.h>
 
 /**
- * `SRHttpHelper` is an object used to create HttpRequest objects that are configured for the various http request methods (GET, PUT etc)
+ * `SRHttpHelper` defines a protocol used to create HttpRequest objects that are configured for the various http request methods (GET, PUT etc)
  */
-@interface SRHttpHelper : NSObject
-
-///-------------------------------
-/// @name Initialization
-///-------------------------------
-
-/**
- * Initializes a Singleton for `SRHttpHelper` 
- */
-+ (id)sharedHttpRequestManager;
+@protocol SRHttpHelper <NSObject>
 
 #pragma mark -
 #pragma mark GET Requests
+
 ///-------------------------------
 /// @name GET Requests
 ///-------------------------------
@@ -83,6 +75,7 @@
 
 #pragma mark -
 #pragma mark POST Requests
+
 ///-------------------------------
 /// @name POST Requests
 ///-------------------------------

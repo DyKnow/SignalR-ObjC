@@ -1,8 +1,8 @@
 //
-//  DefaultHttpClient.m
+//  SRDefaultHttpHelper.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 3/23/12.
+//  Created by Alex Billingsley on 6/6/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,25 +20,9 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRDefaultHttpClient.h"
+#import <Foundation/Foundation.h>
+#import "SRHttpHelper.h"
 
-#import "SRDefaultHttpHelper.h"
-
-@implementation SRDefaultHttpClient
-
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
-{
-    [SRDefaultHttpHelper getAsync:url requestPreparer:prepareRequest continueWith:block];
-}
-
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
-{
-    [SRDefaultHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:block];
-}
-
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block
-{
-    [SRDefaultHttpHelper postAsync:url requestPreparer:prepareRequest postData:postData continueWith:block];
-}
+@interface SRDefaultHttpHelper : NSObject <SRHttpHelper>
 
 @end

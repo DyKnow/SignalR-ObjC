@@ -1,8 +1,8 @@
 //
-//  SRHttpHelper.m
+//  SRDefaultHttpHelper.m
 //  SignalR
 //
-//  Created by Alex Billingsley on 10/18/11.
+//  Created by Alex Billingsley on 6/6/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,13 +20,13 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHttpHelper.h"
+#import "SRDefaultHttpHelper.h"
 #import "SRSignalRConfig.h"
 
 #import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 
-@interface SRHttpHelper ()
+@interface SRDefaultHttpHelper ()
 
 #pragma mark - 
 #pragma mark GET Requests Implementation
@@ -41,7 +41,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block;
++ (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block;
 
 #pragma mark - 
 #pragma mark POST Requests Implementation
@@ -56,28 +56,18 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block;
++ (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block;
 
 @end
 
-static id sharedHttpRequestManager = nil;
-
-@implementation SRHttpHelper
-
-+ (id)sharedHttpRequestManager
-{
-    if (sharedHttpRequestManager == nil) {
-		sharedHttpRequestManager = [[self alloc] init];
-	}
-	return sharedHttpRequestManager;
-}
+@implementation SRDefaultHttpHelper
 
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
 + (void)getAsync:(NSString *)url continueWith:(void (^)(id response))block
 {
-     [[self class] getAsync:url requestPreparer:nil continueWith:block];
+    [[self class] getAsync:url requestPreparer:nil continueWith:block];
 }
 
 + (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block
@@ -92,10 +82,10 @@ static id sharedHttpRequestManager = nil;
 
 + (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
 {
-    [[self sharedHttpRequestManager] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
+    [[self class] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
 }
 
-- (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
++ (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"GET"];
@@ -130,29 +120,29 @@ static id sharedHttpRequestManager = nil;
         operation.outputStream = oStream;
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
-    {
+     {
 #if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+         debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
+         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-        if (block)
-        {
-            block((useOutputStream) ? nil : operation.responseString);
-        }
-    } 
-    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
-    {
+         if (block)
+         {
+             block((useOutputStream) ? nil : operation.responseString);
+         }
+     } 
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+     {
 #if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+         debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
+         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-        if (block)
-        {
-            block(error);
-        }
-    }];
+         if (block)
+         {
+             block(error);
+         }
+     }];
     [operation start];
 }
 
@@ -176,10 +166,10 @@ static id sharedHttpRequestManager = nil;
 
 + (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
 {
-    [[self sharedHttpRequestManager] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
+    [[self class] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
 }
 
-- (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
++ (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
 {
     NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
@@ -207,29 +197,29 @@ static id sharedHttpRequestManager = nil;
         requestPreparer(operation);
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
-    {
+     {
 #if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+         debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
+         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-        if (block)
-        {
-            block(operation.responseString);
-        }
-    } 
-    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
-    {
+         if (block)
+         {
+             block(operation.responseString);
+         }
+     } 
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+     {
 #if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+         debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
+         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-        if (block)
-        {
-            block(error);
-        }
-    }];
+         if (block)
+         {
+             block(error);
+         }
+     }];
     [operation start];
 }
 

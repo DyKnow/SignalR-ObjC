@@ -47,7 +47,6 @@
 		3916E6FA14D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69814D6FD8B002D967A /* SRServerSentEventsTransport.m */; };
 		392524741524EC5A00312374 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 392524731524EC5A00312374 /* NSObject+SRJSON.m */; };
 		3925247A1524EC6500312374 /* SRDefaultHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 392524761524EC6500312374 /* SRDefaultHttpClient.m */; };
-		3925247B1524EC6500312374 /* SRHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 392524791524EC6500312374 /* SRHttpHelper.m */; };
 		39607A74155AF32000790098 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 39607A60155AF32000790098 /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39607A75155AF32000790098 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39607A62155AF32000790098 /* AFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39607A76155AF32000790098 /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39607A64155AF32000790098 /* AFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -80,6 +79,7 @@
 		39951B6B14C6476800B33280 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39951B6A14C6476800B33280 /* icon.png */; };
 		39951B6C14C647BB00B33280 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39951B6A14C6476800B33280 /* icon.png */; };
 		39951B8014C64B8300B33280 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 39951B7F14C64B8300B33280 /* icon.icns */; };
+		39E52ED3157FC89E00A3A75C /* SRDefaultHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E52ED2157FC89E00A3A75C /* SRDefaultHttpHelper.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -134,7 +134,6 @@
 		392524761524EC6500312374 /* SRDefaultHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRDefaultHttpClient.m; path = Http/SRDefaultHttpClient.m; sourceTree = "<group>"; };
 		392524771524EC6500312374 /* SRHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHttpClient.h; path = Http/SRHttpClient.h; sourceTree = "<group>"; };
 		392524781524EC6500312374 /* SRHttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHttpHelper.h; path = Http/SRHttpHelper.h; sourceTree = "<group>"; };
-		392524791524EC6500312374 /* SRHttpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHttpHelper.m; path = Http/SRHttpHelper.m; sourceTree = "<group>"; };
 		39607A5F155AF32000790098 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		39607A60155AF32000790098 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
 		39607A61155AF32000790098 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -192,6 +191,8 @@
 		39E52EA4157F932400A3A75C /* SRConnectionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionState.h; sourceTree = "<group>"; };
 		39E52EB5157F9F9400A3A75C /* SRSerializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRSerializable.h; sourceTree = "<group>"; };
 		39E52EB7157F9FA100A3A75C /* SRDeserializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRDeserializable.h; sourceTree = "<group>"; };
+		39E52ED1157FC89E00A3A75C /* SRDefaultHttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRDefaultHttpHelper.h; path = Http/SRDefaultHttpHelper.h; sourceTree = "<group>"; };
+		39E52ED2157FC89E00A3A75C /* SRDefaultHttpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRDefaultHttpHelper.m; path = Http/SRDefaultHttpHelper.m; sourceTree = "<group>"; };
 		39FE4E451468164300B111BF /* SignalR.Samples.iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39FE4E491468164300B111BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		39FE4E4B1468164300B111BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -306,7 +307,8 @@
 				392524751524EC6500312374 /* SRDefaultHttpClient.h */,
 				392524761524EC6500312374 /* SRDefaultHttpClient.m */,
 				392524781524EC6500312374 /* SRHttpHelper.h */,
-				392524791524EC6500312374 /* SRHttpHelper.m */,
+				39E52ED1157FC89E00A3A75C /* SRDefaultHttpHelper.h */,
+				39E52ED2157FC89E00A3A75C /* SRDefaultHttpHelper.m */,
 			);
 			name = Http;
 			sourceTree = "<group>";
@@ -652,7 +654,6 @@
 				3916E6F914D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */,
 				392524741524EC5A00312374 /* NSObject+SRJSON.m in Sources */,
 				3925247A1524EC6500312374 /* SRDefaultHttpClient.m in Sources */,
-				3925247B1524EC6500312374 /* SRHttpHelper.m in Sources */,
 				39607A74155AF32000790098 /* AFHTTPClient.m in Sources */,
 				39607A75155AF32000790098 /* AFHTTPRequestOperation.m in Sources */,
 				39607A76155AF32000790098 /* AFImageRequestOperation.m in Sources */,
@@ -663,6 +664,7 @@
 				39607A7B155AF32000790098 /* AFURLConnectionOperation.m in Sources */,
 				39607A7C155AF32000790098 /* AFXMLRequestOperation.m in Sources */,
 				39607A7D155AF32000790098 /* UIImageView+AFNetworking.m in Sources */,
+				39E52ED3157FC89E00A3A75C /* SRDefaultHttpHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
