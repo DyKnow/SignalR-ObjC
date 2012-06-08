@@ -81,6 +81,10 @@
 		39951B8014C64B8300B33280 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 39951B7F14C64B8300B33280 /* icon.icns */; };
 		39A3F6361581412E00695201 /* SRDefaultHttpWebRequestWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F6351581412E00695201 /* SRDefaultHttpWebRequestWrapper.m */; };
 		39A3F654158237C700695201 /* SRDefaultHttpWebResponseWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F653158237C700695201 /* SRDefaultHttpWebResponseWrapper.m */; };
+		39A3F66C15828E8A00695201 /* SRExceptionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F66B15828E8A00695201 /* SRExceptionHelper.m */; };
+		39A3F67115828FF700695201 /* SRSseEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F67015828FF700695201 /* SRSseEvent.m */; };
+		39A3F6751582918000695201 /* SRChunkBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F6741582917F00695201 /* SRChunkBuffer.m */; };
+		39A3F6781582925000695201 /* SREventSourceStreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F6771582924F00695201 /* SREventSourceStreamReader.m */; };
 		39E52ED3157FC89E00A3A75C /* SRDefaultHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E52ED2157FC89E00A3A75C /* SRDefaultHttpHelper.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
@@ -196,6 +200,15 @@
 		39A3F6351581412E00695201 /* SRDefaultHttpWebRequestWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRDefaultHttpWebRequestWrapper.m; path = Http/SRDefaultHttpWebRequestWrapper.m; sourceTree = "<group>"; };
 		39A3F652158237C700695201 /* SRDefaultHttpWebResponseWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRDefaultHttpWebResponseWrapper.h; path = Http/SRDefaultHttpWebResponseWrapper.h; sourceTree = "<group>"; };
 		39A3F653158237C700695201 /* SRDefaultHttpWebResponseWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRDefaultHttpWebResponseWrapper.m; path = Http/SRDefaultHttpWebResponseWrapper.m; sourceTree = "<group>"; };
+		39A3F66A15828E8A00695201 /* SRExceptionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRExceptionHelper.h; sourceTree = "<group>"; };
+		39A3F66B15828E8A00695201 /* SRExceptionHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRExceptionHelper.m; sourceTree = "<group>"; };
+		39A3F66F15828FF700695201 /* SRSseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRSseEvent.h; path = ServerSentEvents/SRSseEvent.h; sourceTree = "<group>"; };
+		39A3F67015828FF700695201 /* SRSseEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRSseEvent.m; path = ServerSentEvents/SRSseEvent.m; sourceTree = "<group>"; };
+		39A3F6721582903000695201 /* SREventType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SREventType.h; path = ServerSentEvents/SREventType.h; sourceTree = "<group>"; };
+		39A3F6731582917F00695201 /* SRChunkBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRChunkBuffer.h; path = ServerSentEvents/SRChunkBuffer.h; sourceTree = "<group>"; };
+		39A3F6741582917F00695201 /* SRChunkBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRChunkBuffer.m; path = ServerSentEvents/SRChunkBuffer.m; sourceTree = "<group>"; };
+		39A3F6761582924F00695201 /* SREventSourceStreamReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SREventSourceStreamReader.h; path = ServerSentEvents/SREventSourceStreamReader.h; sourceTree = "<group>"; };
+		39A3F6771582924F00695201 /* SREventSourceStreamReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SREventSourceStreamReader.m; path = ServerSentEvents/SREventSourceStreamReader.m; sourceTree = "<group>"; };
 		39E52EA4157F932400A3A75C /* SRConnectionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionState.h; sourceTree = "<group>"; };
 		39E52EB5157F9F9400A3A75C /* SRSerializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRSerializable.h; sourceTree = "<group>"; };
 		39E52EB7157F9FA100A3A75C /* SRDeserializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRDeserializable.h; sourceTree = "<group>"; };
@@ -287,6 +300,8 @@
 				3916E68114D6FD8B002D967A /* NSTimer+Blocks.m */,
 				3916E68414D6FD8B002D967A /* SRVersion.h */,
 				3916E68514D6FD8B002D967A /* SRVersion.m */,
+				39A3F66A15828E8A00695201 /* SRExceptionHelper.h */,
+				39A3F66B15828E8A00695201 /* SRExceptionHelper.m */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -294,6 +309,7 @@
 		3916E68E14D6FD8B002D967A /* Transports */ = {
 			isa = PBXGroup;
 			children = (
+				39A3F66E15828FC600695201 /* ServerSentEvents */,
 				3916E68F14D6FD8B002D967A /* SRAutoTransport.h */,
 				3916E69014D6FD8B002D967A /* SRAutoTransport.m */,
 				3916E69114D6FD8B002D967A /* SRClientTransport+Constants.h */,
@@ -457,6 +473,20 @@
 				39FE4E4B1468164300B111BF /* Foundation.framework */,
 			);
 			name = Frameworks.Common;
+			sourceTree = "<group>";
+		};
+		39A3F66E15828FC600695201 /* ServerSentEvents */ = {
+			isa = PBXGroup;
+			children = (
+				39A3F6731582917F00695201 /* SRChunkBuffer.h */,
+				39A3F6741582917F00695201 /* SRChunkBuffer.m */,
+				39A3F6761582924F00695201 /* SREventSourceStreamReader.h */,
+				39A3F6771582924F00695201 /* SREventSourceStreamReader.m */,
+				39A3F6721582903000695201 /* SREventType.h */,
+				39A3F66F15828FF700695201 /* SRSseEvent.h */,
+				39A3F67015828FF700695201 /* SRSseEvent.m */,
+			);
+			name = ServerSentEvents;
 			sourceTree = "<group>";
 		};
 		39FE4E3A1468164200B111BF = {
@@ -681,6 +711,10 @@
 				39E52ED3157FC89E00A3A75C /* SRDefaultHttpHelper.m in Sources */,
 				39A3F6361581412E00695201 /* SRDefaultHttpWebRequestWrapper.m in Sources */,
 				39A3F654158237C700695201 /* SRDefaultHttpWebResponseWrapper.m in Sources */,
+				39A3F66C15828E8A00695201 /* SRExceptionHelper.m in Sources */,
+				39A3F67115828FF700695201 /* SRSseEvent.m in Sources */,
+				39A3F6751582918000695201 /* SRChunkBuffer.m in Sources */,
+				39A3F6781582925000695201 /* SREventSourceStreamReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

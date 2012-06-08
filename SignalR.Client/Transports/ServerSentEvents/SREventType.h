@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol SREventType <NSObject>
-
-@end
+typedef enum 
+{
+    Id,
+    Data
+} EventType;

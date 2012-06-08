@@ -101,14 +101,6 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 - (NSString *)getSendQueryString:(SRConnection *)connection;
 
 /**
- * Performs a check to see if the underlying HTTP request was cancelled
- *
- * @param error an error returned from the underlying HTTP request `SRHttpHelper`
- * @return YES if the request was aborted, NO if not
- */
-- (BOOL)isRequestAborted:(NSError *)error;
-
-/**
  * Subclasses of `SRHttpBasedTransport` should override this method if the `SRHttpBasedTransport` needs to perform cleanup before closing
  *
  * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`

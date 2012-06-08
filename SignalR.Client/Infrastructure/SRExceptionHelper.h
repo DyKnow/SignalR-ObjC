@@ -10,4 +10,12 @@
 
 @interface SRExceptionHelper : NSObject
 
+/**
+ * Performs a check to see if the underlying HTTP request was cancelled
+ *
+ * @param error an error returned from the underlying HTTP request `SRHttpHelper`
+ * @return YES if the request was aborted, NO if not
+ */
++ (BOOL)isRequestAborted:(NSError *)error;
+
 @end

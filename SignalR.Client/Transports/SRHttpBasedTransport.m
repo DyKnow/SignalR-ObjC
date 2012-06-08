@@ -176,11 +176,6 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
-- (BOOL)isRequestAborted:(NSError *)error
-{
-    return (error != nil && (error.code == NSURLErrorCancelled));
-}
-
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data
 {

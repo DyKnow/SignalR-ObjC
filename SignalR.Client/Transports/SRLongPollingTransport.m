@@ -24,6 +24,7 @@
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
 #import "SRDefaultHttpClient.h"
+#import "SRExceptionHelper.h"
 #import "SRSignalRConfig.h"
 
 #import "NSTimer+Blocks.h"
@@ -173,7 +174,7 @@ static NSString * const kTransportName = @"longPolling";
                         else
                         {
                             //Figure out if the request is aborted
-                            requestAborted = [self isRequestAborted:response.error];
+                            requestAborted = [SRExceptionHelper isRequestAborted:response.error];
                             
                             //Sometimes a connection might have been closed by the server before we get to write anything
                             //So just try again and don't raise an error

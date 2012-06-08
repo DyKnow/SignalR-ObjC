@@ -7,7 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SREventType.h"
 
 @interface SRSseEvent : NSObject
+
+@property (assign, nonatomic, readwrite) EventType type;
+@property (strong, nonatomic, readwrite) NSString *data;
+
+- (id)initWithType:(EventType)type data:(NSString *)data;
+
++ (BOOL)tryParseEvent:(NSString *)line sseEvent:(SRSseEvent **)sseEvent;
 
 @end
