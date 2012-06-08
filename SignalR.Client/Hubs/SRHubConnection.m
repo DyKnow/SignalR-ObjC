@@ -29,9 +29,7 @@
 #import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
 
-#if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onConnectionSending)();
-#endif
 
 @interface SRHubConnection ()
 

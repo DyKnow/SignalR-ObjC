@@ -21,7 +21,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "SRHttpClient.h"
 @class SRConnection;
 
 /**
@@ -29,7 +29,7 @@
  **/
 @protocol SRClientTransport <NSObject>
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void(^)(id))block;
+- (void)negotiate:(SRConnection *)connection continueWith:(SRResponseBlock)block;
 
 /**
  * Opens a connection to the server for the active transport
@@ -38,7 +38,7 @@
  * @param data the data to send when starting the transport on, may be nil
  * @param block the block to be called once start finishes, block may be nil
  */
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void(^)(id))block;
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(SRResponseBlock)block;
 
 /**
  * Sends data to the server for the active transport
@@ -47,7 +47,7 @@
  * @param data the data to send the server
  * @param block the block to be called once send finishes, block may be nil
  */
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block;
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(SRResponseBlock)block;
 
 /**
  * Stops the active transport from receiving data from the server

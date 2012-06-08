@@ -25,9 +25,7 @@
 #import "SRHttpClient.h"
 #import "SRRequest.h"
 
-#if NS_BLOCKS_AVAILABLE
 typedef void (^SRErrorByReferenceBlock)(NSError **);
-#endif
 
 /**
  * `SRHttpBasedTransport` is an abstract class intended to be subclassed. It publishes a programmatic interface that all subclasses must adopt and provide implementations for.
@@ -61,7 +59,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  */
 - (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport;
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id))block;
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(SRResponseBlock)block;
 
 /**
  * @warning *Important:* this method should only be called from a subclass of `SRHttpBasedTransport` 

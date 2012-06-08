@@ -22,6 +22,9 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^SRPrepareRequestBlock)(id request);
+typedef void (^SRContinueWithBlock)(id response);
+
 /**
  * `SRHttpHelper` defines a protocol used to create HttpRequest objects that are configured for the various http request methods (GET, PUT etc)
  */
@@ -40,7 +43,7 @@
  * @param url The url relative to the server endpoint
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url continueWith:(void (^)(id response))block;
++ (void)getAsync:(NSString *)url continueWith:(SRContinueWithBlock)block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -50,7 +53,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block;
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -60,7 +63,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(id response))block;
++ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(SRContinueWithBlock)block;
 
 /**
  * Creates a GET request with the specified url returns on the given block
@@ -71,7 +74,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block;
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block;
 
 #pragma mark -
 #pragma mark POST Requests
@@ -87,7 +90,7 @@
  * @param url The url relative to the server endpoint
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url continueWith:(void (^)(id response))block;
++ (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block;
 
 /**
  * Creates a POST request with the specified url returns on the given block
@@ -98,7 +101,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block;
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block;
 
 /**
  * Creates a POST request with the specified url and payload returns on the given block
@@ -108,7 +111,7 @@
  * @param postData An Object that conforms to SRSerializable to post at the url
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(id response))block;
++ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(SRContinueWithBlock)block;
 
 /**
  * Creates a POST request with the specified url and payload returns on the given block
@@ -120,6 +123,6 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block;
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block;
 
 @end

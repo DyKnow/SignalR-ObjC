@@ -141,10 +141,8 @@ typedef enum {
 #pragma mark -
 #pragma mark AsyncStreamReader
 
-#if NS_BLOCKS_AVAILABLE
 typedef void (^onInitialized)(void);
 typedef void (^onClose)(void);
-#endif
 
 @interface AsyncStreamReader : NSObject <NSStreamDelegate>
 
@@ -497,7 +495,7 @@ static NSString * const kReaderKey = @"sse.reader";
     
     NSString *url = [(reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
-    [self.httpClient getAsync:url requestPreparer:^(id <SRRequest> request)
+    [self.httpClient getAsync:url requestPreparer:^(id<SRRequest> request)
     {
         [self prepareRequest:request forConnection:connection];
 

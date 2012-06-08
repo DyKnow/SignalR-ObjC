@@ -41,7 +41,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block;
++ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block;
 
 #pragma mark - 
 #pragma mark POST Requests Implementation
@@ -56,7 +56,7 @@
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block;
++ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block;
 
 @end
 
@@ -65,27 +65,27 @@
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
-+ (void)getAsync:(NSString *)url continueWith:(void (^)(id response))block
++ (void)getAsync:(NSString *)url continueWith:(SRContinueWithBlock)block
 {
     [[self class] getAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block
 {
     [[self class] getAsync:url requestPreparer:requestPreparer parameters:[[NSDictionary alloc] init] continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(void (^)(id response))block;
++ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(SRContinueWithBlock)block
 {
     [[self class] getAsync:url requestPreparer:nil parameters:parameters continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block
 {
     [[self class] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
 }
 
-+ (void)getInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer parameters:(id)parameters continueWith:(void (^)(id response))block
++ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"GET"];
@@ -149,27 +149,27 @@
 #pragma mark - 
 #pragma mark POST Requests Implementation
 
-+ (void)postAsync:(NSString *)url continueWith:(void (^)(id response))block
++ (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block
 {
     [[self class] postAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer continueWith:(void (^)(id response))block
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block
 {
     [[self class] postAsync:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(void (^)(id response))block
++ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(SRContinueWithBlock)block
 {
     [[self class] postAsync:url requestPreparer:nil postData:postData continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block
 {
     [[self class] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
 }
 
-+ (void)postInternal:(NSString *)url requestPreparer:(void(^)(id))requestPreparer postData:(id)postData continueWith:(void (^)(id response))block
++ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block
 {
     NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     

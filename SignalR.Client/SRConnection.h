@@ -75,14 +75,12 @@
 
 @end
 
-#if NS_BLOCKS_AVAILABLE
 typedef void (^onStarted)();
 typedef NSString* (^onSending)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
 typedef void (^onReconnected)();
-#endif
 
 /**
  * An `SRConnection` object provides support to open a persistent connection with a SignalR Server.
@@ -304,7 +302,7 @@ typedef void (^onReconnected)();
  * @param message the message to send
  * @param block the callback to be called once the message is sent.
  */
-- (void)send:(NSString *)message continueWith:(void (^)(id response))block;
+- (void)send:(NSString *)message continueWith:(SRResponseBlock)block;
 
 ///-------------------------------
 /// @name Receiving Data
