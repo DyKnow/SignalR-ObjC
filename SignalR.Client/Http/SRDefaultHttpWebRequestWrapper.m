@@ -43,11 +43,6 @@
 @synthesize request = _request;
 @synthesize requestOperation = _requestOperation;
 
-+ (id)httpWebRequestWrapperWithRequest:(id)request
-{
-    return [[[self class] alloc] initWithRequest:request];
-}
-
 - (id)initWithRequest:(id)request
 {
     if (self = [super init])

@@ -120,29 +120,29 @@
         operation.outputStream = oStream;
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
-     {
+    {
 #if DEBUG_HTTP_HELPER
-         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-         debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
-         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-         if (block)
-         {
-             block((useOutputStream) ? nil : operation.responseString);
-         }
-     } 
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
-     {
+        if (block)
+        {
+            block((useOutputStream) ? nil : operation.responseString);
+        }
+    } 
+    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+    {
 #if DEBUG_HTTP_HELPER
-         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-         debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
-         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-         if (block)
-         {
-             block(error);
-         }
-     }];
+        if (block)
+        {
+            block(error);
+        }
+    }];
     [operation start];
 }
 
@@ -197,29 +197,29 @@
         requestPreparer(operation);
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
-     {
+    {
 #if DEBUG_HTTP_HELPER
-         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-         debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
-         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-         if (block)
-         {
-             block(operation.responseString);
-         }
-     } 
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
-     {
+        if (block)
+        {
+            block(operation.responseString);
+        }
+    } 
+    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
+    {
 #if DEBUG_HTTP_HELPER
-         NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-         debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
-         SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
+        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
+        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
+        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
 #endif
-         if (block)
-         {
-             block(error);
-         }
-     }];
+        if (block)
+        {
+            block(error);
+        }
+    }];
     [operation start];
 }
 
