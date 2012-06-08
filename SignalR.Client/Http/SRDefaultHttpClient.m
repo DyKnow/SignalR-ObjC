@@ -30,23 +30,23 @@
 - (void)getAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest continueWith:(SRResponseBlock)block
 {
     [SRDefaultHttpHelper getAsync:url 
-                  requestPreparer:^(id request) { prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); }
-                     continueWith:block];
+                  requestPreparer:^(id request) { if (prepareRequest) prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); }
+                     continueWith:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithResponse:response]); }];
 }
 
 - (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest continueWith:(SRResponseBlock)block
 {
     [SRDefaultHttpHelper postAsync:url 
-                   requestPreparer:^(id request) { prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); } 
-                      continueWith:block];
+                   requestPreparer:^(id request) { if (prepareRequest) prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); } 
+                      continueWith:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithResponse:response]); }];
 }
 
 - (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData continueWith:(SRResponseBlock)block
 {
     [SRDefaultHttpHelper postAsync:url 
-                   requestPreparer:^(id request) { prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); } 
+                   requestPreparer:^(id request) { if (prepareRequest) prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); } 
                           postData:postData 
-                      continueWith:block];
+                      continueWith:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithResponse:response]); }];
 }
 
 @end

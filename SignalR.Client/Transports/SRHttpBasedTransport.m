@@ -66,20 +66,20 @@
         
         [connection prepareRequest:request];
     }
-    continueWith:^(id response)
+    continueWith:^(id<SRResponse> response)
     {
 #if DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",response);
 #endif
-        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
-                          [response isEqualToString:@""] || response == nil ||
-                          [response isEqualToString:@"null"]);
+        BOOL isFaulted = (response.error || 
+                          [response.string isEqualToString:@""] ||
+                          [response.string isEqualToString:@"null"]);
         
-        if([response isKindOfClass:[NSString class]])
+        if(response.string)
         {
             if(!isFaulted)
             {
-                SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response SRJSONValue]];
+                SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response.string SRJSONValue]];
                 
                 if(block)
                 {
@@ -131,32 +131,22 @@
     SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will send data");
 #endif
     
-    if(block == nil)
+    [_httpClient postAsync:url requestPreparer:^(id<SRRequest> request)
     {
-        [_httpClient postAsync:url requestPreparer:^(id <SRRequest> request)
-        {
-            [connection prepareRequest:request];
-        } 
-        postData:postData continueWith:
-        ^(id response)
-        {
-            if([response isKindOfClass:[NSString class]])
-            {
-                if([response isEqualToString:@""] == NO && response != nil)
-                {
-                    [connection didReceiveData:response];
-                }
-            }
-        }];
-    }
-    else
+        [connection prepareRequest:request];
+    } 
+    postData:postData continueWith:^(id<SRResponse> response)
     {
-        [_httpClient postAsync:url requestPreparer:^(id <SRRequest> request)
+        if(response.string == nil || [response.string isEqualToString:@""] )
         {
-            [connection prepareRequest:request];
+            return;
         }
-        postData:postData continueWith:block];
-    }
+
+        if(block)
+        {
+            block([response.string SRJSONValue]);
+        }
+    }];
 }
 
 - (void)stop:(SRConnection *)connection

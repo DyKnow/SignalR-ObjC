@@ -22,9 +22,10 @@
 
 #import <Foundation/Foundation.h>
 #import "SRRequest.h"
+#import "SRResponse.h"
 
 typedef void (^SRRequestBlock)(id <SRRequest> request);
-typedef void (^SRResponseBlock)(id response);
+typedef void (^SRResponseBlock)(id <SRResponse> response);
 
 @protocol SRHttpClient <NSObject>
 

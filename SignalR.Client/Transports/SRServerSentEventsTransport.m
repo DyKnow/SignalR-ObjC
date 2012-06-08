@@ -501,16 +501,17 @@ static NSString * const kReaderKey = @"sse.reader";
 
         [request setAccept:@"text/event-stream"];
     }
-    continueWith:^(id response)
+    continueWith:^(id<SRResponse> response)
     {
-        BOOL isFaulted = ([response isKindOfClass:[NSError class]] || 
-                          response == nil);
+        BOOL isFaulted = (response.error || 
+                          [response.string isEqualToString:@""] ||
+                          [response.string isEqualToString:@"null"]);
         
         if (isFaulted)
         {
-            if ([response isKindOfClass:[NSError class]])
+            if (response.error)
             {
-                if(![self isRequestAborted:response])
+                if(![self isRequestAborted:response.error])
                 {                        
                     if (errorCallback != nil && 
                         _initializedCalled == 0)
@@ -522,7 +523,7 @@ static NSString * const kReaderKey = @"sse.reader";
                         
                         SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                         {
-                            *error = response;
+                            *error = response.error;
                         };
                         errorCallback(errorBlock);
                     }
@@ -532,7 +533,7 @@ static NSString * const kReaderKey = @"sse.reader";
                         SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
 #endif
                         // Only raise the error event if we failed to reconnect
-                        [connection didReceiveError:response];
+                        [connection didReceiveError:response.error];
                     }
                 }
                 
@@ -547,7 +548,7 @@ static NSString * const kReaderKey = @"sse.reader";
                     [self reconnect:connection data:data];
                 }
             }
-            else if(response == nil)
+            else if(response.stream == nil)
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
@@ -563,7 +564,7 @@ static NSString * const kReaderKey = @"sse.reader";
         else
         {
             //Get the response stream and read it for messages
-            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response connection:connection transport:self];
+            AsyncStreamReader *reader = [[AsyncStreamReader alloc] initWithStream:response.stream connection:connection transport:self];
             reader.initializeCallback = ^()
             {
                 if(initializeCallback != nil && _initializedCalled == 0)

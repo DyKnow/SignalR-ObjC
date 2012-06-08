@@ -24,4 +24,8 @@
 
 @protocol SRResponse <NSObject>
 
+@property (strong, nonatomic, readwrite) NSString *string;
+@property (strong, nonatomic, readwrite) NSOutputStream *stream;
+@property (strong, nonatomic, readwrite) NSError *error;
+
 @end
