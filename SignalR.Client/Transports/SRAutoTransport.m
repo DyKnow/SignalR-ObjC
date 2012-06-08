@@ -53,7 +53,7 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id response))block
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block
 {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
@@ -67,43 +67,43 @@
 {
     id <SRClientTransport> transport = [_transports objectAtIndex:index];
     
-    [transport start:connection withData:data continueWith:
-     ^(id task) {
-         if (task != nil)
-         {
+    [transport start:connection withData:data continueWith:^(id task) 
+    {
+        if (task != nil)
+        {
 #if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
-             SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will switch to next transport");
+            SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will switch to next transport");
 #endif
-             int next = index + 1;
-             if (next < [_transports count])
-             {
-                 [self resolveTransport:connection data:data taskCompletionSource:block index:next];
-             }
-             else
-             {
-                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                 [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                 [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",@"")] forKey:NSLocalizedDescriptionKey];
-                 NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                              code:0 
-                                          userInfo:userInfo];
-                 [connection didReceiveError:error];
-             }
-         }
-         else
-         {
+            int next = index + 1;
+            if (next < [_transports count])
+            {
+                [self resolveTransport:connection data:data taskCompletionSource:block index:next];
+            }
+            else
+            {
+                NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+                [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",@"")] forKey:NSLocalizedDescriptionKey];
+                NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+                                                     code:0 
+                                                 userInfo:userInfo];
+                [connection didReceiveError:error];
+            }
+        }
+        else
+        {
 #if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
-             SR_DEBUG_LOG(@"[AUTO_TRANSPORT] did set active transport");
+            SR_DEBUG_LOG(@"[AUTO_TRANSPORT] did set active transport");
 #endif
-             //Set the active transport
-             _transport = transport;
+            //Set the active transport
+            _transport = transport;
              
-             if(block) 
-             {
-                 block(nil);
-             }
-         }
-     }];
+            if(block) 
+            {
+                block(nil);
+            }
+        }
+    }];
 }
 
 - (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
@@ -124,6 +124,7 @@
 
 - (void)dealloc
 {
+    _httpClient = nil;
     _transports = nil;
     _transport = nil;
 }

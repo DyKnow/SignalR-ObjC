@@ -31,7 +31,6 @@
 @synthesize name = _name;
 
 static NSString * const kName = @"name";
-static NSString * const kMethods = @"methods";
 
 - (id) init
 {

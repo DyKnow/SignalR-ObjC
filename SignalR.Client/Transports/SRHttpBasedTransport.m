@@ -51,12 +51,12 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id response))block
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block
 {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id response))block
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block
 {
     NSString *negotiateUrl = [connection.url stringByAppendingString:kNegotiateRequest];
     
@@ -68,32 +68,31 @@
     }
     continueWith:^(id<SRResponse> response)
     {
-#if DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",response);
-#endif
-        BOOL isFaulted = (response.error || 
-                          [response.string isEqualToString:@""] ||
-                          [response.string isEqualToString:@"null"]);
+        NSString *raw = response.string;
         
-        if(response.string)
+        if (raw == nil || [raw isEqualToString:@""])
         {
-            if(!isFaulted)
-            {
-                SRNegotiationResponse *negotiationResponse = [[SRNegotiationResponse alloc] initWithDictionary:[response.string SRJSONValue]];
-                
-                if(block)
-                {
-                    block(negotiationResponse);
-                }
-            }
+#if DEBUG_HTTP_BASED_TRANSPORT
+            SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation failed, connection will stop");
+#endif
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+            [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+            [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Server negotiation failed.",@"NSInternalInconsistencyException")] forKey:NSLocalizedDescriptionKey];
+            NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+                                                 code:0 
+                                             userInfo:userInfo];
+            [connection didReceiveError:error];
+            [connection stop];
+            return;
         }
         
-        if(isFaulted)
-        {
-#if DEBUG_CONNECTION
-            SR_DEBUG_LOG(@"[CONNECTION] negotiation failed, connection will stop");
+#if DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",raw);
 #endif
-            [connection stop];
+        
+        if(block)
+        {
+            block([[SRNegotiationResponse alloc] initWithDictionary:[raw SRJSONValue]]);
         }
     }];
 }
@@ -103,8 +102,13 @@
 
 - (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))tcs
 {
-    [self onStart:connection data:data initializeCallback:^{ if(tcs) tcs(nil); } 
-    errorCallback:^(SRErrorByReferenceBlock block) {
+    [self onStart:connection data:data 
+    initializeCallback:^
+    { 
+        if(tcs) tcs(nil); 
+    } 
+    errorCallback:^(SRErrorByReferenceBlock block) 
+    {
         NSError *error = nil;
         if (tcs && block)
         {
@@ -137,14 +141,16 @@
     } 
     postData:postData continueWith:^(id<SRResponse> response)
     {
-        if(response.string == nil || [response.string isEqualToString:@""] )
+        NSString *raw = response.string;
+        
+        if (raw == nil || [raw isEqualToString:@""])
         {
             return;
         }
 
         if(block)
         {
-            block([response.string SRJSONValue]);
+            block([raw SRJSONValue]);
         }
     }];
 }
@@ -311,6 +317,7 @@
 
 - (void)dealloc
 {
+    _httpClient = nil;
     _transport = nil;
 }
 @end

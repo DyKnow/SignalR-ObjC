@@ -132,6 +132,11 @@
     return success;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%d.%d.%d.%d",_major,_minor,_build,_revision];
+}
+
 - (void)dealloc
 {
     _build = 0;

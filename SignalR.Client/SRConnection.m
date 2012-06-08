@@ -35,7 +35,7 @@ void (^prepareRequest)(id);
 
 @interface SRConnection ()
 
-@property (strong, nonatomic, readonly) NSString *assemblyVersion;
+@property (strong, nonatomic, readonly) SRVersion *assemblyVersion;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
 
 - (void)verifyProtocolVersion:(NSString *)versionString;
@@ -114,6 +114,7 @@ void (^prepareRequest)(id);
         _groups = [[NSMutableArray alloc] init];
         _items = [NSMutableDictionary dictionary];
         _headers = [NSMutableDictionary dictionary];
+        _state = disconnected;
     }
     return self;
 }
@@ -148,13 +149,6 @@ void (^prepareRequest)(id);
 
 - (void)negotiate:(id<SRClientTransport>)transport
 {
-    NSString *data = nil;
-    
-    if(_sending != nil)
-    {
-        data = self.sending();
-    }
-        
 #if DEBUG_CONNECTION
     SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
 #endif
@@ -169,6 +163,13 @@ void (^prepareRequest)(id);
         if(negotiationResponse.connectionId)
         {
             _connectionId = negotiationResponse.connectionId;
+            
+            NSString *data = nil;
+            
+            if(_sending != nil)
+            {
+                data = self.sending();
+            }
             
             [_transport start:self withData:data continueWith:
              ^(id task) 
@@ -319,8 +320,7 @@ void (^prepareRequest)(id);
 {
     if(_assemblyVersion == nil)
     {
-        //Need to manually set this otherwise it will inherit from the project version
-        _assemblyVersion = @"0.5";
+        _assemblyVersion = [[SRVersion alloc] initWithMajor:0 minor:5 build:0 revision:0];
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -358,6 +358,7 @@ void (^prepareRequest)(id);
     _connectionId = nil;
     _items = nil;
     _queryString = nil;
+    _headers = nil;
     _delegate = nil;
 }
 

@@ -24,7 +24,6 @@
 
 typedef enum 
 {
-    none,
     connecting,
     connected,
     reconnecting,
