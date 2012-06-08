@@ -302,7 +302,7 @@ typedef void (^onReconnected)();
  * @param message the message to send
  * @param block the callback to be called once the message is sent.
  */
-- (void)send:(NSString *)message continueWith:(SRResponseBlock)block;
+- (void)send:(NSString *)message continueWith:(void (^)(id response))block;
 
 ///-------------------------------
 /// @name Receiving Data

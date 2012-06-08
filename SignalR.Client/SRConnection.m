@@ -236,7 +236,7 @@ void (^prepareRequest)(id);
     [self send:message continueWith:nil];
 }
 
-- (void)send:(NSString *)message continueWith:(SRResponseBlock)block
+- (void)send:(NSString *)message continueWith:(void (^)(id response))block
 {
     if ([self isDisconnecting])
     {

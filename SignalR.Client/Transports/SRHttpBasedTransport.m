@@ -51,12 +51,12 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(SRResponseBlock)block
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id response))block
 {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(SRResponseBlock)block
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id response))block
 {
     NSString *negotiateUrl = [connection.url stringByAppendingString:kNegotiateRequest];
     
@@ -101,7 +101,7 @@
 #pragma mark -
 #pragma mark SRConnectionTransport Protocol
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(SRResponseBlock)tcs
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))tcs
 {
     [self onStart:connection data:data initializeCallback:^{ if(tcs) tcs(nil); } 
     errorCallback:^(SRErrorByReferenceBlock block) {
@@ -119,7 +119,7 @@
     [NSException raise:NSGenericException format:NSLocalizedString(@"Must use an overriding class of SRHttpBasedTransport",@"")];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(SRResponseBlock)block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {       
     NSString *url = [connection.url stringByAppendingString:kSendEndPoint];
     url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];

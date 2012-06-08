@@ -32,7 +32,7 @@
 @property (strong, nonatomic, readonly) NSArray *transports;
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(SRResponseBlock)block index:(int)index;
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index;
 
 @end
 
@@ -53,17 +53,17 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(SRResponseBlock)block
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(id response))block
 {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(SRResponseBlock)block
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {
     [self resolveTransport:connection data:data taskCompletionSource:block index:0];
 }
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(SRResponseBlock)block index:(int)index
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index
 {
     id <SRClientTransport> transport = [_transports objectAtIndex:index];
     
@@ -106,7 +106,7 @@
      }];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(SRResponseBlock)block
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
 {
 #if DEBUG_AUTO_TRANSPORT || DEBUG_HTTP_BASED_TRANSPORT
     SR_DEBUG_LOG(@"[AUTO_TRANSPORT] will send data from active transport");

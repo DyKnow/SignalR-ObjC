@@ -21,7 +21,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRHttpClient.h"
 
 @class SRConnection;
 @class SRSubscription;
@@ -127,6 +126,6 @@
  * @param args the arguments to pass as part of the invocation
  * @param responseBlock the block to be called once the server method is invoked, this may be nil
  */
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(SRResponseBlock)responseBlock;
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(void (^)(id response))responseBlock;
 
 @end

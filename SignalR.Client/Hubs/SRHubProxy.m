@@ -127,7 +127,7 @@
     [self invoke:method withArgs:args continueWith:nil];
 }
 
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(SRResponseBlock)responseBlock
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(void (^)(id response))responseBlock
 {
     if([method isEqualToString:@""] || method == nil)
     {

@@ -59,7 +59,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  */
 - (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport;
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(SRResponseBlock)block;
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(id response))block;
 
 /**
  * @warning *Important:* this method should only be called from a subclass of `SRHttpBasedTransport` 
