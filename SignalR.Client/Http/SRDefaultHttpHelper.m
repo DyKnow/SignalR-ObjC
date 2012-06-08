@@ -20,10 +20,10 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import "AFNetworking.h"
 #import "SRDefaultHttpHelper.h"
 #import "SRSignalRConfig.h"
 
-#import "AFNetworking.h"
 #import "NSDictionary+QueryString.h"
 
 @interface SRDefaultHttpHelper ()

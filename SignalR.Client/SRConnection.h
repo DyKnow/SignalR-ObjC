@@ -22,8 +22,9 @@
 
 #import <Foundation/Foundation.h>
 #import "SRClientTransport.h"
-#import "SRHttpClient.h"
 #import "SRConnectionState.h"
+#import "SRHttpClient.h"
+#import "SRRequest.h"
 
 @class SRConnection;
 
@@ -349,9 +350,9 @@ typedef void (^onReconnected)();
 /**
  * Sets the user agent, crediential information and other relevant header values on each connection
  *
- * @param request The `NSMutableURLRequest` that will be sent to the server
+ * @param request The `id <SRRequest>` that will be sent to the server
  */
-- (void)prepareRequest:(id)request;
+- (void)prepareRequest:(id <SRRequest>)request;
 
 /**
  * Generates the client UserAgent header field

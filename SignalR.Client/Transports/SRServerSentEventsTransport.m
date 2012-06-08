@@ -21,11 +21,11 @@
 //
 
 #import "SRServerSentEventsTransport.h"
-#import "SRSignalRConfig.h"
-
-#import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
+#import "SRDefaultHttpClient.h"
+#import "SRSignalRConfig.h"
+
 #import "NSTimer+Blocks.h"
 
 #pragma mark - 
@@ -497,14 +497,11 @@ static NSString * const kReaderKey = @"sse.reader";
     
     NSString *url = [(reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
-    [self.httpClient getAsync:url requestPreparer:^(id request)
+    [self.httpClient getAsync:url requestPreparer:^(id <SRRequest> request)
     {
         [self prepareRequest:request forConnection:connection];
 
-        if([request isKindOfClass:[NSMutableURLRequest class]])
-        {
-            [request addValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
-        }
+        [request setAccept:@"text/event-stream"];
     }
     continueWith:^(id response)
     {

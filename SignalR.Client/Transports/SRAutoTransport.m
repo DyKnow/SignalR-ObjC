@@ -21,12 +21,10 @@
 //
 
 #import "SRAutoTransport.h"
-#import "SRSignalRConfig.h"
-
 #import "SRConnection.h"
-#import "SRDefaultHttpClient.h"
-#import "SRServerSentEventsTransport.h"
 #import "SRLongPollingTransport.h"
+#import "SRServerSentEventsTransport.h"
+#import "SRSignalRConfig.h"
 
 @interface SRAutoTransport ()
 
@@ -50,7 +48,7 @@
     if(self = [super init])
     {
         _httpClient = httpClient;
-        _transports = [NSArray arrayWithObjects:[[SRServerSentEventsTransport alloc] init],[[SRLongPollingTransport alloc] init], nil];
+        _transports = [NSArray arrayWithObjects:[[SRLongPollingTransport alloc] init],[[SRLongPollingTransport alloc] init], nil];
     }
     return self;
 }

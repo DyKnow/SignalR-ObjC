@@ -20,6 +20,8 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import <Foundation/Foundation.h>
+
 /**
  * A category on `NSDictionary` which url form encodes/decodes `NSDictionary` objects
  */

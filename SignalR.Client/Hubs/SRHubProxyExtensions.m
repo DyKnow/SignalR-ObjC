@@ -21,9 +21,8 @@
 //
 
 #import "SRHubProxyExtensions.h"
-
-#import "SRSubscription.h"
 #import "SRHubservable.h"
+#import "SRSubscription.h"
 
 @implementation SRHubProxy (Extensions)
 

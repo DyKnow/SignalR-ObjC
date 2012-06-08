@@ -21,24 +21,24 @@
 //
 
 #import "SRDefaultHttpClient.h"
-
 #import "SRDefaultHttpHelper.h"
+#import "SRDefaultHttpWebRequestWrapper.h"
 
 @implementation SRDefaultHttpClient
 
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id <SRRequest>))prepareRequest continueWith:(void (^)(id response))block
 {
-    [SRDefaultHttpHelper getAsync:url requestPreparer:prepareRequest continueWith:block];
+    [SRDefaultHttpHelper getAsync:url requestPreparer:^(id request) { prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); }continueWith:block];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id <SRRequest>))prepareRequest continueWith:(void (^)(id response))block
 {
-    [SRDefaultHttpHelper postAsync:url requestPreparer:prepareRequest continueWith:block];
+    [SRDefaultHttpHelper postAsync:url requestPreparer:^(id request) { prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); } continueWith:block];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id <SRRequest>))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block
 {
-    [SRDefaultHttpHelper postAsync:url requestPreparer:prepareRequest postData:postData continueWith:block];
+    [SRDefaultHttpHelper postAsync:url requestPreparer:^(id request) { prepareRequest([[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request]); } postData:postData continueWith:block];
 }
 
 @end

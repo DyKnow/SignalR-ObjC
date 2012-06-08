@@ -21,12 +21,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRRequest.h"
 
 @protocol SRHttpClient <NSObject>
 
-- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block;
+- (void)getAsync:(NSString *)url requestPreparer:(void(^)(id <SRRequest>))prepareRequest continueWith:(void (^)(id response))block;
 
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest continueWith:(void (^)(id response))block;
-- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block;
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id <SRRequest>))prepareRequest continueWith:(void (^)(id response))block;
+- (void)postAsync:(NSString *)url requestPreparer:(void(^)(id <SRRequest>))prepareRequest postData:(id)postData continueWith:(void (^)(id response))block;
 
 @end

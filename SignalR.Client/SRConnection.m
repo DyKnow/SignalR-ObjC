@@ -21,16 +21,14 @@
 //
 
 #include <TargetConditionals.h>
+#import "SRAutoTransport.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
-#import "SRSignalRConfig.h"
-
-#import "AFNetworking.h"
-#import "NSObject+SRJSON.h"
 #import "SRDefaultHttpClient.h"
-#import "SRAutoTransport.h"
 #import "SRNegotiationResponse.h"
+#import "SRSignalRConfig.h"
 #import "SRVersion.h"
+
 #import "NSDictionary+QueryString.h"
 
 void (^prepareRequest)(id);
@@ -304,29 +302,17 @@ void (^prepareRequest)(id);
 #pragma mark - 
 #pragma mark Prepare Request
 
-- (void)prepareRequest:(id)request
+- (void)prepareRequest:(id <SRRequest>)request
 {
-    if([request isKindOfClass:[NSMutableURLRequest class]])
-    {
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-        [request addValue:[self createUserAgentString:NSLocalizedString(@"SignalR.Client.iOS",@"")] forHTTPHeaderField:@"User-Agent"];
+    [request setUserAgent:[self createUserAgentString:NSLocalizedString(@"SignalR.Client.iOS",@"")]];
 #elif TARGET_OS_MAC
-        [request addValue:[self createUserAgentString:NSLocalizedString(@"SignalR.Client.OSX",@"")] forHTTPHeaderField:@"User-Agent"];
+    [request setUserAgent:[self createUserAgentString:NSLocalizedString(@"SignalR.Client.OSX",@"")]];
 #endif
-        if(_credentials != nil)
-        {
-            // Create a AFHTTPClient for the sole purpose of generating an authorization header.
-            AFHTTPClient *clientForAuthHeader = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
-            [clientForAuthHeader setAuthorizationHeaderWithUsername:_credentials.user password:_credentials.password];
-            
-            //Set the Authorization header that we just generated to our actual request
-            [request addValue:[clientForAuthHeader defaultValueForHeader:@"Authorization"] forHTTPHeaderField:@"Authorization"];
-        }
-        for(NSString *header in _headers) 
-        {
-            [request addValue:[_headers valueForKey:header] forHTTPHeaderField:header];
-        }
-    }
+    
+    [request setCredentials:_credentials];
+    
+    [request setHeaders:_headers];
 }
 
 - (NSString *)createUserAgentString:(NSString *)client

@@ -20,6 +20,8 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import <Foundation/Foundation.h>
+
 /**
  * A category on `NSString` which url encodes/decodes `NSString` objects
  */

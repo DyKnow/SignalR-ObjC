@@ -79,6 +79,7 @@
 		39951B6B14C6476800B33280 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39951B6A14C6476800B33280 /* icon.png */; };
 		39951B6C14C647BB00B33280 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 39951B6A14C6476800B33280 /* icon.png */; };
 		39951B8014C64B8300B33280 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 39951B7F14C64B8300B33280 /* icon.icns */; };
+		39A3F6361581412E00695201 /* SRDefaultHttpWebRequestWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A3F6351581412E00695201 /* SRDefaultHttpWebRequestWrapper.m */; };
 		39E52ED3157FC89E00A3A75C /* SRDefaultHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E52ED2157FC89E00A3A75C /* SRDefaultHttpHelper.m */; };
 		39FE4E4A1468164300B111BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E491468164300B111BF /* UIKit.framework */; };
 		39FE4E4C1468164300B111BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE4E4B1468164300B111BF /* Foundation.framework */; };
@@ -188,6 +189,10 @@
 		39951B6814C6468000B33280 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		39951B6A14C6476800B33280 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		39951B7F14C64B8300B33280 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		39A3F631158140EF00695201 /* SRRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SRRequest.h; path = Http/SRRequest.h; sourceTree = "<group>"; };
+		39A3F6331581410200695201 /* SRResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SRResponse.h; path = Http/SRResponse.h; sourceTree = "<group>"; };
+		39A3F6341581412E00695201 /* SRDefaultHttpWebRequestWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRDefaultHttpWebRequestWrapper.h; path = Http/SRDefaultHttpWebRequestWrapper.h; sourceTree = "<group>"; };
+		39A3F6351581412E00695201 /* SRDefaultHttpWebRequestWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRDefaultHttpWebRequestWrapper.m; path = Http/SRDefaultHttpWebRequestWrapper.m; sourceTree = "<group>"; };
 		39E52EA4157F932400A3A75C /* SRConnectionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionState.h; sourceTree = "<group>"; };
 		39E52EB5157F9F9400A3A75C /* SRSerializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRSerializable.h; sourceTree = "<group>"; };
 		39E52EB7157F9FA100A3A75C /* SRDeserializable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRDeserializable.h; sourceTree = "<group>"; };
@@ -309,6 +314,10 @@
 				392524781524EC6500312374 /* SRHttpHelper.h */,
 				39E52ED1157FC89E00A3A75C /* SRDefaultHttpHelper.h */,
 				39E52ED2157FC89E00A3A75C /* SRDefaultHttpHelper.m */,
+				39A3F631158140EF00695201 /* SRRequest.h */,
+				39A3F6341581412E00695201 /* SRDefaultHttpWebRequestWrapper.h */,
+				39A3F6351581412E00695201 /* SRDefaultHttpWebRequestWrapper.m */,
+				39A3F6331581410200695201 /* SRResponse.h */,
 			);
 			name = Http;
 			sourceTree = "<group>";
@@ -665,6 +674,7 @@
 				39607A7C155AF32000790098 /* AFXMLRequestOperation.m in Sources */,
 				39607A7D155AF32000790098 /* UIImageView+AFNetworking.m in Sources */,
 				39E52ED3157FC89E00A3A75C /* SRDefaultHttpHelper.m in Sources */,
+				39A3F6361581412E00695201 /* SRDefaultHttpWebRequestWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,8 +1,8 @@
 //
-//  SRHubservable.m
+//  SRDefaultHttpWebRequestWrapper.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 11/4/11.
+//  Created by Alex Billingsley on 3/23/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -20,55 +20,11 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubProxy.h"
-#import "SRHubservable.h"
-#import "SRSubscription.h"
+#import <Foundation/Foundation.h>
+#import "SRRequest.h"
 
-@interface SRHubservable ()
+@interface SRDefaultHttpWebRequestWrapper : NSObject <SRRequest>
 
-@end
-
-@implementation SRHubservable
-
-@synthesize proxy = _proxy;
-@synthesize eventName = _eventName;
-
-#pragma mark - 
-#pragma mark Initialization
-
-+ (id)observe:(SRHubProxy *)proxy event:(NSString *)eventName
-{
-    return [[SRHubservable alloc] initWithProxy:proxy eventName:eventName];
-}
-
-- (id)initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName
-{
-    if (self = [super init]) 
-    {
-        _proxy = proxy;
-        _eventName = eventName;
-    }
-    return self;
-}
-
-- (SRSubscription *)subscribe:(NSObject *)object selector:(SEL)selector
-{
-    SRSubscription *subscription = [_proxy subscribe:_eventName];
-    subscription.object = object;
-    subscription.selector = selector;
-    
-    return subscription;
-}
-
-- (NSString *)description 
-{  
-    return [NSString stringWithFormat:@"Hubservable: Hub:%@ Event=%@",_proxy, _eventName];
-}
-
-- (void)dealloc
-{
-    _proxy = nil;
-    _eventName = nil;
-}
+- (id)initWithRequest:(id)request;
 
 @end

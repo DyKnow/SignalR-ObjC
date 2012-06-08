@@ -20,6 +20,7 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import <Foundation/Foundation.h>
 #import "SRConnection.h"
 
 @class SRHubProxy;

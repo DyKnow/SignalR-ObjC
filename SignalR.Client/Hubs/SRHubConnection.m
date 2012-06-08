@@ -21,14 +21,13 @@
 //
 
 #import "SRHubConnection.h"
-#import "SRSignalRConfig.h"
-
-#import "NSObject+SRJSON.h"
+#import "SRHubInvocation.h"
 #import "SRHubProxy.h"
 #import "SRHubRegistrationData.h"
-#import "SRHubInvocation.h"
+#import "SRSignalRConfig.h"
 
 #import "NSDictionary+QueryString.h"
+#import "NSObject+SRJSON.h"
 
 #if NS_BLOCKS_AVAILABLE
 typedef NSString* (^onConnectionSending)();

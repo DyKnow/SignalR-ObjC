@@ -21,11 +21,11 @@
 //
 
 #import "SRLongPollingTransport.h"
-#import "SRSignalRConfig.h"
-
-#import "SRDefaultHttpClient.h"
 #import "SRConnection.h"
 #import "SRConnectionExtensions.h"
+#import "SRDefaultHttpClient.h"
+#import "SRSignalRConfig.h"
+
 #import "NSTimer+Blocks.h"
 
 typedef void (^onInitialized)(void);

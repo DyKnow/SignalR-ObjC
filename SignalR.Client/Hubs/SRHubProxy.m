@@ -20,14 +20,14 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import "SRConnection.h"
+#import "SRHubInvocation.h"
 #import "SRHubProxy.h"
+#import "SRHubResult.h"
 #import "SRSignalRConfig.h"
+#import "SRSubscription.h"
 
 #import "NSObject+SRJSON.h"
-#import "SRConnection.h"
-#import "SRSubscription.h"
-#import "SRHubInvocation.h"
-#import "SRHubResult.h"
 
 @interface SRHubProxy ()
 
