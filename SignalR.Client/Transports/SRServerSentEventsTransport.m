@@ -27,11 +27,13 @@
 #import "SREventSourceStreamReader.h"
 #import "SRExceptionHelper.h"
 #import "SRSignalRConfig.h"
+#import "SRSseEvent.h"
 
 #import "NSTimer+Blocks.h"
 
 @interface SRServerSentEventsTransport ()
 
+@property (strong, nonatomic, readwrite) SREventSourceStreamReader *eventSource;
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
 @property (assign, nonatomic, readwrite) NSInteger initializedCalled;
 
@@ -42,11 +44,11 @@
 @implementation SRServerSentEventsTransport
 
 @synthesize connectionTimeout = _connectionTimeout;
+@synthesize eventSource = _eventSource;
 @synthesize reconnectDelay = _reconnectDelay;
 @synthesize initializedCalled = _initializedCalled;
 
 static NSString * const kTransportName = @"serverSentEvents";
-static NSString * const kReaderKey = @"sse.reader";
 
 - (id)init
 {
@@ -108,97 +110,121 @@ static NSString * const kReaderKey = @"sse.reader";
         
         if (isFaulted)
         {
-            if (response.error)
-            {
-                if(![SRExceptionHelper isRequestAborted:response.error])
-                {                        
-                    if (errorCallback != nil && 
-                        _initializedCalled == 0)
-                    {
+            if(![SRExceptionHelper isRequestAborted:response.error])
+            {                        
+                if (errorCallback != nil && 
+                    _initializedCalled == 0)
+                {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
+                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
 #endif
-                        _initializedCalled = 1;
-                        
-                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                    _initializedCalled = 1;
+                    
+                    SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                    {
+                        if(error)
                         {
                             *error = response.error;
-                        };
-                        errorCallback(errorBlock);
-                    }
-                    else if(reconnecting)
-                    {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
-#endif
-                        // Only raise the error event if we failed to reconnect
-                        [connection didReceiveError:response.error];
-                    }
+                        }
+                    };
+                    errorCallback(errorBlock);
                 }
-                
-                if(reconnecting)
+                else if(reconnecting)
                 {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
+                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
 #endif
-                    connection.state = reconnecting;
-                    
-                    //Retry
-                    [self reconnect:connection data:data];
+                    // Only raise the error event if we failed to reconnect
+                    [connection didReceiveError:response.error];
                 }
             }
-            else if(response.stream == nil)
+            
+            if(reconnecting) //&& !CancellationToken.IsCancellationRequested) //TODO: Not cancelled
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] buffer is 0 reading will stop and resume after reconnecting");
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
 #endif
-                SREventSourceStreamReader *reader = nil;
-                if((reader = [connection getValue:kReaderKey]))
-                {
-                    [reader stopReading:YES];
-                    return;
-                }  
+                connection.state = reconnecting;
+                
+                //Retry
+                [self reconnect:connection data:data];
             }
         }
         else
         {
-            //Get the response stream and read it for messages
-            SREventSourceStreamReader *reader = [[SREventSourceStreamReader alloc] initWithStream:response.stream connection:connection transport:self];
-            reader.initializeCallback = ^()
+            _eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
+            __weak SRServerSentEventsTransport *_transport = self;
+            __block BOOL retry = YES;
+            
+            _eventSource.opened = ^()
             {
-                if(initializeCallback != nil && _initializedCalled == 0)
+                if(initializeCallback != nil && _transport.initializedCalled == 0)
                 {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection is initialized");
 #endif
-                    _initializedCalled = 1;
+                    _transport.initializedCalled = 1;
                     
                     initializeCallback();
                 }
+                
+                if(reconnecting)
+                {
+                    //Change the status to connected
+                    connection.state = connected;
+                    
+                    // Raise the reconnect event if the connection comes back up
+                    [connection didReconnect];
+                }
             };
-            reader.closeCallback = ^()
+            
+            _eventSource.error = ^(NSError * error)
             {
+                [connection didReceiveError:error];
+            };
+            
+            _eventSource.message = ^(SRSseEvent * sseEvent)
+            {
+                if(sseEvent.type == Data)
+                {
+                    if([sseEvent.data caseInsensitiveCompare:@"initialized"] == NSOrderedSame)
+                    {
+                        return;
+                    }
+                }
+                
+                BOOL timedOut = NO;
+                BOOL disconnect = NO;
+                
+                [_transport processResponse:connection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
+                
+                if(disconnect)
+                {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] stream did close, will reopen in %d seconds...",_reconnectDelay);
+                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] disconnectReceived should disconnect");
 #endif
-                connection.state = reconnecting;
-                
-                [self reconnect:connection data:data];
+                    retry = NO;
+                }
             };
             
-            if(reconnecting)
+            _eventSource.closed = ^()
             {
-                //Change the status to connected
-                connection.state = connected;
-                
-                // Raise the reconnect event if the connection comes back up
-                [connection didReconnect];
-            }
+                if(retry)// && !CancellationToken.IsCancellationRequested)) //TODO: Not cancelled
+                {
+                    connection.state = reconnecting;
+                    
+                    [_transport reconnect:connection data:data];
+                }
+                else
+                {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] will abort connection");
+#endif
+                    [connection stop];
+                }
+            };
             
-            [reader startReading];
-            
-            //Set the reader for this connection
-            [connection.items setObject:reader forKey:kReaderKey];
+            [_eventSource start];
         }
     }];
     
@@ -221,12 +247,15 @@ static NSString * const kReaderKey = @"sse.reader";
                 {
                     SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                     {
-                        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
-                        *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                                             code:NSURLErrorTimedOut 
-                                                         userInfo:userInfo];
+                        if(error)
+                        {
+                            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                            [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+                            [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
+                            *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+                                                         code:NSURLErrorTimedOut 
+                                                     userInfo:userInfo];
+                        }
                     };
                     errorCallback(errorBlock);
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
@@ -238,25 +267,9 @@ static NSString * const kReaderKey = @"sse.reader";
     }
 }
 
-- (void)onBeforeAbort:(SRConnection *)connection
-{
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] will abort connection");
-#endif
-    //Get the reader from the connection and stop it
-    id reader = nil;
-    if((reader = [connection getValue:kReaderKey]))
-    {
-        //Stop reading data from the stream
-        [reader stopReading:NO];
-        
-        //Remove the reader
-        [connection.items removeObjectForKey:kReaderKey];
-    }
-}
-
 - (void)dealloc
 {
+    _eventSource = nil;
     _connectionTimeout = 0;
     _reconnectDelay = 0;
     _initializedCalled = 0;

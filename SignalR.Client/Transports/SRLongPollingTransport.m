@@ -167,7 +167,10 @@ static NSString * const kTransportName = @"longPolling";
                             //Call the callback
                             SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                             {
-                                *error = response.error;
+                                if(error)
+                                {
+                                    *error = response.error;
+                                }
                             };
                             errorCallback(errorBlock);
                         }
