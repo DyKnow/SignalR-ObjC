@@ -62,17 +62,6 @@
 
 @implementation SRDefaultHttpHelper
 
-+ (NSOperationQueue *)sharedRequestOperationQueue 
-{
-    static NSOperationQueue *requestOperationQueue = nil;
-    if (!requestOperationQueue) 
-    {
-        requestOperationQueue = [[NSOperationQueue alloc] init];
-        [requestOperationQueue setMaxConcurrentOperationCount:1];
-    }
-    return requestOperationQueue;
-}
-
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
@@ -152,7 +141,7 @@
             block(error);
         }
     }];
-    [[[self class] sharedRequestOperationQueue] addOperation:operation];
+    [operation start];
 }
 
 #pragma mark - 
@@ -229,7 +218,7 @@
             block(error);
         }
     }];
-    [[[self class] sharedRequestOperationQueue] addOperation:operation];
+    [operation start];
 }
 
 @end

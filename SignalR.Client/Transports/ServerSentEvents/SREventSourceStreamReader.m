@@ -74,6 +74,7 @@
 - (void)start
 {
     _stream.delegate = self;
+    //[_stream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 }
 
 - (BOOL)processing
@@ -119,7 +120,6 @@
             NSData *buffer = [(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
             buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
             
-            NSLog(@"%@",[NSThread currentThread]);
             NSInteger read = [buffer length];            
             if(read > 0)
             {
