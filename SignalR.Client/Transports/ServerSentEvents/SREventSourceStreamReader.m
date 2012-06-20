@@ -33,13 +33,11 @@
 @property (strong, nonatomic, readwrite)  NSOutputStream *stream;
 @property (strong, nonatomic, readonly)  SRChunkBuffer *buffer;
 @property (assign, nonatomic, readonly)  BOOL reading;
-@property (assign, nonatomic, readwrite) int processedBytes;
-@property (assign, nonatomic, readonly)  BOOL processingBuffer;
-@property (assign, nonatomic, readonly)  int processingQueue;
+@property (assign, nonatomic, readwrite) NSInteger offset;
 
 - (BOOL)processing;
 
-- (void)processBuffer;
+- (void)processBuffer:(NSData *)buffer read:(NSInteger)read;
 
 - (void)onError:(NSError *)error;
 - (void)onOpened;
@@ -58,9 +56,7 @@
 @synthesize stream = _stream;
 @synthesize buffer = _buffer;
 @synthesize reading = _reading;
-@synthesize processedBytes = _processedBytes;
-@synthesize processingBuffer = _processingBuffer;
-@synthesize processingQueue = _processingQueue;
+@synthesize offset = _offset;
 
 - (id)initWithStream:(NSOutputStream *)steam
 {
@@ -70,7 +66,7 @@
         _buffer = [[SRChunkBuffer alloc] init];
         _reading = NO;
 
-        _processedBytes = 0;
+        _offset = 0;
     }
     return self;
 }
@@ -120,19 +116,17 @@
                 return;
             }
             
-            NSMutableData *buffer = [NSMutableData dataWithData:[(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
-            [buffer replaceBytesInRange:NSMakeRange(0, _processedBytes) withBytes:NULL length:0];
+            NSData *buffer = [(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+            buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
             
-            int read = [buffer length];
-            
+            NSLog(@"%@",[NSThread currentThread]);
+            NSInteger read = [buffer length];            
             if(read > 0)
             {
                 // Put chunks in the buffer
-                [_buffer add:buffer length:read];
-                _processedBytes = _processedBytes + [buffer length];
+                _offset = _offset + read;
+                [self processBuffer:buffer read:read];
             }
-            
-            [self processBuffer];
             
             break;
         }
@@ -160,55 +154,31 @@
     }
 }
 
-- (void)processBuffer
+- (void)processBuffer:(NSData *)buffer read:(NSInteger)read
 {
-    if (![self processing])
+    [_buffer add:buffer length:read];
+    
+    while ([_buffer hasChunks])
     {
-        return;
-    }
-    
-    if (_processingBuffer)
-    {
-        // Increment the number of times we should process messages
-        _processingQueue++;
-        return;
-    }
-    
-    _processingBuffer = true;
-    
-    int total = MAX(1, _processingQueue);
-    
-    for (int i = 0; i < total; i++)
-    {
-        while ([_buffer hasChunks])
+        NSString *line = [_buffer readLine];
+        
+        // No new lines in the buffer so stop processing
+        if (line == nil)
         {
-            NSString *line = [_buffer readLine];
-            
-            // No new lines in the buffer so stop processing
-            if (line == nil)
-            {
-                break;
-            }
-            
-            SRSseEvent *sseEvent = nil;
-            if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent])
-            {
-                continue;
-            }
-            
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[EventSourceReader] SSE READ: %@",sseEvent);
-#endif
-            [self onMessage:sseEvent];
+            break;
         }
+        
+        SRSseEvent *sseEvent = nil;
+        if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent])
+        {
+            continue;
+        }
+        
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[EventSourceReader] SSE READ: %@",sseEvent);
+#endif
+        [self onMessage:sseEvent];
     }
-    
-    if (_processingQueue > 0)
-    {
-        _processingQueue -= total;
-    }
-    
-    _processingBuffer = false;
 }
 
 #pragma mark -
@@ -248,6 +218,7 @@
 
 - (void)dealloc
 {
+    _stream.delegate = nil;
     _stream = nil;
     _buffer = nil;
     _reading = NO;

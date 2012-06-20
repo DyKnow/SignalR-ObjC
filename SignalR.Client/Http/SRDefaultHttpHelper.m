@@ -62,6 +62,17 @@
 
 @implementation SRDefaultHttpHelper
 
++ (NSOperationQueue *)sharedRequestOperationQueue 
+{
+    static NSOperationQueue *requestOperationQueue = nil;
+    if (!requestOperationQueue) 
+    {
+        requestOperationQueue = [[NSOperationQueue alloc] init];
+        [requestOperationQueue setMaxConcurrentOperationCount:1];
+    }
+    return requestOperationQueue;
+}
+
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
@@ -112,12 +123,10 @@
     BOOL useOutputStream = ([[request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]);
     if(useOutputStream)
     {
-        NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
         if(block)
         {
-            block(oStream);
+            block(operation.outputStream);
         }
-        operation.outputStream = oStream;
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
@@ -143,7 +152,7 @@
             block(error);
         }
     }];
-    [operation start];
+    [[[self class] sharedRequestOperationQueue] addOperation:operation];
 }
 
 #pragma mark - 
@@ -220,7 +229,7 @@
             block(error);
         }
     }];
-    [operation start];
+    [[[self class] sharedRequestOperationQueue] addOperation:operation];
 }
 
 @end
