@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:SignalR.Framework/SignalR.Framework.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:SignalR.Samples/SignalR.Samples.xcodeproj">
+   </FileRef>
+</Workspace>
