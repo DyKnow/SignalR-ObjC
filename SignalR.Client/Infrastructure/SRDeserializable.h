@@ -31,11 +31,4 @@
  */
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 
-/**
- * Updates a new `NSObject` from a `NSDictionary` object deserialized from a JSON server response
- *
- * @param dict a dictionary representing an `NSObject`
- */
-- (void)updateWithDictionary:(NSDictionary *)dictionary;
-
 @end

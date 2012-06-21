@@ -58,13 +58,6 @@ static NSString * const kProtocolVersion = @"ProtocolVersion";
 	return self;
 }
 
-- (void)updateWithDictionary:(NSDictionary *)dict
-{
-    _connectionId = ([dict objectForKey:kConnectionId]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kConnectionId]] : _connectionId;
-    _url = ([dict objectForKey:kUrl]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kUrl]] : _url;
-    _protocolVersion = ([dict objectForKey:kProtocolVersion]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kProtocolVersion]] : _protocolVersion;
-}
-
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];

@@ -62,14 +62,6 @@ static NSString * const kState = @"State";
     return self;
 }
 
-- (void)updateWithDictionary:(NSDictionary *)dict
-{
-    self.hub = ([dict objectForKey:kHub]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kHub]] : _hub;
-    self.method = ([dict objectForKey:kMethod]) ? [NSString stringWithFormat:@"%@",[dict objectForKey:kMethod]] : _method;
-    self.args = ([dict objectForKey:kArgs]) ? [dict objectForKey:kArgs] : _args;
-    self.state = ([dict objectForKey:kState]) ? [dict objectForKey:kState] : _state;
-}
-
 - (id)proxyForJson
 {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];

@@ -57,13 +57,6 @@ static NSString * const kState = @"State";
     return self;
 }
 
-- (void)updateWithDictionary:(NSDictionary *)dict
-{
-    self.result = ([dict objectForKey:kResult]) ? [dict objectForKey:kResult] : _result;
-    self.error = ([dict objectForKey:kError]) ? [dict objectForKey:kError] : _error;
-    self.state = ([dict objectForKey:kState]) ? [dict objectForKey:kState] : _state;
-}
-
 - (NSString *)description 
 {  
     return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
