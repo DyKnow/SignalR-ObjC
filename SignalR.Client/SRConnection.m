@@ -30,6 +30,7 @@
 #import "SRVersion.h"
 
 #import "NSDictionary+QueryString.h"
+#import "NSObject+SRJSON.h"
 
 void (^prepareRequest)(id);
 
@@ -232,12 +233,12 @@ void (^prepareRequest)(id);
 #pragma mark - 
 #pragma mark Sending data
 
-- (void)send:(NSString *)message
+- (void)send:(id)object
 {
-    [self send:message continueWith:nil];
+    [self send:object continueWith:nil];
 }
 
-- (void)send:(NSString *)message continueWith:(void (^)(id response))block
+- (void)send:(id)object continueWith:(void (^)(id response))block
 {
     if ([self isDisconnecting])
     {
@@ -250,6 +251,15 @@ void (^prepareRequest)(id);
         [self didReceiveError:error];
     }
 
+    NSString *message = nil;
+    if ([object isKindOfClass:[NSString class]])
+    {
+        message = object;
+    }
+    else
+    {
+        message = [object SRJSONRepresentation];
+    }
     [_transport send:self withData:message continueWith:block];
 }
 

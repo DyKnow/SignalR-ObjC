@@ -290,19 +290,19 @@ typedef void (^onReconnected)();
  * Sends data over the connection.
  * calls [self send:message continueWith:nil];
  *
- * @param message the message to send
+ * @param object a JSON stringifable object to send
  */
-- (void)send:(NSString *)message;
+- (void)send:(id)object;
 
 /**
  * Sends data over the connection.
  *
  * @warning *Important* Start must be called before sending data
  *
- * @param message the message to send
+ * @param object a JSON stringifable object to send
  * @param block the callback to be called once the message is sent.
  */
-- (void)send:(NSString *)message continueWith:(void (^)(id response))block;
+- (void)send:(id)object continueWith:(void (^)(id response))block;
 
 ///-------------------------------
 /// @name Receiving Data
