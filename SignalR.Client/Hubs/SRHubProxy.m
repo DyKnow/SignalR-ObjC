@@ -27,8 +27,6 @@
 #import "SRSignalRConfig.h"
 #import "SRSubscription.h"
 
-#import "NSObject+SRJSON.h"
-
 @interface SRHubProxy ()
 
 @end
@@ -140,9 +138,7 @@
     hubData.args = [NSMutableArray arrayWithArray:args];
     hubData.state = _state;
     
-    NSString *value = [hubData SRJSONRepresentation];
-        
-    [_connection send:value continueWith:^(NSDictionary *response)
+    [_connection send:hubData continueWith:^(NSDictionary *response)
     {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] did receive response %@",response);

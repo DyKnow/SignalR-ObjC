@@ -121,8 +121,7 @@
     [message setObject:[NSNumber numberWithInt:0] forKey:@"type"];
     [message setObject:meField.text forKey:@"value"];
 
-    NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+    [connection send:message];
 }
 
 - (IBAction)broadcastClicked:(id)sender
@@ -131,8 +130,7 @@
     [message setObject:[NSNumber numberWithInt:1] forKey:@"type"];
     [message setObject:messageField.text forKey:@"value"];
     
-   NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+    [connection send:message];
 }
 
 - (IBAction)enternameClicked:(id)sender
@@ -141,8 +139,7 @@
     [message setObject:[NSNumber numberWithInt:2] forKey:@"type"];
     [message setObject:messageField.text forKey:@"value"];
     
-    NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+    [connection send:message];
 }
 
 - (IBAction)sendToUserClicked:(id)sender
@@ -151,8 +148,7 @@
     [message setObject:[NSNumber numberWithInt:3] forKey:@"type"];
     [message setObject:[NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text] forKey:@"value"];
     
-    NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+    [connection send:message];
 }
 
 - (IBAction)joingroupClicked:(id)sender
@@ -161,8 +157,7 @@
     [message setObject:[NSNumber numberWithInt:4] forKey:@"type"];
     [message setObject:messageField.text forKey:@"value"];
 
-    NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+    [connection send:message];
 }
 
 - (IBAction)leavegroupClicked:(id)sender
@@ -171,8 +166,7 @@
     [message setObject:[NSNumber numberWithInt:5] forKey:@"type"];
     [message setObject:messageField.text forKey:@"value"];
     
-    NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+   [connection send:message];
 }
 
 - (IBAction)sendToGroupClicked:(id)sender
@@ -181,8 +175,7 @@
     [message setObject:[NSNumber numberWithInt:6] forKey:@"type"];
     [message setObject:[NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text] forKey:@"value"];
     
-    NSString *json = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:message options:0 error:nil] encoding:NSUTF8StringEncoding];
-    [connection send:json];
+    [connection send:message];
 }
 
 - (IBAction)stopClicked:(id)sender
