@@ -185,7 +185,7 @@
     
     if(connection.messageId) 
     {
-        [parameters setObject:[connection.messageId stringValue] forKey:kMessageId];
+        [parameters setObject:connection.messageId forKey:kMessageId];
     }
     else
     {
@@ -246,11 +246,6 @@
         return;
     }
     
-    if(connection.messageId == nil)
-    {
-        connection.messageId = [NSNumber numberWithInt:0];
-    }
-    
     @try 
     {
         id result = [response SRJSONValue];
@@ -264,10 +259,10 @@
                 return;
             }
             
-            NSInteger messageId = [[result objectForKey:kResponse_MessageId] integerValue];
+            NSString *messageId = [[result objectForKey:kResponse_MessageId] stringValue];
             if(messageId)
             {
-                connection.messageId = [NSNumber numberWithInteger:messageId];
+                connection.messageId = messageId;
             }
             
             id messageData = [result objectForKey:kResponse_Messages];

@@ -140,9 +140,9 @@ typedef void (^onReconnected)();
 @property (strong, nonatomic, readwrite) NSString *url;
 
 /**
- * An `NSNumber` representing the current message id 
+ * An `NSString` representing the current message id 
  */
-@property (strong, nonatomic, readwrite) NSNumber *messageId;
+@property (strong, nonatomic, readwrite) NSString *messageId;
 
 /**
  * An `NSString` representing the current connectionId established during negotiation 
