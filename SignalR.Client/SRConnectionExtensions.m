@@ -33,17 +33,4 @@
     return value;
 }
 
-- (BOOL)isDisconnecting
-{
-    return (self.state == disconnecting ||
-            self.state == disconnected);
-    
-}
-
-- (BOOL)isActive
-{
-    return (self.state == connected ||
-            self.state == connecting);
-}
-
 @end

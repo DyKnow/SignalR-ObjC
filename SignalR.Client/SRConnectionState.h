@@ -27,6 +27,5 @@ typedef enum
     connecting,
     connected,
     reconnecting,
-    disconnecting,
     disconnected
 } connectionState;

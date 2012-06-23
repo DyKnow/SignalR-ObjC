@@ -274,6 +274,8 @@ typedef void (^onReconnected)();
  */
 - (void)negotiate:(id <SRClientTransport>)transport;
 
+- (BOOL)changeState:(connectionState)oldState toState:(connectionState)newState;
+
 /**
  * Stops the connection
  * dispatches the closed event to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidClose:self];

@@ -49,6 +49,7 @@
 @synthesize initializedCalled = _initializedCalled;
 
 static NSString * const kTransportName = @"serverSentEvents";
+static NSString * const kEventSourceKey = @"eventSourceStream";
 
 - (id)init
 {
@@ -76,16 +77,14 @@ static NSString * const kTransportName = @"serverSentEvents";
 
 - (void)reconnect:(SRConnection *)connection data:(NSString *)data
 {
-    if([connection isDisconnecting])
-    {
-        return;
-    }
-    
     //Wait for a bit before reconnecting
     [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
     {
-        //Now attempt a reconnect
-        [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
+        if ([connection changeState:connected toState:reconnecting])
+        {
+            //Now attempt a reconnect
+            [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
+        }
     } repeats:NO];
 }
 
@@ -139,13 +138,11 @@ static NSString * const kTransportName = @"serverSentEvents";
                 }
             }
             
-            if(reconnecting) //&& !CancellationToken.IsCancellationRequested) //TODO: Not cancelled
+            if(reconnecting)
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
-#endif
-                connection.state = reconnecting;
-                
+#endif                
                 //Retry
                 [self reconnect:connection data:data];
             }
@@ -153,6 +150,9 @@ static NSString * const kTransportName = @"serverSentEvents";
         else
         {
             _eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
+            
+            [connection.items setObject:_eventSource forKey:kEventSourceKey];
+            
             __weak SRServerSentEventsTransport *_transport = self;
             __block BOOL retry = YES;
             
@@ -168,11 +168,8 @@ static NSString * const kTransportName = @"serverSentEvents";
                     initializeCallback();
                 }
                 
-                if(reconnecting)
+                if(reconnecting && [connection changeState:reconnecting toState:connected])
                 {
-                    //Change the status to connected
-                    connection.state = connected;
-                    
                     // Raise the reconnect event if the connection comes back up
                     [connection didReconnect];
                 }
@@ -209,10 +206,8 @@ static NSString * const kTransportName = @"serverSentEvents";
             
             _eventSource.closed = ^()
             {
-                if(retry)// && !CancellationToken.IsCancellationRequested)) //TODO: Not cancelled
+                if(retry)
                 {
-                    connection.state = reconnecting;
-                    
                     [_transport reconnect:connection data:data];
                 }
                 else
@@ -265,6 +260,16 @@ static NSString * const kTransportName = @"serverSentEvents";
             }
         } repeats:NO];
     }
+}
+
+- (void)onBeforeAbort:(SRConnection *)connection
+{
+    SREventSourceStreamReader *eventSourceStream = [connection getValue:kEventSourceKey];
+    if (eventSourceStream != nil)
+    {
+        [eventSourceStream close];
+    }
+    [super onBeforeAbort:connection];
 }
 
 - (void)dealloc

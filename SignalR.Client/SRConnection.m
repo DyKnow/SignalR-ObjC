@@ -136,13 +136,11 @@ void (^prepareRequest)(id);
 
 - (void)start:(id <SRClientTransport>)transport
 {
-    if ([self isActive])
+    if (![self changeState:disconnected toState:connecting])
     {
         return;
     }
-    
-    _state = connecting;
-        
+            
     _transport = transport;
     
     [self negotiate:transport];
@@ -175,8 +173,9 @@ void (^prepareRequest)(id);
             [_transport start:self withData:data continueWith:
              ^(id task) 
             {
-                _state = connected;
                  
+                [self changeState:connecting toState:connected];
+                
                 if(_started != nil)
                 {
                     self.started();
@@ -187,6 +186,19 @@ void (^prepareRequest)(id);
             }];
         }
     }];
+}
+
+- (BOOL)changeState:(connectionState)oldState toState:(connectionState)newState
+{
+    @synchronized(self)
+    {
+        if (self.state == oldState)
+        {
+            self.state = newState;
+            return YES;
+        }
+        return NO;
+    }
 }
 
 - (void)verifyProtocolVersion:(NSString *)versionString
@@ -205,12 +217,10 @@ void (^prepareRequest)(id);
     @try 
     {
         // Do nothing if the connection is offline
-        if ([self isDisconnecting])
+        if (self.state == disconnected)
         {
             return;
         }
-        
-        _state = disconnecting;
         
         [_transport stop:self];
         
@@ -240,7 +250,7 @@ void (^prepareRequest)(id);
 
 - (void)send:(id)object continueWith:(void (^)(id response))block
 {
-    if ([self isDisconnecting])
+    if (self.state == disconnected)
     {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];

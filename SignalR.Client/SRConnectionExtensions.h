@@ -34,7 +34,4 @@
  */
 - (id)getValue:(NSString *)key;
 
-- (BOOL)isDisconnecting;
-- (BOOL)isActive;
-
 @end
