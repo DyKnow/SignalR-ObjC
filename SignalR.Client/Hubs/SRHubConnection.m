@@ -124,36 +124,26 @@ typedef NSString* (^onConnectionSending)();
 }
 
 #pragma mark - 
-#pragma mark Connection management
+#pragma mark Sending data
 
-- (void)start:(id<SRClientTransport>)transport
+- (NSString *)onSending
 {
-    __unsafe_unretained NSMutableDictionary *hubs_ = _hubs;
-
-    self.sending = ^()
-    {    
-        NSMutableArray *dataFromHub = [[NSMutableArray alloc] init];
-
-        for(id key in hubs_)
-        {
-            SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
-            registration.name = [[hubs_ objectForKey:key] hubName];
-            [dataFromHub addObject:registration];
-        }
-        
-        NSString *data = [dataFromHub SRJSONRepresentation];
-        
-        return data;
-    };
+    NSMutableArray *dataFromHub = [[NSMutableArray alloc] init];
     
-    [super start:transport];
+    for(id key in _hubs)
+    {
+        SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
+        registration.name = [[_hubs objectForKey:key] hubName];
+        [dataFromHub addObject:registration];
+    }
+    
+    NSString *data = [dataFromHub SRJSONRepresentation];
+    
+    return data;
 }
 
-- (void)stop
-{
-    self.sending = nil;
-    [super stop];
-}
+#pragma mark - 
+#pragma mark Received Data
 
 - (void)didReceiveData:(NSString *)data
 {

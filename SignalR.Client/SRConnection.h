@@ -76,7 +76,6 @@
 @end
 
 typedef void (^onStarted)();
-typedef NSString* (^onSending)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
@@ -128,11 +127,6 @@ typedef void (^onReconnected)();
  * A `NSMutableArray` of the connected groups
  */
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
-
-/**
- * A block to be called prior to sending data
- */
-@property (copy) onSending sending;
 
 /**
  * The endpoint at which the connection is initialized to
@@ -287,6 +281,8 @@ typedef void (^onReconnected)();
 ///-------------------------------
 /// @name Sending Data
 ///-------------------------------
+
+- (NSString *)onSending;
 
 /**
  * Sends data over the connection.

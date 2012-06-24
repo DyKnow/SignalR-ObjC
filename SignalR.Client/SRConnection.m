@@ -163,12 +163,7 @@ void (^prepareRequest)(id);
         {
             _connectionId = negotiationResponse.connectionId;
             
-            NSString *data = nil;
-            
-            if(_sending != nil)
-            {
-                data = self.sending();
-            }
+            NSString *data = [self onSending];
             
             [_transport start:self withData:data continueWith:
              ^(id task) 
@@ -242,6 +237,11 @@ void (^prepareRequest)(id);
 
 #pragma mark - 
 #pragma mark Sending data
+
+- (NSString *)onSending
+{
+    return nil;
+}
 
 - (void)send:(id)object
 {
