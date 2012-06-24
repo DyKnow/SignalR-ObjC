@@ -260,6 +260,17 @@ void (^prepareRequest)(id);
                                          userInfo:userInfo];
         [self didReceiveError:error];
     }
+    
+    if (self.state == connecting)
+    {
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"The connection has not been established",@"NSInternalInconsistencyException")] forKey:NSLocalizedDescriptionKey];
+        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+                                             code:0 
+                                         userInfo:userInfo];
+        [self didReceiveError:error];
+    }
 
     NSString *message = nil;
     if ([object isKindOfClass:[NSString class]])
