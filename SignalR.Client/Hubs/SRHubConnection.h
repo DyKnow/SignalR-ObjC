@@ -89,15 +89,4 @@
  */
 - (SRHubProxy *)createProxy:(NSString *)hubName;
 
-/**
- * Starts the connection for all hubs
- * @param transport the transport to use for the connection
- */
-- (void)start:(id<SRClientTransport>)transport;
-
-/**
- * Stops the connection for all hubs
- */
-- (void)stop;
-
 @end

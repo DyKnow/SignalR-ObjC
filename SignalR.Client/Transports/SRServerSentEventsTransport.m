@@ -80,7 +80,8 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
     //Wait for a bit before reconnecting
     [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
     {
-        if ([connection changeState:connected toState:reconnecting])
+        if (connection.state == reconnecting ||
+            [connection changeState:connected toState:reconnecting])
         {
             //Now attempt a reconnect
             [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
@@ -135,16 +136,12 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 #endif
                     // Only raise the error event if we failed to reconnect
                     [connection didReceiveError:response.error];
-                }
-            }
-            
-            if(reconnecting)
-            {
+                    
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
-#endif                
-                //Retry
-                [self reconnect:connection data:data];
+                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
+#endif   
+                    [self reconnect:connection data:data];
+                }
             }
         }
         else

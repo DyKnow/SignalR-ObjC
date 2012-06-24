@@ -57,7 +57,6 @@ void (^prepareRequest)(id);
 @synthesize reconnected = _reconnected;
 @synthesize groups = _groups;
 @synthesize credentials = _credentials;
-@synthesize sending = _sending;
 @synthesize url = _url;
 @synthesize messageId = _messageId;
 @synthesize connectionId = _connectionId;
@@ -187,11 +186,13 @@ void (^prepareRequest)(id);
 {
     @synchronized(self)
     {
+        // If we're in the expected old state then change state and return true
         if (self.state == oldState)
         {
             self.state = newState;
             return YES;
         }
+        // Invalid transition
         return NO;
     }
 }
@@ -383,7 +384,6 @@ void (^prepareRequest)(id);
     _closed = nil;
     _groups = nil;
     _credentials = nil;
-    _sending = nil;
     _url = nil;
     _messageId = nil;
     _connectionId = nil;

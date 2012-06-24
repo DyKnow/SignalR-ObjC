@@ -29,8 +29,6 @@
 #import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
 
-typedef NSString* (^onConnectionSending)();
-
 @interface SRHubConnection ()
 
 - (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
