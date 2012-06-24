@@ -22,9 +22,6 @@
 
 #import "SREventSourceStreamReader.h"
 #import "SRChunkBuffer.h"
-#import "SRConnection.h"
-#import "SRExceptionHelper.h"
-#import "SRServerSentEventsTransport.h"
 #import "SRSignalRConfig.h"
 #import "SRSseEvent.h"
 
@@ -39,10 +36,9 @@
 
 - (void)processBuffer:(NSData *)buffer read:(NSInteger)read;
 
-- (void)onError:(NSError *)error;
 - (void)onOpened;
 - (void)onMessage:(SRSseEvent *)sseEvent;
-- (void)onClosed;
+- (void)onClosed:(NSError *)error;
 
 @end
 
@@ -51,7 +47,6 @@
 @synthesize opened = _opened;
 @synthesize closed = _closed;
 @synthesize message = _message;
-@synthesize error = _error;
 
 @synthesize stream = _stream;
 @synthesize buffer = _buffer;
@@ -84,17 +79,7 @@
 
 - (void)close
 {
-    if (_reading)
-    {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[EventSourceReader] Connection Closed");
-#endif
-        _stream.delegate = nil;
-        [_stream close];
-        _reading = NO;
-
-        [self onClosed];       
-    }
+    [self onClosed:nil];
 }
 
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
@@ -132,18 +117,7 @@
         }
         case NSStreamEventErrorOccurred:
         {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] an error %@ occured while reading the stream",[stream streamError]);
-#endif
-            if (![SRExceptionHelper isRequestAborted:[stream streamError]])
-            {
-                //if(![[stream streamError] isKindOfClass:IOException]
-                    [self onError:[stream streamError]];
-            }
-            else
-            {
-                [self onClosed];
-            }
+            [self onClosed:[stream streamError]];
             break;
         }
         case NSStreamEventEndEncountered:
@@ -184,14 +158,6 @@
 #pragma mark -
 #pragma mark Dispatch Blocks
 
-- (void)onError:(NSError *)error
-{
-    if(self.error)
-    {
-        self.error(error);
-    }
-}
-
 - (void)onOpened
 {
     if(self.opened)
@@ -208,11 +174,21 @@
     }
 }
 
-- (void)onClosed;
+- (void)onClosed:(NSError *)error;
 {
-    if(self.closed)
+    if (_reading)
     {
-        self.closed();
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+        SR_DEBUG_LOG(@"[EventSourceReader] Connection Closed");
+#endif
+        _stream.delegate = nil;
+        [_stream close];
+        _reading = NO;
+        
+        if(self.closed)
+        {
+            self.closed(error);
+        }
     }
 }
 

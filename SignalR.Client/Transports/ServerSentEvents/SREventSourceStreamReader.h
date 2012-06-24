@@ -25,16 +25,14 @@
 @class SRSseEvent;
 
 typedef void (^onStreamOpened)();
-typedef void (^onStreamClosed)();
+typedef void (^onStreamClosed)(NSError * error);
 typedef void (^onStreamMessage)(SRSseEvent * event);
-typedef void (^onStreamError)(NSError * error);
 
 @interface SREventSourceStreamReader : NSObject <NSStreamDelegate>
 
 @property (copy) onStreamOpened opened;
 @property (copy) onStreamClosed closed;
 @property (copy) onStreamMessage message;
-@property (copy) onStreamError error;
 
 - (id)initWithStream:(id)steam;
 

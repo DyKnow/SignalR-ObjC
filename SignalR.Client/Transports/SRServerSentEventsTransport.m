@@ -172,11 +172,6 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 }
             };
             
-            _eventSource.error = ^(NSError * error)
-            {
-                [connection didReceiveError:error];
-            };
-            
             _eventSource.message = ^(SRSseEvent * sseEvent)
             {
                 if(sseEvent.type == Data)
@@ -201,8 +196,14 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 }
             };
             
-            _eventSource.closed = ^()
+            _eventSource.closed = ^(NSError * error)
             {
+                if (error != nil && ![SRExceptionHelper isRequestAborted:error])
+                {
+                    // Don't raise exceptions if the request was aborted (connection was stopped).
+                    [connection didReceiveError:error];
+                }
+                
                 if(retry)
                 {
                     [_transport reconnect:connection data:data];
