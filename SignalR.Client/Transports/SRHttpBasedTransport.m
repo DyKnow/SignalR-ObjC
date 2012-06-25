@@ -259,7 +259,7 @@
                 return;
             }
             
-            NSString *messageId = [[result objectForKey:kResponse_MessageId] stringValue];
+            NSString *messageId = [result objectForKey:kResponse_MessageId];
             if(messageId)
             {
                 connection.messageId = messageId;
