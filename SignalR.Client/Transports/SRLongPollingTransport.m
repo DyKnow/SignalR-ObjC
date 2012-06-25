@@ -26,6 +26,7 @@
 #import "SRDefaultHttpClient.h"
 #import "SRExceptionHelper.h"
 #import "SRSignalRConfig.h"
+#import "SRThreadSafeInvoker.h"
 
 #import "NSTimer+Blocks.h"
 
@@ -80,9 +81,9 @@ static NSString * const kTransportName = @"longPolling";
 { 
     NSString *url = connection.url;
     
-    // This is only necessary for the initial request where initializeCallback and errorCallback are non-null
-    __block int callbackFired = 0;
-    
+    SRThreadSafeInvoker *reconnectInvoker = [[SRThreadSafeInvoker alloc] init];
+    SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
+
     if(connection.messageId == nil)
     {
         url = [url stringByAppendingString:kConnectEndPoint];
@@ -91,7 +92,8 @@ static NSString * const kTransportName = @"longPolling";
     {
         url = [url stringByAppendingString:kReconnectEndPoint];
         
-        if (![connection changeState:connected toState:reconnecting])
+        if (connection.state == reconnecting &&
+            ![connection changeState:connected toState:reconnecting])
         {
             return;
         }
@@ -125,7 +127,7 @@ static NSString * const kTransportName = @"longPolling";
                 {
                     // If the timeout for the receonnect hasn't fired as yet just fire the 
                     // Event here before any incoming messages are processed
-                    [self fireReconnected:connection];
+                    [reconnectInvoker invoke:^(SRConnection *conn) { [self fireReconnected:conn]; } withObject:connection];
                 }
                 
                 [self processResponse:connection response:response.string timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
@@ -149,28 +151,32 @@ static NSString * const kTransportName = @"longPolling";
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
 #endif
+                    [reconnectInvoker invoke];
                     // Raise the reconnect event if we successfully reconect after failing
                     shouldRaiseReconnect = YES;
                     
                     if(response.error)
                     {
                         // If the error callback isn't null then raise it and don't continue polling
-                        if (errorCallback && callbackFired == 0)
+                        if (errorCallback != nil)
                         {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                             SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
 #endif
-                            callbackFired = 1;
-
                             //Call the callback
-                            SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                            [callbackInvoker invoke:^(callback cb, NSError *ex) 
                             {
-                                if(error)
+                                SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                                 {
-                                    *error = response.error;
-                                }
-                            };
-                            errorCallback(errorBlock);
+                                    if(error)
+                                    {
+                                        *error = ex;
+                                    }
+                                };
+                                cb(errorBlock);
+                            } 
+                            withCallback:errorCallback 
+                            withObject:response.error];
                         }
                         else
                         {
@@ -215,21 +221,19 @@ static NSString * const kTransportName = @"longPolling";
         }
     }];
     
-    if (initializeCallback != nil && callbackFired == 0)
+    if (initializeCallback != nil)
     {
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[LONG_POLLING] connection is initialized");
 #endif
-        callbackFired = 1;
-        // Only set this the first time
-        initializeCallback();
+        [callbackInvoker invoke:initializeCallback];
     }
     
     if (raiseReconnect)
     {
         [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
         {
-            [self fireReconnected:connection];
+            [reconnectInvoker invoke:^(SRConnection *conn) { [self fireReconnected:conn]; } withObject:connection];
         } repeats:NO];
     }
 }

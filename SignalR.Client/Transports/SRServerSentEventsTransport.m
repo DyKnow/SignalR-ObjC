@@ -28,6 +28,7 @@
 #import "SRExceptionHelper.h"
 #import "SRSignalRConfig.h"
 #import "SRSseEvent.h"
+#import "SRThreadSafeInvoker.h"
 
 #import "NSTimer+Blocks.h"
 
@@ -35,7 +36,6 @@
 
 @property (strong, nonatomic, readwrite) SREventSourceStreamReader *eventSource;
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
-@property (assign, nonatomic, readwrite) NSInteger initializedCalled;
 
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
@@ -46,7 +46,6 @@
 @synthesize connectionTimeout = _connectionTimeout;
 @synthesize eventSource = _eventSource;
 @synthesize reconnectDelay = _reconnectDelay;
-@synthesize initializedCalled = _initializedCalled;
 
 static NSString * const kTransportName = @"serverSentEvents";
 static NSString * const kEventSourceKey = @"eventSourceStream";
@@ -93,6 +92,7 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 {
     // If we're reconnecting add /connect to the url
     BOOL reconnecting = initializeCallback == nil;
+    SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
     
     NSString *url = [(reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
@@ -112,22 +112,24 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         {
             if(![SRExceptionHelper isRequestAborted:response.error])
             {                        
-                if (errorCallback != nil && 
-                    _initializedCalled == 0)
+                if (errorCallback != nil)
                 {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to errorCallback");
 #endif
-                    _initializedCalled = 1;
-                    
-                    SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                    [callbackInvoker invoke:^(callback cb, NSError *ex) 
                     {
-                        if(error)
+                        SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                         {
-                            *error = response.error;
-                        }
-                    };
-                    errorCallback(errorBlock);
+                            if(error)
+                            {
+                                *error = ex;
+                            }
+                        };
+                        cb(errorBlock);
+                    } 
+                    withCallback:errorCallback 
+                    withObject:response.error];
                 }
                 else if(reconnecting)
                 {
@@ -155,15 +157,7 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
             
             _eventSource.opened = ^()
             {
-                if(initializeCallback != nil && _transport.initializedCalled == 0)
-                {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection is initialized");
-#endif
-                    _transport.initializedCalled = 1;
-                    
-                    initializeCallback();
-                }
+                [callbackInvoker invoke:initializeCallback];
                 
                 if(reconnecting && [connection changeState:reconnecting toState:connected])
                 {
@@ -221,41 +215,35 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         }
     }];
     
-    if (initializeCallback != nil)
+    if (errorCallback != nil)
     {
         [NSTimer scheduledTimerWithTimeInterval:_connectionTimeout block:
         ^{
-            if(_initializedCalled == 0)
+            [callbackInvoker invoke:^(callback cb, SRConnection *conn) 
             {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] connection did timeout");
-#endif
-                _initializedCalled = 1;
-                
                 // Stop the connection
-                [self stop:connection];
+                [self stop:conn];
                 
-                // Connection timeout occured
-                if (errorCallback != nil)
+                SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
                 {
-                    SRErrorByReferenceBlock errorBlock = ^(NSError ** error)
+                    if(error)
                     {
-                        if(error)
-                        {
-                            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                            [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                            [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
-                            *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                                         code:NSURLErrorTimedOut 
-                                                     userInfo:userInfo];
-                        }
-                    };
-                    errorCallback(errorBlock);
+                        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
+                        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
+                        *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+                                                    code:NSURLErrorTimedOut 
+                                                userInfo:userInfo];
+                    }
+                };
+                cb(errorBlock);
+            } 
+            withCallback:errorCallback 
+            withObject:connection];
+
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
+            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
 #endif
-                }
-            }
         } repeats:NO];
     }
 }
@@ -275,7 +263,6 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
     _eventSource = nil;
     _connectionTimeout = 0;
     _reconnectDelay = 0;
-    _initializedCalled = 0;
 }
 
 @end

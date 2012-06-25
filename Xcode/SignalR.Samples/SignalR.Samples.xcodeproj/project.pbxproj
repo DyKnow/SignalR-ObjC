@@ -47,6 +47,7 @@
 		3916E6FA14D6FD8B002D967A /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69814D6FD8B002D967A /* SRServerSentEventsTransport.m */; };
 		392524741524EC5A00312374 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 392524731524EC5A00312374 /* NSObject+SRJSON.m */; };
 		3925247A1524EC6500312374 /* SRDefaultHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 392524761524EC6500312374 /* SRDefaultHttpClient.m */; };
+		3931AE6A159892F4002E0CB0 /* SRThreadSafeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3931AE69159892F4002E0CB0 /* SRThreadSafeInvoker.m */; };
 		39607A74155AF32000790098 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 39607A60155AF32000790098 /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39607A75155AF32000790098 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39607A62155AF32000790098 /* AFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		39607A76155AF32000790098 /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 39607A64155AF32000790098 /* AFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -140,6 +141,8 @@
 		392524761524EC6500312374 /* SRDefaultHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRDefaultHttpClient.m; path = Http/SRDefaultHttpClient.m; sourceTree = "<group>"; };
 		392524771524EC6500312374 /* SRHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHttpClient.h; path = Http/SRHttpClient.h; sourceTree = "<group>"; };
 		392524781524EC6500312374 /* SRHttpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRHttpHelper.h; path = Http/SRHttpHelper.h; sourceTree = "<group>"; };
+		3931AE68159892F4002E0CB0 /* SRThreadSafeInvoker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRThreadSafeInvoker.h; sourceTree = "<group>"; };
+		3931AE69159892F4002E0CB0 /* SRThreadSafeInvoker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRThreadSafeInvoker.m; sourceTree = "<group>"; };
 		39607A5F155AF32000790098 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		39607A60155AF32000790098 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
 		39607A61155AF32000790098 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -302,6 +305,8 @@
 				3916E68514D6FD8B002D967A /* SRVersion.m */,
 				39A3F66A15828E8A00695201 /* SRExceptionHelper.h */,
 				39A3F66B15828E8A00695201 /* SRExceptionHelper.m */,
+				3931AE68159892F4002E0CB0 /* SRThreadSafeInvoker.h */,
+				3931AE69159892F4002E0CB0 /* SRThreadSafeInvoker.m */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -715,6 +720,7 @@
 				39A3F67115828FF700695201 /* SRSseEvent.m in Sources */,
 				39A3F6751582918000695201 /* SRChunkBuffer.m in Sources */,
 				39A3F6781582925000695201 /* SREventSourceStreamReader.m in Sources */,
+				3931AE6A159892F4002E0CB0 /* SRThreadSafeInvoker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -202,6 +202,10 @@
 		397DA3A6155BFF5D00A91949 /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 397DA37D155BFF5D00A91949 /* UIImageView+AFNetworking.h */; };
 		397DA3A7155BFF5D00A91949 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 397DA37E155BFF5D00A91949 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		397DA3A8155BFF5D00A91949 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 397DA37E155BFF5D00A91949 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		39FB221C1598A98D0021ECF8 /* SRThreadSafeInvoker.h in Headers */ = {isa = PBXBuildFile; fileRef = 39FB221A1598A98D0021ECF8 /* SRThreadSafeInvoker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		39FB221D1598A98D0021ECF8 /* SRThreadSafeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FB221B1598A98D0021ECF8 /* SRThreadSafeInvoker.m */; };
+		39FB221F1598A9AE0021ECF8 /* SRThreadSafeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 39FB221B1598A98D0021ECF8 /* SRThreadSafeInvoker.m */; };
+		39FB22201598A9B60021ECF8 /* SRThreadSafeInvoker.h in Headers */ = {isa = PBXBuildFile; fileRef = 39FB221A1598A98D0021ECF8 /* SRThreadSafeInvoker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -304,6 +308,8 @@
 		397DA37E155BFF5D00A91949 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		39951B8514C64DF700B33280 /* SignalR-iOS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "SignalR-iOS-Info.plist"; path = "SignalR-iOS/SignalR-iOS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		39951B8614C64DF700B33280 /* SignalR-iOS-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SignalR-iOS-Prefix.pch"; path = "SignalR-iOS/SignalR-iOS-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		39FB221A1598A98D0021ECF8 /* SRThreadSafeInvoker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRThreadSafeInvoker.h; sourceTree = "<group>"; };
+		39FB221B1598A98D0021ECF8 /* SRThreadSafeInvoker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRThreadSafeInvoker.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +511,8 @@
 				3941BDCA159346970071EBF9 /* SRSerializable.h */,
 				3941BDCB159346970071EBF9 /* SRVersion.h */,
 				3941BDCC159346970071EBF9 /* SRVersion.m */,
+				39FB221A1598A98D0021ECF8 /* SRThreadSafeInvoker.h */,
+				39FB221B1598A98D0021ECF8 /* SRThreadSafeInvoker.m */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -613,6 +621,7 @@
 				3941BE2F159346970071EBF9 /* NSTimer+Blocks.h in Headers */,
 				3941BE35159346970071EBF9 /* SRExceptionHelper.h in Headers */,
 				3941BE3B159346970071EBF9 /* SRVersion.h in Headers */,
+				39FB221C1598A98D0021ECF8 /* SRThreadSafeInvoker.h in Headers */,
 				3941BE51159346970071EBF9 /* SRChunkBuffer.h in Headers */,
 				3941BE55159346970071EBF9 /* SREventSourceStreamReader.h in Headers */,
 				3941BE59159346970071EBF9 /* SREventType.h in Headers */,
@@ -672,6 +681,7 @@
 				3941BE30159346970071EBF9 /* NSTimer+Blocks.h in Headers */,
 				3941BE36159346970071EBF9 /* SRExceptionHelper.h in Headers */,
 				3941BE3C159346970071EBF9 /* SRVersion.h in Headers */,
+				39FB22201598A9B60021ECF8 /* SRThreadSafeInvoker.h in Headers */,
 				3941BE52159346970071EBF9 /* SRChunkBuffer.h in Headers */,
 				3941BE56159346970071EBF9 /* SREventSourceStreamReader.h in Headers */,
 				3941BE5A159346970071EBF9 /* SREventType.h in Headers */,
@@ -861,6 +871,7 @@
 				3941BE69159346970071EBF9 /* SRHttpBasedTransport.m in Sources */,
 				3941BE6D159346970071EBF9 /* SRLongPollingTransport.m in Sources */,
 				3941BE71159346970071EBF9 /* SRServerSentEventsTransport.m in Sources */,
+				39FB221D1598A98D0021ECF8 /* SRThreadSafeInvoker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +917,7 @@
 				3941BE6A159346970071EBF9 /* SRHttpBasedTransport.m in Sources */,
 				3941BE6E159346970071EBF9 /* SRLongPollingTransport.m in Sources */,
 				3941BE72159346970071EBF9 /* SRServerSentEventsTransport.m in Sources */,
+				39FB221F1598A9AE0021ECF8 /* SRThreadSafeInvoker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
