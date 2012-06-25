@@ -20,7 +20,7 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AFNetworking.h"
+#import "AFHTTPRequestOperation.h"
 #import "SRDefaultHttpHelper.h"
 #import "SRSignalRConfig.h"
 
