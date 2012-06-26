@@ -39,42 +39,7 @@
  */
 @property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
 
-/**
- * A convenience method for initWithURL:(NSString *)url;
- *
- * <code>
- *  SRHubConnection *connection = [SRHubConnection connectionWithURL:@"http://mysite/"];
- * </code>
- * @warning *Important:*  This url will not point to a specific handler. But will instead point to the root of your site.
- *
- * @param URL the endpoint to initialize the new connection to
- * @return an SRHubConnection object 
- */
-+ (SRHubConnection *)connectionWithURL:(NSString *)URL;
-
-+ (SRHubConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
-
-+ (SRHubConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
-
-/**
- * Initializes a new `SRHubConnection` object at the specified URL
- * 
- * <code>
- *  SRHubConnection *connection = [[SRHubConnection alloc] initWithURL:@"http://mysite/"];
- * </code>
- * @warning *Important:*  This url will not point to a specific handler. But will instead point to the root of your site.
- *
- * @param url the endpoint to initialize the new connection to
- * @return an SRHubConnection object 
- */
-- (id)initWithURL:(NSString *)url;
-
 - (id)initWithURL:(NSString *)URL useDefault:(BOOL)useDefault;
-
-- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString;
-
-- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString;
-
 
 /**
  * Creates a client side proxy to the hub on the server side.

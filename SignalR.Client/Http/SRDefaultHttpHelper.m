@@ -108,15 +108,29 @@
         requestPreparer(operation);
     }
     
+    NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
     //This is a little hacky but it allows us to only use the output stream for SSE only
     BOOL useOutputStream = ([[request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]);
     if(useOutputStream)
     {
         if(block)
         {
-            block(operation.outputStream);
+            block(oStream);
         }
     }
+    [operation setDownloadProgressBlock:^(NSInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) 
+    {
+        NSData *buffer = [operation.outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+        buffer = [buffer subdataWithRange:NSMakeRange([buffer length] - bytesRead, bytesRead)];        
+        dispatch_async(dispatch_get_main_queue(), ^
+        {
+            if ([oStream hasSpaceAvailable]) 
+            {
+                const uint8_t *dataBuffer = (uint8_t *) [buffer bytes];
+                [oStream write:&dataBuffer[0] maxLength:[buffer length]];
+            }
+        });
+    }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
 #if DEBUG_HTTP_HELPER

@@ -42,21 +42,6 @@
 #pragma mark - 
 #pragma mark Initialization
 
-+ (SRHubConnection *)connectionWithURL:(NSString *)URL
-{
-    return [[SRHubConnection alloc] initWithURL:URL];
-}
-
-+ (SRHubConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
-{
-    return [[SRHubConnection alloc] initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
-}
-
-+ (SRHubConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
-{
-    return [[SRHubConnection alloc] initWithURL:url queryString:queryString];
-}
-
 - (id)initWithURL:(NSString *)URL
 {
     return [self initWithURL:URL useDefault:YES];
@@ -66,7 +51,6 @@
 {
     if ((self = [super initWithURL:[self _getUrl:URL useDefault:useDefault]])) 
     {
-        _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -74,15 +58,6 @@
 - (id)initWithURL:(NSString *)url queryString:(NSString *)queryString
 {
     if ((self = [super initWithURL:url queryString:queryString])) 
-    {
-        _hubs = [[NSMutableDictionary alloc] init];
-    }
-    return self;
-}
-
-- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString
-{
-    if ((self = [super initWithURL:url query:queryString])) 
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }

@@ -179,7 +179,7 @@ typedef void (^onReconnected)();
  * @param URL the endpoint to initialize the new connection to
  * @return an `SRConnection` object 
  */
-+ (SRConnection *)connectionWithURL:(NSString *)URL;
++ (id)connectionWithURL:(NSString *)URL;
 
 /**
  * A convenience method for initWithURL:(NSString *)url query:(NSDictionary *)queryString;
@@ -192,7 +192,7 @@ typedef void (^onReconnected)();
  * @param queryString an `NSDictionary` representation of a custom query string to be appended to the `SRConnection` endpoint
  * @return an `SRConnection` object 
  */
-+ (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
++ (id)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
 
 /**
  * A convenience method for initWithURL:(NSString *)url queryString:(NSString *)queryString;;
@@ -202,7 +202,7 @@ typedef void (^onReconnected)();
  * @warning *Important* Url cannot contain a QueryString directly. Namely the string should not contain the prefix '?' It is recommended that (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString; is used instead
  * @return an `SRConnection` object 
  */
-+ (SRConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
++ (id)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
 
 /**
  * Initializes a new `SRConnection` object at the specified URL

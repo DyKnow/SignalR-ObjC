@@ -76,6 +76,10 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 
 - (void)reconnect:(SRConnection *)connection data:(NSString *)data
 {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
+#endif   
+    
     //Wait for a bit before reconnecting
     [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
     {
@@ -133,15 +137,9 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 }
                 else if(reconnecting)
                 {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] isFaulted will report to connection");
-#endif
                     // Only raise the error event if we failed to reconnect
                     [connection didReceiveError:response.error];
                     
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] reconnecting");
-#endif   
                     [self reconnect:connection data:data];
                 }
             }
@@ -149,16 +147,21 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         else
         {
             _eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
-            
-            [connection.items setObject:_eventSource forKey:kEventSourceKey];
-            
             __weak SRServerSentEventsTransport *_transport = self;
             __block BOOL retry = YES;
             
+            [connection.items setObject:_eventSource forKey:kEventSourceKey];
+            
             _eventSource.opened = ^()
             {
-                [callbackInvoker invoke:initializeCallback];
-                
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did initialize");
+#endif
+                if (initializeCallback != nil)
+                {
+                    [callbackInvoker invoke:initializeCallback];
+                }
+
                 if(reconnecting && [connection changeState:reconnecting toState:connected])
                 {
                     // Raise the reconnect event if the connection comes back up
@@ -178,7 +181,6 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 
                 BOOL timedOut = NO;
                 BOOL disconnect = NO;
-                
                 [_transport processResponse:connection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
                 
                 if(disconnect)
@@ -192,6 +194,9 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
             
             _eventSource.closed = ^(NSError * error)
             {
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did close");
+#endif
                 if (error != nil && ![SRExceptionHelper isRequestAborted:error])
                 {
                     // Don't raise exceptions if the request was aborted (connection was stopped).
@@ -237,13 +242,12 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     }
                 };
                 cb(errorBlock);
+#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
+                SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
+#endif
             } 
             withCallback:errorCallback 
             withObject:connection];
-
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
-#endif
         } repeats:NO];
     }
 }

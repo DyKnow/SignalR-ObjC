@@ -34,7 +34,7 @@ typedef void (^onStreamMessage)(SRSseEvent * event);
 @property (copy) onStreamClosed closed;
 @property (copy) onStreamMessage message;
 
-- (id)initWithStream:(id)steam;
+- (id)initWithStream:(NSOutputStream *)steam;
 
 - (void)start;
 - (void)close;

@@ -70,19 +70,19 @@ void (^prepareRequest)(id);
 #pragma mark - 
 #pragma mark Initialization
 
-+ (SRConnection *)connectionWithURL:(NSString *)url
++ (id)connectionWithURL:(NSString *)url
 {
-    return [[SRConnection alloc] initWithURL:url];
+    return [[[self class] alloc] initWithURL:url];
 }
 
-+ (SRConnection *)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
++ (id)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
 {
-    return [[SRConnection alloc] initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
+    return [[[self class] alloc] initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
 }
 
-+ (SRConnection *)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
++ (id)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
 {
-    return [[SRConnection alloc] initWithURL:url queryString:queryString];
+    return [[[self class] alloc] initWithURL:url queryString:queryString];
 }
 
 - (id)initWithURL:(NSString *)url

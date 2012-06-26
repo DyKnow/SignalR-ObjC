@@ -27,7 +27,7 @@
 
 @interface SREventSourceStreamReader ()
 
-@property (strong, nonatomic, readwrite)  NSOutputStream *stream;
+@property (strong, nonatomic, readwrite) NSOutputStream *stream;
 @property (strong, nonatomic, readonly)  SRChunkBuffer *buffer;
 @property (assign, nonatomic, readonly)  BOOL reading;
 @property (assign, nonatomic, readwrite) NSInteger offset;
@@ -69,7 +69,8 @@
 - (void)start
 {
     _stream.delegate = self;
-    //[_stream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    [_stream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [_stream open];
 }
 
 - (BOOL)processing
@@ -89,7 +90,7 @@
         case NSStreamEventOpenCompleted:
         {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[EventSourceReader] Connection Opened");
+            SR_DEBUG_LOG(@"[EventSourceReader] Opened");
 #endif
             _reading = YES;
             [self onOpened];
@@ -124,7 +125,10 @@
         case NSStreamEventNone:
         case NSStreamEventHasBytesAvailable:
         default:
+        {
+            NSLog(@"HERE");
             break;
+        }
     }
 }
 
@@ -179,7 +183,7 @@
     if (_reading)
     {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[EventSourceReader] Connection Closed");
+        SR_DEBUG_LOG(@"[EventSourceReader] Closed");
 #endif
         _stream.delegate = nil;
         [_stream close];
