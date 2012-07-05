@@ -177,18 +177,18 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     {
                         return;
                     }
-                }
-                
-                BOOL timedOut = NO;
-                BOOL disconnect = NO;
-                [_transport processResponse:connection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
-                
-                if(disconnect)
-                {
+                    
+                    BOOL timedOut = NO;
+                    BOOL disconnect = NO;
+                    [_transport processResponse:connection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
+                    
+                    if(disconnect)
+                    {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] disconnectReceived should disconnect");
+                        SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] disconnectReceived should disconnect");
 #endif
-                    retry = NO;
+                        retry = NO;
+                    }
                 }
             };
             
