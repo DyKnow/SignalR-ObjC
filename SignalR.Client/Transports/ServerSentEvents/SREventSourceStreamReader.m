@@ -27,7 +27,7 @@
 
 @interface SREventSourceStreamReader ()
 
-@property (unsafe_unretained, nonatomic, readwrite) NSOutputStream *stream;
+@property (weak, nonatomic, readwrite) NSOutputStream *stream;
 @property (strong, nonatomic, readonly)  SRChunkBuffer *buffer;
 @property (assign, nonatomic, readonly)  BOOL reading;
 @property (assign, nonatomic, readwrite) NSInteger offset;

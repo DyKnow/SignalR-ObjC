@@ -148,7 +148,8 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
             __unsafe_unretained SRThreadSafeInvoker *weakCallbackInvoker = callbackInvoker;
             __unsafe_unretained SRConnection *weakConnection = connection;
             __unsafe_unretained NSString *weakData = data;
-
+            typedef void (^SRInitializedCallback)(void);
+            __block SRInitializedCallback weakInitializedCallback = initializeCallback;
             __block BOOL retry = YES;
             
             [connection.items setObject:eventSource forKey:kEventSourceKey];
@@ -158,9 +159,11 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did initialize");
 #endif
-                if (initializeCallback != nil)
+                
+                if (weakInitializedCallback != nil)
                 {
-                    [weakCallbackInvoker invoke:initializeCallback];
+                    [weakCallbackInvoker invoke:weakInitializedCallback];
+                    weakInitializedCallback = nil;
                 }
                 
                 if(_reconnecting && [weakConnection changeState:reconnecting toState:connected])
