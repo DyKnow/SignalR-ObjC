@@ -27,7 +27,7 @@
 
 @interface SREventSourceStreamReader ()
 
-@property (strong, nonatomic, readwrite) NSOutputStream *stream;
+@property (unsafe_unretained, nonatomic, readwrite) NSOutputStream *stream;
 @property (strong, nonatomic, readonly)  SRChunkBuffer *buffer;
 @property (assign, nonatomic, readonly)  BOOL reading;
 @property (assign, nonatomic, readwrite) NSInteger offset;
@@ -198,6 +198,9 @@
 
 - (void)dealloc
 {
+    _opened = nil;
+    _message = nil;
+    _closed = nil;
     _stream.delegate = nil;
     _stream = nil;
     _buffer = nil;

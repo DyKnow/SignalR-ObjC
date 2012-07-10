@@ -63,8 +63,6 @@
 		3916E6EC14D6FD8B002D967A /* SRVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68514D6FD8B002D967A /* SRVersion.m */; };
 		3916E6ED14D6FD8B002D967A /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68814D6FD8B002D967A /* SRConnection.m */; };
 		3916E6EE14D6FD8B002D967A /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68814D6FD8B002D967A /* SRConnection.m */; };
-		3916E6EF14D6FD8B002D967A /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68A14D6FD8B002D967A /* SRConnectionExtensions.m */; };
-		3916E6F014D6FD8B002D967A /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68A14D6FD8B002D967A /* SRConnectionExtensions.m */; };
 		3916E6F114D6FD8B002D967A /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68C14D6FD8B002D967A /* SRNegotiationResponse.m */; };
 		3916E6F214D6FD8B002D967A /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E68C14D6FD8B002D967A /* SRNegotiationResponse.m */; };
 		3916E6F314D6FD8B002D967A /* SRAutoTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3916E69014D6FD8B002D967A /* SRAutoTransport.m */; };
@@ -161,8 +159,6 @@
 		3916E68614D6FD8B002D967A /* SignalR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalR.h; sourceTree = "<group>"; };
 		3916E68714D6FD8B002D967A /* SRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnection.h; sourceTree = "<group>"; };
 		3916E68814D6FD8B002D967A /* SRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnection.m; sourceTree = "<group>"; };
-		3916E68914D6FD8B002D967A /* SRConnectionExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnectionExtensions.h; sourceTree = "<group>"; };
-		3916E68A14D6FD8B002D967A /* SRConnectionExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnectionExtensions.m; sourceTree = "<group>"; };
 		3916E68B14D6FD8B002D967A /* SRNegotiationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRNegotiationResponse.h; sourceTree = "<group>"; };
 		3916E68C14D6FD8B002D967A /* SRNegotiationResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRNegotiationResponse.m; sourceTree = "<group>"; };
 		3916E68D14D6FD8B002D967A /* SRSignalRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSignalRConfig.h; sourceTree = "<group>"; };
@@ -300,8 +296,6 @@
 				3916E68614D6FD8B002D967A /* SignalR.h */,
 				3916E68714D6FD8B002D967A /* SRConnection.h */,
 				3916E68814D6FD8B002D967A /* SRConnection.m */,
-				3916E68914D6FD8B002D967A /* SRConnectionExtensions.h */,
-				3916E68A14D6FD8B002D967A /* SRConnectionExtensions.m */,
 				39E52EA4157F932400A3A75C /* SRConnectionState.h */,
 				3916E68B14D6FD8B002D967A /* SRNegotiationResponse.h */,
 				3916E68C14D6FD8B002D967A /* SRNegotiationResponse.m */,
@@ -680,7 +674,6 @@
 				3916E6E814D6FD8B002D967A /* NSTimer+Blocks.m in Sources */,
 				3916E6EC14D6FD8B002D967A /* SRVersion.m in Sources */,
 				3916E6EE14D6FD8B002D967A /* SRConnection.m in Sources */,
-				3916E6F014D6FD8B002D967A /* SRConnectionExtensions.m in Sources */,
 				3916E6F214D6FD8B002D967A /* SRNegotiationResponse.m in Sources */,
 				3916E6F414D6FD8B002D967A /* SRAutoTransport.m in Sources */,
 				3916E6F614D6FD8B002D967A /* SRHttpBasedTransport.m in Sources */,
@@ -735,7 +728,6 @@
 				3916E6E714D6FD8B002D967A /* NSTimer+Blocks.m in Sources */,
 				3916E6EB14D6FD8B002D967A /* SRVersion.m in Sources */,
 				3916E6ED14D6FD8B002D967A /* SRConnection.m in Sources */,
-				3916E6EF14D6FD8B002D967A /* SRConnectionExtensions.m in Sources */,
 				3916E6F114D6FD8B002D967A /* SRNegotiationResponse.m in Sources */,
 				3916E6F314D6FD8B002D967A /* SRAutoTransport.m in Sources */,
 				3916E6F514D6FD8B002D967A /* SRHttpBasedTransport.m in Sources */,

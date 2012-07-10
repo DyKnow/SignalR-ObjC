@@ -22,7 +22,6 @@
 
 #import "SRServerSentEventsTransport.h"
 #import "SRConnection.h"
-#import "SRConnectionExtensions.h"
 #import "SRDefaultHttpClient.h"
 #import "SREventSourceStreamReader.h"
 #import "SRExceptionHelper.h"
@@ -34,7 +33,6 @@
 
 @interface SRServerSentEventsTransport ()
 
-@property (strong, nonatomic, readwrite) SREventSourceStreamReader *eventSource;
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
 
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
@@ -44,7 +42,6 @@
 @implementation SRServerSentEventsTransport
 
 @synthesize connectionTimeout = _connectionTimeout;
-@synthesize eventSource = _eventSource;
 @synthesize reconnectDelay = _reconnectDelay;
 
 static NSString * const kTransportName = @"serverSentEvents";
@@ -95,10 +92,10 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     // If we're reconnecting add /connect to the url
-    BOOL reconnecting = initializeCallback == nil;
+    BOOL _reconnecting = initializeCallback == nil;
     SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
     
-    NSString *url = [(reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
+    NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:kConnectEndPoint]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
 
     [self.httpClient getAsync:url requestPreparer:^(id<SRRequest> request)
     {
@@ -135,7 +132,7 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     withCallback:errorCallback 
                     withObject:response.error];
                 }
-                else if(reconnecting)
+                else if(_reconnecting)
                 {
                     // Only raise the error event if we failed to reconnect
                     [connection didReceiveError:response.error];
@@ -146,30 +143,34 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         }
         else
         {
-            _eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
-            __weak SRServerSentEventsTransport *_transport = self;
+            SREventSourceStreamReader *eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
+            __unsafe_unretained SRServerSentEventsTransport *weakTransport = self;
+            __unsafe_unretained SRThreadSafeInvoker *weakCallbackInvoker = callbackInvoker;
+            __unsafe_unretained SRConnection *weakConnection = connection;
+            __unsafe_unretained NSString *weakData = data;
+
             __block BOOL retry = YES;
             
-            [connection.items setObject:_eventSource forKey:kEventSourceKey];
+            [connection.items setObject:eventSource forKey:kEventSourceKey];
             
-            _eventSource.opened = ^()
+            eventSource.opened = ^()
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did initialize");
 #endif
                 if (initializeCallback != nil)
                 {
-                    [callbackInvoker invoke:initializeCallback];
+                    [weakCallbackInvoker invoke:initializeCallback];
                 }
-
-                if(reconnecting && [connection changeState:reconnecting toState:connected])
+                
+                if(_reconnecting && [weakConnection changeState:reconnecting toState:connected])
                 {
                     // Raise the reconnect event if the connection comes back up
-                    [connection didReconnect];
+                    [weakConnection didReconnect];
                 }
             };
             
-            _eventSource.message = ^(SRSseEvent * sseEvent)
+            eventSource.message = ^(SRSseEvent * sseEvent)
             {
                 if(sseEvent.type == Data)
                 {
@@ -180,7 +181,7 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     
                     BOOL timedOut = NO;
                     BOOL disconnect = NO;
-                    [_transport processResponse:connection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
+                    [weakTransport processResponse:weakConnection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
                     
                     if(disconnect)
                     {
@@ -192,7 +193,7 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 }
             };
             
-            _eventSource.closed = ^(NSError * error)
+            eventSource.closed = ^(NSError * error)
             {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did close");
@@ -200,23 +201,23 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 if (error != nil && ![SRExceptionHelper isRequestAborted:error])
                 {
                     // Don't raise exceptions if the request was aborted (connection was stopped).
-                    [connection didReceiveError:error];
+                    [weakConnection didReceiveError:error];
                 }
                 
                 if(retry)
                 {
-                    [_transport reconnect:connection data:data];
+                    [weakTransport reconnect:weakConnection data:weakData];
                 }
                 else
                 {
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                     SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] will abort connection");
 #endif
-                    [connection stop];
+                    [weakConnection stop];
                 }
             };
             
-            [_eventSource start];
+            [eventSource start];
         }
     }];
     
@@ -254,17 +255,17 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 
 - (void)onBeforeAbort:(SRConnection *)connection
 {
-    SREventSourceStreamReader *eventSourceStream = [connection getValue:kEventSourceKey];
+    SREventSourceStreamReader *eventSourceStream = [connection.items objectForKey:kEventSourceKey];
     if (eventSourceStream != nil)
     {
         [eventSourceStream close];
+        eventSourceStream = nil;
     }
     [super onBeforeAbort:connection];
 }
 
 - (void)dealloc
 {
-    _eventSource = nil;
     _connectionTimeout = 0;
     _reconnectDelay = 0;
 }

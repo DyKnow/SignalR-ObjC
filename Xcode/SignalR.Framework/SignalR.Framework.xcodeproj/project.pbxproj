@@ -156,10 +156,6 @@
 		3941BE42159346970071EBF9 /* SRConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941BDCE159346970071EBF9 /* SRConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3941BE43159346970071EBF9 /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3941BDCF159346970071EBF9 /* SRConnection.m */; };
 		3941BE44159346970071EBF9 /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3941BDCF159346970071EBF9 /* SRConnection.m */; };
-		3941BE45159346970071EBF9 /* SRConnectionExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941BDD0159346970071EBF9 /* SRConnectionExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3941BE46159346970071EBF9 /* SRConnectionExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941BDD0159346970071EBF9 /* SRConnectionExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3941BE47159346970071EBF9 /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3941BDD1159346970071EBF9 /* SRConnectionExtensions.m */; };
-		3941BE48159346970071EBF9 /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3941BDD1159346970071EBF9 /* SRConnectionExtensions.m */; };
 		3941BE49159346970071EBF9 /* SRConnectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941BDD2159346970071EBF9 /* SRConnectionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3941BE4A159346970071EBF9 /* SRConnectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941BDD2159346970071EBF9 /* SRConnectionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3941BE4B159346970071EBF9 /* SRNegotiationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941BDD3159346970071EBF9 /* SRNegotiationResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -283,8 +279,6 @@
 		3941BDCD159346970071EBF9 /* SignalR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalR.h; sourceTree = "<group>"; };
 		3941BDCE159346970071EBF9 /* SRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnection.h; sourceTree = "<group>"; };
 		3941BDCF159346970071EBF9 /* SRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnection.m; sourceTree = "<group>"; };
-		3941BDD0159346970071EBF9 /* SRConnectionExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnectionExtensions.h; sourceTree = "<group>"; };
-		3941BDD1159346970071EBF9 /* SRConnectionExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnectionExtensions.m; sourceTree = "<group>"; };
 		3941BDD2159346970071EBF9 /* SRConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnectionState.h; sourceTree = "<group>"; };
 		3941BDD3159346970071EBF9 /* SRNegotiationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRNegotiationResponse.h; sourceTree = "<group>"; };
 		3941BDD4159346970071EBF9 /* SRNegotiationResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRNegotiationResponse.m; sourceTree = "<group>"; };
@@ -467,8 +461,6 @@
 				3941BDCD159346970071EBF9 /* SignalR.h */,
 				3941BDCE159346970071EBF9 /* SRConnection.h */,
 				3941BDCF159346970071EBF9 /* SRConnection.m */,
-				3941BDD0159346970071EBF9 /* SRConnectionExtensions.h */,
-				3941BDD1159346970071EBF9 /* SRConnectionExtensions.m */,
 				3941BDD2159346970071EBF9 /* SRConnectionState.h */,
 				3941BDD3159346970071EBF9 /* SRNegotiationResponse.h */,
 				3941BDD4159346970071EBF9 /* SRNegotiationResponse.m */,
@@ -601,7 +593,6 @@
 				3941BE39159346970071EBF9 /* SRSerializable.h in Headers */,
 				3941BE3F159346970071EBF9 /* SignalR.h in Headers */,
 				3941BE41159346970071EBF9 /* SRConnection.h in Headers */,
-				3941BE45159346970071EBF9 /* SRConnectionExtensions.h in Headers */,
 				3941BE49159346970071EBF9 /* SRConnectionState.h in Headers */,
 				3941BE4B159346970071EBF9 /* SRNegotiationResponse.h in Headers */,
 				3941BE4F159346970071EBF9 /* SRSignalRConfig.h in Headers */,
@@ -661,7 +652,6 @@
 				3941BE3A159346970071EBF9 /* SRSerializable.h in Headers */,
 				3941BE40159346970071EBF9 /* SignalR.h in Headers */,
 				3941BE42159346970071EBF9 /* SRConnection.h in Headers */,
-				3941BE46159346970071EBF9 /* SRConnectionExtensions.h in Headers */,
 				3941BE4A159346970071EBF9 /* SRConnectionState.h in Headers */,
 				3941BE4C159346970071EBF9 /* SRNegotiationResponse.h in Headers */,
 				3941BE50159346970071EBF9 /* SRSignalRConfig.h in Headers */,
@@ -852,7 +842,6 @@
 				3941BE37159346970071EBF9 /* SRExceptionHelper.m in Sources */,
 				3941BE3D159346970071EBF9 /* SRVersion.m in Sources */,
 				3941BE43159346970071EBF9 /* SRConnection.m in Sources */,
-				3941BE47159346970071EBF9 /* SRConnectionExtensions.m in Sources */,
 				3941BE4D159346970071EBF9 /* SRNegotiationResponse.m in Sources */,
 				3941BE53159346970071EBF9 /* SRChunkBuffer.m in Sources */,
 				3941BE57159346970071EBF9 /* SREventSourceStreamReader.m in Sources */,
@@ -898,7 +887,6 @@
 				3941BE38159346970071EBF9 /* SRExceptionHelper.m in Sources */,
 				3941BE3E159346970071EBF9 /* SRVersion.m in Sources */,
 				3941BE44159346970071EBF9 /* SRConnection.m in Sources */,
-				3941BE48159346970071EBF9 /* SRConnectionExtensions.m in Sources */,
 				3941BE4E159346970071EBF9 /* SRNegotiationResponse.m in Sources */,
 				3941BE54159346970071EBF9 /* SRChunkBuffer.m in Sources */,
 				3941BE58159346970071EBF9 /* SREventSourceStreamReader.m in Sources */,

@@ -48,7 +48,7 @@
     if(self = [super init])
     {
         _httpClient = httpClient;
-        _transports = [NSArray arrayWithObjects:[[SRServerSentEventsTransport alloc] init],[[SRLongPollingTransport alloc] init], nil];
+        _transports = [NSArray arrayWithObjects:[[SRLongPollingTransport alloc] init], nil];
     }
     return self;
 }

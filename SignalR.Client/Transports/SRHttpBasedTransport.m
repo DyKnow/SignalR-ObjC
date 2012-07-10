@@ -22,7 +22,6 @@
 
 #import "SRHttpBasedTransport.h"
 #import "SRConnection.h"
-#import "SRConnectionExtensions.h"
 #import "SRNegotiationResponse.h"
 #import "SRSignalRConfig.h"
 
@@ -160,7 +159,7 @@
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
     SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will stop transport");
 #endif
-    id <SRRequest> httpRequest = [connection getValue:kHttpRequestKey];
+    id <SRRequest> httpRequest = [connection.items objectForKey:kHttpRequestKey];
     
     if(httpRequest != nil)
     {

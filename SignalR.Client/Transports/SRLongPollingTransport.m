@@ -22,7 +22,6 @@
 
 #import "SRLongPollingTransport.h"
 #import "SRConnection.h"
-#import "SRConnectionExtensions.h"
 #import "SRDefaultHttpClient.h"
 #import "SRExceptionHelper.h"
 #import "SRSignalRConfig.h"

@@ -23,7 +23,6 @@
 #include <TargetConditionals.h>
 #import "SRAutoTransport.h"
 #import "SRConnection.h"
-#import "SRConnectionExtensions.h"
 #import "SRDefaultHttpClient.h"
 #import "SRNegotiationResponse.h"
 #import "SRSignalRConfig.h"
@@ -375,7 +374,6 @@ void (^prepareRequest)(id);
 
 - (void)dealloc
 {
-    //private
     _assemblyVersion = nil;
     _transport = nil;
     _started = nil;
