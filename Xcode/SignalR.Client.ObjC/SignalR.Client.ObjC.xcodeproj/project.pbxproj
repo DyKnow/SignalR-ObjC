@@ -101,7 +101,8 @@
 		391963D315AF22FF00DDC946 /* SRHttpBasedTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D415AF22FF00DDC946 /* SRLongPollingTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785E15AF13F6009B959E /* SRLongPollingTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D515AF22FF00DDC946 /* SRServerSentEventsTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920786015AF13F6009B959E /* SRServerSentEventsTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963DF15AF266200DDC946 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920780A15AF13C3009B959E /* Foundation.framework */; };
+		3919643115AF373E00DDC946 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3919643015AF373E00DDC946 /* icon.png */; };
+		3919643315AF374900DDC946 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3919643215AF374900DDC946 /* icon.icns */; };
 		3920780B15AF13C3009B959E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920780A15AF13C3009B959E /* Foundation.framework */; };
 		3920786215AF13F6009B959E /* SRDefaultHttpClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920781915AF13F6009B959E /* SRDefaultHttpClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920786315AF13F6009B959E /* SRDefaultHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920781A15AF13F6009B959E /* SRDefaultHttpClient.m */; };
@@ -174,7 +175,6 @@
 		392078A615AF13F6009B959E /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920786115AF13F6009B959E /* SRServerSentEventsTransport.m */; };
 		3920792115AF1853009B959E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920792015AF1853009B959E /* UIKit.framework */; };
 		3920792215AF1853009B959E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920780A15AF13C3009B959E /* Foundation.framework */; };
-		3920792415AF1853009B959E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920792315AF1853009B959E /* CoreGraphics.framework */; };
 		3920792A15AF1854009B959E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3920792815AF1854009B959E /* InfoPlist.strings */; };
 		3920792C15AF1854009B959E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920792B15AF1854009B959E /* main.m */; };
 		3920793315AF1854009B959E /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3920793115AF1854009B959E /* MainStoryboard_iPhone.storyboard */; };
@@ -194,9 +194,6 @@
 /* Begin PBXFileReference section */
 		15A54869CA52487B852CD37E /* Pods-SignalR.Client.iOS.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.xcconfig"; path = "../../Pods/Pods-SignalR.Client.iOS.xcconfig"; sourceTree = SOURCE_ROOT; };
 		3919634415AF1EC100DDC946 /* SignalR.Samples.OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3919634915AF1EC200DDC946 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		3919634A15AF1EC200DDC946 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		3919634B15AF1EC200DDC946 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3919634E15AF1EC200DDC946 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
 		3919635015AF1EC200DDC946 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3919635215AF1EC200DDC946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -211,6 +208,8 @@
 		3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSignalR.Client.OSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3919637215AF205300DDC946 /* SignalR.Client.OSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.OSX-Prefix.pch"; sourceTree = "<group>"; };
 		3919637A15AF220300DDC946 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		3919643015AF373E00DDC946 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		3919643215AF374900DDC946 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		3920780715AF13C3009B959E /* libSignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSignalR.Client.iOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3920780A15AF13C3009B959E /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3920780E15AF13C3009B959E /* SignalR.Client.iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.iOS-Prefix.pch"; sourceTree = "<group>"; };
@@ -285,7 +284,6 @@
 		3920786115AF13F6009B959E /* SRServerSentEventsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEventsTransport.m; sourceTree = "<group>"; };
 		3920791E15AF1853009B959E /* SignalR.Samples.iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalR.Samples.iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3920792015AF1853009B959E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		3920792315AF1853009B959E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		3920792715AF1853009B959E /* SignalR.Samples.iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.iOS-Info.plist"; sourceTree = "<group>"; };
 		3920792915AF1854009B959E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3920792B15AF1854009B959E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -325,7 +323,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				391963DF15AF266200DDC946 /* Foundation.framework in Frameworks */,
 				7D13361DA8814C3FB92D0EB2 /* libPods-SignalR.Client.OSX.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -346,23 +343,12 @@
 				3920794015AF187D009B959E /* libSignalR.Client.iOS.a in Frameworks */,
 				3920792115AF1853009B959E /* UIKit.framework in Frameworks */,
 				3920792215AF1853009B959E /* Foundation.framework in Frameworks */,
-				3920792415AF1853009B959E /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3919634815AF1EC200DDC946 /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				3919634915AF1EC200DDC946 /* AppKit.framework */,
-				3919634A15AF1EC200DDC946 /* CoreData.framework */,
-				3919634B15AF1EC200DDC946 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
 		3919634C15AF1EC200DDC946 /* SignalR.Samples.OSX */ = {
 			isa = PBXGroup;
 			children = (
@@ -423,6 +409,8 @@
 		392077FC15AF13C3009B959E = {
 			isa = PBXGroup;
 			children = (
+				3919643215AF374900DDC946 /* icon.icns */,
+				3919643015AF373E00DDC946 /* icon.png */,
 				3920781715AF13F6009B959E /* SignalR.Client */,
 				3920780C15AF13C3009B959E /* SignalR.Client.iOS */,
 				3919637015AF205300DDC946 /* SignalR.Client.OSX */,
@@ -453,8 +441,6 @@
 				3919637A15AF220300DDC946 /* Cocoa.framework */,
 				3920780A15AF13C3009B959E /* Foundation.framework */,
 				3920792015AF1853009B959E /* UIKit.framework */,
-				3920792315AF1853009B959E /* CoreGraphics.framework */,
-				3919634815AF1EC200DDC946 /* Other Frameworks */,
 				63F8A3995EE047F88A8ECB45 /* libPods-SignalR.Client.iOS.a */,
 				EDDF51C2ADE148E3BE134FC3 /* libPods-SignalR.Client.OSX.a */,
 			);
@@ -499,18 +485,18 @@
 		3920781815AF13F6009B959E /* Http */ = {
 			isa = PBXGroup;
 			children = (
-				3920781915AF13F6009B959E /* SRDefaultHttpClient.h */,
-				3920781A15AF13F6009B959E /* SRDefaultHttpClient.m */,
+				3920782215AF13F6009B959E /* SRHttpHelper.h */,
 				3920781B15AF13F6009B959E /* SRDefaultHttpHelper.h */,
 				3920781C15AF13F6009B959E /* SRDefaultHttpHelper.m */,
+				3920782115AF13F6009B959E /* SRHttpClient.h */,
+				3920781915AF13F6009B959E /* SRDefaultHttpClient.h */,
+				3920781A15AF13F6009B959E /* SRDefaultHttpClient.m */,
+				3920782315AF13F6009B959E /* SRRequest.h */,
 				3920781D15AF13F6009B959E /* SRDefaultHttpWebRequestWrapper.h */,
 				3920781E15AF13F6009B959E /* SRDefaultHttpWebRequestWrapper.m */,
+				3920782415AF13F6009B959E /* SRResponse.h */,
 				3920781F15AF13F6009B959E /* SRDefaultHttpWebResponseWrapper.h */,
 				3920782015AF13F6009B959E /* SRDefaultHttpWebResponseWrapper.m */,
-				3920782115AF13F6009B959E /* SRHttpClient.h */,
-				3920782215AF13F6009B959E /* SRHttpHelper.h */,
-				3920782315AF13F6009B959E /* SRRequest.h */,
-				3920782415AF13F6009B959E /* SRResponse.h */,
 			);
 			path = Http;
 			sourceTree = "<group>";
@@ -518,19 +504,19 @@
 		3920782515AF13F6009B959E /* Hubs */ = {
 			isa = PBXGroup;
 			children = (
+				3920783215AF13F6009B959E /* SRHubs.h */,
 				3920782615AF13F6009B959E /* SRHubConnection.h */,
 				3920782715AF13F6009B959E /* SRHubConnection.m */,
-				3920782815AF13F6009B959E /* SRHubInvocation.h */,
-				3920782915AF13F6009B959E /* SRHubInvocation.m */,
 				3920782A15AF13F6009B959E /* SRHubProxy.h */,
 				3920782B15AF13F6009B959E /* SRHubProxy.m */,
 				3920782C15AF13F6009B959E /* SRHubProxyExtensions.h */,
 				3920782D15AF13F6009B959E /* SRHubProxyExtensions.m */,
+				3920782815AF13F6009B959E /* SRHubInvocation.h */,
+				3920782915AF13F6009B959E /* SRHubInvocation.m */,
 				3920782E15AF13F6009B959E /* SRHubRegistrationData.h */,
 				3920782F15AF13F6009B959E /* SRHubRegistrationData.m */,
 				3920783015AF13F6009B959E /* SRHubResult.h */,
 				3920783115AF13F6009B959E /* SRHubResult.m */,
-				3920783215AF13F6009B959E /* SRHubs.h */,
 				3920783315AF13F6009B959E /* SRHubservable.h */,
 				3920783415AF13F6009B959E /* SRHubservable.m */,
 				3920783515AF13F6009B959E /* SRSubscription.h */,
@@ -848,6 +834,7 @@
 				3919635715AF1EC200DDC946 /* Credits.rtf in Resources */,
 				3919635D15AF1EC200DDC946 /* MainMenu.xib in Resources */,
 				3919636815AF1FC400DDC946 /* Environments.plist in Resources */,
+				3919643315AF374900DDC946 /* icon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -859,6 +846,7 @@
 				3920793315AF1854009B959E /* MainStoryboard_iPhone.storyboard in Resources */,
 				3920793615AF1854009B959E /* MainStoryboard_iPad.storyboard in Resources */,
 				3919636615AF1FBC00DDC946 /* Environments.plist in Resources */,
+				3919643115AF373E00DDC946 /* icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1168,6 +1156,7 @@
 		3920781215AF13C3009B959E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ADDITIONAL_SDKS = "";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1193,6 +1182,7 @@
 		3920781315AF13C3009B959E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ADDITIONAL_SDKS = "";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
