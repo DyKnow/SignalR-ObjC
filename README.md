@@ -17,7 +17,16 @@ See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) and [api re
 ## Installation
 NOTE: SignalR-ObjC uses Automatic Reference Counting.
 
-### Method 1:
+### Method 1: [CocoaPods](http://cocoapods.org/)
+1. Install CocoaPods
+    * $ [sudo] gem install cocoapods
+    * $ pod setup
+1. Create or Add SignalR to your "Podfile"
+    * pod 'SignalR-ObjC'
+1. Install SignalR-ObjC into your project
+    * pod install App.xcodeproj
+
+### Method 2:
 1. Copy the contents of the SignalR.Client and Vendor Folders into your project
 	- Note: While SignalR-ObjC uses arc it makes use of Vendor Projects that do not.
 		- For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to ```-fno-objc-arc```
@@ -25,7 +34,7 @@ NOTE: SignalR-ObjC uses Automatic Reference Counting.
 1. In your pch file or where every you intend to use SignalR ```#import SignalR.h```
 1. Build and Run your project with no errors
 
-### Method 2:
+### Method 3:
 1. Open the [SignalR.Framework XCode Project](https://github.com/DyKnow/SignalR-ObjC/tree/master/Xcode/SignalR.Framework) 
 1. Choose the appropriate build target SignalR-iOS or SignalR-OSX
 1. Verify that the Project's Base SDK setting under Build Settings is correct, Latest iOS for the iOS target, Latest Mac OS for the mac target
