@@ -15,10 +15,9 @@ it dead easy and handles all the heavy lifting for you.
 See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) and [api reference](http://dyknow.github.com/SignalR-ObjC/Documentation/index.html)
 	
 ## Installation
-NOTE: SignalR-ObjC uses Automatic Reference Counting.
 
-### Method 1: [CocoaPods](http://cocoapods.org/)
-1. Install CocoaPods
+### [CocoaPods](http://cocoapods.org/)
+1. Install CocoaPods (if you have not already done so)
     * $ [sudo] gem install cocoapods
     * $ pod setup
 1. Create or Add SignalR to your "Podfile"
@@ -26,16 +25,12 @@ NOTE: SignalR-ObjC uses Automatic Reference Counting.
 1. Install SignalR-ObjC into your project
     * pod install App.xcodeproj
 
-### Method 2: Link to Static Library
-
-### Method 3: Copy Sources
-1. Copy the contents of the SignalR.Client
-1. Download a copy of [AFNetworking](https://github.com/AFNetworking/AFNetworking)
-	- Note: While SignalR-ObjC uses arc it makes use of vendor Projects that do not.
-		- For each target that SignalR-ObjC is used in update the compiler flags under Build Phases Compile Sources to ```-fno-objc-arc```
-		- for any files that have the prefix AF (This requirement will go away in future release of AFNetworking)
-1. In your pch file or where every you intend to use SignalR ```#import SignalR.h```
-1. Build and Run your project with no errors
+## Running the Samples
+1. Install CocoaPods (if you have not already done so)
+    * $ [sudo] gem install cocoapods
+    * $ pod setup
+1. cd SignalR-ObjC project directory
+1. $ pod install
 
 ## Requirements
 
@@ -44,6 +39,7 @@ SignalR-ObjC uses [`NSJSONSerialization`](http://developer.apple.com/library/mac
 * [JSONKit](https://github.com/johnezang/JSONKit)
 * [SBJson](http://stig.github.com/json-framework/)
 * [YAJL](http://lloyd.github.com/yajl/)
+* [NextiveJson](https://github.com/nextive/NextiveJson)
 
 ### ARC Support
 
@@ -52,8 +48,7 @@ SignalR-ObjC requires ARC
 ## LICENSE
 [MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
 
-SignalR-ObjC uses 3rd-party code, see [ACKNOWLEDGEMENTS](https://github.com/DyKnow/SignalR-ObjC/blob/master/ACKNOWLEDGEMENTS.md) for contributions and
-[Vendor](https://github.com/DyKnow/SignalR-ObjC/tree/master/Vendor) for specific usage
+SignalR-ObjC uses 3rd-party code, see [ACKNOWLEDGEMENTS](https://github.com/DyKnow/SignalR-ObjC/blob/master/ACKNOWLEDGEMENTS.md) for contributions
 
 ## Questions?
 - The SignalR team hangs out in the **signalr** room at http://jabbr.net/
