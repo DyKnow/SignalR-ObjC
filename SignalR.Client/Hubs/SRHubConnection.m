@@ -42,22 +42,22 @@
 #pragma mark - 
 #pragma mark Initialization
 
-- (id)initWithURL:(NSString *)URL
+- (id)initWithURLString:(NSString *)URL
 {
-    return [self initWithURL:URL useDefault:YES];
+    return [self initWithURLString:URL useDefault:YES];
 }
 
-- (id)initWithURL:(NSString *)URL useDefault:(BOOL)useDefault
+- (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURL:[self _getUrl:URL useDefault:useDefault]])) 
+    if ((self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]])) 
     {
     }
     return self;
 }
 
-- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString
+- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString
 {
-    if ((self = [super initWithURL:url queryString:queryString])) 
+    if ((self = [super initWithURLString:url queryString:queryString])) 
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }

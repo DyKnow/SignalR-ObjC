@@ -71,30 +71,30 @@ void (^prepareRequest)(id);
 
 + (id)connectionWithURL:(NSString *)url
 {
-    return [[[self class] alloc] initWithURL:url];
+    return [[[self class] alloc] initWithURLString:url];
 }
 
 + (id)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
 {
-    return [[[self class] alloc] initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
+    return [[[self class] alloc] initWithURLString:url queryString:[queryString stringWithFormEncodedComponents]];
 }
 
 + (id)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
 {
-    return [[[self class] alloc] initWithURL:url queryString:queryString];
+    return [[[self class] alloc] initWithURLString:url queryString:queryString];
 }
 
-- (id)initWithURL:(NSString *)url
+- (id)initWithURLString:(NSString *)url
 {
-    return [self initWithURL:url queryString:@""];
+    return [self initWithURLString:url queryString:@""];
 }
 
-- (id)initWithURL:(NSString *)url query:(NSDictionary *)queryString
+- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString
 {
-    return [self initWithURL:url queryString:[queryString stringWithFormEncodedComponents]];
+    return [self initWithURLString:url queryString:[queryString stringWithFormEncodedComponents]];
 }
 
-- (id)initWithURL:(NSString *)url queryString:(NSString *)queryString
+- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString
 {
     if ((self = [super init])) 
     {
