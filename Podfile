@@ -1,6 +1,6 @@
 platform :ios
 
-xcodeproj 'Xcode/SignalR.Client.ObjC/SignalR.Client.ObjC'
+xcodeproj 'SignalR.Client.ObjC/SignalR.Client.ObjC'
 workspace 'SignalR.Client.ObjC'
 
 target :"SignalR.Client.iOS", :exclusive => true do
