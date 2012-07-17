@@ -103,7 +103,7 @@
                 return;
             }
             
-            NSData *buffer = [(NSOutputStream *)stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+            NSData *buffer = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
             buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
             
             NSInteger read = [buffer length];            
@@ -125,10 +125,7 @@
         case NSStreamEventNone:
         case NSStreamEventHasBytesAvailable:
         default:
-        {
-            NSLog(@"HERE");
             break;
-        }
     }
 }
 
