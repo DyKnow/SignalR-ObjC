@@ -19,7 +19,9 @@
 
 * Use Apple Defined Exceptions when trowing errors
 * Prepare project for Localization
+* Invoke Server Side abort when stopping connections for Http Based Transports
 * Abstract away AFNetworking and make HTTP library plug-able
+* Define Protocol for JSON serialization and deserialization
 * Allow sending an Object in SRConnection
 * Refactor ServerSentEvents transport
 * Add Connection State to SRConnection
