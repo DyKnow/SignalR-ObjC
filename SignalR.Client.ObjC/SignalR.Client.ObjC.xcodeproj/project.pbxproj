@@ -32,7 +32,6 @@
 		3919636815AF1FC400DDC946 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3919636215AF1FBC00DDC946 /* Environments.plist */; };
 		3919636915AF1FC700DDC946 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 3919636515AF1FBC00DDC946 /* Router.m */; };
 		3919637915AF21F500DDC946 /* libSignalR.Client.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */; };
-		3919637B15AF220300DDC946 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3919637A15AF220300DDC946 /* Cocoa.framework */; };
 		3919637C15AF222200DDC946 /* SRDefaultHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920781A15AF13F6009B959E /* SRDefaultHttpClient.m */; };
 		3919637D15AF222200DDC946 /* SRDefaultHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920781C15AF13F6009B959E /* SRDefaultHttpHelper.m */; };
 		3919637E15AF222200DDC946 /* SRDefaultHttpWebRequestWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920781E15AF13F6009B959E /* SRDefaultHttpWebRequestWrapper.m */; };
@@ -188,6 +187,16 @@
 		3920795915AF1BEA009B959E /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795015AF1BEA009B959E /* MouseTrackingViewController.m */; };
 		3920795A15AF1BEA009B959E /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795215AF1BEA009B959E /* RawViewController.m */; };
 		3920795B15AF1BEA009B959E /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795415AF1BEA009B959E /* StreamingViewController.m */; };
+		39E6FCE215C6BDC600434098 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39E6FCE015C6BDC600434098 /* InfoPlist.strings */; };
+		39E6FCEC15C6BE4D00434098 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E6FCEB15C6BE4D00434098 /* SenTestingKit.framework */; };
+		39E6FCEE15C6BE5400434098 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E6FCED15C6BE5400434098 /* Cocoa.framework */; };
+		39E6FCEF15C6BE6800434098 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E6FCED15C6BE5400434098 /* Cocoa.framework */; };
+		39E6FD1815C6BF4000434098 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E6FCEB15C6BE4D00434098 /* SenTestingKit.framework */; };
+		39E6FD1915C6BF4000434098 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920792015AF1853009B959E /* UIKit.framework */; };
+		39E6FD1A15C6BF4000434098 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920780A15AF13C3009B959E /* Foundation.framework */; };
+		39E6FD2015C6BF4000434098 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39E6FD1E15C6BF4000434098 /* InfoPlist.strings */; };
+		39E6FD2C15C6BFCE00434098 /* SRJSONTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */; };
+		39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */; };
 		D27CBDC3D95B4241B1B76237 /* libPods-SignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */; };
 /* End PBXBuildFile section */
 
@@ -208,7 +217,6 @@
 		3919636515AF1FBC00DDC946 /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSignalR.Client.OSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3919637215AF205300DDC946 /* SignalR.Client.OSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.OSX-Prefix.pch"; sourceTree = "<group>"; };
-		3919637A15AF220300DDC946 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		3919643015AF373E00DDC946 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		3919643215AF374900DDC946 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		3920780715AF13C3009B959E /* libSignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSignalR.Client.iOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -305,6 +313,17 @@
 		3920795215AF1BEA009B959E /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
 		3920795315AF1BEA009B959E /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
 		3920795415AF1BEA009B959E /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
+		39E6FCD515C6BDC600434098 /* SignalR.Client.Tests.OSX.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalR.Client.Tests.OSX.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		39E6FCDF15C6BDC600434098 /* SignalR.Client.Tests.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Client.Tests.OSX-Info.plist"; sourceTree = "<group>"; };
+		39E6FCE115C6BDC600434098 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		39E6FCE615C6BDC600434098 /* SignalR.Client.Tests.OSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.Tests.OSX-Prefix.pch"; sourceTree = "<group>"; };
+		39E6FCEB15C6BE4D00434098 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		39E6FCED15C6BE5400434098 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		39E6FD1715C6BF4000434098 /* SignalR.Client.Tests.iOS.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalR.Client.Tests.iOS.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		39E6FD1D15C6BF4000434098 /* SignalR.Client.Tests.iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Client.Tests.iOS-Info.plist"; sourceTree = "<group>"; };
+		39E6FD1F15C6BF4000434098 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		39E6FD2415C6BF4000434098 /* SignalR.Client.Tests.iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.Tests.iOS-Prefix.pch"; sourceTree = "<group>"; };
+		39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRJSONTests.m; path = SignalR.Client.Tests/SRJSONTests.m; sourceTree = "<group>"; };
 		E1168910CBED44F49353CF85 /* Pods-SignalR.Client.OSX.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.OSX.xcconfig"; path = "../Pods/Pods-SignalR.Client.OSX.xcconfig"; sourceTree = SOURCE_ROOT; };
 		F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -314,8 +333,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3919637B15AF220300DDC946 /* Cocoa.framework in Frameworks */,
 				3919637915AF21F500DDC946 /* libSignalR.Client.OSX.a in Frameworks */,
+				39E6FCEF15C6BE6800434098 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,6 +362,25 @@
 				3920794015AF187D009B959E /* libSignalR.Client.iOS.a in Frameworks */,
 				3920792115AF1853009B959E /* UIKit.framework in Frameworks */,
 				3920792215AF1853009B959E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39E6FCD115C6BDC600434098 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39E6FCEE15C6BE5400434098 /* Cocoa.framework in Frameworks */,
+				39E6FCEC15C6BE4D00434098 /* SenTestingKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39E6FD1315C6BF4000434098 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39E6FD1815C6BF4000434098 /* SenTestingKit.framework in Frameworks */,
+				39E6FD1915C6BF4000434098 /* UIKit.framework in Frameworks */,
+				39E6FD1A15C6BF4000434098 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +452,9 @@
 				3920781715AF13F6009B959E /* SignalR.Client */,
 				3920780C15AF13C3009B959E /* SignalR.Client.iOS */,
 				3919637015AF205300DDC946 /* SignalR.Client.OSX */,
+				39E6FD2915C6BFAB00434098 /* SignalR.Client.Tests */,
+				39E6FD1B15C6BF4000434098 /* SignalR.Client.Tests.iOS */,
+				39E6FCDD15C6BDC600434098 /* SignalR.Client.Tests.OSX */,
 				3919636115AF1FBC00DDC946 /* SignalR.Samples */,
 				3920792515AF1853009B959E /* SignalR.Samples.iOS */,
 				3919634C15AF1EC200DDC946 /* SignalR.Samples.OSX */,
@@ -431,6 +472,8 @@
 				3920791E15AF1853009B959E /* SignalR.Samples.iOS.app */,
 				3919634415AF1EC100DDC946 /* SignalR.Samples.OSX.app */,
 				3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */,
+				39E6FCD515C6BDC600434098 /* SignalR.Client.Tests.OSX.octest */,
+				39E6FD1715C6BF4000434098 /* SignalR.Client.Tests.iOS.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -438,7 +481,8 @@
 		3920780915AF13C3009B959E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3919637A15AF220300DDC946 /* Cocoa.framework */,
+				39E6FCED15C6BE5400434098 /* Cocoa.framework */,
+				39E6FCEB15C6BE4D00434098 /* SenTestingKit.framework */,
 				3920780A15AF13C3009B959E /* Foundation.framework */,
 				3920792015AF1853009B959E /* UIKit.framework */,
 				F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */,
@@ -623,6 +667,50 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		39E6FCDD15C6BDC600434098 /* SignalR.Client.Tests.OSX */ = {
+			isa = PBXGroup;
+			children = (
+				39E6FCDE15C6BDC600434098 /* Supporting Files */,
+			);
+			path = SignalR.Client.Tests.OSX;
+			sourceTree = "<group>";
+		};
+		39E6FCDE15C6BDC600434098 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				39E6FCDF15C6BDC600434098 /* SignalR.Client.Tests.OSX-Info.plist */,
+				39E6FCE015C6BDC600434098 /* InfoPlist.strings */,
+				39E6FCE615C6BDC600434098 /* SignalR.Client.Tests.OSX-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		39E6FD1B15C6BF4000434098 /* SignalR.Client.Tests.iOS */ = {
+			isa = PBXGroup;
+			children = (
+				39E6FD1C15C6BF4000434098 /* Supporting Files */,
+			);
+			path = SignalR.Client.Tests.iOS;
+			sourceTree = "<group>";
+		};
+		39E6FD1C15C6BF4000434098 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				39E6FD1D15C6BF4000434098 /* SignalR.Client.Tests.iOS-Info.plist */,
+				39E6FD1E15C6BF4000434098 /* InfoPlist.strings */,
+				39E6FD2415C6BF4000434098 /* SignalR.Client.Tests.iOS-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		39E6FD2915C6BFAB00434098 /* SignalR.Client.Tests */ = {
+			isa = PBXGroup;
+			children = (
+				39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */,
+			);
+			name = SignalR.Client.Tests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -795,6 +883,42 @@
 			productReference = 3920791E15AF1853009B959E /* SignalR.Samples.iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		39E6FCD415C6BDC600434098 /* SignalR.Client.Tests.OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39E6FCE915C6BDC600434098 /* Build configuration list for PBXNativeTarget "SignalR.Client.Tests.OSX" */;
+			buildPhases = (
+				39E6FCD015C6BDC600434098 /* Sources */,
+				39E6FCD115C6BDC600434098 /* Frameworks */,
+				39E6FCD215C6BDC600434098 /* Resources */,
+				39E6FCD315C6BDC600434098 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SignalR.Client.Tests.OSX;
+			productName = SignalR.Client.Tests.OSX;
+			productReference = 39E6FCD515C6BDC600434098 /* SignalR.Client.Tests.OSX.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+		39E6FD1615C6BF4000434098 /* SignalR.Client.Tests.iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39E6FD2715C6BF4000434098 /* Build configuration list for PBXNativeTarget "SignalR.Client.Tests.iOS" */;
+			buildPhases = (
+				39E6FD1215C6BF4000434098 /* Sources */,
+				39E6FD1315C6BF4000434098 /* Frameworks */,
+				39E6FD1415C6BF4000434098 /* Resources */,
+				39E6FD1515C6BF4000434098 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SignalR.Client.Tests.iOS;
+			productName = SignalR.Client.Tests.iOS;
+			productReference = 39E6FD1715C6BF4000434098 /* SignalR.Client.Tests.iOS.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -818,6 +942,8 @@
 			targets = (
 				3920780615AF13C3009B959E /* SignalR.Client.iOS */,
 				3919636D15AF205300DDC946 /* SignalR.Client.OSX */,
+				39E6FD1615C6BF4000434098 /* SignalR.Client.Tests.iOS */,
+				39E6FCD415C6BDC600434098 /* SignalR.Client.Tests.OSX */,
 				3920791D15AF1853009B959E /* SignalR.Samples.iOS */,
 				3919634315AF1EC100DDC946 /* SignalR.Samples.OSX */,
 				391963DA15AF25A500DDC946 /* Documentation */,
@@ -850,6 +976,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		39E6FCD215C6BDC600434098 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39E6FCE215C6BDC600434098 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39E6FD1415C6BF4000434098 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39E6FD2015C6BF4000434098 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -865,6 +1007,32 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"SignalR-ObjC\" \\\n--project-company \"DyKnow\" \\\n--company-id \"com.dyknow\" \\\n--docset-atom-filename \"SignalR-ObjC.atom\" \\\n--docset-feed-url \"http://dyknow.github.com/SignalR-ObjC/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://dyknow.github.com/SignalR-ObjC/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://dyknow.github.com/SignalR-ObjC/\" \\\n--output \"~/Documentation/SignalR-ObjC\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--keep-intermediate-files \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n\"${PROJECT_DIR}/../SignalR.Client\"";
+		};
+		39E6FCD315C6BDC600434098 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		39E6FD1515C6BF4000434098 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 		47855B948C574C78A24C0F0F /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -993,6 +1161,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		39E6FCD015C6BDC600434098 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39E6FD1215C6BF4000434098 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39E6FD2C15C6BFCE00434098 /* SRJSONTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -1042,6 +1226,22 @@
 				3920793515AF1854009B959E /* en */,
 			);
 			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		39E6FCE015C6BDC600434098 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39E6FCE115C6BDC600434098 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		39E6FD1E15C6BF4000434098 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				39E6FD1F15C6BF4000434098 /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1260,6 +1460,89 @@
 			};
 			name = Release;
 		};
+		39E6FCE715C6BDC600434098 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks\"",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Info.plist";
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		39E6FCE815C6BDC600434098 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks\"",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		39E6FD2515C6BF4000434098 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Prefix.pch";
+				INFOPLIST_FILE = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		39E6FD2615C6BF4000434098 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Prefix.pch";
+				INFOPLIST_FILE = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1316,6 +1599,23 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		39E6FCE915C6BDC600434098 /* Build configuration list for PBXNativeTarget "SignalR.Client.Tests.OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39E6FCE715C6BDC600434098 /* Debug */,
+				39E6FCE815C6BDC600434098 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		39E6FD2715C6BF4000434098 /* Build configuration list for PBXNativeTarget "SignalR.Client.Tests.iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39E6FD2515C6BF4000434098 /* Debug */,
+				39E6FD2615C6BF4000434098 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,0 +1,8 @@
+//
+// Prefix header for all source files of the 'SignalR.Client.Tests.iOS' target in the 'SignalR.Client.Tests.iOS' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
