@@ -82,6 +82,8 @@
             
             json = jsonTemp;
             
+            if(json == nil) goto throw;
+            
             return [self ensureFoundationObject:json];
         }
         else if (_YAJLSelector && [object respondsToSelector:_YAJLSelector]) 
@@ -98,6 +100,8 @@
             [invocation getReturnValue:&jsonTemp];
             
             json = jsonTemp;
+            
+            if(json == nil) goto throw;
             
             return [self ensureFoundationObject:json];
         }
@@ -116,9 +120,16 @@
             
             json = jsonTemp;
             
+            if(json == nil) goto throw;
+            
             return [self ensureFoundationObject:json];
         }
     }
+
+throw:;
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Your NSObject subclass should implement at least one of the following: proxyForJson; JSON; or serialize; as defined in SRSerializable.h", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+    [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"Invalid JSON Object", nil) userInfo:userInfo] raise];
+
     return nil;
 }
 

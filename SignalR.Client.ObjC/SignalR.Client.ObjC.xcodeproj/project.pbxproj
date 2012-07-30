@@ -197,8 +197,27 @@
 		39E6FD2015C6BF4000434098 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39E6FD1E15C6BF4000434098 /* InfoPlist.strings */; };
 		39E6FD2C15C6BFCE00434098 /* SRJSONTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */; };
 		39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */; };
+		39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
+		39E6FD6115C6EAFC00434098 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
 		D27CBDC3D95B4241B1B76237 /* libPods-SignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		39E6FD6215C6F0CB00434098 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 392077FE15AF13C3009B959E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3920780615AF13C3009B959E;
+			remoteInfo = SignalR.Client.iOS;
+		};
+		39E6FD6415C6F0CF00434098 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 392077FE15AF13C3009B959E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3919636D15AF205300DDC946;
+			remoteInfo = SignalR.Client.OSX;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		036198E3EF3A4AB9A00C08B9 /* Pods-SignalR.Client.iOS.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.xcconfig"; path = "../Pods/Pods-SignalR.Client.iOS.xcconfig"; sourceTree = SOURCE_ROOT; };
@@ -895,6 +914,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				39E6FD6515C6F0CF00434098 /* PBXTargetDependency */,
 			);
 			name = SignalR.Client.Tests.OSX;
 			productName = SignalR.Client.Tests.OSX;
@@ -913,6 +933,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				39E6FD6315C6F0CB00434098 /* PBXTargetDependency */,
 			);
 			name = SignalR.Client.Tests.iOS;
 			productName = SignalR.Client.Tests.iOS;
@@ -1166,6 +1187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */,
+				39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1174,10 +1196,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				39E6FD2C15C6BFCE00434098 /* SRJSONTests.m in Sources */,
+				39E6FD6115C6EAFC00434098 /* NSObject+SRJSON.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		39E6FD6315C6F0CB00434098 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3920780615AF13C3009B959E /* SignalR.Client.iOS */;
+			targetProxy = 39E6FD6215C6F0CB00434098 /* PBXContainerItemProxy */;
+		};
+		39E6FD6515C6F0CF00434098 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3919636D15AF205300DDC946 /* SignalR.Client.OSX */;
+			targetProxy = 39E6FD6415C6F0CF00434098 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3919634F15AF1EC200DDC946 /* InfoPlist.strings */ = {
@@ -1616,6 +1652,7 @@
 				39E6FD2615C6BF4000434098 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
