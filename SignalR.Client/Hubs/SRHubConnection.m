@@ -66,6 +66,11 @@
 
 - (SRHubProxy *)createProxy:(NSString *)hubName
 {
+    if (self.state != disconnected)
+    {
+        [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
+    }
+    
 #if DEBUG_CONNECTION
     SR_DEBUG_LOG(@"[CONNECTION] will create proxy %@",hubName);
 #endif

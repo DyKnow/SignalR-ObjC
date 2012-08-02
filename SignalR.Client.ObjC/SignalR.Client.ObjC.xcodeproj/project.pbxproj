@@ -187,6 +187,10 @@
 		3920795915AF1BEA009B959E /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795015AF1BEA009B959E /* MouseTrackingViewController.m */; };
 		3920795A15AF1BEA009B959E /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795215AF1BEA009B959E /* RawViewController.m */; };
 		3920795B15AF1BEA009B959E /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795415AF1BEA009B959E /* StreamingViewController.m */; };
+		39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
+		39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
+		39BB8D7915CAA59C007B7245 /* libSignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920780715AF13C3009B959E /* libSignalR.Client.iOS.a */; };
+		39BB8D7A15CAA5A2007B7245 /* libSignalR.Client.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */; };
 		39E6FCE215C6BDC600434098 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 39E6FCE015C6BDC600434098 /* InfoPlist.strings */; };
 		39E6FCEC15C6BE4D00434098 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E6FCEB15C6BE4D00434098 /* SenTestingKit.framework */; };
 		39E6FCEE15C6BE5400434098 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E6FCED15C6BE5400434098 /* Cocoa.framework */; };
@@ -201,23 +205,6 @@
 		39E6FD6115C6EAFC00434098 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
 		D27CBDC3D95B4241B1B76237 /* libPods-SignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		39E6FD6215C6F0CB00434098 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 392077FE15AF13C3009B959E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3920780615AF13C3009B959E;
-			remoteInfo = SignalR.Client.iOS;
-		};
-		39E6FD6415C6F0CF00434098 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 392077FE15AF13C3009B959E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3919636D15AF205300DDC946;
-			remoteInfo = SignalR.Client.OSX;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		036198E3EF3A4AB9A00C08B9 /* Pods-SignalR.Client.iOS.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.xcconfig"; path = "../Pods/Pods-SignalR.Client.iOS.xcconfig"; sourceTree = SOURCE_ROOT; };
@@ -332,6 +319,7 @@
 		3920795215AF1BEA009B959E /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
 		3920795315AF1BEA009B959E /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
 		3920795415AF1BEA009B959E /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
+		39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubConnectionTests.m; path = SignalR.Client.Tests/SRHubConnectionTests.m; sourceTree = "<group>"; };
 		39E6FCD515C6BDC600434098 /* SignalR.Client.Tests.OSX.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalR.Client.Tests.OSX.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39E6FCDF15C6BDC600434098 /* SignalR.Client.Tests.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Client.Tests.OSX-Info.plist"; sourceTree = "<group>"; };
 		39E6FCE115C6BDC600434098 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -388,6 +376,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39BB8D7A15CAA5A2007B7245 /* libSignalR.Client.OSX.a in Frameworks */,
 				39E6FCEE15C6BE5400434098 /* Cocoa.framework in Frameworks */,
 				39E6FCEC15C6BE4D00434098 /* SenTestingKit.framework in Frameworks */,
 			);
@@ -397,6 +386,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39BB8D7915CAA59C007B7245 /* libSignalR.Client.iOS.a in Frameworks */,
 				39E6FD1815C6BF4000434098 /* SenTestingKit.framework in Frameworks */,
 				39E6FD1915C6BF4000434098 /* UIKit.framework in Frameworks */,
 				39E6FD1A15C6BF4000434098 /* Foundation.framework in Frameworks */,
@@ -726,6 +716,7 @@
 			isa = PBXGroup;
 			children = (
 				39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */,
+				39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */,
 			);
 			name = SignalR.Client.Tests;
 			sourceTree = "<group>";
@@ -914,7 +905,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				39E6FD6515C6F0CF00434098 /* PBXTargetDependency */,
 			);
 			name = SignalR.Client.Tests.OSX;
 			productName = SignalR.Client.Tests.OSX;
@@ -933,7 +923,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				39E6FD6315C6F0CB00434098 /* PBXTargetDependency */,
 			);
 			name = SignalR.Client.Tests.iOS;
 			productName = SignalR.Client.Tests.iOS;
@@ -1188,6 +1177,7 @@
 			files = (
 				39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */,
 				39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */,
+				39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1197,23 +1187,11 @@
 			files = (
 				39E6FD2C15C6BFCE00434098 /* SRJSONTests.m in Sources */,
 				39E6FD6115C6EAFC00434098 /* NSObject+SRJSON.m in Sources */,
+				39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		39E6FD6315C6F0CB00434098 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3920780615AF13C3009B959E /* SignalR.Client.iOS */;
-			targetProxy = 39E6FD6215C6F0CB00434098 /* PBXContainerItemProxy */;
-		};
-		39E6FD6515C6F0CF00434098 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3919636D15AF205300DDC946 /* SignalR.Client.OSX */;
-			targetProxy = 39E6FD6415C6F0CF00434098 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3919634F15AF1EC200DDC946 /* InfoPlist.strings */ = {
