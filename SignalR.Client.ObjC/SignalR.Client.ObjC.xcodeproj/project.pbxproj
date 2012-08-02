@@ -47,7 +47,6 @@
 		3919638815AF223A00DDC946 /* NSDictionary+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783915AF13F6009B959E /* NSDictionary+QueryString.m */; };
 		3919638915AF223A00DDC946 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
 		3919638A15AF223A00DDC946 /* NSString+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783D15AF13F6009B959E /* NSString+QueryString.m */; };
-		3919638B15AF223A00DDC946 /* NSTimer+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783F15AF13F6009B959E /* NSTimer+Blocks.m */; };
 		3919638C15AF223A00DDC946 /* SRExceptionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784215AF13F6009B959E /* SRExceptionHelper.m */; };
 		3919638D15AF223A00DDC946 /* SRThreadSafeInvoker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784515AF13F6009B959E /* SRThreadSafeInvoker.m */; };
 		3919638E15AF223A00DDC946 /* SRVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784715AF13F6009B959E /* SRVersion.m */; };
@@ -80,7 +79,6 @@
 		391963BE15AF22FF00DDC946 /* NSDictionary+QueryString.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783815AF13F6009B959E /* NSDictionary+QueryString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963BF15AF22FF00DDC946 /* NSObject+SRJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783A15AF13F6009B959E /* NSObject+SRJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963C015AF22FF00DDC946 /* NSString+QueryString.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783C15AF13F6009B959E /* NSString+QueryString.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		391963C115AF22FF00DDC946 /* NSTimer+Blocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783E15AF13F6009B959E /* NSTimer+Blocks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963C215AF22FF00DDC946 /* SRDeserializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784015AF13F6009B959E /* SRDeserializable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963C315AF22FF00DDC946 /* SRExceptionHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784115AF13F6009B959E /* SRExceptionHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963C415AF22FF00DDC946 /* SRSerializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784315AF13F6009B959E /* SRSerializable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -139,8 +137,6 @@
 		3920788215AF13F6009B959E /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
 		3920788315AF13F6009B959E /* NSString+QueryString.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783C15AF13F6009B959E /* NSString+QueryString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920788415AF13F6009B959E /* NSString+QueryString.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783D15AF13F6009B959E /* NSString+QueryString.m */; };
-		3920788515AF13F6009B959E /* NSTimer+Blocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783E15AF13F6009B959E /* NSTimer+Blocks.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3920788615AF13F6009B959E /* NSTimer+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783F15AF13F6009B959E /* NSTimer+Blocks.m */; };
 		3920788715AF13F6009B959E /* SRDeserializable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784015AF13F6009B959E /* SRDeserializable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920788815AF13F6009B959E /* SRExceptionHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784115AF13F6009B959E /* SRExceptionHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920788915AF13F6009B959E /* SRExceptionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784215AF13F6009B959E /* SRExceptionHelper.m */; };
@@ -263,8 +259,6 @@
 		3920783B15AF13F6009B959E /* NSObject+SRJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SRJSON.m"; sourceTree = "<group>"; };
 		3920783C15AF13F6009B959E /* NSString+QueryString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+QueryString.h"; sourceTree = "<group>"; };
 		3920783D15AF13F6009B959E /* NSString+QueryString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+QueryString.m"; sourceTree = "<group>"; };
-		3920783E15AF13F6009B959E /* NSTimer+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+Blocks.h"; sourceTree = "<group>"; };
-		3920783F15AF13F6009B959E /* NSTimer+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+Blocks.m"; sourceTree = "<group>"; };
 		3920784015AF13F6009B959E /* SRDeserializable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRDeserializable.h; sourceTree = "<group>"; };
 		3920784115AF13F6009B959E /* SRExceptionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRExceptionHelper.h; sourceTree = "<group>"; };
 		3920784215AF13F6009B959E /* SRExceptionHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRExceptionHelper.m; sourceTree = "<group>"; };
@@ -587,8 +581,6 @@
 				3920783B15AF13F6009B959E /* NSObject+SRJSON.m */,
 				3920783C15AF13F6009B959E /* NSString+QueryString.h */,
 				3920783D15AF13F6009B959E /* NSString+QueryString.m */,
-				3920783E15AF13F6009B959E /* NSTimer+Blocks.h */,
-				3920783F15AF13F6009B959E /* NSTimer+Blocks.m */,
 				3920784015AF13F6009B959E /* SRDeserializable.h */,
 				3920784115AF13F6009B959E /* SRExceptionHelper.h */,
 				3920784215AF13F6009B959E /* SRExceptionHelper.m */,
@@ -767,7 +759,6 @@
 				391963CF15AF22FF00DDC946 /* SRSseEvent.h in Headers */,
 				391963BE15AF22FF00DDC946 /* NSDictionary+QueryString.h in Headers */,
 				391963C015AF22FF00DDC946 /* NSString+QueryString.h in Headers */,
-				391963C115AF22FF00DDC946 /* NSTimer+Blocks.h in Headers */,
 				391963BF15AF22FF00DDC946 /* NSObject+SRJSON.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -812,7 +803,6 @@
 				3920787F15AF13F6009B959E /* NSDictionary+QueryString.h in Headers */,
 				3920788115AF13F6009B959E /* NSObject+SRJSON.h in Headers */,
 				3920788315AF13F6009B959E /* NSString+QueryString.h in Headers */,
-				3920788515AF13F6009B959E /* NSTimer+Blocks.h in Headers */,
 				392078A015AF13F6009B959E /* SRClientTransport.h in Headers */,
 				392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */,
 				392078A315AF13F6009B959E /* SRLongPollingTransport.h in Headers */,
@@ -1104,7 +1094,6 @@
 				3919638815AF223A00DDC946 /* NSDictionary+QueryString.m in Sources */,
 				3919638915AF223A00DDC946 /* NSObject+SRJSON.m in Sources */,
 				3919638A15AF223A00DDC946 /* NSString+QueryString.m in Sources */,
-				3919638B15AF223A00DDC946 /* NSTimer+Blocks.m in Sources */,
 				3919638C15AF223A00DDC946 /* SRExceptionHelper.m in Sources */,
 				3919638D15AF223A00DDC946 /* SRThreadSafeInvoker.m in Sources */,
 				3919638E15AF223A00DDC946 /* SRVersion.m in Sources */,
@@ -1139,7 +1128,6 @@
 				3920788015AF13F6009B959E /* NSDictionary+QueryString.m in Sources */,
 				3920788215AF13F6009B959E /* NSObject+SRJSON.m in Sources */,
 				3920788415AF13F6009B959E /* NSString+QueryString.m in Sources */,
-				3920788615AF13F6009B959E /* NSTimer+Blocks.m in Sources */,
 				3920788915AF13F6009B959E /* SRExceptionHelper.m in Sources */,
 				3920788C15AF13F6009B959E /* SRThreadSafeInvoker.m in Sources */,
 				3920788E15AF13F6009B959E /* SRVersion.m in Sources */,

@@ -27,8 +27,6 @@
 #import "SRSignalRConfig.h"
 #import "SRThreadSafeInvoker.h"
 
-#import "NSTimer+Blocks.h"
-
 typedef void (^onInitialized)(void);
 
 @interface SRLongPollingTransport()
@@ -195,13 +193,12 @@ static NSString * const kTransportName = @"longPolling";
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
                                 SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in %d seconds",_errorDelay);
 #endif
-                                [NSTimer scheduledTimerWithTimeInterval:_errorDelay block:
-                                 ^{
-                                     if (connection.state != disconnected)
-                                     {
-                                         [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
-                                     }
-                                 } repeats:NO];    
+                                [[NSBlockOperation blockOperationWithBlock:^{
+                                    if (connection.state != disconnected)
+                                    {
+                                        [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
+                                    }
+                                }] performSelector:@selector(start) withObject:nil afterDelay:_errorDelay];
                             }
                         }
                     }
@@ -230,10 +227,9 @@ static NSString * const kTransportName = @"longPolling";
     
     if (raiseReconnect)
     {
-        [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
-        {
+        [[NSBlockOperation blockOperationWithBlock:^{
             [reconnectInvoker invoke:^(SRConnection *conn) { [self fireReconnected:conn]; } withObject:connection];
-        } repeats:NO];
+        }] performSelector:@selector(start) withObject:nil afterDelay:_reconnectDelay];
     }
 }
 

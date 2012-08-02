@@ -29,8 +29,6 @@
 #import "SRSseEvent.h"
 #import "SRThreadSafeInvoker.h"
 
-#import "NSTimer+Blocks.h"
-
 @interface SRServerSentEventsTransport ()
 
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
@@ -78,15 +76,14 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 #endif   
     
     //Wait for a bit before reconnecting
-    [NSTimer scheduledTimerWithTimeInterval:_reconnectDelay block:^
-    {
+    [[NSBlockOperation blockOperationWithBlock:^{
         if (connection.state == reconnecting ||
-            [connection changeState:connected toState:reconnecting])
+           [connection changeState:connected toState:reconnecting])
         {
             //Now attempt a reconnect
             [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
         }
-    } repeats:NO];
+    }] performSelector:@selector(start) withObject:nil afterDelay:_reconnectDelay];
 }
 
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
@@ -226,9 +223,8 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
     
     if (errorCallback != nil)
     {
-        [NSTimer scheduledTimerWithTimeInterval:_connectionTimeout block:
-        ^{
-            [callbackInvoker invoke:^(callback cb, SRConnection *conn) 
+        [[NSBlockOperation blockOperationWithBlock:^{
+            [callbackInvoker invoke:^(callback cb, SRConnection *conn)
             {
                 // Stop the connection
                 [self stop:conn];
@@ -240,19 +236,19 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                         [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
                         [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
-                        *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                                    code:NSURLErrorTimedOut 
-                                                userInfo:userInfo];
+                        *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
+                                                     code:NSURLErrorTimedOut
+                                                 userInfo:userInfo];
                     }
                 };
                 cb(errorBlock);
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did call errorCallBack with timeout error");
 #endif
-            } 
-            withCallback:errorCallback 
+            }
+            withCallback:errorCallback
             withObject:connection];
-        } repeats:NO];
+        }] performSelector:@selector(start) withObject:nil afterDelay:_connectionTimeout];
     }
 }
 

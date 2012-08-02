@@ -29,7 +29,7 @@
 @property (strong, nonatomic, readwrite) NSMutableString *lineBuilder;
 
 - (BOOL)hasChunks;
-- (void)add:(id)buffer length:(int)length;
+- (void)add:(id)buffer length:(NSInteger)length;
 - (NSString *)readLine;
 
 @end

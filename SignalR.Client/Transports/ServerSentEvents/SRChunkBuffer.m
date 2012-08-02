@@ -47,7 +47,7 @@
     return (_offset < [_buffer length]);
 }
 
-- (void)add:(NSData *)buffer length:(int)length
+- (void)add:(NSData *)buffer length:(NSInteger)length
 {
     [_buffer appendString:[[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding]];
 }
