@@ -28,4 +28,6 @@
 @property (strong, nonatomic, readwrite) NSOutputStream *stream;
 @property (strong, nonatomic, readwrite) NSError *error;
 
+- (void)close;
+
 @end

@@ -202,6 +202,8 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     [weakConnection didReceiveError:error];
                 }
                 
+                [response close];
+                
                 if(retry)
                 {
                     [weakTransport reconnect:weakConnection data:weakData];

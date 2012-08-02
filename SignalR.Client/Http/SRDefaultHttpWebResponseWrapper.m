@@ -24,6 +24,7 @@
 
 @interface SRDefaultHttpWebResponseWrapper ()
 
+@property (strong, nonatomic, readwrite) id <SRRequest> request;
 @end
 
 @implementation SRDefaultHttpWebResponseWrapper
@@ -32,12 +33,16 @@
 @synthesize stream = _stream;
 @synthesize error = _error;
 
-- (id)initWithResponse:(id)response
+@synthesize request = _request;
+
+- (id)initWithRequest:(id <SRRequest>)request withResponse:(id)response
 {
     static NSString *empty = @"";
     
     if (self = [super init])
     {
+        _request = request;
+        
         if([response isKindOfClass:[NSError class]])
         {
             _error = response;
@@ -56,6 +61,15 @@
         }
     }
     return self;
+}
+
+- (void)close;
+{
+    if(_request != nil)
+    {
+        // Always try to abort the request since close hangs if the connection is being held open
+        [_request abort];
+    }
 }
 
 @end

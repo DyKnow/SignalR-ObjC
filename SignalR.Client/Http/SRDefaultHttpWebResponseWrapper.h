@@ -21,10 +21,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRRequest.h"
 #import "SRResponse.h"
 
 @interface SRDefaultHttpWebResponseWrapper : NSObject <SRResponse>
 
-- (id)initWithResponse:(id)response;
+- (id)initWithRequest:(id <SRRequest>)request withResponse:(id)response;
 
 @end
