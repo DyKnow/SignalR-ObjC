@@ -31,8 +31,6 @@
 
 @interface SRServerSentEventsTransport ()
 
-@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
-
 - (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 @end
@@ -108,7 +106,8 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         
         if (isFaulted)
         {
-            if(![SRExceptionHelper isRequestAborted:response.error])
+            NSError *exception = response.error;
+            if(![SRExceptionHelper isRequestAborted:exception])
             {                        
                 if (errorCallback != nil)
                 {
@@ -127,12 +126,12 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                         cb(errorBlock);
                     } 
                     withCallback:errorCallback 
-                    withObject:response.error];
+                    withObject:exception];
                 }
                 else if(_reconnecting)
                 {
                     // Only raise the error event if we failed to reconnect
-                    [connection didReceiveError:response.error];
+                    [connection didReceiveError:exception];
                     
                     [self reconnect:connection data:data];
                 }
@@ -156,7 +155,6 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
 #if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
                 SR_DEBUG_LOG(@"[SERVER_SENT_EVENTS] did initialize");
 #endif
-                
                 if (weakInitializedCallback != nil)
                 {
                     [weakCallbackInvoker invoke:weakInitializedCallback];

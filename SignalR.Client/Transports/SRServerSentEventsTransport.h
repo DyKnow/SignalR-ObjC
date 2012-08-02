@@ -39,11 +39,18 @@
 ///-------------------------------
 
 /**
- * Returns an `NSInteger` object with the amount of time in seconds to wait for successful transport initialization
+ * Returns an `NSInteger` object with the time allowed before failing the connect request.
  *
  * By default, this is 2 seconds
  */
 @property (assign, nonatomic, readwrite) NSInteger connectionTimeout;
+
+/**
+ * Returns an `NSInteger` object with the time to wait after a connection drops to try reconnecting.
+ *
+ * By default, this is 2 seconds
+ */
+@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
 
 - (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
 

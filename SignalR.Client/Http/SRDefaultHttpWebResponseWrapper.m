@@ -24,8 +24,6 @@
 
 @interface SRDefaultHttpWebResponseWrapper ()
 
-@property (strong, nonatomic, readwrite) id response;
-
 @end
 
 @implementation SRDefaultHttpWebResponseWrapper
@@ -33,8 +31,6 @@
 @synthesize string = _string;
 @synthesize stream = _stream;
 @synthesize error = _error;
-
-@synthesize response = _response;
 
 - (id)initWithResponse:(id)response
 {

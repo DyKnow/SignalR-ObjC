@@ -37,11 +37,26 @@
 ///-------------------------------
 
 /**
- * Returns an `NSInteger` object with the amount of time in seconds to wait before raising a reconnect
+ * Returns an `NSInteger` object with the time to wait after a connection drops to try reconnecting.
  *
  * By default, this is 5 seconds
  */
 @property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+
+/**
+ * Returns an `NSInteger` object with the time to wait after an error happens to continue polling.
+ *
+ * By default, this is 2 seconds
+ */
+@property (assign, nonatomic, readwrite) NSInteger errorDelay;
+
+/**
+ * Returns an `NSInteger` object with the time to wait after the initial connect http request before it is considered
+ *
+ * By default, this is 2 seconds
+ */
+@property (assign, nonatomic, readwrite) NSInteger connectDelay;
+
 
 - (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
 

@@ -31,8 +31,6 @@ typedef void (^onInitialized)(void);
 
 @interface SRLongPollingTransport()
 
-@property (assign, nonatomic, readwrite) NSInteger errorDelay;
-
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 - (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
 - (void)fireReconnected:(SRConnection *)connection;
@@ -43,6 +41,7 @@ typedef void (^onInitialized)(void);
 
 @synthesize reconnectDelay = _reconnectDelay;
 @synthesize errorDelay = _errorDelay;
+@synthesize connectDelay = _connectDelay;
 
 static NSString * const kTransportName = @"longPolling";
 
@@ -60,6 +59,7 @@ static NSString * const kTransportName = @"longPolling";
     {
         _reconnectDelay = 5;
         _errorDelay = 2;
+        _connectDelay = 2;
     }
     return self;
 }
@@ -127,7 +127,17 @@ static NSString * const kTransportName = @"longPolling";
                     [reconnectInvoker invoke:^(SRConnection *conn) { [self fireReconnected:conn]; } withObject:connection];
                 }
                 
-                [self processResponse:connection response:response.string timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
+                if (initializeCallback != nil)
+                {
+                    // If the timeout for connect hasn't fired as yet then just fire
+                    // the event before any incoming messages are processed
+                    [callbackInvoker invoke:initializeCallback];
+                }
+                
+                // Get the response
+                NSString *raw = response.string;
+                
+                [self processResponse:connection response:raw timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
             }
         }
         @finally 
@@ -152,7 +162,10 @@ static NSString * const kTransportName = @"longPolling";
                     // Raise the reconnect event if we successfully reconect after failing
                     shouldRaiseReconnect = YES;
                     
-                    if(response.error)
+                    // Get the underlying exception
+                    NSError *exception = response.error;
+                    
+                    if(exception)
                     {
                         // If the error callback isn't null then raise it and don't continue polling
                         if (errorCallback != nil)
@@ -173,19 +186,19 @@ static NSString * const kTransportName = @"longPolling";
                                 cb(errorBlock);
                             } 
                             withCallback:errorCallback 
-                            withObject:response.error];
+                            withObject:exception];
                         }
                         else
                         {
                             //Figure out if the request is aborted
-                            requestAborted = [SRExceptionHelper isRequestAborted:response.error];
+                            requestAborted = [SRExceptionHelper isRequestAborted:exception];
                             
                             //Sometimes a connection might have been closed by the server before we get to write anything
                             //So just try again and don't raise an error
                             if(!requestAborted)
                             {
                                 //Raise Error
-                                [connection didReceiveError:response.error];
+                                [connection didReceiveError:exception];
                                 
                                 //If the connection is still active after raising the error wait 2 seconds 
                                 //before polling again so we arent hammering the server
@@ -222,7 +235,9 @@ static NSString * const kTransportName = @"longPolling";
 #if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
         SR_DEBUG_LOG(@"[LONG_POLLING] connection is initialized");
 #endif
-        [callbackInvoker invoke:initializeCallback];
+        [[NSBlockOperation blockOperationWithBlock:^{
+            [callbackInvoker invoke:initializeCallback];
+        }] performSelector:@selector(start) withObject:nil afterDelay:_connectDelay];
     }
     
     if (raiseReconnect)

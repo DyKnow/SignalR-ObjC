@@ -163,17 +163,16 @@ void (^prepareRequest)(id);
             
             NSString *data = [self onSending];
             
-            [_transport start:self withData:data continueWith:
-             ^(id task) 
+            [_transport start:self withData:data continueWith:^(id task) 
             {
-                 
                 [self changeState:connecting toState:connected];
                 
                 if(_started != nil)
                 {
                     self.started();
                 }
-                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)]){
+                if(_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidOpen:)])
+                {
                     [self.delegate SRConnectionDidOpen:self];
                 }
             }];

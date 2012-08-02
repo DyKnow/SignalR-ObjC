@@ -63,7 +63,7 @@
 
 - (SRSubscription *)subscribe:(NSString *)eventName
 {
-    if([eventName isEqualToString:@""] || eventName == nil)
+    if(eventName == nil || [eventName isEqualToString:@""])
     {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument eventName is null",@"NSInvalidArgumentException")];
     }
@@ -127,7 +127,7 @@
 
 - (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(void (^)(id response))block
 {
-    if([method isEqualToString:@""] || method == nil)
+    if(method == nil || [method isEqualToString:@""])
     {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument method is null",@"NSInvalidArgumentException")];
     }
