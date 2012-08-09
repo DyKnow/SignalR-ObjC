@@ -15,6 +15,16 @@
 
 @implementation SRHubConnectionTests
 
+- (void)setUp
+{
+    [super setUp];
+}
+
+- (void)tearDown
+{
+    [super tearDown];
+}
+
 - (void)testThrowIfCreateProxyAfterConnectionStarts
 {
     SRHubConnection *connection  = [SRHubConnection connectionWithURL:@"http://site/"];
