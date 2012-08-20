@@ -34,7 +34,7 @@
 
 - (id)init
 {
-    if (self == [super init])
+    if (self = [super init])
     {
         _invoked = [NSNumber numberWithBool:NO];
     }
