@@ -49,7 +49,7 @@
 
 - (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]])) 
+    if (self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]]) 
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
@@ -63,7 +63,7 @@
 
 - (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString]))
+    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString])
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
@@ -77,7 +77,7 @@
 
 - (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString]))
+    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString])
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
