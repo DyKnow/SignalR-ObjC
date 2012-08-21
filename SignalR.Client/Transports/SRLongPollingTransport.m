@@ -104,9 +104,8 @@ static NSString * const kTransportName = @"longPolling";
     } 
     continueWith:^(id<SRResponse> response)
     {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[LONG_POLLING] did receive response %@",response);
-#endif
+        SRLogLongPolling(@"did receive response %@",response);
+
         // Clear the pending request
         [connection.items removeObjectForKey:kHttpRequestKey];
 
@@ -144,9 +143,8 @@ static NSString * const kTransportName = @"longPolling";
         {
             if(disconnectedReceived)
             {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                SR_DEBUG_LOG(@"[LONG_POLLING] did disconnect");
-#endif
+                SRLogLongPolling(@"did disconnect");
+
                 [connection stop];
             }
             else
@@ -155,9 +153,8 @@ static NSString * const kTransportName = @"longPolling";
                 
                 if (isFaulted)
                 {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                    SR_DEBUG_LOG(@"[LONG_POLLING] isFaulted");
-#endif
+                    SRLogLongPolling(@"isFaulted");
+
                     [reconnectInvoker invoke];
                     // Raise the reconnect event if we successfully reconect after failing
                     shouldRaiseReconnect = YES;
@@ -170,9 +167,8 @@ static NSString * const kTransportName = @"longPolling";
                         // If the error callback isn't null then raise it and don't continue polling
                         if (errorCallback != nil)
                         {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                            SR_DEBUG_LOG(@"[LONG_POLLING] will report error to errorCallback");
-#endif
+                            SRLogLongPolling(@"will report error to errorCallback");
+
                             //Call the callback
                             [callbackInvoker invoke:^(callback cb, NSError *ex) 
                             {
@@ -203,9 +199,8 @@ static NSString * const kTransportName = @"longPolling";
                                 //If the connection is still active after raising the error wait 2 seconds 
                                 //before polling again so we arent hammering the server
                                 
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                                SR_DEBUG_LOG(@"[LONG_POLLING] will poll again in %d seconds",_errorDelay);
-#endif
+                                SRLogLongPolling(@"will poll again in %d seconds",_errorDelay);
+
                                 [[NSBlockOperation blockOperationWithBlock:^{
                                     if (connection.state != disconnected)
                                     {
@@ -220,9 +215,8 @@ static NSString * const kTransportName = @"longPolling";
                 {
                     if (connection.state != disconnected)
                     {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-                        SR_DEBUG_LOG(@"[LONG_POLLING] will poll again immediately");
-#endif
+                        SRLogLongPolling(@"will poll again immediately");
+
                         [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
                     }
                 }
@@ -232,9 +226,8 @@ static NSString * const kTransportName = @"longPolling";
     
     if (initializeCallback != nil)
     {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[LONG_POLLING] connection is initialized");
-#endif
+        SRLogLongPolling(@"connection is initialized");
+
         [[NSBlockOperation blockOperationWithBlock:^{
             [callbackInvoker invoke:initializeCallback];
         }] performSelector:@selector(start) withObject:nil afterDelay:_connectDelay];
@@ -252,9 +245,8 @@ static NSString * const kTransportName = @"longPolling";
 {
     if ([connection changeState:reconnecting toState:connected])
     {
-#if DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[LONG_POLLING] did fire reconnected");
-#endif
+        SRLogLongPolling(@"did fire reconnected");
+
         [connection didReconnect];
     }
 }

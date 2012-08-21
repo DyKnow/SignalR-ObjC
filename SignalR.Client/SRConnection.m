@@ -146,15 +146,12 @@ void (^prepareRequest)(id);
 
 - (void)negotiate:(id<SRClientTransport>)transport
 {
-#if DEBUG_CONNECTION
-    SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
-#endif
+    SRLogConnection(@"will negotiate");
     
     [transport negotiate:self continueWith:^(SRNegotiationResponse *negotiationResponse) 
     {
-#if DEBUG_CONNECTION
-        SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
-#endif
+        SRLogConnection(@"negotiation was successful %@",negotiationResponse);
+
         [self verifyProtocolVersion:negotiationResponse.protocolVersion];
         
         if(negotiationResponse.connectionId)

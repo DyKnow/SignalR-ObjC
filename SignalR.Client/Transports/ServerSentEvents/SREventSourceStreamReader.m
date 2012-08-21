@@ -89,9 +89,8 @@
     {
         case NSStreamEventOpenCompleted:
         {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[EventSourceReader] Opened");
-#endif
+            SRLogServerSentEvents(@"Opened");
+
             _reading = YES;
             [self onOpened];
             break;
@@ -149,9 +148,8 @@
             continue;
         }
         
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[EventSourceReader] SSE READ: %@",sseEvent);
-#endif
+        SRLogServerSentEvents(@"SSE READ: %@",sseEvent);
+        
         [self onMessage:sseEvent];
     }
 }
@@ -179,9 +177,8 @@
 {
     if (_reading)
     {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[EventSourceReader] Closed");
-#endif
+        SRLogServerSentEvents(@"Closed");
+
         _stream.delegate = nil;
         [_stream close];
         _reading = NO;

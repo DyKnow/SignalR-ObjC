@@ -95,13 +95,8 @@
     {
         requestPreparer(request);
     }
-#if DEBUG_HTTP_HELPER
-    NSString *debugOutput = [NSString stringWithFormat:@"%@ %@\n",request.HTTPMethod,[request.URL absoluteString]];
-    debugOutput = [debugOutput stringByAppendingFormat:@"HEADERS=%@ \n",request.allHTTPHeaderFields];
-    debugOutput = [debugOutput stringByAppendingFormat:@"BODY=%@ \n",request.HTTPBody];
-    debugOutput = [debugOutput stringByAppendingFormat:@"TIMEOUT=%@ \n",request.timeoutInterval];
-    SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
-#endif
+    SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\n    HEADERS=%@\n    BODY=%@\n    TIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
+
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
@@ -135,11 +130,8 @@
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
-#if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
-#endif
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\n    RESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
+        
         if (block)
         {
             block((useOutputStream) ? nil : operation.responseString);
@@ -147,11 +139,8 @@
     } 
     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
-#if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
-#endif
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\n    ERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
+        
         if (block)
         {
             block(error);
@@ -198,13 +187,8 @@
     {
         requestPreparer(request);
     }
-#if DEBUG_HTTP_HELPER
-    NSString *debugOutput = [NSString stringWithFormat:@"%@ %@\n",request.HTTPMethod,[request.URL absoluteString]];
-    debugOutput = [debugOutput stringByAppendingFormat:@"HEADERS=%@ \n",request.allHTTPHeaderFields];
-    debugOutput = [debugOutput stringByAppendingFormat:@"BODY=%@ \n",request.HTTPBody];
-    debugOutput = [debugOutput stringByAppendingFormat:@"TIMEOUT=%@ \n",request.timeoutInterval];
-    SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
-#endif
+    SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\n    HEADERS=%@\n    BODY=%@\n    TIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
@@ -212,11 +196,8 @@
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
-#if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) was successful\n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"RESPONSE=%@ \n",operation.responseString];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
-#endif
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\n    RESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
+
         if (block)
         {
             block(operation.responseString);
@@ -224,11 +205,8 @@
     } 
     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
-#if DEBUG_HTTP_HELPER
-        NSString *debugOutput = [NSString stringWithFormat:@"Request (%@ %@) failed \n",operation.request.HTTPMethod,[operation.request.URL absoluteString]];
-        debugOutput = [debugOutput stringByAppendingFormat:@"ERROR=%@ \n",error];
-        SR_DEBUG_LOG(@"[HTTPHELPER] %@",debugOutput);
-#endif
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\n    ERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
+
         if (block)
         {
             block(error);

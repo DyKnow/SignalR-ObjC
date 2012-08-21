@@ -89,9 +89,7 @@
         
         if (args.count != numberOfArguments)
         {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] Callback for event '%@' is configured with %d arguments, received %d parameters instead.",eventName, numberOfArguments, args.count);
-#endif            
+            SRLogConnection(@"Callback for event '%@' is configured with %d arguments, received %d parameters instead.",eventName, numberOfArguments, args.count);
         }
         
         [invocation setSelector:eventObj.selector];
@@ -140,9 +138,8 @@
     
     [_connection send:hubData continueWith:^(NSDictionary *response)
     {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] did receive response %@",response);
-#endif
+        SRLogConnection(@"did receive response %@",response);
+
         if(response)
         {
             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:response];
