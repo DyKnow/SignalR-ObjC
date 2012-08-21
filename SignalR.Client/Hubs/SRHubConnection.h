@@ -40,6 +40,8 @@
 @property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
 
 - (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault;
+- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault;
+- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault;
 
 /**
  * Creates a client side proxy to the hub on the server side.

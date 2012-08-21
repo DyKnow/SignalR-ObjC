@@ -96,7 +96,7 @@ void (^prepareRequest)(id);
 
 - (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString
 {
-    if ((self = [super init])) 
+    if (self = [super init]) 
     {
         NSRange range = [queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch];
         if(range.location != NSNotFound) 
