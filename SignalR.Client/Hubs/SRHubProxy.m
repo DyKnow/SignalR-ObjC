@@ -24,7 +24,7 @@
 #import "SRHubInvocation.h"
 #import "SRHubProxy.h"
 #import "SRHubResult.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 #import "SRSubscription.h"
 
 @interface SRHubProxy ()

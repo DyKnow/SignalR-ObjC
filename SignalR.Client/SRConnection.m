@@ -24,8 +24,8 @@
 #import "SRAutoTransport.h"
 #import "SRConnection.h"
 #import "SRDefaultHttpClient.h"
+#import "SRLog.h"
 #import "SRNegotiationResponse.h"
-#import "SRSignalRConfig.h"
 #import "SRVersion.h"
 
 #import "NSDictionary+QueryString.h"

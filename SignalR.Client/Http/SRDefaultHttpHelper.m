@@ -22,7 +22,7 @@
 
 #import "AFHTTPRequestOperation.h"
 #import "SRDefaultHttpHelper.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 
 #import "NSDictionary+QueryString.h"
 
@@ -95,7 +95,7 @@
     {
         requestPreparer(request);
     }
-    SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\n    HEADERS=%@\n    BODY=%@\n    TIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
+    SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
 
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
@@ -130,7 +130,7 @@
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
-        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\n    RESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
         
         if (block)
         {
@@ -139,7 +139,7 @@
     } 
     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
-        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\n    ERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\nERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
         
         if (block)
         {
@@ -187,7 +187,7 @@
     {
         requestPreparer(request);
     }
-    SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\n    HEADERS=%@\n    BODY=%@\n    TIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
+    SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
@@ -196,7 +196,7 @@
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
     {
-        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\n    RESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
 
         if (block)
         {
@@ -205,7 +205,7 @@
     } 
     failure:^(AFHTTPRequestOperation *operation, NSError *error) 
     {
-        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\n    ERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
+        SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\nERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
 
         if (block)
         {

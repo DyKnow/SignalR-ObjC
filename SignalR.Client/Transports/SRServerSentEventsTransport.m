@@ -25,7 +25,7 @@
 #import "SRDefaultHttpClient.h"
 #import "SREventSourceStreamReader.h"
 #import "SRExceptionHelper.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 #import "SRSseEvent.h"
 #import "SRThreadSafeInvoker.h"
 

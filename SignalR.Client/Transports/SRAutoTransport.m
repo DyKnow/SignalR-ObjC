@@ -22,9 +22,9 @@
 
 #import "SRAutoTransport.h"
 #import "SRConnection.h"
+#import "SRLog.h"
 #import "SRLongPollingTransport.h"
 #import "SRServerSentEventsTransport.h"
-#import "SRSignalRConfig.h"
 
 @interface SRAutoTransport ()
 

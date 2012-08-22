@@ -22,8 +22,8 @@
 
 #import "SRHttpBasedTransport.h"
 #import "SRConnection.h"
+#import "SRLog.h"
 #import "SRNegotiationResponse.h"
-#import "SRSignalRConfig.h"
 
 #import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"

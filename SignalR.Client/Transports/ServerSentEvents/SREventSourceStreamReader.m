@@ -22,7 +22,7 @@
 
 #import "SREventSourceStreamReader.h"
 #import "SRChunkBuffer.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 #import "SRSseEvent.h"
 
 @interface SREventSourceStreamReader ()

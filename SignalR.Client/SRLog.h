@@ -1,5 +1,5 @@
 //
-//  SRSignalRConfig.h
+//  SRLog.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 1/29/12.
@@ -19,18 +19,6 @@
 //  CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 //  DEALINGS IN THE SOFTWARE.
 //
-
-#import <Foundation/Foundation.h>
-
-/**
- * `SRSignalRConfig` is intended to be used for debugging the SignalR Client.
- * 
- * @warning For the most verbose logging set DEBUG_CONNECTION, DEBUG_HTTP_BASED_TRANSPORT, and DEBUG_HTTP_HELPER to 1
- */
-
-///-------------------------------
-/// @name Debug output configuration options
-///-------------------------------
 
 #define LOG_FLAG_HTTP               (1 << 0)  // 0...000001
 #define LOG_FLAG_CONNECTION         (1 << 1)  // 0...000010
@@ -54,7 +42,7 @@
 #define LOG_HTTPTRANSPORT       (ddLogLevel & LOG_FLAG_HTTPTRANSPORT  )
 #define LOG_AUTOTRANSPORT       (ddLogLevel & LOG_FLAG_AUTOTRANSPORT )
 
-static int ddLogLevel = LOG_LEVEL_HTTP;
+static int ddLogLevel = LOG_LEVEL_OFF;
 
 #define COCOA_LUMBER_JACK 0
 #if COCOA_LUMBER_JACK
@@ -86,27 +74,55 @@ static int ddLogLevel = LOG_LEVEL_HTTP;
 #undef DDLogCInfo
 #undef DDLogCVerbose
 
-#define SRLogHTTP(frmt, ...)    SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_HTTP,  0, frmt, ##__VA_ARGS__)
-#define SRLogConnection(frmt, ...)    SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_CONNECTION,  0, frmt, ##__VA_ARGS__)
-#define SRLogLongPolling(frmt, ...)    ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_LONGPOLLING,   0, frmt, ##__VA_ARGS__)
-#define SRLogServerSentEvents(frmt, ...)  ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_SERVERSENTEVENTS, 0, frmt, ##__VA_ARGS__)
-#define SRLogHTTPTransport(frmt, ...)    ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_HTTPTRANSPORT,   0, frmt, ##__VA_ARGS__)
-#define SRLogAutoTransport(frmt, ...)   ASYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_AUTOTRANSPORT,  0, frmt, ##__VA_ARGS__)
+#define SRLogHTTP(frmt, ...)                SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_HTTP,              0, frmt, ##__VA_ARGS__)
+#define SRLogConnection(frmt, ...)          SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_CONNECTION,        0, frmt, ##__VA_ARGS__)
+#define SRLogLongPolling(frmt, ...)         SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_LONGPOLLING,       0, frmt, ##__VA_ARGS__)
+#define SRLogServerSentEvents(frmt, ...)    SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_SERVERSENTEVENTS,  0, frmt, ##__VA_ARGS__)
+#define SRLogHTTPTransport(frmt, ...)       SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_HTTPTRANSPORT,     0, frmt, ##__VA_ARGS__)
+#define SRLogAutoTransport(frmt, ...)       SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_AUTOTRANSPORT,     0, frmt, ##__VA_ARGS__)
 
-#define SRLogCHTTP(frmt, ...)   SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_HTTP,  0, frmt, ##__VA_ARGS__)
-#define SRLogCConnection(frmt, ...)   SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_CONNECTION,  0, frmt, ##__VA_ARGS__)
-#define SRLogCLongPolling(frmt, ...)   ASYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_LONGPOLLING,   0, frmt, ##__VA_ARGS__)
-#define SRLogCServerSentEvents(frmt, ...) ASYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_SERVERSENTEVENTS, 0, frmt, ##__VA_ARGS__)
-#define SRLogCHTTPTransport(frmt, ...)   ASYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_HTTPTRANSPORT,   0, frmt, ##__VA_ARGS__)
-#define SRLogCAutoTransport(frmt, ...)  ASYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_AUTOTRANSPORT,  0, frmt, ##__VA_ARGS__)
+#define SRLogCHTTP(frmt, ...)               SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_HTTP,             0, frmt, ##__VA_ARGS__)
+#define SRLogCConnection(frmt, ...)         SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_CONNECTION,       0, frmt, ##__VA_ARGS__)
+#define SRLogCLongPolling(frmt, ...)        SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_LONGPOLLING,      0, frmt, ##__VA_ARGS__)
+#define SRLogCServerSentEvents(frmt, ...)   SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_SERVERSENTEVENTS, 0, frmt, ##__VA_ARGS__)
+#define SRLogCHTTPTransport(frmt, ...)      SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_HTTPTRANSPORT,    0, frmt, ##__VA_ARGS__)
+#define SRLogCAutoTransport(frmt, ...)      SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_AUTOTRANSPORT,    0, frmt, ##__VA_ARGS__)
 
 #else
 
-#define SRLogHTTP(fmt, ...) do{ if(ddLogLevel & LOG_HTTP) NSLog((@"%s [Line %d]\n[HTTP]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); } while(0)
-#define SRLogConnection(fmt, ...) do{ if(ddLogLevel & LOG_CONNECTION) NSLog((@"%s [Line %d]\n[CONNECTION]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); } while(0)
-#define SRLogLongPolling(fmt, ...) do{ if(ddLogLevel & LOG_LONGPOLLING) NSLog((@"%s [Line %d]\n[LONG_POLLING]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); } while(0)
-#define SRLogServerSentEvents(fmt, ...) do{ if(ddLogLevel & LOG_SERVERSENTEVENTS) NSLog((@"%s [Line %d]\n[SERVER_SENT_EVENTS]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); } while(0)
-#define SRLogHTTPTransport(fmt, ...) do{ if(ddLogLevel & LOG_HTTPTRANSPORT) NSLog((@"%s [Line %d]\n[HTTP_BASED_TRANSPORT]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); } while(0)
-#define SRLogAutoTransport(fmt, ...) do{ if(ddLogLevel & LOG_AUTOTRANSPORT) NSLog((@"%s [Line %d]\n[AUTO_TRANSPORT]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); } while(0)
+#define SRLogHTTP(fmt, ...) \
+do{ \
+    if(ddLogLevel & LOG_HTTP) \
+        NSLog((@"%s [Line %d]\n[HTTP]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} while(0)
+
+#define SRLogConnection(fmt, ...) \
+do{ \
+    if(ddLogLevel & LOG_CONNECTION) \
+        NSLog((@"%s [Line %d]\n[CONNECTION]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} while(0)
+
+#define SRLogLongPolling(fmt, ...) \
+do{ \
+    if(ddLogLevel & LOG_LONGPOLLING) \
+        NSLog((@"%s [Line %d]\n[LONG_POLLING]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} while(0)
+
+#define SRLogServerSentEvents(fmt, ...) \
+do{ \
+    if(ddLogLevel & LOG_SERVERSENTEVENTS) \
+        NSLog((@"%s [Line %d]\n[SERVER_SENT_EVENTS]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} while(0)
+
+#define SRLogHTTPTransport(fmt, ...) \
+do{ \
+    if(ddLogLevel & LOG_HTTPTRANSPORT) \
+        NSLog((@"%s [Line %d]\n[HTTP_BASED_TRANSPORT]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} while(0)
+
+#define SRLogAutoTransport(fmt, ...) \
+    do{ if(ddLogLevel & LOG_AUTOTRANSPORT) \
+        NSLog((@"%s [Line %d]\n[AUTO_TRANSPORT]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} while(0)
 
 #endif

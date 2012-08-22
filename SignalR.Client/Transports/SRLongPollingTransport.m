@@ -24,7 +24,7 @@
 #import "SRConnection.h"
 #import "SRDefaultHttpClient.h"
 #import "SRExceptionHelper.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 #import "SRThreadSafeInvoker.h"
 
 typedef void (^onInitialized)(void);
