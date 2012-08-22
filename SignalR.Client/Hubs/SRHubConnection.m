@@ -24,7 +24,7 @@
 #import "SRHubInvocation.h"
 #import "SRHubProxy.h"
 #import "SRHubRegistrationData.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 
 #import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
@@ -91,9 +91,8 @@
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
     }
     
-#if DEBUG_CONNECTION
-    SR_DEBUG_LOG(@"[CONNECTION] will create proxy %@",hubName);
-#endif
+    SRLogConnection(@"will create proxy %@",hubName);
+
     SRHubProxy *hubProxy;
     if([_hubs objectForKey:[hubName lowercaseString]] == nil)
     {
