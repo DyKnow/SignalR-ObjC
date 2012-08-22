@@ -22,8 +22,8 @@
 
 #import "SRHttpBasedTransport.h"
 #import "SRConnection.h"
+#import "SRLog.h"
 #import "SRNegotiationResponse.h"
-#import "SRSignalRConfig.h"
 
 #import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
@@ -71,9 +71,8 @@
         
         if (raw == nil || [raw isEqualToString:@""])
         {
-#if DEBUG_HTTP_BASED_TRANSPORT
-            SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation failed, connection will stop");
-#endif
+            SRLogHTTPTransport(@"negotiation failed, connection will stop");
+
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
             [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
             [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Server negotiation failed.",@"NSInternalInconsistencyException")] forKey:NSLocalizedDescriptionKey];
@@ -85,9 +84,7 @@
             return;
         }
         
-#if DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] negotiation did receive response %@",raw);
-#endif
+        SRLogHTTPTransport(@"negotiation did receive response %@",raw);
         
         if(block)
         {
@@ -130,9 +127,7 @@
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
     [postData setObject:[data stringByEscapingForURLQuery] forKey:kData];
     
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-    SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will send data");
-#endif
+    SRLogHTTPTransport(@"will send data");
     
     [_httpClient postAsync:url requestPreparer:^(id<SRRequest> request)
     {
@@ -156,9 +151,8 @@
 
 - (void)stop:(SRConnection *)connection
 {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-    SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] will stop transport");
-#endif
+    SRLogHTTPTransport(@"will stop transport");
+
     id <SRRequest> httpRequest = [connection.items objectForKey:kHttpRequestKey];
     
     if(httpRequest != nil)
@@ -292,9 +286,8 @@
         }
     }
     @catch (NSError *ex) {
-#if DEBUG_SERVER_SENT_EVENTS || DEBUG_LONG_POLLING || DEBUG_HTTP_BASED_TRANSPORT
-        SR_DEBUG_LOG(@"[HTTP_BASED_TRANSPORT] error while processing messages %@",ex);
-#endif
+        SRLogHTTPTransport(@"error while processing messages %@",ex);
+
         [connection didReceiveError:ex];
     }
 }
