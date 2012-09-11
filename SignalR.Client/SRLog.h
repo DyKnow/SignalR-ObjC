@@ -42,7 +42,7 @@
 #define LOG_HTTPTRANSPORT       (ddLogLevel & LOG_FLAG_HTTPTRANSPORT  )
 #define LOG_AUTOTRANSPORT       (ddLogLevel & LOG_FLAG_AUTOTRANSPORT )
 
-static int ddLogLevel = LOG_LEVEL_OFF;
+static int ddLogLevel = LOG_LEVEL_AUTOTRANSPORT;
 
 #define COCOA_LUMBER_JACK 0
 #if COCOA_LUMBER_JACK
@@ -93,36 +93,36 @@ static int ddLogLevel = LOG_LEVEL_OFF;
 #define SRLogHTTP(fmt, ...) \
 do{ \
     if(ddLogLevel & LOG_HTTP) \
-        NSLog((@"%s [Line %d]\n[HTTP]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        NSLog((@"Thread %@:%s [Line %d]\n[HTTP]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
 #define SRLogConnection(fmt, ...) \
 do{ \
     if(ddLogLevel & LOG_CONNECTION) \
-        NSLog((@"%s [Line %d]\n[CONNECTION]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        NSLog((@"Thread %@:%s [Line %d]\n[CONNECTION]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
 #define SRLogLongPolling(fmt, ...) \
 do{ \
     if(ddLogLevel & LOG_LONGPOLLING) \
-        NSLog((@"%s [Line %d]\n[LONG_POLLING]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        NSLog((@"Thread %@:%s [Line %d]\n[LONG_POLLING]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
 #define SRLogServerSentEvents(fmt, ...) \
 do{ \
     if(ddLogLevel & LOG_SERVERSENTEVENTS) \
-        NSLog((@"%s [Line %d]\n[SERVER_SENT_EVENTS]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        NSLog((@"Thread %@:%s [Line %d]\n[SERVER_SENT_EVENTS]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
 #define SRLogHTTPTransport(fmt, ...) \
 do{ \
     if(ddLogLevel & LOG_HTTPTRANSPORT) \
-        NSLog((@"%s [Line %d]\n[HTTP_BASED_TRANSPORT]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        NSLog((@"Thread %@:%s [Line %d]\n[HTTP_BASED_TRANSPORT]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
 #define SRLogAutoTransport(fmt, ...) \
     do{ if(ddLogLevel & LOG_AUTOTRANSPORT) \
-        NSLog((@"%s [Line %d]\n[AUTO_TRANSPORT]    " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        NSLog((@"Thread %@:%s [Line %d]\n[AUTO_TRANSPORT]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
 #endif

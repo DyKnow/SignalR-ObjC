@@ -93,7 +93,7 @@
 
             _reading = YES;
             [self onOpened];
-            break;
+            //break;
         }
         case NSStreamEventHasSpaceAvailable:
         {

@@ -20,11 +20,47 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import "AFURLConnectionOperation.h"
 #import "AFHTTPRequestOperation.h"
 #import "SRDefaultHttpHelper.h"
 #import "SRLog.h"
 
 #import "NSDictionary+QueryString.h"
+
+//https://github.com/AFNetworking/AFNetworking/issues/388
+@interface AFURLConnectionOperation (SignalR) <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+@end
+
+@interface SRHTTPRequestOperation : AFHTTPRequestOperation
+
+typedef void (^AFURLConnectionOperationDidReceiveResponseBlock)(SRHTTPRequestOperation *operation);
+
+@property (readwrite, nonatomic, retain) NSHTTPURLResponse *response;
+@property (readwrite, nonatomic, copy) AFURLConnectionOperationDidReceiveResponseBlock didReceiveResponseBlock;
+
+@end
+
+@implementation SRHTTPRequestOperation
+
+#pragma mark -
+#pragma mark NSURLConnection Delegate
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    if (self.didReceiveResponseBlock)
+    {
+        self.response = (NSHTTPURLResponse *)response;
+        self.didReceiveResponseBlock(self);
+    }
+    [super connection:connection didReceiveResponse:response];
+}
+
+- (void)dealloc
+{
+    self.didReceiveResponseBlock = nil;
+    self.response = nil;
+}
+@end
 
 @interface SRDefaultHttpHelper ()
 
@@ -97,7 +133,7 @@
     }
     SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
 
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    SRHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
         requestPreparer(operation);
@@ -109,23 +145,18 @@
     {
         if(block)
         {
-            NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
-            
-            __unsafe_unretained NSOutputStream *weakStream = oStream;
-            __unsafe_unretained NSOutputStream *weakOperationOutputSream = operation.outputStream;
-            [operation setDownloadProgressBlock:^(NSInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) 
+            [operation setDidReceiveResponseBlock:^(SRHTTPRequestOperation *operation)
             {
-                NSData *buffer = [weakOperationOutputSream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-                buffer = [buffer subdataWithRange:NSMakeRange([buffer length] - bytesRead, bytesRead)];        
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([weakStream hasSpaceAvailable]) 
-                    {
-                        const uint8_t *dataBuffer = (uint8_t *) [buffer bytes];
-                        [weakStream write:&dataBuffer[0] maxLength:[buffer length]];
-                    }
-                });
+                if([operation hasAcceptableStatusCode])
+                {
+                    NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
+                    [operation setOutputStream:oStream];
+                    
+                    __unsafe_unretained NSOutputStream *weakStream = oStream;
+                    block(weakStream);
+                }
+                operation = nil;
             }];
-            block(weakStream);
         }
     }
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
