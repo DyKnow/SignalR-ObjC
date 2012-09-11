@@ -347,7 +347,7 @@ void (^prepareRequest)(id);
 {
     if(_assemblyVersion == nil)
     {
-        _assemblyVersion = [[SRVersion alloc] initWithMajor:0 minor:5 build:3 revision:0];
+        _assemblyVersion = [[SRVersion alloc] initWithMajor:0 minor:5 build:3 revision:1];
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
