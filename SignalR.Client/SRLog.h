@@ -42,7 +42,7 @@
 #define LOG_HTTPTRANSPORT       (ddLogLevel & LOG_FLAG_HTTPTRANSPORT  )
 #define LOG_AUTOTRANSPORT       (ddLogLevel & LOG_FLAG_AUTOTRANSPORT )
 
-static int ddLogLevel = LOG_LEVEL_AUTOTRANSPORT;
+static int ddLogLevel = LOG_LEVEL_OFF;
 
 #define COCOA_LUMBER_JACK 0
 #if COCOA_LUMBER_JACK
