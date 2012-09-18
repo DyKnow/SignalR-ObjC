@@ -27,39 +27,38 @@
 
 #import "NSDictionary+QueryString.h"
 
-//https://github.com/AFNetworking/AFNetworking/issues/388
-@interface AFURLConnectionOperation (SignalR) <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
-@end
-
 @interface SRHTTPRequestOperation : AFHTTPRequestOperation
 
-typedef void (^AFURLConnectionOperationDidReceiveResponseBlock)(SRHTTPRequestOperation *operation);
+typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
 
-@property (readwrite, nonatomic, retain) NSHTTPURLResponse *response;
-@property (readwrite, nonatomic, copy) AFURLConnectionOperationDidReceiveResponseBlock didReceiveResponseBlock;
+@property (readwrite, nonatomic, strong) NSHTTPURLResponse *response;
+@property (readwrite, nonatomic, copy) AFURLConnectionOperationDidReceiveURLResponseBlock urlResponseBlock;
 
 @end
 
 @implementation SRHTTPRequestOperation
+@synthesize successCallbackQueue = _successCallbackQueue;
+@dynamic response;
+
+- (void)setDidReceiveResponseBlock:(void (^)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response))block {
+    self.urlResponseBlock = block;
+}
 
 #pragma mark -
 #pragma mark NSURLConnection Delegate
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)connection:(NSURLConnection *)__unused connection
+didReceiveResponse:(NSURLResponse *)response
 {
-    if (self.didReceiveResponseBlock)
-    {
-        self.response = (NSHTTPURLResponse *)response;
-        self.didReceiveResponseBlock(self);
+    self.response = (NSHTTPURLResponse *)response;
+    if (self.urlResponseBlock) {
+        //dispatch_async(dispatch_get_main_queue(), ^{
+            self.urlResponseBlock(self, self.response);
+        //});
     }
     [super connection:connection didReceiveResponse:response];
 }
 
-- (void)dealloc
-{
-    self.didReceiveResponseBlock = nil;
-    self.response = nil;
-}
 @end
 
 @interface SRDefaultHttpHelper ()
@@ -133,7 +132,7 @@ typedef void (^AFURLConnectionOperationDidReceiveResponseBlock)(SRHTTPRequestOpe
     }
     SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
 
-    SRHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
+    AFHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
         requestPreparer(operation);
@@ -141,25 +140,20 @@ typedef void (^AFURLConnectionOperationDidReceiveResponseBlock)(SRHTTPRequestOpe
     
     //This is a little hacky but it allows us to only use the output stream for SSE only
     BOOL useOutputStream = ([[request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]);
-    if(useOutputStream)
+    [(SRHTTPRequestOperation *)operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response)
     {
-        if(block)
+        if([operation hasAcceptableStatusCode])
         {
-            [operation setDidReceiveResponseBlock:^(SRHTTPRequestOperation *operation)
+            if(useOutputStream && block)
             {
-                if([operation hasAcceptableStatusCode])
-                {
-                    NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
-                    [operation setOutputStream:oStream];
-                    
-                    __unsafe_unretained NSOutputStream *weakStream = oStream;
-                    block(weakStream);
-                }
-                operation = nil;
-            }];
+                NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
+                [operation setOutputStream:oStream];
+                block(oStream);
+            }
         }
-    }
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
+    }];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
         
@@ -180,7 +174,7 @@ typedef void (^AFURLConnectionOperationDidReceiveResponseBlock)(SRHTTPRequestOpe
     [operation start];
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark POST Requests Implementation
 
 + (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block
