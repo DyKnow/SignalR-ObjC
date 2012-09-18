@@ -24,7 +24,7 @@ See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) and [api re
     * ```platform :ios, '5.0'``` or ```platform :osx, '10.7'```
     * ```pod 'SignalR-ObjC'```
 1. Install SignalR-ObjC into your project
-    * pod install App.xcodeproj
+    * pod install
 
 ## Running the Samples
 1. Install CocoaPods (if you have not already done so)

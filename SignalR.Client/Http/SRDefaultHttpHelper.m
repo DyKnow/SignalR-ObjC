@@ -20,11 +20,46 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import "AFURLConnectionOperation.h"
 #import "AFHTTPRequestOperation.h"
 #import "SRDefaultHttpHelper.h"
 #import "SRLog.h"
 
 #import "NSDictionary+QueryString.h"
+
+@interface SRHTTPRequestOperation : AFHTTPRequestOperation
+
+typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
+
+@property (readwrite, nonatomic, strong) NSHTTPURLResponse *response;
+@property (readwrite, nonatomic, copy) AFURLConnectionOperationDidReceiveURLResponseBlock urlResponseBlock;
+
+@end
+
+@implementation SRHTTPRequestOperation
+@synthesize successCallbackQueue = _successCallbackQueue;
+@dynamic response;
+
+- (void)setDidReceiveResponseBlock:(void (^)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response))block {
+    self.urlResponseBlock = block;
+}
+
+#pragma mark -
+#pragma mark NSURLConnection Delegate
+
+- (void)connection:(NSURLConnection *)__unused connection
+didReceiveResponse:(NSURLResponse *)response
+{
+    self.response = (NSHTTPURLResponse *)response;
+    if (self.urlResponseBlock) {
+        //dispatch_async(dispatch_get_main_queue(), ^{
+            self.urlResponseBlock(self, self.response);
+        //});
+    }
+    [super connection:connection didReceiveResponse:response];
+}
+
+@end
 
 @interface SRDefaultHttpHelper ()
 
@@ -97,7 +132,7 @@
     }
     SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
 
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    AFHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
     if(requestPreparer != nil)
     {
         requestPreparer(operation);
@@ -105,30 +140,20 @@
     
     //This is a little hacky but it allows us to only use the output stream for SSE only
     BOOL useOutputStream = ([[request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]);
-    if(useOutputStream)
+    [(SRHTTPRequestOperation *)operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response)
     {
-        if(block)
+        if([operation hasAcceptableStatusCode])
         {
-            NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
-            
-            __unsafe_unretained NSOutputStream *weakStream = oStream;
-            __unsafe_unretained NSOutputStream *weakOperationOutputSream = operation.outputStream;
-            [operation setDownloadProgressBlock:^(NSInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) 
+            if(useOutputStream && block)
             {
-                NSData *buffer = [weakOperationOutputSream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-                buffer = [buffer subdataWithRange:NSMakeRange([buffer length] - bytesRead, bytesRead)];        
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([weakStream hasSpaceAvailable]) 
-                    {
-                        const uint8_t *dataBuffer = (uint8_t *) [buffer bytes];
-                        [weakStream write:&dataBuffer[0] maxLength:[buffer length]];
-                    }
-                });
-            }];
-            block(weakStream);
+                NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
+                [operation setOutputStream:oStream];
+                block(oStream);
+            }
         }
-    }
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
+    }];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
         
@@ -149,7 +174,7 @@
     [operation start];
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark POST Requests Implementation
 
 + (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block
