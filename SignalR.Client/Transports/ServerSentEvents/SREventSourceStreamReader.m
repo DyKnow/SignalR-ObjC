@@ -70,7 +70,6 @@
 {
     _stream.delegate = self;
     [_stream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [_stream open];
 }
 
 - (BOOL)processing
@@ -93,7 +92,6 @@
 
             _reading = YES;
             [self onOpened];
-            break;
         }
         case NSStreamEventHasSpaceAvailable:
         {
