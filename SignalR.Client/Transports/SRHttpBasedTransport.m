@@ -277,11 +277,7 @@
             id transportData = [result objectForKey:kResponse_TransportData];
             if(transportData && [transportData isKindOfClass:[NSDictionary class]])  
             {
-                id groups = [transportData objectForKey:kResponse_Groups];
-                if(groups && [groups isKindOfClass:[NSArray class]])
-                {
-                    connection.groups = [NSMutableArray arrayWithArray:groups];
-                }
+                connection.groups = ([transportData objectForKey:kResponse_Groups]) ? [transportData objectForKey:kResponse_Groups] : [NSMutableArray array];
             }
         }
     }
