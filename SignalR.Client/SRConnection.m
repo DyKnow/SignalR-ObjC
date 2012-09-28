@@ -24,8 +24,8 @@
 #import "SRAutoTransport.h"
 #import "SRConnection.h"
 #import "SRDefaultHttpClient.h"
+#import "SRLog.h"
 #import "SRNegotiationResponse.h"
-#import "SRSignalRConfig.h"
 #import "SRVersion.h"
 
 #import "NSDictionary+QueryString.h"
@@ -96,7 +96,7 @@ void (^prepareRequest)(id);
 
 - (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString
 {
-    if ((self = [super init])) 
+    if (self = [super init]) 
     {
         NSRange range = [queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch];
         if(range.location != NSNotFound) 
@@ -146,15 +146,12 @@ void (^prepareRequest)(id);
 
 - (void)negotiate:(id<SRClientTransport>)transport
 {
-#if DEBUG_CONNECTION
-    SR_DEBUG_LOG(@"[CONNECTION] will negotiate");
-#endif
+    SRLogConnection(@"will negotiate");
     
     [transport negotiate:self continueWith:^(SRNegotiationResponse *negotiationResponse) 
     {
-#if DEBUG_CONNECTION
-        SR_DEBUG_LOG(@"[CONNECTION] negotiation was successful %@",negotiationResponse);
-#endif
+        SRLogConnection(@"negotiation was successful %@",negotiationResponse);
+
         [self verifyProtocolVersion:negotiationResponse.protocolVersion];
         
         if(negotiationResponse.connectionId)
@@ -350,7 +347,7 @@ void (^prepareRequest)(id);
 {
     if(_assemblyVersion == nil)
     {
-        _assemblyVersion = [[SRVersion alloc] initWithMajor:0 minor:5 build:2 revision:0];
+        _assemblyVersion = [[SRVersion alloc] initWithMajor:0 minor:5 build:3 revision:1];
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR

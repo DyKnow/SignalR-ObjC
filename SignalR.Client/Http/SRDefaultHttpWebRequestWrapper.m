@@ -27,7 +27,7 @@
 @interface SRDefaultHttpWebRequestWrapper ()
 
 @property (strong, nonatomic, readwrite) NSMutableURLRequest *request;
-@property (strong, nonatomic, readwrite) AFHTTPRequestOperation *requestOperation;
+@property (weak, nonatomic, readwrite) AFHTTPRequestOperation *requestOperation;
 
 @end
 

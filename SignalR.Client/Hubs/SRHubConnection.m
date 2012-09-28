@@ -24,7 +24,7 @@
 #import "SRHubInvocation.h"
 #import "SRHubProxy.h"
 #import "SRHubRegistrationData.h"
-#import "SRSignalRConfig.h"
+#import "SRLog.h"
 
 #import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
@@ -49,7 +49,7 @@
 
 - (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]])) 
+    if (self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]]) 
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
@@ -63,7 +63,7 @@
 
 - (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString]))
+    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString])
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
@@ -77,7 +77,7 @@
 
 - (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault
 {
-    if ((self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString]))
+    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString])
     {
         _hubs = [[NSMutableDictionary alloc] init];
     }
@@ -91,9 +91,8 @@
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
     }
     
-#if DEBUG_CONNECTION
-    SR_DEBUG_LOG(@"[CONNECTION] will create proxy %@",hubName);
-#endif
+    SRLogConnection(@"will create proxy %@",hubName);
+
     SRHubProxy *hubProxy;
     if([_hubs objectForKey:[hubName lowercaseString]] == nil)
     {
