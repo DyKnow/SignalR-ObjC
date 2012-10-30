@@ -12,7 +12,6 @@
 @interface MouseTrackingViewController ()
 
 - (void)moveMouse:(id)id x:(id)x y:(id)y;
-- (void)join;
 
 @end
 
@@ -112,9 +111,8 @@
 {
     NSString *server = [Router sharedRouter].server_url;
     connection = [SRHubConnection connectionWithURL:server];
-    hub = [connection createProxy:@"MouseTracking"]; 
-    [hub on:@"moveMouse" perform:self selector:@selector(moveMouse:x:y:)];
-    [hub on:@"join" perform:self selector:@selector(join)];
+    hub = [connection createHubProxy:@"MouseTracking"]; 
+    [hub on:@"move" perform:self selector:@selector(moveMouse:x:y:)];
     [connection start];
     
     if(messagesReceived == nil)
@@ -128,12 +126,6 @@
 - (void)moveMouse:(id)id x:(id)x y:(id)y
 {
     [messagesReceived insertObject:[NSString stringWithFormat:@"Mouse Number: %@ Moved X:%@ Y:%@",id,x,y] atIndex:0];
-    [messageTable reloadData];
-}
-
-- (void)join
-{
-    [messagesReceived insertObject:[NSString stringWithFormat:@"Joined"] atIndex:0];
     [messageTable reloadData];
 }
 

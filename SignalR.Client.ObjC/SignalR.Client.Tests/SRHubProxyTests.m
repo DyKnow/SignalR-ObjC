@@ -34,7 +34,7 @@
 - (void)testCustomQueryStringRaw
 {
     SRHubConnection *connection = [SRHubConnection connectionWithURL:@"http://foo/" queryString:@"a=b"];    
-    [connection createProxy:@"CustomQueryHub"];
+    [connection createHubProxy:@"CustomQueryHub"];
     [connection start];
 
     NSString *result = [[NSDictionary dictionaryWithFormEncodedString:connection.queryString] objectForKey:@"a"];
@@ -52,7 +52,7 @@
     NSMutableDictionary *qs = [NSMutableDictionary dictionary];
     [qs setObject:@"b" forKey:@"a"];
     SRHubConnection *connection = [SRHubConnection connectionWithURL:@"http://foo/" query:qs];
-    [connection createProxy:@"CustomQueryHub"];
+    [connection createHubProxy:@"CustomQueryHub"];
     [connection start];
 
     NSString *result = [[NSDictionary dictionaryWithFormEncodedString:connection.queryString] objectForKey:@"a"];

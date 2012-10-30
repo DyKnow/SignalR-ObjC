@@ -25,8 +25,6 @@
 #import "SRDefaultHttpHelper.h"
 #import "SRLog.h"
 
-#import "NSDictionary+QueryString.h"
-
 @interface SRHTTPRequestOperation : AFHTTPRequestOperation
 
 typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
@@ -199,7 +197,12 @@ didReceiveResponse:(NSURLResponse *)response
 
 + (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block
 {
-    NSData *requestData = [[postData stringWithFormEncodedComponents] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    NSMutableArray *components = [NSMutableArray array];
+    for (NSString *key in [postData allKeys])
+    {
+        [components addObject:[NSString stringWithFormat:@"%@=%@",key,[postData objectForKey:key]]];
+    }
+    NSData *requestData = [[components componentsJoinedByString:@"&"] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"POST"];

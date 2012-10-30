@@ -54,6 +54,6 @@
  * @param hubName hubName the name of the hub
  * @return SRHubProxy object 
  */
-- (SRHubProxy *)createProxy:(NSString *)hubName;
+- (SRHubProxy *)createHubProxy:(NSString *)hubName;
 
 @end

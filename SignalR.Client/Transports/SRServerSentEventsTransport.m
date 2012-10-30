@@ -137,10 +137,10 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         else
         {
             SREventSourceStreamReader *eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
-            __unsafe_unretained SRServerSentEventsTransport *weakTransport = self;
-            __unsafe_unretained SRThreadSafeInvoker *weakCallbackInvoker = callbackInvoker;
-            __unsafe_unretained SRConnection *weakConnection = connection;
-            __unsafe_unretained NSString *weakData = data;
+            __weak SRServerSentEventsTransport *weakTransport = self;
+            __weak SRThreadSafeInvoker *weakCallbackInvoker = callbackInvoker;
+            __weak SRConnection *weakConnection = connection;
+            __weak NSString *weakData = data;
             typedef void (^SRInitializedCallback)(void);
             __block SRInitializedCallback weakInitializedCallback = initializeCallback;
             __block BOOL retry = YES;
@@ -186,27 +186,38 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                 }
             };
             
-            eventSource.closed = ^(NSError * error)
+            eventSource.closed = ^(NSError *exception)
             {
                 SRLogServerSentEvents(@"did close");
-
-                if (error != nil && ![SRExceptionHelper isRequestAborted:error])
+                BOOL isRequestAborted = NO;
+                
+                if (exception != nil)
                 {
-                    // Don't raise exceptions if the request was aborted (connection was stopped).
-                    [weakConnection didReceiveError:error];
+                    // Check if the request is aborted
+                    isRequestAborted = [SRExceptionHelper isRequestAborted:exception];
+                    
+                    if (!isRequestAborted)
+                    {
+                        // Don't raise exceptions if the request was aborted (connection was stopped).
+                        [connection didReceiveError:exception];
+                    }
                 }
                 
                 [response close];
                 
-                if(retry)
+                // Skip reconnect attempt for aborted requests
+                if (!isRequestAborted)
                 {
-                    [weakTransport reconnect:weakConnection data:weakData];
-                }
-                else
-                {
-                    SRLogServerSentEvents(@"will abort connection");
-
-                    [weakConnection stop];
+                    if(retry)
+                    {
+                        [weakTransport reconnect:weakConnection data:weakData];
+                    }
+                    else
+                    {
+                        SRLogServerSentEvents(@"will abort connection");
+                        
+                        [weakConnection stop];
+                    }
                 }
             };
             

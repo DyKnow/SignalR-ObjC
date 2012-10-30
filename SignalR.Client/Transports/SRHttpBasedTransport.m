@@ -25,9 +25,7 @@
 #import "SRLog.h"
 #import "SRNegotiationResponse.h"
 
-#import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
-#import "NSString+QueryString.h"
 
 @interface SRHttpBasedTransport()
 
@@ -125,7 +123,7 @@
     url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
 
     NSMutableDictionary *postData = [[NSMutableDictionary alloc] init];
-    [postData setObject:[data stringByEscapingForURLQuery] forKey:kData];
+    [postData setObject:data forKey:kData];
     
     SRLogHTTPTransport(@"will send data");
     
@@ -172,40 +170,39 @@
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
 - (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data
 {
-    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    [parameters setObject:_transport forKey:kTransport];
-    [parameters setObject:connection.connectionId forKey:kConnectionId];
-    
+    NSMutableString *queryStringBuilder = [NSMutableString string];
+    [queryStringBuilder appendFormat:@"?%@=%@",kTransport,_transport];
+    [queryStringBuilder appendFormat:@"&%@=%@",kConnectionId,[connection.connectionId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+
     if(connection.messageId) 
     {
-        [parameters setObject:connection.messageId forKey:kMessageId];
-    }
-    else
-    {
-        [parameters setObject:[NSString stringWithFormat:@""] forKey:kMessageId];
+        [queryStringBuilder appendFormat:@"&%@=%@",kMessageId,[connection.messageId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     }
     
-    [parameters setObject:[connection.groups SRJSONRepresentation] forKey:kGroups];
+    if (connection.groups && [connection.groups count] > 0)
+    {
+        [queryStringBuilder appendFormat:@"&%@=%@",kGroups,[[connection.groups SRJSONRepresentation] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    }
     
-    if (data) 
+    if (data != nil)
     {
-        [parameters setObject:[data stringByEscapingForURLQuery] forKey:kConnectionData]; 
+        [queryStringBuilder appendFormat:@"&%@=%@",kConnectionData,[data stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     }
-    else
+
+    NSString *customQuery = [self getCustomQueryString:connection];
+    
+    if (customQuery == nil || [customQuery isEqualToString:@""])
     {
-        [parameters setObject:[NSString stringWithFormat:@""] forKey:kConnectionData];
+        [queryStringBuilder appendFormat:@"&%@",customQuery];
     }
-    return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
+    
+    return queryStringBuilder;
 }
 
 //?transport=<transportname>&connectionId=<connectionId><customquerystring>
 - (NSString *)getSendQueryString:(SRConnection *)connection
 {
-    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
-    [parameters setObject:_transport forKey:kTransport];
-    [parameters setObject:connection.connectionId forKey:kConnectionId];
-    
-    return [NSString stringWithFormat:@"?%@%@",[parameters stringWithFormEncodedComponents],[self getCustomQueryString:connection]];
+    return [NSString stringWithFormat:@"?%@=%@&%@=%@%@",kTransport,_transport,kConnectionId,connection.connectionId,[self getCustomQueryString:connection]];
 }
 
 - (void)prepareRequest:(id <SRRequest>)request forConnection:(SRConnection *)connection;
@@ -258,10 +255,10 @@
                 connection.messageId = messageId;
             }
             
-            id messageData = [result objectForKey:kResponse_Messages];
-            if(messageData && [messageData isKindOfClass:[NSArray class]])
+            id messages = [result objectForKey:kResponse_Messages];
+            if(messages && [messages isKindOfClass:[NSArray class]])
             {
-                for (id message in messageData) 
+                for (id message in messages) 
                 {   
                     if([message isKindOfClass:[NSDictionary class]])
                     {
@@ -277,7 +274,11 @@
             id transportData = [result objectForKey:kResponse_TransportData];
             if(transportData && [transportData isKindOfClass:[NSDictionary class]])  
             {
-                connection.groups = ([transportData objectForKey:kResponse_Groups]) ? [transportData objectForKey:kResponse_Groups] : [NSMutableArray array];
+                id groups = [transportData objectForKey:kResponse_Groups];
+                if (groups != nil)
+                {
+                    connection.Groups = groups;
+                }
             }
         }
     }

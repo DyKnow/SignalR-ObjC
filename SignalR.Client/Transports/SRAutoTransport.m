@@ -73,13 +73,16 @@
         {
             SRLogAutoTransport(@"will switch to next transport");
 
+            // If that transport fails to initialize then fallback
             int next = index + 1;
             if (next < [_transports count])
             {
+                // Try the next transport
                 [self resolveTransport:connection data:data taskCompletionSource:block index:next];
             }
             else
             {
+                // If there's nothing else to try then just fail
                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                 [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
                 [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",@"")] forKey:NSLocalizedDescriptionKey];

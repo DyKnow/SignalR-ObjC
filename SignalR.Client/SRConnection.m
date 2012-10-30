@@ -28,7 +28,6 @@
 #import "SRNegotiationResponse.h"
 #import "SRVersion.h"
 
-#import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
 
 void (^prepareRequest)(id);
@@ -39,6 +38,7 @@ void (^prepareRequest)(id);
 @property (strong, nonatomic, readonly) id <SRClientTransport> transport;
 
 - (void)verifyProtocolVersion:(NSString *)versionString;
+- (NSString *)createQueryString:(NSDictionary *)queryString;
 
 @end
 
@@ -76,7 +76,7 @@ void (^prepareRequest)(id);
 
 + (id)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString
 {
-    return [[[self class] alloc] initWithURLString:url queryString:[queryString stringWithFormEncodedComponents]];
+    return [[[self class] alloc] initWithURLString:url query:queryString];
 }
 
 + (id)connectionWithURL:(NSString *)url queryString:(NSString *)queryString
@@ -91,7 +91,7 @@ void (^prepareRequest)(id);
 
 - (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString
 {
-    return [self initWithURLString:url queryString:[queryString stringWithFormEncodedComponents]];
+    return [self initWithURLString:url queryString:[self createQueryString:queryString]];
 }
 
 - (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString
@@ -347,7 +347,7 @@ void (^prepareRequest)(id);
 {
     if(_assemblyVersion == nil)
     {
-        _assemblyVersion = [[SRVersion alloc] initWithMajor:0 minor:5 build:3 revision:1];
+        _assemblyVersion = [[SRVersion alloc] initWithMajor:1 minor:0 build:0];
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -366,6 +366,17 @@ void (^prepareRequest)(id);
     }
     return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
 #endif
+}
+
+- (NSString *)createQueryString:(NSDictionary *)queryString
+{
+    NSMutableArray *components = [NSMutableArray array];
+    for (NSString *key in [queryString allKeys])
+    {
+        [components addObject:[NSString stringWithFormat:@"%@=%@",key,[queryString objectForKey:key]]];
+    }
+
+    return [components componentsJoinedByString:@"&"];
 }
 
 - (void)dealloc

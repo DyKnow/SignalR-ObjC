@@ -58,7 +58,6 @@
     }
     else if([line hasPrefix:@"id:"])
     {
-        
         NSString *data = [line substringFromIndex:@"id:".length];
         *sseEvent = [[SRSseEvent alloc] initWithType:Id data:data];
         return YES;

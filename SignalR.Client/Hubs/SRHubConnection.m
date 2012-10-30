@@ -26,7 +26,6 @@
 #import "SRHubRegistrationData.h"
 #import "SRLog.h"
 
-#import "NSDictionary+QueryString.h"
 #import "NSObject+SRJSON.h"
 
 @interface SRHubConnection ()
@@ -84,7 +83,7 @@
     return self;
 }
 
-- (SRHubProxy *)createProxy:(NSString *)hubName
+- (SRHubProxy *)createHubProxy:(NSString *)hubName
 {
     if (self.state != disconnected)
     {
@@ -150,11 +149,10 @@
         SRHubProxy *hubProxy = [_hubs objectForKey:[invocation.hub lowercaseString]];
         if(hubProxy)
         {
-            if(invocation.state != nil)
+            if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]])
             {
                 for (id key in invocation.state)
                 {
-                    
                     [hubProxy setMember:key object:[invocation.state objectForKey:key]];
                 }
             }

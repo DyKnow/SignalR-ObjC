@@ -156,6 +156,7 @@ static NSString * const kTransportName = @"longPolling";
                     SRLogLongPolling(@"isFaulted");
 
                     [reconnectInvoker invoke];
+                    
                     // Raise the reconnect event if we successfully reconect after failing
                     shouldRaiseReconnect = YES;
                     
