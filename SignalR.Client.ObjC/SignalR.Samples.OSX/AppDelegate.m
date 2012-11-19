@@ -16,35 +16,20 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
-    NSString *server = [Router sharedRouter].server_url;
-    server = [server stringByAppendingFormat:@"Streaming/Streaming.ashx"];
-    connection = [SRConnection connectionWithURL:server];
-    [connection setDelegate:self];
-    
-    [connection start];
-}
-
-#pragma mark - 
-#pragma mark SRConnection Delegate
-
-- (void)SRConnectionDidOpen:(SRConnection *)connection
-{
-    NSLog(@"Connection Opened");
-}
-
-- (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
-{
-    NSLog(@"%@",data);
-}
-
-- (void)SRConnectionDidClose:(SRConnection *)connection
-{
-    NSLog(@"Connection Closed");
-}
-
-- (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error
-{
-    NSLog(@"%@",[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription]);
+    _connection = [SRConnection connectionWithURL:[[Router sharedRouter].server_url stringByAppendingFormat:@"streaming-connection"]];
+    _connection.started = ^{
+        NSLog(@"Connection Opened");
+    };
+    _connection.received = ^(NSString * data){
+        NSLog(@"%@",data);
+    };
+    _connection.closed = ^{
+       NSLog(@"Connection Closed");
+    };
+    _connection.error = ^(NSError *error){
+         NSLog(@"%@",[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription]);
+    };
+    [_connection start];
 }
 
 @end

@@ -50,9 +50,9 @@ didReceiveResponse:(NSURLResponse *)response
 {
     self.response = (NSHTTPURLResponse *)response;
     if (self.urlResponseBlock) {
-        //dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_sync(dispatch_get_main_queue(), ^{
             self.urlResponseBlock(self, self.response);
-        //});
+        });
     }
     [super connection:connection didReceiveResponse:response];
 }
@@ -136,13 +136,11 @@ didReceiveResponse:(NSURLResponse *)response
         requestPreparer(operation);
     }
     
-    //This is a little hacky but it allows us to only use the output stream for SSE only
-    BOOL useOutputStream = ([[request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]);
     [(SRHTTPRequestOperation *)operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response)
     {
         if([operation hasAcceptableStatusCode])
         {
-            if(useOutputStream && block)
+            if([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"] && block)
             {
                 NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
                 [operation setOutputStream:oStream];
@@ -157,7 +155,7 @@ didReceiveResponse:(NSURLResponse *)response
         
         if (block)
         {
-            block((useOutputStream) ? nil : operation.responseString);
+            block(([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]) ? nil : operation.responseString);
         }
     } 
     failure:^(AFHTTPRequestOperation *operation, NSError *error) 

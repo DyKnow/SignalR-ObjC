@@ -24,36 +24,27 @@
 
 @synthesize messageField, messageTable;
 
-- (void)dealloc
+- (void)awakeFromNib
 {
-    [connection stop];
-    hub = nil;
-    connection.delegate = nil;
-    connection = nil;
+    [super awakeFromNib];
 }
 
 - (void)didReceiveMemoryWarning
 {
-    // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - 
+- (void)dealloc
+{
+    
+}
+
+#pragma mark -
 #pragma mark View lifecycle
 
-- (void)viewDidLoad
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    [super viewDidAppear:animated];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -61,24 +52,28 @@
     [super viewWillAppear:animated];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewDidDisappear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [connection stop];
+    hub = nil;
+    connection.delegate = nil;
+    connection = nil;
+
+    [super viewDidDisappear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [super viewWillDisappear:animated];
+	[super viewWillDisappear:animated];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewDidLoad
 {
-    [super viewDidDisappear:animated];
+    [super viewDidLoad];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
 	return YES;
 }
 

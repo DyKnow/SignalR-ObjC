@@ -137,10 +137,12 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
         else
         {
             SREventSourceStreamReader *eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
-            __weak SRServerSentEventsTransport *weakTransport = self;
-            __weak SRThreadSafeInvoker *weakCallbackInvoker = callbackInvoker;
-            __weak SRConnection *weakConnection = connection;
-            __weak NSString *weakData = data;
+            __weak __typeof(&*self)weakSelf = self;
+            __weak __typeof(&*connection)weakConnection = connection;
+            __weak __typeof(&*response)weakResponse = response;
+            __weak __typeof(&*data)weakData = data;
+            __weak __typeof(&*callbackInvoker)weakCallbackInvoker = callbackInvoker;
+
             typedef void (^SRInitializedCallback)(void);
             __block SRInitializedCallback weakInitializedCallback = initializeCallback;
             __block BOOL retry = YES;
@@ -149,23 +151,29 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
             
             eventSource.opened = ^()
             {
+                __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+                __strong __typeof(&*weakCallbackInvoker)strongCallbackInvoker = weakCallbackInvoker;
+
                 SRLogServerSentEvents(@"did initialize");
 
                 if (weakInitializedCallback != nil)
                 {
-                    [weakCallbackInvoker invoke:weakInitializedCallback];
+                    [strongCallbackInvoker invoke:weakInitializedCallback];
                     weakInitializedCallback = nil;
                 }
                 
-                if(_reconnecting && [weakConnection changeState:reconnecting toState:connected])
+                if(_reconnecting && [strongConnection changeState:reconnecting toState:connected])
                 {
                     // Raise the reconnect event if the connection comes back up
-                    [weakConnection didReconnect];
+                    [strongConnection didReconnect];
                 }
             };
             
             eventSource.message = ^(SRSseEvent * sseEvent)
             {
+                __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+                __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+
                 if(sseEvent.type == Data)
                 {
                     if([sseEvent.data caseInsensitiveCompare:@"initialized"] == NSOrderedSame)
@@ -175,7 +183,7 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     
                     BOOL timedOut = NO;
                     BOOL disconnect = NO;
-                    [weakTransport processResponse:weakConnection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
+                    [strongSelf processResponse:strongConnection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
                     
                     if(disconnect)
                     {
@@ -188,6 +196,11 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
             
             eventSource.closed = ^(NSError *exception)
             {
+                __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+                __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+                __strong __typeof(&*weakResponse)strongResponse = weakResponse;
+                __strong __typeof(&*weakData)strongData = weakData;
+
                 SRLogServerSentEvents(@"did close");
                 BOOL isRequestAborted = NO;
                 
@@ -199,24 +212,24 @@ static NSString * const kEventSourceKey = @"eventSourceStream";
                     if (!isRequestAborted)
                     {
                         // Don't raise exceptions if the request was aborted (connection was stopped).
-                        [connection didReceiveError:exception];
+                        [strongConnection didReceiveError:exception];
                     }
                 }
                 
-                [response close];
+                [strongResponse close];
                 
                 // Skip reconnect attempt for aborted requests
                 if (!isRequestAborted)
                 {
                     if(retry)
                     {
-                        [weakTransport reconnect:weakConnection data:weakData];
+                        [strongSelf reconnect:strongConnection data:strongData];
                     }
                     else
                     {
                         SRLogServerSentEvents(@"will abort connection");
                         
-                        [weakConnection stop];
+                        [strongConnection stop];
                     }
                 }
             };

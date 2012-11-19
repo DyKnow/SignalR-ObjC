@@ -9,10 +9,9 @@
 #import <Cocoa/Cocoa.h>
 #import "SignalR.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, SRConnectionDelegate>
-{
-    SRConnection *connection;
-}
+@interface AppDelegate : NSObject <NSApplicationDelegate>
+
+@property (strong, nonatomic, readwrite) SRConnection *connection;
 @property (assign) IBOutlet NSWindow *window;
 
 @end
