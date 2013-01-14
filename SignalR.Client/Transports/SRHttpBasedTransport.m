@@ -191,7 +191,7 @@
 
     NSString *customQuery = [self getCustomQueryString:connection];
     
-    if (customQuery == nil || [customQuery isEqualToString:@""])
+    if (customQuery != nil && ![customQuery isEqualToString:@""])
     {
         [queryStringBuilder appendFormat:@"&%@",customQuery];
     }
