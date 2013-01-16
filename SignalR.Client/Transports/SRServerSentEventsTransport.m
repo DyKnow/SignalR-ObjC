@@ -79,7 +79,8 @@ static NSString * const kTransportName = @"serverSentEvents";
     
     NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
     __block id <SRRequest> request = nil;
-    
+    __block SREventSourceStreamReader *eventSource;
+
     [self.httpClient getAsync:url requestPreparer:^(id<SRRequest> req) {
         request = req;
         [connection prepareRequest:request];
@@ -114,7 +115,7 @@ static NSString * const kTransportName = @"serverSentEvents";
                 }
             }
         } else {
-            SREventSourceStreamReader *eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
+            eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
             __weak __typeof(&*self)weakSelf = self;
             __weak __typeof(&*connection)weakConnection = connection;
             __weak __typeof(&*response)weakResponse = response;
@@ -130,10 +131,7 @@ static NSString * const kTransportName = @"serverSentEvents";
                 retry = false;
                 es.Close();
             }, eventSource);*/
-            
-            //TODO: Remove, this is only here because without it eventSource is released early
-            (connection.items)[@"retainEventSource"] = eventSource;
-            
+
             eventSource.opened = ^() {
                 __strong __typeof(&*weakConnection)strongConnection = weakConnection;
                 __strong __typeof(&*weakCallbackInvoker)strongCallbackInvoker = weakCallbackInvoker;
