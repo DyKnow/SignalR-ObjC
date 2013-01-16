@@ -36,65 +36,51 @@
 
 @implementation SRHubConnection
 
-@synthesize hubs = _hubs;
-
 #pragma mark - 
 #pragma mark Initialization
 
-- (id)initWithURLString:(NSString *)URL
-{
+- (id)initWithURLString:(NSString *)URL {
     return [self initWithURLString:URL useDefault:YES];
 }
 
-- (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault
-{
-    if (self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]]) 
-    {
+- (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault {
+    if (self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]])  {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString
-{
+- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
     return [self initWithURLString:url queryString:queryString useDefault:YES];
 }
 
-- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault
-{
-    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString])
-    {
+- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault {
+    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString]) {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString
-{
+- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
     return [self initWithURLString:url query:queryString useDefault:YES];
 }
 
-- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault
-{
-    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString])
-    {
+- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
+    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString]) {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (SRHubProxy *)createHubProxy:(NSString *)hubName
-{
-    if (self.state != disconnected)
-    {
+- (SRHubProxy *)createHubProxy:(NSString *)hubName {
+    if (self.state != disconnected) {
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
     }
     
     SRLogConnection(@"will create proxy %@",hubName);
 
     SRHubProxy *hubProxy;
-    if([_hubs objectForKey:[hubName lowercaseString]] == nil)
-    {
+    if([_hubs objectForKey:[hubName lowercaseString]] == nil) {
         hubProxy = [[SRHubProxy alloc] initWithConnection:self hubName:[hubName lowercaseString]];
         [_hubs setObject:hubProxy forKey:[hubName lowercaseString]];
     }
@@ -104,15 +90,12 @@
 #pragma mark - 
 #pragma mark Private
 
-- (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault
-{
-    if([URL hasSuffix:@"/"] == false)
-    {
+- (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault {
+    if([URL hasSuffix:@"/"] == false) {
         URL = [URL stringByAppendingString:@"/"];
     }
     
-    if(useDefault)
-    {
+    if(useDefault) {
         return [URL stringByAppendingString:@"signalr"];
     }
     
@@ -122,37 +105,28 @@
 #pragma mark - 
 #pragma mark Sending data
 
-- (NSString *)onSending
-{
-    NSMutableArray *dataFromHub = [[NSMutableArray alloc] init];
+- (NSString *)onSending {
     
-    for(id key in _hubs)
-    {
+    NSMutableArray *data = [[NSMutableArray alloc] init];
+    for(id key in _hubs) {
         SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
         registration.name = [[_hubs objectForKey:key] hubName];
-        [dataFromHub addObject:registration];
+        [data addObject:registration];
     }
-    
-    NSString *data = [dataFromHub SRJSONRepresentation];
-    
-    return data;
+        
+    return [data SRJSONRepresentation];
 }
 
 #pragma mark - 
 #pragma mark Received Data
 
-- (void)didReceiveData:(NSString *)data
-{
-    if([data isKindOfClass:[NSString class]])
-    {
+- (void)didReceiveData:(NSString *)data {
+    if([data isKindOfClass:[NSString class]]) {
         SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:[data SRJSONValue]];
         SRHubProxy *hubProxy = [_hubs objectForKey:[invocation.hub lowercaseString]];
-        if(hubProxy)
-        {
-            if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]])
-            {
-                for (id key in invocation.state)
-                {
+        if(hubProxy) {
+            if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]]) {
+                for (id key in invocation.state) {
                     [hubProxy setMember:key object:[invocation.state objectForKey:key]];
                 }
             }
@@ -163,8 +137,7 @@
     [super didReceiveData:data];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     _hubs = nil;
 }
 

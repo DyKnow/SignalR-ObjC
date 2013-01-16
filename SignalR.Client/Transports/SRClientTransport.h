@@ -55,6 +55,6 @@
  *
  * @param connection the `SRConnection` owning the transport that should be stopped
  */
-- (void)stop:(SRConnection *)connection;
+- (void)abort:(SRConnection *)connection;
 
 @end

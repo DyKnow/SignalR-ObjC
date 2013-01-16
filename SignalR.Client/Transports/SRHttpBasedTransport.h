@@ -21,7 +21,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransport+Constants.h"
+#import "SRClientTransport.h"
 #import "SRHttpClient.h"
 #import "SRRequest.h"
 
@@ -76,14 +76,6 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 ///-------------------------------
 
 /**
- * Prepares http requests to be sent to the server
- * 
- * @param request id <SRRequest> associated with the request
- * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
- */
-- (void)prepareRequest:(id <SRRequest>)request forConnection:(SRConnection *)connection;
-
-/**
  * Generates a query string for request made to receive data from the server
  *
  * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
@@ -100,13 +92,6 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  */
 - (NSString *)getSendQueryString:(SRConnection *)connection;
 
-/**
- * Subclasses of `SRHttpBasedTransport` should override this method if the `SRHttpBasedTransport` needs to perform cleanup before closing
- *
- * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
- */
-- (void)onBeforeAbort:(SRConnection *)connection;
-
 ///-------------------------------
 /// @name Processing a response
 ///-------------------------------
@@ -120,7 +105,5 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param disconnected a `BOOL` respresenting if the connection received a disconnect from the server
  */
 - (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
-
-#define kHttpRequestKey @"http.Request"
 
 @end

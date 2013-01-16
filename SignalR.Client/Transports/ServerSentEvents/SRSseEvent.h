@@ -25,7 +25,7 @@
 
 @interface SRSseEvent : NSObject
 
-@property (assign, nonatomic, readwrite) EventType type;
+@property (assign, nonatomic, readwrite) EventType eventType;
 @property (strong, nonatomic, readwrite) NSString *data;
 
 - (id)initWithType:(EventType)type data:(NSString *)data;

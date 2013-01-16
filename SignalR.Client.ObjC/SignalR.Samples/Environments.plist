@@ -5,12 +5,12 @@
 	<key>Debug</key>
 	<dict>
 		<key>server</key>
-		<string>http://abillingsley-vm:9090/</string>
+		<string>http://192.168.85.133:9090/</string>
 	</dict>
 	<key>Release</key>
 	<dict>
 		<key>server</key>
-		<string>http://abillingsley-vm:9090/</string>
+		<string>http://abill-win8:9090/</string>
 	</dict>
 </dict>
 </plist>

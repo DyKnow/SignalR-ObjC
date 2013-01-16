@@ -28,28 +28,20 @@
 
 @implementation SRHubResult
 
-@synthesize result = _result;
-@synthesize error = _error;
-@synthesize state = _state;
+static NSString * const kResult = @"R";
+static NSString * const kError = @"E";
+static NSString * const kState = @"S";
 
-static NSString * const kResult = @"Result";
-static NSString * const kError = @"Error";
-static NSString * const kState = @"State";
-
-- (id) init
-{
-    if (self = [super init])
-    {
+- (id) init {
+    if (self = [super init]) {
         _error = [NSString stringWithFormat:@""];
 		_state = [NSDictionary dictionary];
     }
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary*)dict
-{
-	if (self = [self init])
-	{
+- (id)initWithDictionary:(NSDictionary*)dict {
+	if (self = [self init]) {
         self.result  = [dict objectForKey:kResult];
         self.error = [dict objectForKey:kError];
         self.state = [dict objectForKey:kState];
@@ -57,13 +49,11 @@ static NSString * const kState = @"State";
     return self;
 }
 
-- (NSString *)description 
-{  
+- (NSString *)description  {  
     return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     _result = nil;
     _error = nil;
     _state = nil;

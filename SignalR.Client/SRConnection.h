@@ -44,6 +44,13 @@
 - (void)SRConnectionDidOpen:(SRConnection *)connection;
 
 /**
+ * Called when the `SRConnection` is reconnecting
+ *
+ * @param connection the `SRConnection` object dispatching the event
+ */
+- (void)SRConnectionWillReconnect:(SRConnection *)connection;
+
+/**
  * Called when the `SRConnection` is reconnected
  *
  * @param connection the `SRConnection` object dispatching the event
@@ -73,13 +80,17 @@
  */
 - (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error;
 
+- (void)SRConnection:(SRConnection *)connection didChangeState:(connectionState)oldState newState:(connectionState)newState;
+
 @end
 
 typedef void (^onStarted)();
 typedef void (^onReceived)(NSString *);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
+typedef void (^onReconnecting)();
 typedef void (^onReconnected)();
+typedef void (^onStateChanged)(connectionState);
 
 /**
  * An `SRConnection` object provides support to open a persistent connection with a SignalR Server.
@@ -93,76 +104,88 @@ typedef void (^onReconnected)();
 ///-------------------------------
 
 /**
- * A block to be called when the connection's underlying transport is `initialized` the first time
+ * Occurs when the SRConnection is started.
  */
 @property (copy) onStarted started;
 
 /**
- * A block to be called when the connection's underlying transport receives new data
+ * Occurs when the SRConnection has received data from the server.
  */
 @property (copy) onReceived received;
 
 /**
- * A block to be called when the connection's underlying transport receives a error
+ * Occurs when the SRConnection has encountered an error.
  */
 @property (copy) onError error; 
 
 /**
- * A block to be called when the connection's underlying transport is closed
+ * Occurs when the SRConnection is stopped.
  */
 @property (copy) onClosed closed;
 
+/*
+ * Occurs when the SRConnection starts reconnecting after an error.
+ */
+@property (copy) onReconnecting reconnecting;
+
 /**
- * A block to be called when the connection's underlying transport is reconnected
+ * Occurs when the SRConnection successfully reconnects after a timeout.
  */
 @property (copy) onReconnected reconnected;
 
-/**
- * The authentication credential to be applied to each request
- * Support is limited to HTTP Basic Authentication
+/*
+ * Occurs when the SRConnection state changes.
+ */
+@property (copy) onStateChanged stateChanged;
+
+
+@property (strong, nonatomic, readonly) NSMutableDictionary *headers;
+
+/*
+ * Gets or sets authentication information for the connection.
  */
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
 
-/**
- * A `NSMutableArray` of the connected groups
+/*
+ * Gets of sets proxy information for the connection.
+ */
+//@property (strong, nonatomic, readwrite) id proxy; TODO: Add the proxy information??
+
+/*
+ * Gets the groups for the connection.
  */
 @property (strong, nonatomic, readwrite) NSMutableArray *groups;
 
-/**
- * The endpoint at which the connection is initialized to
+/*
+ * Gets the url for the connection.
  */
-@property (strong, nonatomic, readwrite) NSString *url;
+@property (strong, nonatomic, readonly) NSString *url;
 
-/**
- * An `NSString` representing the current message id 
+/*
+ * Gets or sets the last message id for the connection.
  */
 @property (strong, nonatomic, readwrite) NSString *messageId;
 
-/**
- * An `NSString` representing the current connectionId established during negotiation 
+/*
+ * Gets or sets the connection id for the connection.
  */
 @property (strong, nonatomic, readwrite) NSString *connectionId;
 
-/**
- * An `NSMutableDictionary` containing objects that need to be persisted by the underlying transport for example the last httprequest.
+/*
+ * Gets a dictionary for storing state for a the connection.
  */
-@property (strong, nonatomic, readwrite) NSMutableDictionary *items;
+@property (strong, nonatomic, readonly) NSMutableDictionary *items;
 
-/**
- * An `NSString` representing the custom query string to be applied to each request
+/*
+ * Gets the querystring specified in the ctor.
  */
 @property (strong, nonatomic, readonly) NSString *queryString;
 
-@property (assign, nonatomic, readwrite) connectionState state;
-
-/**
- * An `NSMutableDictionary` representing the headers to be applied to each request 
+/*
+ * Gets the current <see cref="ConnectionState"/> of the connection.
  */
-@property (strong, nonatomic, readonly) NSMutableDictionary *headers;
+@property (assign, nonatomic, readonly) connectionState state;
 
-/**
- * The object that acts as the delegate of the receiving `SRConnection`.
- */
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
 ///-------------------------------
@@ -172,10 +195,6 @@ typedef void (^onReconnected)();
 /**
  * A convenience method for initWithURLString:(NSString *)url;
  *
- * <code>
- *  SRConnection *connection = [SRConnection connectionWithURL:@"http://mysite/echo"];
- * </code>
- *
  * @param URL the endpoint to initialize the new connection to
  * @return an `SRConnection` object 
  */
@@ -183,10 +202,6 @@ typedef void (^onReconnected)();
 
 /**
  * A convenience method for initWithURLString:(NSString *)url query:(NSDictionary *)queryString;
- *
- * <code>
- *  SRConnection *connection = [SRConnection connectionWithURL:@"http://mysite/echo"];
- * </code>
  *
  * @param url the endpoint to initialize the new connection to
  * @param queryString an `NSDictionary` representation of a custom query string to be appended to the `SRConnection` endpoint
@@ -205,19 +220,15 @@ typedef void (^onReconnected)();
 + (id)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
 
 /**
- * Initializes a new `SRConnection` object at the specified URL
- *
- * <code>
- *  SRConnection *connection = [[SRConnection alloc] initWithURLString:@"http://mysite/echo"];
- * </code>
- *
+ * Initializes a new instance of the `SRConnection` class
+ 
  * @param url the endpoint to initialize the new connection to
  * @return an `SRConnection` object 
  */
 - (id)initWithURLString:(NSString *)url;
 
 /**
- * Initializes a new `SRConnection` object at the specified URL
+ * Initializes a new instance of the `SRConnection` class
  *
  * @param url the endpoint to initialize the new connection to
  * @param queryString an `NSDictionary` representation of a custom query string to be appended to the `SRConnection` endpoint
@@ -226,7 +237,7 @@ typedef void (^onReconnected)();
 - (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString;
 
 /**
- * Initializes a new `SRConnection` object at the specified URL
+ * Initializes a new instance of the `SRConnection` class
  *
  * @param url the endpoint to initialize the new connection to
  * @param queryString an `NSString` representation of a custom query string to be appended to the `SRConnection` endpoint
@@ -240,43 +251,34 @@ typedef void (^onReconnected)();
 ///-------------------------------
 
 /**
- * Starts the connection using SRAutoTransport
- *
- * sets `active` to YES
+ * Starts the `SRConnection`.
  */
 - (void)start;
 
+/**
+ * Starts the `SRConnection`.
+ *
+ * @param httpClient the httpClient to use for the connection
+ */
 - (void)startHttpClient:(id <SRHttpClient>)httpClient;
 
 /**
- * Starts the connection
- *
- * sets `active` to YES
- *
+ * Starts the `SRConnection`
  * @param transport the transport to use for the connection
  */
 - (void)start:(id <SRClientTransport>)transport;
 
-/**
- * Perfromed prior to starting the underlying transport, a negoitate establishes the initial connection with the server
- * by making a request to url/negotiate a sucessful response returns an SRNegotiationResponse object which establishes the connectionId
- * at which time the underlying transport will be started.
- * dispatches the opened event to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidOpen:self];
- * or to the self.started callback once the transport is successfully initialized
- *
- * @param transport the transport to use during negotiation
- */
-- (void)negotiate:(id <SRClientTransport>)transport;
-
 - (BOOL)changeState:(connectionState)oldState toState:(connectionState)newState;
 
 /**
- * Stops the connection
- * dispatches the closed event to either the `SRConnectionDelegate` by calling [self.delegate SRConnectionDidClose:self];
- * or to the self.closed callback 
- * sets `active` and `initialized` to NO
+ * Stops the `SRConnection` and sends an abort message to the server.
  */
 - (void)stop;
+
+/*
+ * Stops the `SRConnection` without sending an abort message to the server.
+ */
+- (void)disconnect;
 
 ///-------------------------------
 /// @name Sending Data
@@ -285,15 +287,16 @@ typedef void (^onReconnected)();
 - (NSString *)onSending;
 
 /**
- * Sends data over the connection.
- * calls [self send:message continueWith:nil];
+ * Sends data asynchronously over the connection.
+ *
+ * @warning *Important* Start must be called before sending data
  *
  * @param object a JSON stringifable object to send
  */
 - (void)send:(id)object;
 
 /**
- * Sends data over the connection.
+ * Sends data asynchronously over the connection.
  *
  * @warning *Important* Start must be called before sending data
  *
@@ -357,5 +360,7 @@ typedef void (^onReconnected)();
  * @return The user agent will be of the form client/version (DeviceModel/DeviceVersion) 
  */
 - (NSString *)createUserAgentString:(NSString *)client;
+
+- (BOOL)ensureReconnecting;
 
 @end

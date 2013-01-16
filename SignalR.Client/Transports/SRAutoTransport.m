@@ -38,50 +38,35 @@
 
 @implementation SRAutoTransport
 
-@synthesize httpClient = _httpClient;
-
-@synthesize transports = _transports;
-@synthesize transport = _transport;
-
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
-{
-    if(self = [super init])
-    {
+- (id)initWithHttpClient:(id<SRHttpClient>)httpClient {
+    if(self = [super init]) {
         _httpClient = httpClient;
         _transports = [NSArray arrayWithObjects:[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],[[SRLongPollingTransport alloc] initWithHttpClient:httpClient], nil];
     }
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block
-{
+- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
 }
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
-{
+- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block {
     [self resolveTransport:connection data:data taskCompletionSource:block index:0];
 }
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index
-{
+- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index {
     id <SRClientTransport> transport = [_transports objectAtIndex:index];
     
-    [transport start:connection withData:data continueWith:^(id task) 
-    {
-        if (task != nil)
-        {
+    [transport start:connection withData:data continueWith:^(id task) {
+        if (task != nil) {
             SRLogAutoTransport(@"will switch to next transport");
 
             // If that transport fails to initialize then fallback
             int next = index + 1;
-            if (next < [_transports count])
-            {
+            if (next < [_transports count]) {
                 // Try the next transport
                 [self resolveTransport:connection data:data taskCompletionSource:block index:next];
-            }
-            else
-            {
+            } else {
                 // If there's nothing else to try then just fail
                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                 [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
@@ -91,9 +76,7 @@
                                                  userInfo:userInfo];
                 [connection didReceiveError:error];
             }
-        }
-        else
-        {
+        } else {
             SRLogAutoTransport(@"did set active transport");
             
             //Set the active transport
@@ -107,22 +90,19 @@
     }];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block
-{
+- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block {
     SRLogAutoTransport(@"will send data from active transport");
 
     [_transport send:connection withData:data continueWith:block];
 }
 
-- (void)stop:(SRConnection *)connection
-{
+- (void)abort:(SRConnection *)connection {
     SRLogAutoTransport(@"will stop transport");
 
-    [_transport stop:connection];
+    [_transport abort:connection];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     _httpClient = nil;
     _transports = nil;
     _transport = nil;

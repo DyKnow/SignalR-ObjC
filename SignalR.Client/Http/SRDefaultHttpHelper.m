@@ -35,7 +35,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 @end
 
 @implementation SRHTTPRequestOperation
-@synthesize successCallbackQueue = _successCallbackQueue;
+
 @dynamic response;
 
 - (void)setDidReceiveResponseBlock:(void (^)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response))block {
@@ -46,8 +46,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 #pragma mark NSURLConnection Delegate
 
 - (void)connection:(NSURLConnection *)__unused connection
-didReceiveResponse:(NSURLResponse *)response
-{
+didReceiveResponse:(NSURLResponse *)response {
     self.response = (NSHTTPURLResponse *)response;
     if (self.urlResponseBlock) {
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -98,72 +97,55 @@ didReceiveResponse:(NSURLResponse *)response
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
-+ (void)getAsync:(NSString *)url continueWith:(SRContinueWithBlock)block
-{
++ (void)getAsync:(NSString *)url continueWith:(SRContinueWithBlock)block {
     [[self class] getAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block
-{
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block {
     [[self class] getAsync:url requestPreparer:requestPreparer parameters:[[NSDictionary alloc] init] continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(SRContinueWithBlock)block
-{
++ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(SRContinueWithBlock)block {
     [[self class] getAsync:url requestPreparer:nil parameters:parameters continueWith:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block
-{
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block {
     [[self class] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
 }
 
-+ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block
-{
++ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
     [request setTimeoutInterval:240];
-    if(requestPreparer != nil)
-    {
+    if(requestPreparer != nil) {
         requestPreparer(request);
     }
     SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
 
     AFHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
-    if(requestPreparer != nil)
-    {
+    if(requestPreparer != nil) {
         requestPreparer(operation);
     }
     
-    [(SRHTTPRequestOperation *)operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response)
-    {
-        if([operation hasAcceptableStatusCode])
-        {
-            if([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"] && block)
-            {
-                NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
-                [operation setOutputStream:oStream];
-                block(oStream);
-            }
+    [(SRHTTPRequestOperation *)operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response) {
+        if([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"] && block) {
+            NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
+            [operation setOutputStream:oStream];
+            block(oStream);
         }
     }];
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
-    {
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
         
-        if (block)
-        {
+        if (block) {
             block(([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]) ? nil : operation.responseString);
         }
-    } 
-    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
-    {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\nERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
         
-        if (block)
-        {
+        if (block) {
             block(error);
         }
     }];
@@ -173,31 +155,25 @@ didReceiveResponse:(NSURLResponse *)response
 #pragma mark -
 #pragma mark POST Requests Implementation
 
-+ (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block
-{
++ (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block {
     [[self class] postAsync:url requestPreparer:nil continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block
-{
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block {
     [[self class] postAsync:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(SRContinueWithBlock)block
-{
++ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(SRContinueWithBlock)block {
     [[self class] postAsync:url requestPreparer:nil postData:postData continueWith:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block
-{
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block {
     [[self class] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
 }
 
-+ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block
-{
++ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block {
     NSMutableArray *components = [NSMutableArray array];
-    for (NSString *key in [postData allKeys])
-    {
+    for (NSString *key in [postData allKeys]) {
         [components addObject:[NSString stringWithFormat:@"%@=%@",key,[postData objectForKey:key]]];
     }
     NSData *requestData = [[components componentsJoinedByString:@"&"] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
@@ -209,32 +185,25 @@ didReceiveResponse:(NSURLResponse *)response
     [request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody: requestData];
     [request setTimeoutInterval:240];
-    if(requestPreparer != nil)
-    {
+    if(requestPreparer != nil) {
         requestPreparer(request);
     }
     SRLogHTTP(@"%@",[NSString stringWithFormat:@"%@: %@\nHEADERS=%@\nBODY=%@\nTIMEOUT=%f\n",request.HTTPMethod,[request.URL absoluteString],request.allHTTPHeaderFields,[[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], request.timeoutInterval]);
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    if(requestPreparer != nil)
-    {
+    if(requestPreparer != nil) {
         requestPreparer(operation);
     }
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) 
-    {
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
 
-        if (block)
-        {
+        if (block) {
             block(operation.responseString);
         }
-    } 
-    failure:^(AFHTTPRequestOperation *operation, NSError *error) 
-    {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\nERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
 
-        if (block)
-        {
+        if (block) {
             block(error);
         }
     }];

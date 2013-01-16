@@ -39,50 +39,36 @@
 @synthesize headers = _headers;
 @synthesize accept = _accept;
 
-@synthesize request = _request;
-@synthesize requestOperation = _requestOperation;
-
-- (id)initWithRequest:(id)request
-{
-    if (self = [super init])
-    {
-        if([request isKindOfClass:[NSMutableURLRequest class]])
-        {
+- (id)initWithRequest:(id)request {
+    if (self = [super init]) {
+        if([request isKindOfClass:[NSMutableURLRequest class]]) {
             _request = request;
-        }
-        else if([request isKindOfClass:[AFHTTPRequestOperation class]])
-        {
+        } else if([request isKindOfClass:[AFHTTPRequestOperation class]]) {
             _requestOperation = request;
         }
     }
     return self;
 }
 
-- (void)setUserAgent:(NSString *)userAgent
-{
+- (void)setUserAgent:(NSString *)userAgent {
     _userAgent = userAgent;
     
-    if(_request && _userAgent)
-    {
+    if(_request && _userAgent) {
         [_request addValue:_userAgent forHTTPHeaderField:@"User-Agent"];
     }
 }
 
-- (void)setTimeoutInterval:(NSTimeInterval)timeoutInterval
-{
+- (void)setTimeoutInterval:(NSTimeInterval)timeoutInterval {
     _timeoutInterval = timeoutInterval;
     
-    if(_request && _timeoutInterval)
-    {
+    if(_request && _timeoutInterval) {
         [_request setTimeoutInterval:_timeoutInterval];
     }
 }
-- (void)setCredentials:(NSURLCredential *)credentials
-{
+- (void)setCredentials:(NSURLCredential *)credentials {
     _credentials = credentials;
     
-    if(_request && _credentials)
-    {
+    if(_request && _credentials) {
         // Create a AFHTTPClient for the sole purpose of generating an authorization header.
         AFHTTPClient *clientForAuthHeader = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@""]];
         [clientForAuthHeader setAuthorizationHeaderWithUsername:_credentials.user password:_credentials.password];
@@ -92,33 +78,26 @@
     }
 }
 
-- (void)setHeaders:(NSMutableDictionary *)headers
-{
+- (void)setHeaders:(NSMutableDictionary *)headers {
     _headers = headers;
     
-    if(_request && _headers)
-    {
-        for(NSString *header in _headers) 
-        {
+    if(_request && _headers) {
+        for(NSString *header in _headers) {
             [_request addValue:[_headers valueForKey:header] forHTTPHeaderField:header];
         }
     }
 }
 
-- (void)setAccept:(NSString *)accept
-{
+- (void)setAccept:(NSString *)accept {
     _accept = accept;
     
-    if(_request && _accept)
-    {
+    if(_request && _accept) {
         [_request addValue:_accept forHTTPHeaderField:@"Accept"];
     }
 }
 
-- (void)abort
-{
-    if(_requestOperation)
-    {
+- (void)abort {
+    if(_requestOperation) {
         [_requestOperation cancel];
     }
 }

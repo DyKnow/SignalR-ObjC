@@ -24,12 +24,39 @@
 
 @protocol SRRequest <NSObject>
 
+/*
+ * The user agent for this request.
+ */
 @property (strong, nonatomic, readwrite) NSString *userAgent;
+
+/*
+ * The timeout interval for the request
+ */
 @property (assign, nonatomic, readwrite) NSTimeInterval timeoutInterval;
+
+/*
+ * The credentials for this request.
+ */
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
+
+/*
+ * The headers for this request.
+ */
 @property (strong, nonatomic, readwrite) NSMutableDictionary *headers;
+
+/*
+ * Gets of sets proxy information for the connection.
+ */
+//@property (strong, nonatomic, readwrite) id proxy; TODO: Add the proxy information??
+
+/*
+ * The accept header for this request.
+ */
 @property (strong, nonatomic, readwrite) NSString * accept;
 
+/*
+ * Aborts the request.
+ */
 - (void)abort;
 
 @end

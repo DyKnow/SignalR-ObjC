@@ -28,46 +28,40 @@
 
 @implementation SRNegotiationResponse
 
-@synthesize connectionId = _connectionId;
-@synthesize url = _url;
-@synthesize protocolVersion = _protocolVersion;
-
 static NSString * const kConnectionId = @"ConnectionId";
 static NSString * const kUrl = @"Url";
 static NSString * const kProtocolVersion = @"ProtocolVersion";
+static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
 
-- (id) init
-{
-    if (self = [super init])
-    {
+- (id) init {
+    if (self = [super init]) {
         _connectionId = [NSString stringWithFormat:@""];
 		_url = [NSString stringWithFormat:@""];
         _protocolVersion = [NSString stringWithFormat:@""];
+        _disconnectTimeout = @0;
     }
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary*)dict
-{
-	if (self = [super init]) 
-    {
+- (id)initWithDictionary:(NSDictionary*)dict {
+	if (self = [super init]) {
 		_connectionId = [NSString stringWithFormat:@"%@",[dict objectForKey:kConnectionId]];
 		_url = [NSString stringWithFormat:@"%@",[dict objectForKey:kUrl]];
         _protocolVersion = [NSString stringWithFormat:@"%@",[dict objectForKey:kProtocolVersion]];
+        _disconnectTimeout = [dict objectForKey:kDisconnectTimeout];
 	}
 	return self;
 }
 
-- (NSString *)description 
-{  
+- (NSString *)description {  
     return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     _connectionId = nil;
     _url = nil;
     _protocolVersion = nil;
+    _disconnectTimeout = nil;
 }
 
 @end

@@ -90,7 +90,6 @@
 		391963CE15AF22FF00DDC946 /* SREventType.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785515AF13F6009B959E /* SREventType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963CF15AF22FF00DDC946 /* SRSseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785615AF13F6009B959E /* SRSseEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963D015AF22FF00DDC946 /* SRAutoTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785815AF13F6009B959E /* SRAutoTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963D115AF22FF00DDC946 /* SRClientTransport+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D215AF22FF00DDC946 /* SRClientTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785B15AF13F6009B959E /* SRClientTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D315AF22FF00DDC946 /* SRHttpBasedTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D415AF22FF00DDC946 /* SRLongPollingTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785E15AF13F6009B959E /* SRLongPollingTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -153,7 +152,6 @@
 		3920789C15AF13F6009B959E /* SRSseEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785715AF13F6009B959E /* SRSseEvent.m */; };
 		3920789D15AF13F6009B959E /* SRAutoTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785815AF13F6009B959E /* SRAutoTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920789E15AF13F6009B959E /* SRAutoTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785915AF13F6009B959E /* SRAutoTransport.m */; };
-		3920789F15AF13F6009B959E /* SRClientTransport+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		392078A015AF13F6009B959E /* SRClientTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785B15AF13F6009B959E /* SRClientTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		392078A215AF13F6009B959E /* SRHttpBasedTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785D15AF13F6009B959E /* SRHttpBasedTransport.m */; };
@@ -283,7 +281,6 @@
 		3920785715AF13F6009B959E /* SRSseEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSseEvent.m; sourceTree = "<group>"; };
 		3920785815AF13F6009B959E /* SRAutoTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRAutoTransport.h; sourceTree = "<group>"; };
 		3920785915AF13F6009B959E /* SRAutoTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRAutoTransport.m; sourceTree = "<group>"; };
-		3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SRClientTransport+Constants.h"; sourceTree = "<group>"; };
 		3920785B15AF13F6009B959E /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransport.h; sourceTree = "<group>"; };
 		3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpBasedTransport.h; sourceTree = "<group>"; };
 		3920785D15AF13F6009B959E /* SRHttpBasedTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHttpBasedTransport.m; sourceTree = "<group>"; };
@@ -611,7 +608,6 @@
 				3920785015AF13F6009B959E /* ServerSentEvents */,
 				3920785815AF13F6009B959E /* SRAutoTransport.h */,
 				3920785915AF13F6009B959E /* SRAutoTransport.m */,
-				3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */,
 				3920785B15AF13F6009B959E /* SRClientTransport.h */,
 				3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */,
 				3920785D15AF13F6009B959E /* SRHttpBasedTransport.m */,
@@ -757,7 +753,6 @@
 				391963CA15AF22FF00DDC946 /* SRNegotiationResponse.h in Headers */,
 				391963CB15AF22FF00DDC946 /* SRLog.h in Headers */,
 				391963D015AF22FF00DDC946 /* SRAutoTransport.h in Headers */,
-				391963D115AF22FF00DDC946 /* SRClientTransport+Constants.h in Headers */,
 				391963D215AF22FF00DDC946 /* SRClientTransport.h in Headers */,
 				391963D315AF22FF00DDC946 /* SRHttpBasedTransport.h in Headers */,
 				391963D415AF22FF00DDC946 /* SRLongPollingTransport.h in Headers */,
@@ -813,7 +808,6 @@
 				3920789A15AF13F6009B959E /* SREventType.h in Headers */,
 				3920789B15AF13F6009B959E /* SRSseEvent.h in Headers */,
 				3920789D15AF13F6009B959E /* SRAutoTransport.h in Headers */,
-				3920789F15AF13F6009B959E /* SRClientTransport+Constants.h in Headers */,
 				3920788115AF13F6009B959E /* NSObject+SRJSON.h in Headers */,
 				392078A015AF13F6009B959E /* SRClientTransport.h in Headers */,
 				392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */,
