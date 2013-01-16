@@ -124,7 +124,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = [self.data objectAtIndex:indexPath.row];
+    cell.textLabel.text = (self.data)[indexPath.row];
     
     return cell;
 }

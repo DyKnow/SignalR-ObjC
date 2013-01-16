@@ -99,7 +99,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = [messagesReceived objectAtIndex:indexPath.row];
+    cell.textLabel.text = messagesReceived[indexPath.row];
     
     return cell;
 }
@@ -113,8 +113,8 @@
     connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createHubProxy:@"Chat"];
     
-    [hub setMember:@"focus" object:[NSNumber numberWithBool:YES]];
-    [hub setMember:@"unread" object:[NSNumber numberWithInt:0]];
+    [hub setMember:@"focus" object:@YES];
+    [hub setMember:@"unread" object:@0];
     
     [hub on:@"refreshRoom" perform:self selector:@selector(refreshRoom:)];
     [hub on:@"showRooms" perform:self selector:@selector(showRooms:)];
@@ -137,7 +137,7 @@
 
 - (IBAction)sendClicked:(id)sender
 {
-    [hub invoke:@"Send" withArgs:[NSArray arrayWithObjects:messageField.text, nil]];
+    [hub invoke:@"Send" withArgs:@[messageField.text]];
     [messageField setText:@""];
 }
 
@@ -177,7 +177,7 @@
     [self clearMessages];
     [self clearUsers];
     
-    [hub invoke:@"GetUsers" withArgs:[NSArray arrayWithObjects:nil] continueWith:^(id users) {
+    [hub invoke:@"GetUsers" withArgs:@[] continueWith:^(id users) {
         for(id user in users)
         {
             if([user isKindOfClass:[NSDictionary class]]){
@@ -203,7 +203,7 @@
         {
             for (id r in rooms)
             {
-                [self addMessage:[NSString stringWithFormat:@"%@ (%@)",[r objectForKey:@"Name"],[r objectForKey:@"Count"]] type:nil];
+                [self addMessage:[NSString stringWithFormat:@"%@ (%@)",r[@"Name"],r[@"Count"]] type:nil];
             }
         }
     }
@@ -222,7 +222,7 @@
 
 - (void)addUser:(id)user exists:(BOOL)exists
 {
-    NSString *userName = [NSString stringWithFormat:@"%@",[user objectForKey:@"Name"]];
+    NSString *userName = [NSString stringWithFormat:@"%@",user[@"Name"]];
 
     if(!exists && ([name isEqualToString:userName] == NO))
     {
@@ -234,7 +234,7 @@
 - (void)changeUserName:(id)oldUser newUser:(id)newUser
 {
     [self refreshUsers];
-    NSString *newUserName = [NSString stringWithFormat:@"%@",[newUser objectForKey:@"Name"]];
+    NSString *newUserName = [NSString stringWithFormat:@"%@",newUser[@"Name"]];
     
     name = newUserName;
     
@@ -244,7 +244,7 @@
     }
     else
     {
-        NSString *oldUserName = [NSString stringWithFormat:@"%@",[oldUser objectForKey:@"Name"]];
+        NSString *oldUserName = [NSString stringWithFormat:@"%@",oldUser[@"Name"]];
         [self addMessage:[NSString stringWithFormat:@"%@'s nick has changed to %@",oldUserName,newUserName] type:@"notification"];
     }
 }
@@ -261,7 +261,7 @@
 
 - (void)leave:(id)user
 {
-    NSString *userName = [NSString stringWithFormat:@"%@",[user objectForKey:@"Name"]];
+    NSString *userName = [NSString stringWithFormat:@"%@",user[@"Name"]];
     [self addMessage:[NSString stringWithFormat:@"%@ left the room",userName] type:nil];
 }
 
@@ -271,7 +271,7 @@
 - (void)SRConnectionDidOpen:(SRConnection *)connection
 {
     [messagesReceived insertObject:@"Connection Opened" atIndex:0];
-    [hub invoke:@"Join" withArgs:[NSArray arrayWithObjects: nil]];
+    [hub invoke:@"Join" withArgs:@[]];
     [messageTable reloadData];
 }
 

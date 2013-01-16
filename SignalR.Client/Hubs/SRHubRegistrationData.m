@@ -40,7 +40,7 @@ static NSString * const kName = @"name";
 - (id)proxyForJson {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     
-    [dict setObject:[NSString stringWithFormat:@"%@",_name] forKey:kName];
+    dict[kName] = [NSString stringWithFormat:@"%@",_name];
     
     return dict;
 }

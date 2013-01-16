@@ -45,10 +45,10 @@ static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
 
 - (id)initWithDictionary:(NSDictionary*)dict {
 	if (self = [super init]) {
-		_connectionId = [NSString stringWithFormat:@"%@",[dict objectForKey:kConnectionId]];
-		_url = [NSString stringWithFormat:@"%@",[dict objectForKey:kUrl]];
-        _protocolVersion = [NSString stringWithFormat:@"%@",[dict objectForKey:kProtocolVersion]];
-        _disconnectTimeout = [dict objectForKey:kDisconnectTimeout];
+		_connectionId = [NSString stringWithFormat:@"%@",dict[kConnectionId]];
+		_url = [NSString stringWithFormat:@"%@",dict[kUrl]];
+        _protocolVersion = [NSString stringWithFormat:@"%@",dict[kProtocolVersion]];
+        _disconnectTimeout = dict[kDisconnectTimeout];
 	}
 	return self;
 }

@@ -34,8 +34,8 @@
         {
             if ([_key isKindOfClass:[NSString class]])
             {
-                id jsonObject = [self ensureFoundationObject:[object objectForKey:_key]];
-                [validJSONDictionary setObject:jsonObject forKey:_key];
+                id jsonObject = [self ensureFoundationObject:object[_key]];
+                validJSONDictionary[_key] = jsonObject;
             }
             else
             {
@@ -127,7 +127,7 @@
     }
 
 throw:;
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Your NSObject subclass should implement at least one of the following: proxyForJson; JSON; or serialize; as defined in SRSerializable.h", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+    NSDictionary *userInfo = @{NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Your NSObject subclass should implement at least one of the following: proxyForJson; JSON; or serialize; as defined in SRSerializable.h", nil)};
     [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"Invalid JSON Object", nil) userInfo:userInfo] raise];
 
     return nil;
@@ -226,7 +226,7 @@ throw:;
     }
     else 
     {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+        NSDictionary *userInfo = @{NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil)};
         [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"No JSON generation functionality available", nil) userInfo:userInfo] raise];
     }
     
@@ -294,7 +294,7 @@ throw:;
         __unsafe_unretained NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
         __unsafe_unretained NSError *error;
         
-        NSNumber *nullOption = [NSNumber numberWithBool:YES];
+        NSNumber *nullOption = @YES;
         NSMethodSignature *signature = [_NXJsonParserClass methodSignatureForSelector:_NXJsonParserSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:_NXJsonParserClass];
@@ -332,7 +332,7 @@ throw:;
     }
     else 
     {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+        NSDictionary *userInfo = @{NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil)};
         [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"No JSON generation functionality available", nil) userInfo:userInfo] raise];
     }
     

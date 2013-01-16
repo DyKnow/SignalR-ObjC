@@ -129,7 +129,7 @@ didReceiveResponse:(NSURLResponse *)response {
     }
     
     [(SRHTTPRequestOperation *)operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response) {
-        if([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"] && block) {
+        if([(operation.request.allHTTPHeaderFields)[@"Accept"] isEqualToString:@"text/event-stream"] && block) {
             NSOutputStream *oStream = [NSOutputStream outputStreamToMemory];
             [operation setOutputStream:oStream];
             block(oStream);
@@ -140,7 +140,7 @@ didReceiveResponse:(NSURLResponse *)response {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) was successful\nRESPONSE=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],operation.responseString]);
         
         if (block) {
-            block(([[operation.request.allHTTPHeaderFields objectForKey:@"Accept"] isEqualToString:@"text/event-stream"]) ? nil : operation.responseString);
+            block(([(operation.request.allHTTPHeaderFields)[@"Accept"] isEqualToString:@"text/event-stream"]) ? nil : operation.responseString);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         SRLogHTTP(@"%@",[NSString stringWithFormat:@"Request (%@ %@) failed\nERROR=%@ \n",operation.request.HTTPMethod,[operation.request.URL absoluteString],error]);
@@ -174,7 +174,7 @@ didReceiveResponse:(NSURLResponse *)response {
 + (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block {
     NSMutableArray *components = [NSMutableArray array];
     for (NSString *key in [postData allKeys]) {
-        [components addObject:[NSString stringWithFormat:@"%@=%@",key,[postData objectForKey:key]]];
+        [components addObject:[NSString stringWithFormat:@"%@=%@",key,postData[key]]];
     }
     NSData *requestData = [[components componentsJoinedByString:@"&"] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     

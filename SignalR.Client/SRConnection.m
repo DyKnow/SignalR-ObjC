@@ -218,8 +218,8 @@ void (^prepareRequest)(id);
 - (void)send:(id)object continueWith:(void (^)(id response))block {
     if (self.state == disconnected) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Start must be called before data can be sent",@"NSInternalInconsistencyException")] forKey:NSLocalizedDescriptionKey];
+        userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+        userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"Start must be called before data can be sent",@"NSInternalInconsistencyException")];
         NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                              code:0 
                                          userInfo:userInfo];
@@ -228,8 +228,8 @@ void (^prepareRequest)(id);
     
     if (self.state == connecting) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"The connection has not been established",@"NSInternalInconsistencyException")] forKey:NSLocalizedDescriptionKey];
+        userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+        userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"The connection has not been established",@"NSInternalInconsistencyException")];
         NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                              code:0 
                                          userInfo:userInfo];
@@ -335,7 +335,7 @@ void (^prepareRequest)(id);
 - (NSString *)createQueryString:(NSDictionary *)queryString {
     NSMutableArray *components = [NSMutableArray array];
     for (NSString *key in [queryString allKeys]) {
-        [components addObject:[NSString stringWithFormat:@"%@=%@",key,[queryString objectForKey:key]]];
+        [components addObject:[NSString stringWithFormat:@"%@=%@",key,queryString[key]]];
     }
 
     return [components componentsJoinedByString:@"&"];

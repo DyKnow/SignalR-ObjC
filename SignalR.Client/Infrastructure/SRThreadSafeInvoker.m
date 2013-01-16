@@ -36,7 +36,7 @@
 {
     if (self = [super init])
     {
-        _invoked = [NSNumber numberWithBool:NO];
+        _invoked = @NO;
     }
     return self;
 }
@@ -50,9 +50,9 @@
 {
     @synchronized(_invoked)
     {
-        if (_invoked == [NSNumber numberWithBool:NO])
+        if (_invoked == @NO)
         {
-            _invoked = [NSNumber numberWithBool:YES];
+            _invoked = @YES;
             if(action)
             {
                 action();
@@ -67,9 +67,9 @@
 {
     @synchronized(_invoked)
     {
-        if (_invoked == [NSNumber numberWithBool:NO])
+        if (_invoked == @NO)
         {
-            _invoked = [NSNumber numberWithBool:YES];
+            _invoked = @YES;
             if(action)
             {
                 action(object);
@@ -84,9 +84,9 @@
 {
     @synchronized(_invoked)
     {
-        if (_invoked == [NSNumber numberWithBool:NO])
+        if (_invoked == @NO)
         {
-            _invoked = [NSNumber numberWithBool:YES];
+            _invoked = @YES;
             if(action)
             {
                 action(object);
@@ -101,9 +101,9 @@
 {
     @synchronized(_invoked)
     {
-        if (_invoked == [NSNumber numberWithBool:NO])
+        if (_invoked == @NO)
         {
-            _invoked = [NSNumber numberWithBool:YES];
+            _invoked = @YES;
             if(action)
             {
                 action(callback, object);
@@ -118,9 +118,9 @@
 {
     @synchronized(_invoked)
     {
-        if (_invoked == [NSNumber numberWithBool:NO])
+        if (_invoked == @NO)
         {
-            _invoked = [NSNumber numberWithBool:YES];
+            _invoked = @YES;
             if(action)
             {
                 action(object1,object2);

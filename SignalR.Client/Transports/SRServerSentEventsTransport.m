@@ -132,7 +132,7 @@ static NSString * const kTransportName = @"serverSentEvents";
             }, eventSource);*/
             
             //TODO: Remove, this is only here because without it eventSource is released early
-            [connection.items setObject:eventSource forKey:@"retainEventSource"];
+            (connection.items)[@"retainEventSource"] = eventSource;
             
             eventSource.opened = ^() {
                 __strong __typeof(&*weakConnection)strongConnection = weakConnection;
@@ -233,8 +233,8 @@ static NSString * const kTransportName = @"serverSentEvents";
                 SRErrorByReferenceBlock errorBlock = ^(NSError ** error) {
                     if(error) {
                         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                        [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                        [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout] forKey:NSLocalizedDescriptionKey];
+                        userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+                        userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"Transport took longer than %d to connect",@""),_connectionTimeout];
                         *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
                                                      code:NSURLErrorTimedOut
                                                  userInfo:userInfo];

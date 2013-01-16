@@ -58,17 +58,17 @@
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument eventName is null",@"NSInvalidArgumentException")];
     }
     
-    SRSubscription *subscription = [_subscriptions objectForKey:eventName];
+    SRSubscription *subscription = _subscriptions[eventName];
     if(subscription == nil) {
         subscription = [[SRSubscription alloc] init];
-        [_subscriptions setObject:subscription forKey:eventName];
+        _subscriptions[eventName] = subscription;
     }
     
     return subscription;
 }
 
 - (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args {
-    SRSubscription *eventObj = [_subscriptions objectForKey:eventName];
+    SRSubscription *eventObj = _subscriptions[eventName];
     if(eventObj != nil) {
         NSMethodSignature *signature = [eventObj.object methodSignatureForSelector:eventObj.selector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -82,7 +82,7 @@
         [invocation setTarget:eventObj.object];
         for(int i =0; i< MIN([args count], numberOfArguments); i++) {
             int arguementIndex = 2 + i;
-            __weak NSString *argument = [args objectAtIndex:i];
+            __weak NSString *argument = args[i];
             [invocation setArgument:&argument atIndex:arguementIndex];
         }
         [invocation invoke];
@@ -93,7 +93,7 @@
 #pragma mark State Management
 
 - (id)getMember:(NSString *)name {
-    id value = [_state objectForKey:name];
+    id value = _state[name];
     return value;
 }
 
@@ -136,8 +136,8 @@
                 if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
                 {
                     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                    [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                    [userInfo setObject:[NSString stringWithFormat:@"%@",hubResult.error] forKey:NSLocalizedDescriptionKey];
+                    userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+                    userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:@"%@",hubResult.error];
                     NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                                          code:0 
                                                      userInfo:userInfo];
@@ -148,7 +148,7 @@
                 {
                     for (id key in hubResult.state)
                     {
-                        [self setMember:key object:[hubResult.state objectForKey:key]];
+                        [self setMember:key object:(hubResult.state)[key]];
                     }
                 }
                 

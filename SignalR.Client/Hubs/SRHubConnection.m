@@ -80,9 +80,9 @@
     SRLogConnection(@"will create proxy %@",hubName);
 
     SRHubProxy *hubProxy;
-    if([_hubs objectForKey:[hubName lowercaseString]] == nil) {
+    if(_hubs[[hubName lowercaseString]] == nil) {
         hubProxy = [[SRHubProxy alloc] initWithConnection:self hubName:[hubName lowercaseString]];
-        [_hubs setObject:hubProxy forKey:[hubName lowercaseString]];
+        _hubs[[hubName lowercaseString]] = hubProxy;
     }
     return hubProxy;
 }
@@ -110,7 +110,7 @@
     NSMutableArray *data = [[NSMutableArray alloc] init];
     for(id key in _hubs) {
         SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
-        registration.name = [[_hubs objectForKey:key] hubName];
+        registration.name = [_hubs[key] hubName];
         [data addObject:registration];
     }
         
@@ -123,11 +123,11 @@
 - (void)didReceiveData:(NSString *)data {
     if([data isKindOfClass:[NSString class]]) {
         SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:[data SRJSONValue]];
-        SRHubProxy *hubProxy = [_hubs objectForKey:[invocation.hub lowercaseString]];
+        SRHubProxy *hubProxy = _hubs[[invocation.hub lowercaseString]];
         if(hubProxy) {
             if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]]) {
                 for (id key in invocation.state) {
-                    [hubProxy setMember:key object:[invocation.state objectForKey:key]];
+                    [hubProxy setMember:key object:(invocation.state)[key]];
                 }
             }
             [hubProxy invokeEvent:invocation.method withArgs:invocation.args];

@@ -35,16 +35,16 @@ static NSString * const kState = @"S";
 - (id) init {
     if (self = [super init]) {
         _error = [NSString stringWithFormat:@""];
-		_state = [NSDictionary dictionary];
+		_state = @{};
     }
     return self;
 }
 
 - (id)initWithDictionary:(NSDictionary*)dict {
 	if (self = [self init]) {
-        self.result  = [dict objectForKey:kResult];
-        self.error = [dict objectForKey:kError];
-        self.state = [dict objectForKey:kState];
+        self.result  = dict[kResult];
+        self.error = dict[kError];
+        self.state = dict[kState];
     }
     return self;
 }

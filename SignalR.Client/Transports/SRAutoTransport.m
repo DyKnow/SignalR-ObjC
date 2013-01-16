@@ -41,7 +41,7 @@
 - (id)initWithHttpClient:(id<SRHttpClient>)httpClient {
     if(self = [super init]) {
         _httpClient = httpClient;
-        _transports = [NSArray arrayWithObjects:[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],[[SRLongPollingTransport alloc] initWithHttpClient:httpClient], nil];
+        _transports = @[[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],[[SRLongPollingTransport alloc] initWithHttpClient:httpClient]];
     }
     return self;
 }
@@ -55,7 +55,7 @@
 }
 
 - (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index {
-    id <SRClientTransport> transport = [_transports objectAtIndex:index];
+    id <SRClientTransport> transport = _transports[index];
     
     [transport start:connection withData:data continueWith:^(id task) {
         if (task != nil) {
@@ -69,8 +69,8 @@
             } else {
                 // If there's nothing else to try then just fail
                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                [userInfo setObject:[NSString stringWithFormat:NSLocalizedString(@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",@"")] forKey:NSLocalizedDescriptionKey];
+                userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+                userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",@"")];
                 NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                                      code:0 
                                                  userInfo:userInfo];

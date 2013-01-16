@@ -45,10 +45,10 @@ static NSString * const kState = @"S";
 
 - (id)initWithDictionary:(NSDictionary*)dict {
 	if (self = [self init]) {
-        self.hub  = [NSString stringWithFormat:@"%@",[dict objectForKey:kHub]];
-        self.method = [NSString stringWithFormat:@"%@",[dict objectForKey:kMethod]];
-        self.args = [dict objectForKey:kArgs];
-        self.state = [dict objectForKey:kState];
+        self.hub  = [NSString stringWithFormat:@"%@",dict[kHub]];
+        self.method = [NSString stringWithFormat:@"%@",dict[kMethod]];
+        self.args = dict[kArgs];
+        self.state = dict[kState];
     }
     return self;
 }
@@ -56,10 +56,10 @@ static NSString * const kState = @"S";
 - (id)proxyForJson {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     
-    [dict setObject:[NSString stringWithFormat:@"%@",_hub] forKey:kHub];
-    [dict setObject:[NSString stringWithFormat:@"%@",_method] forKey:kMethod];
-    [dict setObject:_args forKey:kArgs];
-    [dict setObject:_state forKey:kState];
+    dict[kHub] = [NSString stringWithFormat:@"%@",_hub];
+    dict[kMethod] = [NSString stringWithFormat:@"%@",_method];
+    dict[kArgs] = _args;
+    dict[kState] = _state;
     
     return dict;
 }

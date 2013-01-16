@@ -112,16 +112,16 @@
     {
         switch (i) {
             case 0:
-                temp.major = [[components objectAtIndex:0] integerValue];
+                temp.major = [components[0] integerValue];
                 break;
             case 1:
-                temp.minor = [[components objectAtIndex:1] integerValue];
+                temp.minor = [components[1] integerValue];
                 break;
             case 2:
-                temp.build = [[components objectAtIndex:2] integerValue];
+                temp.build = [components[2] integerValue];
                 break;
             case 3:
-                temp.revision = [[components objectAtIndex:3] integerValue];
+                temp.revision = [components[3] integerValue];
                 break;
             default:
                 break;

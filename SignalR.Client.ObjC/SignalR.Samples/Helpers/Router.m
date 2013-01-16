@@ -38,12 +38,12 @@ static Router *sharedRouter = nil;
 #warning Set your server location in the Supporting Files/Environments.plist 
 - (void)routeForEnvironment
 {
-    NSString *configuration = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Configuration"];
+    NSString *configuration = [[NSBundle mainBundle] infoDictionary][@"Configuration"];
     NSString *enviornmentPlist = [[NSBundle mainBundle] pathForResource:@"Environments" ofType:@"plist"];
     NSDictionary *environments = [[NSDictionary alloc] initWithContentsOfFile:enviornmentPlist];
     if(environments)
     {
-        NSDictionary *environment = [environments objectForKey:configuration];
+        NSDictionary *environment = environments[configuration];
         _server_url = [environment valueForKey:kServer];
     }
     else
