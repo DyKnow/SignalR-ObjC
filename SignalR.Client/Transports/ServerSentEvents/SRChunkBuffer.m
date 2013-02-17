@@ -24,40 +24,33 @@
 
 @interface SRChunkBuffer ()
 
+@property (assign, nonatomic, readwrite) int offset;
+@property (strong, nonatomic, readwrite) NSMutableString *buffer;
+@property (strong, nonatomic, readwrite) NSMutableString *lineBuilder;
+
 @end
 
 @implementation SRChunkBuffer
 
-@synthesize offset = _offset;
-@synthesize buffer = _buffer;
-@synthesize lineBuilder = _lineBuilder;
-
-- (id)init
-{
-    if (self = [super init])
-    {
+- (instancetype)init {
+    if (self = [super init]) {
         _buffer = [NSMutableString string];
         _lineBuilder = [NSMutableString string];
     }
     return self;
 }
 
-- (BOOL)hasChunks
-{
+- (BOOL)hasChunks {
     return (_offset < [_buffer length]);
 }
 
-- (void)add:(NSData *)buffer length:(NSInteger)length
-{
+- (void)add:(NSData *)buffer length:(NSInteger)length {
     [_buffer appendString:[[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding]];
 }
 
-- (NSString *)readLine
-{
-    for (int i = _offset; i < [_buffer length]; i++, _offset++)
-    {
-        if ([_buffer characterAtIndex:i] == '\n')
-        {
+- (NSString *)readLine {
+    for (int i = _offset; i < [_buffer length]; i++, _offset++) {
+        if ([_buffer characterAtIndex:i] == '\n') {
             [_buffer deleteCharactersInRange:NSMakeRange(0, _offset + 1)];
             NSString *line = [NSString stringWithString:_lineBuilder];
             
@@ -70,13 +63,6 @@
     }
     
     return nil;
-}
-
-- (void)dealloc
-{
-    _offset = 0;
-    _buffer = nil;
-    _lineBuilder = nil;
 }
 
 @end

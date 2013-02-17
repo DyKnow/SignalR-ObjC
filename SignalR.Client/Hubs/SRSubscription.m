@@ -28,18 +28,8 @@
 
 @implementation SRSubscription
 
-@synthesize object = _object;
-@synthesize selector = _selector;
-
-- (NSString *)description 
-{  
+- (NSString *)description  {  
     return [NSString stringWithFormat:@"Subscription: Object:%@ Selector=%@",_object, NSStringFromSelector(_selector)];
-}
-
-- (void)dealloc
-{
-    _object = nil;
-    _selector = nil;
 }
 
 @end

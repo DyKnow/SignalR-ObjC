@@ -20,7 +20,6 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRConnection.h"
 #import "SRHubInvocation.h"
 #import "SRHubProxy.h"
 #import "SRHubResult.h"
@@ -29,27 +28,21 @@
 
 @interface SRHubProxy ()
 
+@property (assign, nonatomic, readonly) id <SRConnectionInterface> connection;
+@property (strong, nonatomic, readonly) NSString *hubName;
+@property (strong, nonatomic, readonly) NSMutableDictionary *state;
+@property (strong, nonatomic, readonly) NSMutableDictionary *subscriptions;
+
+
 @end
 
 @implementation SRHubProxy
 
-@synthesize connection = _connection;
-@synthesize hubName = _hubName;
-@synthesize state = _state;
-@synthesize subscriptions = _subscriptions;
-
 #pragma mark - 
 #pragma mark Initialization
 
-+ (SRHubProxy *)hubProxyWith:(SRConnection *)connection hubName:(NSString *)hubname
-{
-    return [[SRHubProxy alloc] initWithConnection:connection hubName:hubname];
-}
-
-- (id)initWithConnection:(SRConnection *)connection hubName:(NSString *)hubname
-{
-    if (self = [super init]) 
-    {
+- (instancetype)initWithConnection:(id <SRConnectionInterface>)connection hubName:(NSString *)hubname {
+    if (self = [super init]) {
         _connection = connection;
         _hubName = hubname;
         _subscriptions = [[NSMutableDictionary alloc] init];
@@ -61,43 +54,36 @@
 #pragma mark - 
 #pragma mark Subscription Management
 
-- (SRSubscription *)subscribe:(NSString *)eventName
-{
-    if(eventName == nil || [eventName isEqualToString:@""])
-    {
+- (SRSubscription *)subscribe:(NSString *)eventName {
+    if(eventName == nil || [eventName isEqualToString:@""]) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument eventName is null",@"NSInvalidArgumentException")];
     }
     
-    SRSubscription *subscription = [_subscriptions objectForKey:eventName];
-    if(subscription == nil)
-    {
+    SRSubscription *subscription = _subscriptions[eventName];
+    if(subscription == nil) {
         subscription = [[SRSubscription alloc] init];
-        [_subscriptions setObject:subscription forKey:eventName];
+        _subscriptions[eventName] = subscription;
     }
     
     return subscription;
 }
 
-- (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args
-{
-    SRSubscription *eventObj = [_subscriptions objectForKey:eventName];
-    if(eventObj != nil)
-    {
+- (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args {
+    SRSubscription *eventObj = _subscriptions[eventName];
+    if(eventObj != nil) {
         NSMethodSignature *signature = [eventObj.object methodSignatureForSelector:eventObj.selector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         NSUInteger numberOfArguments = [signature numberOfArguments] - 2;
         
-        if (args.count != numberOfArguments)
-        {
-            SRLogConnection(@"Callback for event '%@' is configured with %d arguments, received %d parameters instead.",eventName, numberOfArguments, args.count);
+        if (args.count != numberOfArguments) {
+            SRLogConnection(@"Callback for event '%@' is configured with %ld arguments, received %ld parameters instead.",eventName, (unsigned long)numberOfArguments, (unsigned long)args.count);
         }
         
         [invocation setSelector:eventObj.selector];
         [invocation setTarget:eventObj.object];
-        for(int i =0; i< MIN([args count], numberOfArguments); i++)
-        {
+        for(int i =0; i< MIN([args count], numberOfArguments); i++) {
             int arguementIndex = 2 + i;
-            __weak NSString *argument = [args objectAtIndex:i];
+            __weak NSString *argument = args[i];
             [invocation setArgument:&argument atIndex:arguementIndex];
         }
         [invocation invoke];
@@ -107,65 +93,60 @@
 #pragma mark - 
 #pragma mark State Management
 
-- (id)getMember:(NSString *)name
-{
-    id value = [_state objectForKey:name];
+- (id)getMember:(NSString *)name {
+    id value = _state[name];
     return value;
 }
 
-- (void)setMember:(NSString *)name object:(id)value
-{
+- (void)setMember:(NSString *)name object:(id)value {
     [_state setValue:value forKey:name];
 }
 
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args
-{
-    [self invoke:method withArgs:args continueWith:nil];
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args {
+    [self invoke:method withArgs:args completionHandler:nil];
 }
 
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args continueWith:(void (^)(id response))block
-{
-    if(method == nil || [method isEqualToString:@""])
-    {
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args completionHandler:(void (^)(id response))block {
+    if(method == nil || [method isEqualToString:@""]) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument method is null",@"NSInvalidArgumentException")];
+    }
+    
+    if(args == nil) {
+        [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument args is null",@"NSInvalidArgumentException")];
     }
     
     SRHubInvocation *hubData = [[SRHubInvocation alloc] init];
     hubData.hub = _hubName;
     hubData.method = method;
     hubData.args = [NSMutableArray arrayWithArray:args];
-    hubData.state = _state;
     
-    [_connection send:hubData continueWith:^(NSDictionary *response)
-    {
+    if (_state.count > 0) {
+        hubData.state = _state;
+    }
+    
+    [_connection send:hubData completionHandler:^(NSDictionary *response) {
         SRLogConnection(@"did receive response %@",response);
 
-        if(response)
-        {
+        if(response) {
             SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:response];
-            if (hubResult != nil) 
-            {
-                if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil)
-                {
+            if (hubResult != nil) {
+                if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil) {
                     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                    [userInfo setObject:NSInternalInconsistencyException forKey:NSLocalizedFailureReasonErrorKey];
-                    [userInfo setObject:[NSString stringWithFormat:@"%@",hubResult.error] forKey:NSLocalizedDescriptionKey];
+                    userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+                    userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:@"%@",hubResult.error];
                     NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                                          code:0 
                                                      userInfo:userInfo];
                     [_connection didReceiveError:error];
                 }
                 
-                if(![hubResult.state isKindOfClass:[NSNull class]] && hubResult.state != nil)
-                {
-                    for (id key in hubResult.state)
-                    {
-                        [self setMember:key object:[hubResult.state objectForKey:key]];
+                if(![hubResult.state isKindOfClass:[NSNull class]] && hubResult.state != nil) {
+                    for (id key in hubResult.state) {
+                        [self setMember:key object:(hubResult.state)[key]];
                     }
                 }
                 
-                if(block != nil)
-                {
+                if(block != nil) {
                     block(hubResult.result);
                 }
             }
@@ -173,17 +154,8 @@
     }];
 }
 
-- (NSString *)description 
-{     
+- (NSString *)description {     
     return [NSString stringWithFormat:@"HubProxy: Name=%@ State=%@ Subscriptions:%@",_hubName,_state,_subscriptions];
-}
-
-- (void)dealloc
-{
-    _connection = nil;
-    _hubName = nil;
-    _state = nil;
-    _subscriptions = nil;
 }
 
 @end

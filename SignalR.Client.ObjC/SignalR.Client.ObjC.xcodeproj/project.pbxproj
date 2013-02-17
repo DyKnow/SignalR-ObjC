@@ -27,10 +27,6 @@
 		3919635715AF1EC200DDC946 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3919635515AF1EC200DDC946 /* Credits.rtf */; };
 		3919635A15AF1EC200DDC946 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3919635915AF1EC200DDC946 /* AppDelegate.m */; };
 		3919635D15AF1EC200DDC946 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3919635B15AF1EC200DDC946 /* MainMenu.xib */; };
-		3919636615AF1FBC00DDC946 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3919636215AF1FBC00DDC946 /* Environments.plist */; };
-		3919636715AF1FBC00DDC946 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 3919636515AF1FBC00DDC946 /* Router.m */; };
-		3919636815AF1FC400DDC946 /* Environments.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3919636215AF1FBC00DDC946 /* Environments.plist */; };
-		3919636915AF1FC700DDC946 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 3919636515AF1FBC00DDC946 /* Router.m */; };
 		3919637915AF21F500DDC946 /* libSignalR.Client.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */; };
 		3919637C15AF222200DDC946 /* SRDefaultHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920781A15AF13F6009B959E /* SRDefaultHttpClient.m */; };
 		3919637D15AF222200DDC946 /* SRDefaultHttpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920781C15AF13F6009B959E /* SRDefaultHttpHelper.m */; };
@@ -90,8 +86,7 @@
 		391963CE15AF22FF00DDC946 /* SREventType.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785515AF13F6009B959E /* SREventType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963CF15AF22FF00DDC946 /* SRSseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785615AF13F6009B959E /* SRSseEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963D015AF22FF00DDC946 /* SRAutoTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785815AF13F6009B959E /* SRAutoTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963D115AF22FF00DDC946 /* SRClientTransport+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963D215AF22FF00DDC946 /* SRClientTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785B15AF13F6009B959E /* SRClientTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		391963D215AF22FF00DDC946 /* SRClientTransportInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785B15AF13F6009B959E /* SRClientTransportInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D315AF22FF00DDC946 /* SRHttpBasedTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D415AF22FF00DDC946 /* SRLongPollingTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785E15AF13F6009B959E /* SRLongPollingTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963D515AF22FF00DDC946 /* SRServerSentEventsTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920786015AF13F6009B959E /* SRServerSentEventsTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -153,8 +148,7 @@
 		3920789C15AF13F6009B959E /* SRSseEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785715AF13F6009B959E /* SRSseEvent.m */; };
 		3920789D15AF13F6009B959E /* SRAutoTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785815AF13F6009B959E /* SRAutoTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920789E15AF13F6009B959E /* SRAutoTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785915AF13F6009B959E /* SRAutoTransport.m */; };
-		3920789F15AF13F6009B959E /* SRClientTransport+Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		392078A015AF13F6009B959E /* SRClientTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785B15AF13F6009B959E /* SRClientTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		392078A015AF13F6009B959E /* SRClientTransportInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785B15AF13F6009B959E /* SRClientTransportInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		392078A215AF13F6009B959E /* SRHttpBasedTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785D15AF13F6009B959E /* SRHttpBasedTransport.m */; };
 		392078A315AF13F6009B959E /* SRLongPollingTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785E15AF13F6009B959E /* SRLongPollingTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -180,6 +174,12 @@
 		3940059515CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3940059315CC6A2C006673E2 /* SRChunkBufferTests.m */; };
 		3940059915CC6DD6006673E2 /* SRConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3940059815CC6DD6006673E2 /* SRConnectionTests.m */; };
 		3940059A15CC6DD6006673E2 /* SRConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3940059815CC6DD6006673E2 /* SRConnectionTests.m */; };
+		39423B5716D13515003E7516 /* SRConnectionExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 39423B5516D13515003E7516 /* SRConnectionExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39423B5816D13515003E7516 /* SRConnectionExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 39423B5516D13515003E7516 /* SRConnectionExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39423B5916D13515003E7516 /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 39423B5616D13515003E7516 /* SRConnectionExtensions.m */; };
+		39423B5A16D13515003E7516 /* SRConnectionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 39423B5616D13515003E7516 /* SRConnectionExtensions.m */; };
+		39423B5F16D139B0003E7516 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39423B5E16D139B0003E7516 /* Router.m */; };
+		39423B6016D139B0003E7516 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39423B5E16D139B0003E7516 /* Router.m */; };
 		396D2867165ABE4F0000D19E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2866165ABE4F0000D19E /* SystemConfiguration.framework */; };
 		396D286A165ABE6C0000D19E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2869165ABE6C0000D19E /* MobileCoreServices.framework */; };
 		39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
@@ -201,6 +201,15 @@
 		39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
 		39E6FD6115C6EAFC00434098 /* NSObject+SRJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783B15AF13F6009B959E /* NSObject+SRJSON.m */; };
 		39E7A5DB15E532380097F395 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E7A5DA15E532380097F395 /* CoreGraphics.framework */; };
+		39EBAC2F16D072C900C6F359 /* SRHubProxyInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39EBAC3016D072C900C6F359 /* SRHubProxyInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39EBAC3116D072E300C6F359 /* SRConnectionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EBAC2816D03F1000C6F359 /* SRConnectionInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39EBAC3216D072E400C6F359 /* SRConnectionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EBAC2816D03F1000C6F359 /* SRConnectionInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39EBAC3316D072EE00C6F359 /* SRConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EBAC2916D03F5800C6F359 /* SRConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39EBAC3516D0740600C6F359 /* SRConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 39EBAC2916D03F5800C6F359 /* SRConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		39EBAC3A16D07CF300C6F359 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39EBAC3716D07CF300C6F359 /* Default-568h@2x.png */; };
+		39EBAC3B16D07CF300C6F359 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 39EBAC3816D07CF300C6F359 /* Default.png */; };
+		39EBAC3C16D07CF300C6F359 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39EBAC3916D07CF300C6F359 /* Default@2x.png */; };
 		39EF033B15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */; };
 		39EF033C15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */; };
 		D27CBDC3D95B4241B1B76237 /* libPods-SignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */; };
@@ -218,13 +227,10 @@
 		3919635815AF1EC200DDC946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3919635915AF1EC200DDC946 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		3919635C15AF1EC200DDC946 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		3919636215AF1FBC00DDC946 /* Environments.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Environments.plist; sourceTree = "<group>"; };
-		3919636415AF1FBC00DDC946 /* Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Router.h; sourceTree = "<group>"; };
-		3919636515AF1FBC00DDC946 /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		3919636E15AF205300DDC946 /* libSignalR.Client.OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSignalR.Client.OSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3919637215AF205300DDC946 /* SignalR.Client.OSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.OSX-Prefix.pch"; sourceTree = "<group>"; };
-		3919643015AF373E00DDC946 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		3919643215AF374900DDC946 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		3919643015AF373E00DDC946 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
+		3919643215AF374900DDC946 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = ../icon.icns; sourceTree = "<group>"; };
 		3920780715AF13C3009B959E /* libSignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSignalR.Client.iOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3920780A15AF13C3009B959E /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3920780E15AF13C3009B959E /* SignalR.Client.iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.iOS-Prefix.pch"; sourceTree = "<group>"; };
@@ -283,8 +289,7 @@
 		3920785715AF13F6009B959E /* SRSseEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSseEvent.m; sourceTree = "<group>"; };
 		3920785815AF13F6009B959E /* SRAutoTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRAutoTransport.h; sourceTree = "<group>"; };
 		3920785915AF13F6009B959E /* SRAutoTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRAutoTransport.m; sourceTree = "<group>"; };
-		3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SRClientTransport+Constants.h"; sourceTree = "<group>"; };
-		3920785B15AF13F6009B959E /* SRClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransport.h; sourceTree = "<group>"; };
+		3920785B15AF13F6009B959E /* SRClientTransportInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRClientTransportInterface.h; sourceTree = "<group>"; };
 		3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHttpBasedTransport.h; sourceTree = "<group>"; };
 		3920785D15AF13F6009B959E /* SRHttpBasedTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHttpBasedTransport.m; sourceTree = "<group>"; };
 		3920785E15AF13F6009B959E /* SRLongPollingTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRLongPollingTransport.h; sourceTree = "<group>"; };
@@ -315,6 +320,10 @@
 		3920795415AF1BEA009B959E /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
 		3940059315CC6A2C006673E2 /* SRChunkBufferTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRChunkBufferTests.m; path = SignalR.Client.Tests/SRChunkBufferTests.m; sourceTree = "<group>"; };
 		3940059815CC6DD6006673E2 /* SRConnectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRConnectionTests.m; path = SignalR.Client.Tests/SRConnectionTests.m; sourceTree = "<group>"; };
+		39423B5516D13515003E7516 /* SRConnectionExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnectionExtensions.h; sourceTree = "<group>"; };
+		39423B5616D13515003E7516 /* SRConnectionExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnectionExtensions.m; sourceTree = "<group>"; };
+		39423B5D16D139B0003E7516 /* Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Router.h; sourceTree = "<group>"; };
+		39423B5E16D139B0003E7516 /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		396D2851165ABCD50000D19E /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; };
 		396D2866165ABE4F0000D19E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		396D2869165ABE6C0000D19E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -332,6 +341,17 @@
 		39E6FD2415C6BF4000434098 /* SignalR.Client.Tests.iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Client.Tests.iOS-Prefix.pch"; sourceTree = "<group>"; };
 		39E6FD2B15C6BFCE00434098 /* SRJSONTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRJSONTests.m; path = SignalR.Client.Tests/SRJSONTests.m; sourceTree = "<group>"; };
 		39E7A5DA15E532380097F395 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		39EBAC2816D03F1000C6F359 /* SRConnectionInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionInterface.h; sourceTree = "<group>"; };
+		39EBAC2916D03F5800C6F359 /* SRConnectionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionDelegate.h; sourceTree = "<group>"; };
+		39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubProxyInterface.h; sourceTree = "<group>"; };
+		39EBAC3616D07A0B00C6F359 /* SignalR-ObjC.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = "SignalR-ObjC.podspec"; path = "../SignalR-ObjC.podspec"; sourceTree = "<group>"; };
+		39EBAC3716D07CF300C6F359 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
+		39EBAC3816D07CF300C6F359 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = SOURCE_ROOT; };
+		39EBAC3916D07CF300C6F359 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = SOURCE_ROOT; };
+		39EBAC3D16D07D5000C6F359 /* ACKNOWLEDGEMENTS.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = ACKNOWLEDGEMENTS.md; path = ../ACKNOWLEDGEMENTS.md; sourceTree = "<group>"; };
+		39EBAC3E16D07D5000C6F359 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGES.md; path = ../CHANGES.md; sourceTree = "<group>"; };
+		39EBAC3F16D07D5100C6F359 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.md; path = ../LICENSE.md; sourceTree = "<group>"; };
+		39EBAC4016D07D5100C6F359 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SREventSourceStreamReaderTests.m; path = SignalR.Client.Tests/SREventSourceStreamReaderTests.m; sourceTree = "<group>"; };
 		E1168910CBED44F49353CF85 /* Pods-SignalR.Client.OSX.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.OSX.xcconfig"; path = "../Pods/Pods-SignalR.Client.OSX.xcconfig"; sourceTree = SOURCE_ROOT; };
 		F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -405,6 +425,7 @@
 		3919634C15AF1EC200DDC946 /* SignalR.Samples.OSX */ = {
 			isa = PBXGroup;
 			children = (
+				3919643215AF374900DDC946 /* icon.icns */,
 				3919635815AF1EC200DDC946 /* AppDelegate.h */,
 				3919635915AF1EC200DDC946 /* AppDelegate.m */,
 				3919635B15AF1EC200DDC946 /* MainMenu.xib */,
@@ -428,19 +449,10 @@
 		3919636115AF1FBC00DDC946 /* SignalR.Samples */ = {
 			isa = PBXGroup;
 			children = (
-				3919636215AF1FBC00DDC946 /* Environments.plist */,
-				3919636315AF1FBC00DDC946 /* Helpers */,
+				39423B5D16D139B0003E7516 /* Router.h */,
+				39423B5E16D139B0003E7516 /* Router.m */,
 			);
 			path = SignalR.Samples;
-			sourceTree = "<group>";
-		};
-		3919636315AF1FBC00DDC946 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				3919636415AF1FBC00DDC946 /* Router.h */,
-				3919636515AF1FBC00DDC946 /* Router.m */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 		3919637015AF205300DDC946 /* SignalR.Client.OSX */ = {
@@ -462,11 +474,12 @@
 		392077FC15AF13C3009B959E = {
 			isa = PBXGroup;
 			children = (
-				396D2869165ABE6C0000D19E /* MobileCoreServices.framework */,
-				396D2866165ABE4F0000D19E /* SystemConfiguration.framework */,
+				39EBAC3D16D07D5000C6F359 /* ACKNOWLEDGEMENTS.md */,
+				39EBAC3E16D07D5000C6F359 /* CHANGES.md */,
+				39EBAC3F16D07D5100C6F359 /* LICENSE.md */,
+				39EBAC4016D07D5100C6F359 /* README.md */,
 				396D2851165ABCD50000D19E /* Podfile */,
-				3919643215AF374900DDC946 /* icon.icns */,
-				3919643015AF373E00DDC946 /* icon.png */,
+				39EBAC3616D07A0B00C6F359 /* SignalR-ObjC.podspec */,
 				3920781715AF13F6009B959E /* SignalR.Client */,
 				3920780C15AF13C3009B959E /* SignalR.Client.iOS */,
 				3919637015AF205300DDC946 /* SignalR.Client.OSX */,
@@ -499,6 +512,8 @@
 		3920780915AF13C3009B959E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				396D2869165ABE6C0000D19E /* MobileCoreServices.framework */,
+				396D2866165ABE4F0000D19E /* SystemConfiguration.framework */,
 				39E7A5DA15E532380097F395 /* CoreGraphics.framework */,
 				39E6FCED15C6BE5400434098 /* Cocoa.framework */,
 				39E6FCEB15C6BE4D00434098 /* SenTestingKit.framework */,
@@ -533,8 +548,12 @@
 				3920782515AF13F6009B959E /* Hubs */,
 				3920783715AF13F6009B959E /* Infrastructure */,
 				3920784815AF13F6009B959E /* SignalR.h */,
+				39EBAC2816D03F1000C6F359 /* SRConnectionInterface.h */,
 				3920784915AF13F6009B959E /* SRConnection.h */,
 				3920784A15AF13F6009B959E /* SRConnection.m */,
+				39423B5516D13515003E7516 /* SRConnectionExtensions.h */,
+				39423B5616D13515003E7516 /* SRConnectionExtensions.m */,
+				39EBAC2916D03F5800C6F359 /* SRConnectionDelegate.h */,
 				3920784B15AF13F6009B959E /* SRConnectionState.h */,
 				3920784C15AF13F6009B959E /* SRNegotiationResponse.h */,
 				3920784D15AF13F6009B959E /* SRNegotiationResponse.m */,
@@ -570,6 +589,7 @@
 				3920783215AF13F6009B959E /* SRHubs.h */,
 				3920782615AF13F6009B959E /* SRHubConnection.h */,
 				3920782715AF13F6009B959E /* SRHubConnection.m */,
+				39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */,
 				3920782A15AF13F6009B959E /* SRHubProxy.h */,
 				3920782B15AF13F6009B959E /* SRHubProxy.m */,
 				3920782C15AF13F6009B959E /* SRHubProxyExtensions.h */,
@@ -609,10 +629,9 @@
 			isa = PBXGroup;
 			children = (
 				3920785015AF13F6009B959E /* ServerSentEvents */,
+				3920785B15AF13F6009B959E /* SRClientTransportInterface.h */,
 				3920785815AF13F6009B959E /* SRAutoTransport.h */,
 				3920785915AF13F6009B959E /* SRAutoTransport.m */,
-				3920785A15AF13F6009B959E /* SRClientTransport+Constants.h */,
-				3920785B15AF13F6009B959E /* SRClientTransport.h */,
 				3920785C15AF13F6009B959E /* SRHttpBasedTransport.h */,
 				3920785D15AF13F6009B959E /* SRHttpBasedTransport.m */,
 				3920785E15AF13F6009B959E /* SRLongPollingTransport.h */,
@@ -640,6 +659,10 @@
 		3920792515AF1853009B959E /* SignalR.Samples.iOS */ = {
 			isa = PBXGroup;
 			children = (
+				39EBAC3716D07CF300C6F359 /* Default-568h@2x.png */,
+				39EBAC3816D07CF300C6F359 /* Default.png */,
+				39EBAC3916D07CF300C6F359 /* Default@2x.png */,
+				3919643015AF373E00DDC946 /* icon.png */,
 				3920794615AF1BEA009B959E /* Controllers */,
 				3920793115AF1854009B959E /* MainStoryboard_iPhone.storyboard */,
 				3920793415AF1854009B959E /* MainStoryboard_iPad.storyboard */,
@@ -757,11 +780,14 @@
 				391963CA15AF22FF00DDC946 /* SRNegotiationResponse.h in Headers */,
 				391963CB15AF22FF00DDC946 /* SRLog.h in Headers */,
 				391963D015AF22FF00DDC946 /* SRAutoTransport.h in Headers */,
-				391963D115AF22FF00DDC946 /* SRClientTransport+Constants.h in Headers */,
-				391963D215AF22FF00DDC946 /* SRClientTransport.h in Headers */,
+				391963D215AF22FF00DDC946 /* SRClientTransportInterface.h in Headers */,
 				391963D315AF22FF00DDC946 /* SRHttpBasedTransport.h in Headers */,
 				391963D415AF22FF00DDC946 /* SRLongPollingTransport.h in Headers */,
 				391963D515AF22FF00DDC946 /* SRServerSentEventsTransport.h in Headers */,
+				39EBAC3016D072C900C6F359 /* SRHubProxyInterface.h in Headers */,
+				39EBAC3216D072E400C6F359 /* SRConnectionInterface.h in Headers */,
+				39423B5816D13515003E7516 /* SRConnectionExtensions.h in Headers */,
+				39EBAC3516D0740600C6F359 /* SRConnectionDelegate.h in Headers */,
 				391963AD15AF22FF00DDC946 /* SRDefaultHttpClient.h in Headers */,
 				391963AE15AF22FF00DDC946 /* SRDefaultHttpHelper.h in Headers */,
 				391963AF15AF22FF00DDC946 /* SRDefaultHttpWebRequestWrapper.h in Headers */,
@@ -788,6 +814,7 @@
 				3920786A15AF13F6009B959E /* SRHttpClient.h in Headers */,
 				3920786B15AF13F6009B959E /* SRHttpHelper.h in Headers */,
 				3920786C15AF13F6009B959E /* SRRequest.h in Headers */,
+				39EBAC2F16D072C900C6F359 /* SRHubProxyInterface.h in Headers */,
 				3920786D15AF13F6009B959E /* SRResponse.h in Headers */,
 				3920787A15AF13F6009B959E /* SRHubs.h in Headers */,
 				3920786E15AF13F6009B959E /* SRHubConnection.h in Headers */,
@@ -806,6 +833,9 @@
 				3920788D15AF13F6009B959E /* SRVersion.h in Headers */,
 				3920788F15AF13F6009B959E /* SignalR.h in Headers */,
 				3920789015AF13F6009B959E /* SRConnection.h in Headers */,
+				39EBAC3116D072E300C6F359 /* SRConnectionInterface.h in Headers */,
+				39423B5716D13515003E7516 /* SRConnectionExtensions.h in Headers */,
+				39EBAC3316D072EE00C6F359 /* SRConnectionDelegate.h in Headers */,
 				3920789315AF13F6009B959E /* SRNegotiationResponse.h in Headers */,
 				3920789515AF13F6009B959E /* SRLog.h in Headers */,
 				3920789615AF13F6009B959E /* SRChunkBuffer.h in Headers */,
@@ -813,9 +843,8 @@
 				3920789A15AF13F6009B959E /* SREventType.h in Headers */,
 				3920789B15AF13F6009B959E /* SRSseEvent.h in Headers */,
 				3920789D15AF13F6009B959E /* SRAutoTransport.h in Headers */,
-				3920789F15AF13F6009B959E /* SRClientTransport+Constants.h in Headers */,
 				3920788115AF13F6009B959E /* NSObject+SRJSON.h in Headers */,
-				392078A015AF13F6009B959E /* SRClientTransport.h in Headers */,
+				392078A015AF13F6009B959E /* SRClientTransportInterface.h in Headers */,
 				392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */,
 				392078A315AF13F6009B959E /* SRLongPollingTransport.h in Headers */,
 				392078A515AF13F6009B959E /* SRServerSentEventsTransport.h in Headers */,
@@ -971,7 +1000,6 @@
 				3919635115AF1EC200DDC946 /* InfoPlist.strings in Resources */,
 				3919635715AF1EC200DDC946 /* Credits.rtf in Resources */,
 				3919635D15AF1EC200DDC946 /* MainMenu.xib in Resources */,
-				3919636815AF1FC400DDC946 /* Environments.plist in Resources */,
 				3919643315AF374900DDC946 /* icon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -983,8 +1011,10 @@
 				3920792A15AF1854009B959E /* InfoPlist.strings in Resources */,
 				3920793315AF1854009B959E /* MainStoryboard_iPhone.storyboard in Resources */,
 				3920793615AF1854009B959E /* MainStoryboard_iPad.storyboard in Resources */,
-				3919636615AF1FBC00DDC946 /* Environments.plist in Resources */,
 				3919643115AF373E00DDC946 /* icon.png in Resources */,
+				39EBAC3A16D07CF300C6F359 /* Default-568h@2x.png in Resources */,
+				39EBAC3B16D07CF300C6F359 /* Default.png in Resources */,
+				39EBAC3C16D07CF300C6F359 /* Default@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1083,7 +1113,7 @@
 			files = (
 				3919635315AF1EC200DDC946 /* main.m in Sources */,
 				3919635A15AF1EC200DDC946 /* AppDelegate.m in Sources */,
-				3919636915AF1FC700DDC946 /* Router.m in Sources */,
+				39423B6016D139B0003E7516 /* Router.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1116,6 +1146,7 @@
 				3919639515AF224500DDC946 /* SRHttpBasedTransport.m in Sources */,
 				3919639615AF224500DDC946 /* SRLongPollingTransport.m in Sources */,
 				3919639715AF224500DDC946 /* SRServerSentEventsTransport.m in Sources */,
+				39423B5A16D13515003E7516 /* SRConnectionExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1148,6 +1179,7 @@
 				392078A215AF13F6009B959E /* SRHttpBasedTransport.m in Sources */,
 				392078A415AF13F6009B959E /* SRLongPollingTransport.m in Sources */,
 				392078A615AF13F6009B959E /* SRServerSentEventsTransport.m in Sources */,
+				39423B5916D13515003E7516 /* SRConnectionExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1163,7 +1195,7 @@
 				3920795915AF1BEA009B959E /* MouseTrackingViewController.m in Sources */,
 				3920795A15AF1BEA009B959E /* RawViewController.m in Sources */,
 				3920795B15AF1BEA009B959E /* StreamingViewController.m in Sources */,
-				3919636715AF1FBC00DDC946 /* Router.m in Sources */,
+				39423B5F16D139B0003E7516 /* Router.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

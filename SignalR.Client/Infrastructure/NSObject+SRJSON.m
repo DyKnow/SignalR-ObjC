@@ -24,51 +24,39 @@
 
 @implementation NSObject (SRJSON)
 
-- (id)ensureFoundationObject:(id)object 
-{
-    if ([object isKindOfClass:[NSDictionary class]])
-    {
+- (id)ensureFoundationObject:(id)object {
+    if ([object isKindOfClass:[NSDictionary class]]) {
         NSMutableDictionary *validJSONDictionary = [NSMutableDictionary dictionary];
         
-        for (id _key in object)
-        {
-            if ([_key isKindOfClass:[NSString class]])
-            {
-                id jsonObject = [self ensureFoundationObject:[object objectForKey:_key]];
-                [validJSONDictionary setObject:jsonObject forKey:_key];
-            }
-            else
-            {
+        for (id _key in object) {
+            if ([_key isKindOfClass:[NSString class]]) {
+                id jsonObject = [self ensureFoundationObject:object[_key]];
+                validJSONDictionary[_key] = jsonObject;
+            } else {
                 return nil;
             }
         }
         return validJSONDictionary;
-    }
-    else if ([object isKindOfClass:[NSArray class]])
-    {
+    } else if ([object isKindOfClass:[NSSet class]]) {
+        return [object allObjects];
+    } else if ([object isKindOfClass:[NSArray class]]) {
         NSMutableArray *validJSONArray = [NSMutableArray array];
         
-        for (id _object in object)
-        {
+        for (id _object in object) {
             id jsonObject = [self ensureFoundationObject:_object];
             [validJSONArray addObject:jsonObject];
         }
         return validJSONArray;
-    }
-    else if([object isKindOfClass:[NSString class]] ||
-            [object isKindOfClass:[NSNumber class]] ||
-            [object isKindOfClass:[NSNull class]])
-    {
+    } else if([object isKindOfClass:[NSString class]] ||
+              [object isKindOfClass:[NSNumber class]] ||
+              [object isKindOfClass:[NSNull class]]) {
         return object;
-    }
-    else 
-    {
+    } else {
         SEL _YAJLSelector = NSSelectorFromString(@"JSON");
         SEL _SBJSONSelector = NSSelectorFromString(@"proxyForJson");
         SEL _NXJsonSelector = NSSelectorFromString(@"serialize");
         
-        if (_SBJSONSelector && [object respondsToSelector:_SBJSONSelector]) 
-        {
+        if (_SBJSONSelector && [object respondsToSelector:_SBJSONSelector]) {
             NSObject *json;
             __unsafe_unretained NSObject *jsonTemp = nil;
             
@@ -85,9 +73,7 @@
             if(json == nil) goto throw;
             
             return [self ensureFoundationObject:json];
-        }
-        else if (_YAJLSelector && [object respondsToSelector:_YAJLSelector]) 
-        { 
+        } else if (_YAJLSelector && [object respondsToSelector:_YAJLSelector]) {
             NSObject *json;
             __unsafe_unretained NSObject *jsonTemp = nil;
             
@@ -104,9 +90,7 @@
             if(json == nil) goto throw;
             
             return [self ensureFoundationObject:json];
-        }
-        else if (_NXJsonSelector && [object respondsToSelector:_NXJsonSelector]) 
-        { 
+        } else if (_NXJsonSelector && [object respondsToSelector:_NXJsonSelector]) { 
             NSObject *json;
             __unsafe_unretained NSObject *jsonTemp = nil;
             
@@ -127,14 +111,13 @@
     }
 
 throw:;
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Your NSObject subclass should implement at least one of the following: proxyForJson; JSON; or serialize; as defined in SRSerializable.h", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+    NSDictionary *userInfo = @{NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Your NSObject subclass should implement at least one of the following: proxyForJson; JSON; or serialize; as defined in SRSerializable.h", nil)};
     [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"Invalid JSON Object", nil) userInfo:userInfo] raise];
 
     return nil;
 }
 
-- (NSString *)SRJSONRepresentation 
-{
+- (NSString *)SRJSONRepresentation  {
     NSString *json;
     __unsafe_unretained NSString *jsonTemp = nil;  
 
@@ -150,8 +133,7 @@ throw:;
     id _NSJSONSerializationClass = NSClassFromString(@"NSJSONSerialization");
     SEL _NSJSONSerializationSelector = NSSelectorFromString(@"dataWithJSONObject:options:error:");
     
-    if (_JSONKitSelector && [jsonObject respondsToSelector:_JSONKitSelector]) 
-    {
+    if (_JSONKitSelector && [jsonObject respondsToSelector:_JSONKitSelector]) {
         NSMethodSignature *signature = [jsonObject methodSignatureForSelector:_JSONKitSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:jsonObject];
@@ -161,9 +143,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    }
-    else if (_SBJSONSelector && [jsonObject respondsToSelector:_SBJSONSelector]) 
-    {
+    } else if (_SBJSONSelector && [jsonObject respondsToSelector:_SBJSONSelector]) {
         NSMethodSignature *signature = [jsonObject methodSignatureForSelector:_SBJSONSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:jsonObject];
@@ -173,9 +153,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp]; 
         
         json = jsonTemp;
-    } 
-    else if (_YAJLSelector && [jsonObject respondsToSelector:_YAJLSelector]) 
-    {
+    } else if (_YAJLSelector && [jsonObject respondsToSelector:_YAJLSelector]) {
         NSMethodSignature *signature = [jsonObject methodSignatureForSelector:_YAJLSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:jsonObject];
@@ -185,9 +163,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    } 
-    else if (_NXJsonSerializerClass && [_NXJsonSerializerClass respondsToSelector:_NXJsonSerializerSelector])
-    {
+    } else if (_NXJsonSerializerClass && [_NXJsonSerializerClass respondsToSelector:_NXJsonSerializerSelector]) {
         __unsafe_unretained NSString *jsonString = jsonObject;
         
         NSMethodSignature *signature = [_NXJsonSerializerClass methodSignatureForSelector:_NXJsonSerializerSelector];
@@ -201,9 +177,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    }
-    else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
-    {
+    } else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) {
         __unsafe_unretained NSString *jsonString = jsonObject;
         __unsafe_unretained NSData *JSONData = nil;
 
@@ -223,10 +197,8 @@ throw:;
         [invocation getReturnValue:&JSONData];
 
         json = [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding];
-    }
-    else 
-    {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+    } else {
+        NSDictionary *userInfo = @{NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil)};
         [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"No JSON generation functionality available", nil) userInfo:userInfo] raise];
     }
     
@@ -238,8 +210,7 @@ throw:;
 
 @implementation NSString (SRJSON)
 
-- (id)SRJSONValue 
-{
+- (id)SRJSONValue {
     NSObject *json;
     __unsafe_unretained NSObject *jsonTemp = nil;
     
@@ -253,8 +224,7 @@ throw:;
     id _NSJSONSerializationClass = NSClassFromString(@"NSJSONSerialization");
     SEL _NSJSONSerializationSelector = NSSelectorFromString(@"JSONObjectWithData:options:error:");
 
-    if (_JSONKitSelector && [self respondsToSelector:_JSONKitSelector]) 
-    {
+    if (_JSONKitSelector && [self respondsToSelector:_JSONKitSelector]) {
         NSMethodSignature *signature = [self methodSignatureForSelector:_JSONKitSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:self];
@@ -264,9 +234,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    }
-    else if (_SBJSONSelector &&  [self respondsToSelector:_SBJSONSelector])
-    {
+    } else if (_SBJSONSelector &&  [self respondsToSelector:_SBJSONSelector]) {
         NSMethodSignature *signature = [self methodSignatureForSelector:_SBJSONSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:self];
@@ -276,9 +244,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp]; 
         
         json = jsonTemp;
-    } 
-    else if (_YAJLSelector && [self respondsToSelector:_YAJLSelector]) 
-    {
+    } else if (_YAJLSelector && [self respondsToSelector:_YAJLSelector]) {
         NSMethodSignature *signature = [self methodSignatureForSelector:_YAJLSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:self];
@@ -288,13 +254,11 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    }
-    else if (_NXJsonParserClass && [_NXJsonParserClass respondsToSelector:_NXJsonParserSelector]) 
-    {
+    } else if (_NXJsonParserClass && [_NXJsonParserClass respondsToSelector:_NXJsonParserSelector]) {
         __unsafe_unretained NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
         __unsafe_unretained NSError *error;
         
-        NSNumber *nullOption = [NSNumber numberWithBool:YES];
+        NSNumber *nullOption = @YES;
         NSMethodSignature *signature = [_NXJsonParserClass methodSignatureForSelector:_NXJsonParserSelector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setTarget:_NXJsonParserClass];
@@ -308,9 +272,7 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    }
-    else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) 
-    {
+    } else if (_NSJSONSerializationClass && [_NSJSONSerializationClass respondsToSelector:_NSJSONSerializationSelector]) {
         __unsafe_unretained NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
 
         NSUInteger readOptions = 0;
@@ -329,10 +291,8 @@ throw:;
         [invocation getReturnValue:&jsonTemp];
         
         json = jsonTemp;
-    }
-    else 
-    {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil) forKey:NSLocalizedRecoverySuggestionErrorKey];
+    } else {
+        NSDictionary *userInfo = @{NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Please either target a platform that supports NSJSONSerialization or add one of the following libraries to your project: JSONKit, SBJSON, or YAJL", nil)};
         [[NSException exceptionWithName:NSInternalInconsistencyException reason:NSLocalizedString(@"No JSON generation functionality available", nil) userInfo:userInfo] raise];
     }
     

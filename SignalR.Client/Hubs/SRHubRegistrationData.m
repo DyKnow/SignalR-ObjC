@@ -28,36 +28,25 @@
 
 @implementation SRHubRegistrationData
 
-@synthesize name = _name;
+static NSString * const kName = @"Name";
 
-static NSString * const kName = @"name";
-
-- (id) init
-{
-    if (self = [super init])
-    {
+- (instancetype) init {
+    if (self = [super init]) {
         _name = [NSString stringWithFormat:@""];
     }
     return self;
 }
 
-- (id)proxyForJson
-{
+- (id)proxyForJson {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     
-    [dict setObject:[NSString stringWithFormat:@"%@",_name] forKey:kName];
+    dict[kName] = [NSString stringWithFormat:@"%@",_name];
     
     return dict;
 }
 
-- (NSString *)description 
-{     
+- (NSString *)description {     
     return [NSString stringWithFormat:@"HubRegistrationData: Name=%@",_name];
-}
-
-- (void)dealloc
-{
-    _name = nil;
 }
 
 @end

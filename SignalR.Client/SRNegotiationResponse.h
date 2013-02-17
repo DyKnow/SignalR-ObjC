@@ -47,4 +47,6 @@
  */
 @property (strong, nonatomic, readonly) NSString *protocolVersion;
 
+@property (strong, nonatomic, readonly) NSNumber *disconnectTimeout;
+
 @end

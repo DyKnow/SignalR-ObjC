@@ -22,8 +22,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum 
-{
+typedef enum {
     connecting,
     connected,
     reconnecting,

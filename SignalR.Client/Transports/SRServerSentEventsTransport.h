@@ -43,15 +43,15 @@
  *
  * By default, this is 2 seconds
  */
-@property (assign, nonatomic, readwrite) NSInteger connectionTimeout;
+@property (strong, nonatomic, readwrite) NSNumber *connectionTimeout;
 
 /**
  * Returns an `NSInteger` object with the time to wait after a connection drops to try reconnecting.
  *
  * By default, this is 2 seconds
  */
-@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+@property (strong, nonatomic, readwrite) NSNumber *reconnectDelay;
 
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient;
 
 @end

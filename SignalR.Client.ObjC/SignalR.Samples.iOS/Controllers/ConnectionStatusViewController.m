@@ -72,7 +72,7 @@
     _connection.started = ^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         [strongSelf.data insertObject:@"Connection Opened" atIndex:0];
-        [self.tableView reloadData];
+        [strongSelf.tableView reloadData];
     };
     _connection.received = ^(NSString * data){
         //__strong __typeof(&*weakSelf)strongSelf = weakSelf;
@@ -82,12 +82,12 @@
     _connection.closed = ^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         [strongSelf.data insertObject:@"Connection Closed" atIndex:0];
-        [self.tableView reloadData];
+        [strongSelf.tableView reloadData];
     };
     _connection.error = ^(NSError *error){
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         [strongSelf.data insertObject:error.localizedDescription atIndex:0];
-        [self.tableView reloadData];
+        [strongSelf.tableView reloadData];
     };
     [_connection start];
 }
@@ -124,7 +124,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = [self.data objectAtIndex:indexPath.row];
+    cell.textLabel.text = (self.data)[indexPath.row];
     
     return cell;
 }
