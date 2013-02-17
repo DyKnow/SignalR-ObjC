@@ -90,6 +90,6 @@ typedef void (^onStateChanged)(connectionState);
   **/
 - (void)addValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 
-- (BOOL)ensureReconnecting;
-
 @end
+
+extern NSString * const SRConnectionDidDisconnect;

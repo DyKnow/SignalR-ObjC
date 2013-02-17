@@ -28,6 +28,7 @@
 #import "SRLog.h"
 #import "SRSseEvent.h"
 #import "SRThreadSafeInvoker.h"
+#import "SRConnectionExtensions.h"
 
 @interface SRServerSentEventsTransport ()
 
@@ -62,12 +63,10 @@ static NSString * const kTransportName = @"serverSentEvents";
     
     //Wait for a bit before reconnecting
     [[NSBlockOperation blockOperationWithBlock:^{
-        #warning make sure request is not cancelled
-        //if (!disconnectToken.IsCancellationRequested && [connection ensureReconnecting]) {
-        //if ([connection ensureReconnecting]) {
+        if (connection.state != disconnected && [SRConnection ensureReconnecting:connection]) {
             //Now attempt a reconnect
             [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
-        //}
+        }
     }] performSelector:@selector(start) withObject:nil afterDelay:[_reconnectDelay integerValue]];
 }
 
@@ -80,6 +79,7 @@ static NSString * const kTransportName = @"serverSentEvents";
     NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingFormat:@"%@",[self receiveQueryString:connection data:data]];
     __block id <SRRequest> request = nil;
     __block SREventSourceStreamReader *eventSource;
+    __block id requestDisposer;
 
     [self.httpClient getAsync:url requestPreparer:^(id<SRRequest> req) {
         request = req;
@@ -114,6 +114,8 @@ static NSString * const kTransportName = @"serverSentEvents";
                     [self reconnect:connection data:data];
                 }
             }
+            [[NSNotificationCenter defaultCenter] removeObserver:requestDisposer];
+            requestDisposer = nil;
         } else {
             eventSource = [[SREventSourceStreamReader alloc] initWithStream:response.stream];
             __weak __typeof(&*self)weakSelf = self;
@@ -126,11 +128,10 @@ static NSString * const kTransportName = @"serverSentEvents";
             __block SRInitializedCallback weakInitializedCallback = initializeCallback;
             __block BOOL retry = YES;
             
-#warning TODO: if disconnected close the event source
-            /*var eventSourceCancellationRegistration = disconnectToken.SafeRegister(es => {
+            __block id esCancellationRegistration = [[NSNotificationCenter defaultCenter] addObserverForName:SRConnectionDidDisconnect object:connection queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
                 retry = false;
-                es.Close();
-            }, eventSource);*/
+                [eventSource close];
+            }];
 
             eventSource.opened = ^() {
                 __strong __typeof(&*weakConnection)strongConnection = weakConnection;
@@ -198,8 +199,10 @@ static NSString * const kTransportName = @"serverSentEvents";
             
             eventSource.disabled = ^() {
                 __strong __typeof(&*weakResponse)strongResponse = weakResponse;
-                //requestDisposer.Dispose();
-                //esCancellationRegistration.Dispose();
+                [[NSNotificationCenter defaultCenter] removeObserver:requestDisposer];
+                [[NSNotificationCenter defaultCenter] removeObserver:esCancellationRegistration];
+                requestDisposer = nil;
+                esCancellationRegistration = nil;
                 [strongResponse close];
             };
             
@@ -207,22 +210,34 @@ static NSString * const kTransportName = @"serverSentEvents";
         }
     }];
     
-#warning TODO: Receive Notification when a disconnect occurs and stop the pending request
-    /*var requestCancellationRegistration = disconnectToken.SafeRegister(req => {
-        if (req != null) {
+    requestDisposer = [[NSNotificationCenter defaultCenter] addObserverForName:SRConnectionDidDisconnect object:connection queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        if (request != nil) {
             // This will no-op if the request is already finished.
-            req.Abort();
+            [request abort];
         }
         
-        if (errorCallback != null) {
-            callbackInvoker.Invoke((cb, token) => {
-                cb(new OperationCanceledException(Resources.Error_ConnectionCancelled, token));
-            }, errorCallback, disconnectToken);
+        if (errorCallback != nil) {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+            userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+            userInfo[NSLocalizedDescriptionKey] = NSLocalizedString(@"The connection was stopped before it could be started.",@"The connection was stopped before it could be started.");
+            NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
+                                                 code:NSURLErrorCancelled
+                                             userInfo:userInfo];
+            
+            [callbackInvoker invoke:^(callback cb, NSError *ex) {
+                SRErrorByReferenceBlock errorBlock = ^(NSError ** error){
+                    if(error){
+                        *error = ex;
+                    }
+                };
+                cb(errorBlock);
+            }
+                       withCallback:errorCallback
+                         withObject:error];
         }
-    }, request);
-    
-    requestDisposer.Set(requestCancellationRegistration);*/
-    
+
+    }];
+
     if (errorCallback != nil) {
         [[NSBlockOperation blockOperationWithBlock:^{
             [callbackInvoker invoke:^(callback cb, id <SRConnectionInterface> conn) {

@@ -25,6 +25,7 @@
 #import "SRExceptionHelper.h"
 #import "SRLog.h"
 #import "SRThreadSafeInvoker.h"
+#import "SRConnectionExtensions.h"
 
 typedef void (^onInitialized)(void);
 
@@ -69,17 +70,16 @@ static NSString * const kTransportName = @"longPolling";
     __block id <SRRequest> request = nil;
     SRThreadSafeInvoker *reconnectInvoker = [[SRThreadSafeInvoker alloc] init];
     SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
-
+    __block id requestDisposer;
+    
     if(connection.messageId == nil) {
         url = [url stringByAppendingString:@"connect"];
     } else if (raiseReconnect) {
         url = [url stringByAppendingString:@"reconnect"];
         
-#warning make sure request is not cancelled
-        //if (disconnectToken.IsCancellationRequested || ![connection ensureReconnecting]) {
-        /*if (![connection ensureReconnecting]) {
+        if (connection.state == disconnected || ![SRConnection ensureReconnecting:connection]) {
             return;
-        }*/
+        }
     }
     
     url = [url stringByAppendingString:[self receiveQueryString:connection data:data]];
@@ -166,8 +166,6 @@ static NSString * const kTransportName = @"longPolling";
                                 SRLogLongPolling(@"will poll again in %ld seconds",(long)[_errorDelay integerValue]);
 
                                 [[NSBlockOperation blockOperationWithBlock:^{
-                                    #warning make sure request is not cancelled
-                                    //if (!disconnectToken.IsCancellationRequested) {
                                     if (connection.state != disconnected) {
                                         [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
                                     }
@@ -176,8 +174,6 @@ static NSString * const kTransportName = @"longPolling";
                         }
                     }
                 } else {
-                    #warning make sure request is not cancelled
-                    //if (!disconnectToken.IsCancellationRequested) {
                     if (connection.state != disconnected) {
                         SRLogLongPolling(@"will poll again immediately");
                         
@@ -185,27 +181,40 @@ static NSString * const kTransportName = @"longPolling";
                     }
                 }
             }
+            [[NSNotificationCenter defaultCenter] removeObserver:requestDisposer];
+            requestDisposer = nil;
         }
     }];
     
-#warning TODO: Receive Notification when a disconnect occurs and stop the pending request
-    /*var requestCancellationRegistration = disconnectToken.SafeRegister(req => {
-        if (req != null) {
+    requestDisposer = [[NSNotificationCenter defaultCenter] addObserverForName:SRConnectionDidDisconnect object:connection queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        if (request != nil) {
             // This will no-op if the request is already finished.
-            req.Abort();
+            [request abort];
         }
         
         // Prevent the connection state from switching to the reconnected state.
-        reconnectInvoker.Invoke();
+        [reconnectInvoker invoke];
         
-        if (errorCallback != null) {
-            callbackInvoker.Invoke((cb, token) => {
-                cb(new OperationCanceledException(Resources.Error_ConnectionCancelled, token));
-            }, errorCallback, disconnectToken);
+        if (errorCallback != nil) {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+            userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+            userInfo[NSLocalizedDescriptionKey] = NSLocalizedString(@"The connection was stopped before it could be started.",@"The connection was stopped before it could be started.");
+            NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
+                                                 code:NSURLErrorCancelled
+                                             userInfo:userInfo];
+            
+            [callbackInvoker invoke:^(callback cb, NSError *ex) {
+                SRErrorByReferenceBlock errorBlock = ^(NSError ** error){
+                    if(error){
+                        *error = ex;
+                    }
+                };
+                cb(errorBlock);
+            }
+            withCallback:errorCallback
+            withObject:error];
         }
-    }, request);
-    
-    requestDisposer.Set(requestCancellationRegistration);*/
+    }];
     
     if (initializeCallback != nil) {
         SRLogLongPolling(@"connection is initialized");

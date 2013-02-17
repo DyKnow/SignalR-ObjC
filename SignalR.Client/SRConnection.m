@@ -37,6 +37,7 @@ void (^prepareRequest)(id);
 @property (strong, nonatomic, readonly) SRVersion *assemblyVersion;
 @property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
+@property (strong, nonatomic, readwrite) NSBlockOperation * disconnectTimeoutOperation;
 
 @property (assign, nonatomic, readwrite) connectionState state;
 @property (strong, nonatomic, readwrite) NSString *url;
@@ -200,7 +201,7 @@ void (^prepareRequest)(id);
 - (void)disconnect {
     if (self.state != disconnected) {
         
-        #warning nullify disconnect timeout operation here
+        [[NSNotificationCenter defaultCenter] postNotificationName:SRConnectionDidDisconnect object:self];
         
         _state = disconnected;
         
@@ -279,7 +280,16 @@ void (^prepareRequest)(id);
 }
 
 - (void)willReconnect {
-#warning TODO: start disconnect timeout operation here.
+    
+    // Only allow the client to attempt to reconnect for a _disconnectTimout TimeSpan which is set by
+    // the server during negotiation.
+    // If the client tries to reconnect for longer the server will likely have deleted its ConnectionId
+    // topic along with the contained disconnect message.
+    self.disconnectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
+        [self disconnect];
+    }];
+    [self.disconnectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[_disconnectTimeout integerValue]];
+    
     if (self.reconnecting != nil) {
         self.reconnecting();
     }
@@ -290,7 +300,9 @@ void (^prepareRequest)(id);
 }
 
 - (void)didReconnect {
-#warning nullify disconnect timeout operation here
+
+    self.disconnectTimeoutOperation = nil;
+    
     if(self.reconnected != nil) {
         self.reconnected();
     }
@@ -351,12 +363,6 @@ void (^prepareRequest)(id);
     return [components componentsJoinedByString:@"&"];
 }
 
-//TODO: Consider Moving to a Category
-- (BOOL)ensureReconnecting {
-    if ([self changeState:connected toState:reconnecting]) {
-        [self willReconnect];
-    }
-    return (self.state == reconnecting);
-}
-
 @end
+
+NSString * const SRConnectionDidDisconnect = @"SRConnectionDidDisconnect";
