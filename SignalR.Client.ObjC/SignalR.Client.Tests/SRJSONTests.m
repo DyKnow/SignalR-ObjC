@@ -67,7 +67,7 @@
  */
 - (void)testThrowWhenEnsureFoundationObjectShouldReturnNil_NSArray
 {
-    NSArray *nonConformingArray = [NSArray arrayWithObject:[[InvalidModel alloc] init]];
+    NSArray *nonConformingArray = @[[[InvalidModel alloc] init]];
     STAssertThrowsSpecificNamed([nonConformingArray SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
 }
 
@@ -78,7 +78,7 @@
  */
 - (void)testThrowWhenEnsureFoundationObjectShouldReturnNil_NSDictionary
 {
-    NSArray *nonConformingDictionary = [NSDictionary dictionaryWithObject:[[InvalidModel alloc] init] forKey:@"somekey"];
+    NSArray *nonConformingDictionary = @{@"somekey": [[InvalidModel alloc] init]};
     STAssertThrowsSpecificNamed([nonConformingDictionary SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
 }
 

@@ -21,8 +21,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRHubProxyInterface.h"
 
-@class SRHubProxy;
 @class SRSubscription;
 
 /**
@@ -42,7 +42,7 @@
 /**
  * An `SRHubProxy` object representing the Hub to be observed
  */
-@property (strong, nonatomic, readonly) SRHubProxy *proxy;
+@property (strong, nonatomic, readonly) id <SRHubProxyInterface> proxy;
 
 ///-------------------------------
 /// @name Initializing an SRHubservable Object
@@ -59,7 +59,7 @@
  * @param eventName the `NSString` object representing the name of the subscription event
  * @return an `SRHubservable` object 
  */
-+ (id)observe:(SRHubProxy *)proxy event:(NSString *)eventName;
++ (instancetype)observe:(id <SRHubProxyInterface>)proxy event:(NSString *)eventName;
 
 /**
  * Initializes a new `SRHubservable` object
@@ -72,7 +72,7 @@
  * @param eventName the `NSString` object representing the name of the subscription event
  * @return an `SRHubservable` object 
  */
-- (id)initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName;
+- (instancetype)initWithProxy:(id <SRHubProxyInterface>)proxy eventName:(NSString *)eventName;
 
 ///-------------------------------
 /// @name Adding Subscriptions

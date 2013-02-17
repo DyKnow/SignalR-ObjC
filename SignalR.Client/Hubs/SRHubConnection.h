@@ -22,26 +22,16 @@
 
 #import <Foundation/Foundation.h>
 #import "SRConnection.h"
-
-@class SRHubProxy;
+#import "SRHubProxyInterface.h"
 
 /**
  * An `SRHubConnection` object provides an abstraction over `SRConnection` and provides support for publishing and subscribing to custom events
  */
 @interface SRHubConnection : SRConnection
 
-///-------------------------------
-/// @name Properties
-///-------------------------------
-
-/**
- * The `NSMutableDictionary` object containing the `SRHubProxy` objects
- */
-@property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
-
-- (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault;
-- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault;
-- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault;
+- (instancetype)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault;
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault;
+- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault;
 
 /**
  * Creates a client side proxy to the hub on the server side.
@@ -54,6 +44,6 @@
  * @param hubName hubName the name of the hub
  * @return SRHubProxy object 
  */
-- (SRHubProxy *)createHubProxy:(NSString *)hubName;
+- (id <SRHubProxyInterface>)createHubProxy:(NSString *)hubName;
 
 @end

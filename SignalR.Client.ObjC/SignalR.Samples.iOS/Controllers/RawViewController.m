@@ -88,7 +88,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = [messagesReceived objectAtIndex:indexPath.row];
+    cell.textLabel.text = messagesReceived[indexPath.row];
     
     return cell;
 }
@@ -113,8 +113,8 @@
 - (IBAction)sendClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:0] forKey:@"type"];
-    [message setObject:meField.text forKey:@"value"];
+    message[@"type"] = @0;
+    message[@"value"] = meField.text;
 
     [connection send:message];
 }
@@ -122,8 +122,8 @@
 - (IBAction)broadcastClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:1] forKey:@"type"];
-    [message setObject:messageField.text forKey:@"value"];
+    message[@"type"] = @1;
+    message[@"value"] = messageField.text;
     
     [connection send:message];
 }
@@ -131,8 +131,8 @@
 - (IBAction)enternameClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:2] forKey:@"type"];
-    [message setObject:messageField.text forKey:@"value"];
+    message[@"type"] = @2;
+    message[@"value"] = messageField.text;
     
     [connection send:message];
 }
@@ -140,8 +140,8 @@
 - (IBAction)sendToUserClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:3] forKey:@"type"];
-    [message setObject:[NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text] forKey:@"value"];
+    message[@"type"] = @3;
+    message[@"value"] = [NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text];
     
     [connection send:message];
 }
@@ -149,8 +149,8 @@
 - (IBAction)joingroupClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:4] forKey:@"type"];
-    [message setObject:messageField.text forKey:@"value"];
+    message[@"type"] = @4;
+    message[@"value"] = messageField.text;
 
     [connection send:message];
 }
@@ -158,8 +158,8 @@
 - (IBAction)leavegroupClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:5] forKey:@"type"];
-    [message setObject:messageField.text forKey:@"value"];
+    message[@"type"] = @5;
+    message[@"value"] = messageField.text;
     
    [connection send:message];
 }
@@ -167,8 +167,8 @@
 - (IBAction)sendToGroupClicked:(id)sender
 {
     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    [message setObject:[NSNumber numberWithInt:6] forKey:@"type"];
-    [message setObject:[NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text] forKey:@"value"];
+    message[@"type"] = @6;
+    message[@"value"] = [NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text];
     
     [connection send:message];
 }

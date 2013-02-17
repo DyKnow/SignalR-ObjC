@@ -26,6 +26,6 @@
 
 @interface SRDefaultHttpWebResponseWrapper : NSObject <SRResponse>
 
-- (id)initWithRequest:(id <SRRequest>)request withResponse:(id)response;
+- (instancetype)initWithRequest:(id <SRRequest>)request withResponse:(id)response;
 
 @end

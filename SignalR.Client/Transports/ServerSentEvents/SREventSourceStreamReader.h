@@ -27,11 +27,28 @@
 typedef void (^onStreamOpened)();
 typedef void (^onStreamClosed)(NSError * error);
 typedef void (^onStreamMessage)(SRSseEvent * event);
+typedef void (^onStreamDisabled)();
 
 @interface SREventSourceStreamReader : NSObject <NSStreamDelegate>
 
+/*
+ * Invoked when the connection is open.
+ */
 @property (copy) onStreamOpened opened;
+
+/*
+ * Invoked when the reader is closed while in the Processing state.
+ */
 @property (copy) onStreamClosed closed;
+
+/*
+ * Invoked when the reader enters the Stopped state whether or not it was previously in the Processing state.
+ */
+@property (copy) onStreamDisabled disabled;
+
+/*
+ * Invoked when there's a message if received in the stream.
+ */
 @property (copy) onStreamMessage message;
 
 - (id)initWithStream:(NSOutputStream *)steam;

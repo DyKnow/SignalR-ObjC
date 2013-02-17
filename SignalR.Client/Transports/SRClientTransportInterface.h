@@ -1,5 +1,5 @@
 //
-//  SRClientTransport.h
+//  SRClientTransportInterface.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 10/28/11.
@@ -21,40 +21,40 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRConnectionInterface.h"
 
-@class SRConnection;
 @class SRNegotiationResponse;
 
 /**
- * `SRClientTransport` defines the protocol each Client Transport should conform to
+ * `SRClientTransportInterface` defines the protocol each Client Transport should conform to
  **/
-@protocol SRClientTransport <NSObject>
+@protocol SRClientTransportInterface <NSObject>
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block;
+- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block;
 
 /**
  * Opens a connection to the server for the active transport
  *
- * @param connection the `SRConnection` to start the transport on
+ * @param connection the `SRConnectionInterface` to start the transport on
  * @param data the data to send when starting the transport on, may be nil
  * @param block the block to be called once start finishes, block may be nil
  */
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block;
+- (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block;
 
 /**
  * Sends data to the server for the active transport
  *
- * @param connection the `SRConnection` to send the message on
+ * @param connection the `SRConnectionInterface` to send the message on
  * @param data the data to send the server
  * @param block the block to be called once send finishes, block may be nil
  */
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block;
+- (void)send:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block;
 
 /**
  * Stops the active transport from receiving data from the server
  *
- * @param connection the `SRConnection` owning the transport that should be stopped
+ * @param connection the `SRConnectionInterface` owning the transport that should be stopped
  */
-- (void)stop:(SRConnection *)connection;
+- (void)abort:(id <SRConnectionInterface>)connection;
 
 @end

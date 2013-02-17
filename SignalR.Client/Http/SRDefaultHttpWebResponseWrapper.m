@@ -27,46 +27,33 @@
 @property (strong, nonatomic, readwrite) id <SRRequest> request;
 @end
 
-@implementation SRDefaultHttpWebResponseWrapper
+@implementation SRDefaultHttpWebResponseWrapper 
 
 @synthesize string = _string;
 @synthesize stream = _stream;
 @synthesize error = _error;
 
-@synthesize request = _request;
-
-- (id)initWithRequest:(id <SRRequest>)request withResponse:(id)response
-{
+- (instancetype)initWithRequest:(id <SRRequest>)request withResponse:(id)response {
     static NSString *empty = @"";
     
-    if (self = [super init])
-    {
+    if (self = [super init]) {
         _request = request;
         
-        if([response isKindOfClass:[NSError class]])
-        {
+        if([response isKindOfClass:[NSError class]]) {
             _error = response;
-        }
-        else if([response isKindOfClass:[NSOutputStream class]])
-        {
+        } else if([response isKindOfClass:[NSOutputStream class]]) {
             _stream = response;
-        }
-        else if([response isKindOfClass:[NSString class]])
-        {
+        } else if([response isKindOfClass:[NSString class]]) {
             _string = response;
-        }
-        else
-        {
+        } else {
             _string = empty;
         }
     }
     return self;
 }
 
-- (void)close;
-{
-    if(_request != nil)
-    {
+- (void)close; {
+    if(_request != nil) {
         // Always try to abort the request since close hangs if the connection is being held open
         [_request abort];
     }

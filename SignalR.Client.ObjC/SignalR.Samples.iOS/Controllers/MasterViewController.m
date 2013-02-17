@@ -156,7 +156,7 @@
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:self.detailViewController];
         
         // Update the split view controller's view controllers array.
-        NSArray *viewControllers = [[NSArray alloc] initWithObjects:self.navigationController, navController, nil];
+        NSArray *viewControllers = @[self.navigationController, navController];
         self.splitViewController.viewControllers = viewControllers;
         
         self.detailViewController = [[self.splitViewController.viewControllers lastObject] topViewController];
