@@ -39,7 +39,7 @@
 @synthesize headers = _headers;
 @synthesize accept = _accept;
 
-- (id)initWithRequest:(id)request {
+- (instancetype)initWithRequest:(id)request {
     if (self = [super init]) {
         if([request isKindOfClass:[NSMutableURLRequest class]]) {
             _request = request;

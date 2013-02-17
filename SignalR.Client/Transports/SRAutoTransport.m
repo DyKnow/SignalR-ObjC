@@ -21,7 +21,7 @@
 //
 
 #import "SRAutoTransport.h"
-#import "SRConnection.h"
+#import "SRConnectionInterface.h"
 #import "SRLog.h"
 #import "SRLongPollingTransport.h"
 #import "SRServerSentEventsTransport.h"
@@ -30,15 +30,15 @@
 
 // List of transports in fallback order
 @property (strong, nonatomic, readonly) NSArray *transports;
-@property (strong, nonatomic, readonly) id <SRClientTransport> transport;
+@property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index;
+- (void)resolveTransport:(id <SRConnectionInterface>)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index;
 
 @end
 
 @implementation SRAutoTransport
 
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient {
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient {
     if(self = [super init]) {
         _httpClient = httpClient;
         _transports = @[[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],[[SRLongPollingTransport alloc] initWithHttpClient:httpClient]];
@@ -46,18 +46,18 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
+- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
 }
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block {
+- (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
     [self resolveTransport:connection data:data taskCompletionSource:block index:0];
 }
 
-- (void)resolveTransport:(SRConnection *)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index {
-    id <SRClientTransport> transport = _transports[index];
+- (void)resolveTransport:(id <SRConnectionInterface>)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index {
+    id <SRClientTransportInterface> transport = _transports[index];
     
-    [transport start:connection withData:data continueWith:^(id task) {
+    [transport start:connection withData:data completionHandler:^(id task) {
         if (task != nil) {
             SRLogAutoTransport(@"will switch to next transport");
 
@@ -90,22 +90,16 @@
     }];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block {
+- (void)send:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
     SRLogAutoTransport(@"will send data from active transport");
 
-    [_transport send:connection withData:data continueWith:block];
+    [_transport send:connection withData:data completionHandler:block];
 }
 
-- (void)abort:(SRConnection *)connection {
+- (void)abort:(id <SRConnectionInterface>)connection {
     SRLogAutoTransport(@"will stop transport");
 
     [_transport abort:connection];
-}
-
-- (void)dealloc {
-    _httpClient = nil;
-    _transports = nil;
-    _transport = nil;
 }
 
 @end

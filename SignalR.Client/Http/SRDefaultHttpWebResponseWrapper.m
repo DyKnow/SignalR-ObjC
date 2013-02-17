@@ -33,7 +33,7 @@
 @synthesize stream = _stream;
 @synthesize error = _error;
 
-- (id)initWithRequest:(id <SRRequest>)request withResponse:(id)response {
+- (instancetype)initWithRequest:(id <SRRequest>)request withResponse:(id)response {
     static NSString *empty = @"";
     
     if (self = [super init]) {

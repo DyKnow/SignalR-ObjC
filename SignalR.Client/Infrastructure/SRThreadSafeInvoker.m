@@ -30,31 +30,22 @@
 
 @implementation SRThreadSafeInvoker
 
-@synthesize invoked = _invoked;
-
-- (id)init
-{
-    if (self = [super init])
-    {
+- (instancetype)init {
+    if (self = [super init]) {
         _invoked = @NO;
     }
     return self;
 }
 
-- (BOOL)invoke
-{
+- (BOOL)invoke {
     return [self invoke:^{}];
 }
 
-- (BOOL)invoke:(action)action
-{
-    @synchronized(_invoked)
-    {
-        if (_invoked == @NO)
-        {
+- (BOOL)invoke:(action)action {
+    @synchronized(_invoked) {
+        if ([_invoked isEqual:@NO]) {
             _invoked = @YES;
-            if(action)
-            {
+            if(action) {
                 action();
                 return YES;
             }
@@ -63,15 +54,11 @@
     }
 }
 
-- (BOOL)invoke:(actionWithObject)action withObject:(id)object
-{
-    @synchronized(_invoked)
-    {
-        if (_invoked == @NO)
-        {
+- (BOOL)invoke:(actionWithObject)action withObject:(id)object {
+    @synchronized(_invoked) {
+        if ([_invoked isEqual:@NO]) {
             _invoked = @YES;
-            if(action)
-            {
+            if(action) {
                 action(object);
                 return YES;
             }
@@ -80,15 +67,11 @@
     }
 }
 
-- (BOOL)invoke:(actionWithObject)action withBlock:(action)object;
-{
-    @synchronized(_invoked)
-    {
-        if (_invoked == @NO)
-        {
+- (BOOL)invoke:(actionWithObject)action withBlock:(action)object; {
+    @synchronized(_invoked) {
+        if ([_invoked isEqual:@NO]) {
             _invoked = @YES;
-            if(action)
-            {
+            if(action) {
                 action(object);
                 return YES;
             }
@@ -97,15 +80,11 @@
     }
 }
 
-- (BOOL)invoke:(actionWithCallbackWithObject)action withCallback:(callback)callback withObject:(id)object;
-{
-    @synchronized(_invoked)
-    {
-        if (_invoked == @NO)
-        {
+- (BOOL)invoke:(actionWithCallbackWithObject)action withCallback:(callback)callback withObject:(id)object; {
+    @synchronized(_invoked) {
+        if ([_invoked isEqual:@NO]) {
             _invoked = @YES;
-            if(action)
-            {
+            if(action) {
                 action(callback, object);
                 return YES;
             }
@@ -114,15 +93,11 @@
     }
 }
 
-- (BOOL)invoke:(actionWithObjectWithObject)action withObject:(id)object1 withObject:(id)object2
-{
-    @synchronized(_invoked)
-    {
-        if (_invoked == @NO)
-        {
+- (BOOL)invoke:(actionWithObjectWithObject)action withObject:(id)object1 withObject:(id)object2 {
+    @synchronized(_invoked) {
+        if ([_invoked isEqual:@NO]) {
             _invoked = @YES;
-            if(action)
-            {
+            if(action) {
                 action(object1,object2);
                 return YES;
             }
@@ -130,4 +105,5 @@
         return NO;
     }
 }
+
 @end

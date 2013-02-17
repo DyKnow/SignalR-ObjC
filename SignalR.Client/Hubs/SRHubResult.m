@@ -32,7 +32,7 @@ static NSString * const kResult = @"R";
 static NSString * const kError = @"E";
 static NSString * const kState = @"S";
 
-- (id) init {
+- (instancetype) init {
     if (self = [super init]) {
         _error = [NSString stringWithFormat:@""];
 		_state = @{};
@@ -40,7 +40,7 @@ static NSString * const kState = @"S";
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary*)dict {
+- (instancetype)initWithDictionary:(NSDictionary*)dict {
 	if (self = [self init]) {
         self.result  = dict[kResult];
         self.error = dict[kError];
@@ -51,12 +51,6 @@ static NSString * const kState = @"S";
 
 - (NSString *)description  {  
     return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
-}
-
-- (void)dealloc {
-    _result = nil;
-    _error = nil;
-    _state = nil;
 }
 
 @end

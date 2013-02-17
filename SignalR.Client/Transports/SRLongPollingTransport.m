@@ -21,7 +21,6 @@
 //
 
 #import "SRLongPollingTransport.h"
-#import "SRConnection.h"
 #import "SRDefaultHttpClient.h"
 #import "SRExceptionHelper.h"
 #import "SRLog.h"
@@ -31,9 +30,9 @@ typedef void (^onInitialized)(void);
 
 @interface SRLongPollingTransport()
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
-- (void)fireReconnected:(SRConnection *)connection;
+- (void)pollingLoop:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
+- (void)pollingLoop:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect;
++ (void)fireReconnected:(id <SRConnectionInterface>)connection;
 
 @end
 
@@ -41,30 +40,30 @@ typedef void (^onInitialized)(void);
 
 static NSString * const kTransportName = @"longPolling";
 
-- (id)init {
+- (instancetype)init {
     if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]]) {
     }
     return self;
 }
 
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient {
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient {
     if (self = [super initWithHttpClient:httpClient transport:kTransportName]) {
-        _reconnectDelay = 5;
-        _errorDelay = 2;
-        _connectDelay = 2;
+        _reconnectDelay = @5;
+        _errorDelay = @2;
+        _connectDelay = @2;
     }
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback; {
+- (void)onStart:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback; {
     [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback {    
+- (void)pollingLoop:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback {    
     [self pollingLoop:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback raiseReconnect:NO];
 }
 
-- (void)pollingLoop:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect { 
+- (void)pollingLoop:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback raiseReconnect:(BOOL)raiseReconnect { 
     NSString *url = connection.url;
     
     __block id <SRRequest> request = nil;
@@ -78,17 +77,17 @@ static NSString * const kTransportName = @"longPolling";
         
 #warning make sure request is not cancelled
         //if (disconnectToken.IsCancellationRequested || ![connection ensureReconnecting]) {
-        if (![connection ensureReconnecting]) {
+        /*if (![connection ensureReconnecting]) {
             return;
-        }
+        }*/
     }
     
-    url = [url stringByAppendingString:[self getReceiveQueryString:connection data:data]];
+    url = [url stringByAppendingString:[self receiveQueryString:connection data:data]];
     
     [self.httpClient postAsync:url requestPreparer:^(id<SRRequest> req) {
         request = req;
         [connection prepareRequest:request];
-    } continueWith:^(id<SRResponse> response) {
+    } completionHandler:^(id<SRResponse> response) {
         SRLogLongPolling(@"did receive response %@",response);
         
         BOOL shouldRaiseReconnect = NO;
@@ -102,7 +101,7 @@ static NSString * const kTransportName = @"longPolling";
                 if(raiseReconnect) {
                     // If the timeout for the receonnect hasn't fired as yet just fire the 
                     // Event here before any incoming messages are processed
-                    [reconnectInvoker invoke:^(SRConnection *conn) { [self fireReconnected:conn]; } withObject:connection];
+                    [reconnectInvoker invoke:^(id <SRConnectionInterface> conn) { [[self class] fireReconnected:conn]; } withObject:connection];
                 }
                 
                 if (initializeCallback != nil) {
@@ -164,7 +163,7 @@ static NSString * const kTransportName = @"longPolling";
                                 //If the connection is still active after raising the error wait 2 seconds 
                                 //before polling again so we arent hammering the server
                                 
-                                SRLogLongPolling(@"will poll again in %d seconds",_errorDelay);
+                                SRLogLongPolling(@"will poll again in %ld seconds",(long)[_errorDelay integerValue]);
 
                                 [[NSBlockOperation blockOperationWithBlock:^{
                                     #warning make sure request is not cancelled
@@ -172,7 +171,7 @@ static NSString * const kTransportName = @"longPolling";
                                     if (connection.state != disconnected) {
                                         [self pollingLoop:connection data:data initializeCallback:nil errorCallback:nil raiseReconnect:shouldRaiseReconnect];
                                     }
-                                }] performSelector:@selector(start) withObject:nil afterDelay:_errorDelay];
+                                }] performSelector:@selector(start) withObject:nil afterDelay:[_errorDelay integerValue]];
                             }
                         }
                     }
@@ -213,27 +212,21 @@ static NSString * const kTransportName = @"longPolling";
 
         [[NSBlockOperation blockOperationWithBlock:^{
             [callbackInvoker invoke:initializeCallback];
-        }] performSelector:@selector(start) withObject:nil afterDelay:_connectDelay];
+        }] performSelector:@selector(start) withObject:nil afterDelay:[_connectDelay integerValue]];
     }
     
     if (raiseReconnect){
         [[NSBlockOperation blockOperationWithBlock:^{
-            [reconnectInvoker invoke:^(SRConnection *conn) { [self fireReconnected:conn]; } withObject:connection];
-        }] performSelector:@selector(start) withObject:nil afterDelay:_reconnectDelay];
+            [reconnectInvoker invoke:^(id <SRConnectionInterface> conn) { [[self class] fireReconnected:conn]; } withObject:connection];
+        }] performSelector:@selector(start) withObject:nil afterDelay:[_reconnectDelay integerValue]];
     }
 }
 
-- (void)fireReconnected:(SRConnection *)connection {
++ (void)fireReconnected:(id <SRConnectionInterface>)connection {
     if ([connection changeState:reconnecting toState:connected]) {
         SRLogLongPolling(@"did fire reconnected");
-
         [connection didReconnect];
     }
-}
-
-- (void)dealloc
-{
-    
 }
 
 @end

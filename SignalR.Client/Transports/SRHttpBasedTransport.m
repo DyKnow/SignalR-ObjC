@@ -21,7 +21,7 @@
 //
 
 #import "SRHttpBasedTransport.h"
-#import "SRConnection.h"
+#import "SRConnectionInterface.h"
 #import "SRLog.h"
 #import "SRNegotiationResponse.h"
 
@@ -29,13 +29,13 @@
 
 @interface SRHttpBasedTransport()
 
-- (NSString *)getCustomQueryString:(SRConnection *)connection;
+- (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection;
 
 @end
 
 @implementation SRHttpBasedTransport
 
-- (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport {
+- (instancetype)initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport {
     if (self = [super init]) {
         _httpClient = httpClient;
         _transport = transport;
@@ -43,18 +43,18 @@
     return self;
 }
 
-- (void)negotiate:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection continueWith:block];
+- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
+    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
 }
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block {
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     NSString *negotiateUrl = [connection.url stringByAppendingString:@"negotiate"];
     
     [httpClient getAsync:negotiateUrl requestPreparer:^(id<SRRequest> request) {
         [request setTimeoutInterval:30];
         
         [connection prepareRequest:request];
-    } continueWith:^(id<SRResponse> response) {
+    } completionHandler:^(id<SRResponse> response) {
         NSString *raw = response.string;
         
         if (raw == nil || [raw isEqualToString:@""]) {
@@ -82,7 +82,7 @@
 #pragma mark -
 #pragma mark SRConnectionTransport Protocol
 
-- (void)start:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))tcs {
+- (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))tcs {
     [self onStart:connection data:data initializeCallback:^{
         if(tcs)
             tcs(nil);
@@ -95,18 +95,18 @@
     }];
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback {
+- (void)onStart:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback {
     [NSException raise:NSGenericException format:NSLocalizedString(@"Must use an overriding class of SRHttpBasedTransport",@"")];
 }
 
-- (void)send:(SRConnection *)connection withData:(NSString *)data continueWith:(void (^)(id response))block {
+- (void)send:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
     
     if (connection == nil) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Connection should be non-null",@"")];
     }
     
     NSString *url = [connection.url stringByAppendingString:@"send"];
-    url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
+    url = [url stringByAppendingFormat:@"%@",[self sendQueryString:connection]];
 
     NSDictionary *postData = @{
         @"data" : data
@@ -116,7 +116,7 @@
     
     [_httpClient postAsync:url requestPreparer:^(id<SRRequest> request) {
         [connection prepareRequest:request];
-    } postData:postData continueWith:^(id<SRResponse> response) {
+    } postData:postData completionHandler:^(id<SRResponse> response) {
         NSString *raw = response.string;
         
         if (raw == nil || [raw isEqualToString:@""]) {
@@ -129,20 +129,20 @@
     }];
 }
 
-- (void)abort:(SRConnection *)connection {
+- (void)abort:(id <SRConnectionInterface>)connection {
     SRLogHTTPTransport(@"will stop transport");
 
     NSString *url = [connection.url stringByAppendingString:@"abort"];
-    url = [url stringByAppendingFormat:@"%@",[self getSendQueryString:connection]];
+    url = [url stringByAppendingFormat:@"%@",[self sendQueryString:connection]];
     
-    [_httpClient postAsync:url requestPreparer:^(id <SRRequest> request){ [connection prepareRequest:request]; } continueWith:nil];
+    [_httpClient postAsync:url requestPreparer:^(id <SRRequest> request){ [connection prepareRequest:request]; } completionHandler:nil];
 }
 
 #pragma mark - 
 #pragma mark Protected Helpers
 
 //?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
-- (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data {
+- (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data {
     NSMutableString *queryStringBuilder = [NSMutableString string];
     [queryStringBuilder appendFormat:@"?transport=%@",_transport];
     [queryStringBuilder appendFormat:@"&connectionId=%@",[connection.connectionId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
@@ -169,11 +169,11 @@
 }
 
 //?transport=<transportname>&connectionId=<connectionId><customquerystring>
-- (NSString *)getSendQueryString:(SRConnection *)connection {
+- (NSString *)sendQueryString:(id <SRConnectionInterface>)connection {
     return [NSString stringWithFormat:@"?transport=%@&connectionId=%@%@",_transport,connection.connectionId,[self getCustomQueryString:connection]];
 }
 
-- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected {
+- (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected {
     *timedOut = NO;
     *disconnected = NO;
     
@@ -223,7 +223,7 @@
     }
 }
 
-- (void)updateGroups:(SRConnection *)connection resetGroups:(NSArray *)resetGroups addedGroups:(NSArray *)addedGroups removedGroups:(NSArray *)removedGroups {
+- (void)updateGroups:(id <SRConnectionInterface>)connection resetGroups:(NSArray *)resetGroups addedGroups:(NSArray *)addedGroups removedGroups:(NSArray *)removedGroups {
     if (resetGroups){
         [connection.groups removeAllObjects];
         for (id group in resetGroups) {
@@ -235,19 +235,13 @@
         }
         
         for (id group in removedGroups) {
-#warning TODO Make Sure this works properly...
             [connection.groups removeObject:group];
         }
     }
 }
 
-- (NSString *)getCustomQueryString:(SRConnection *)connection {
+- (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection {
     return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
 }
 
-- (void)dealloc
-{
-    _httpClient = nil;
-    _transport = nil;
-}
 @end

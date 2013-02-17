@@ -24,11 +24,15 @@
 
 @interface SRChunkBuffer ()
 
+@property (assign, nonatomic, readwrite) int offset;
+@property (strong, nonatomic, readwrite) NSMutableString *buffer;
+@property (strong, nonatomic, readwrite) NSMutableString *lineBuilder;
+
 @end
 
 @implementation SRChunkBuffer
 
-- (id)init {
+- (instancetype)init {
     if (self = [super init]) {
         _buffer = [NSMutableString string];
         _lineBuilder = [NSMutableString string];
@@ -59,12 +63,6 @@
     }
     
     return nil;
-}
-
-- (void)dealloc {
-    _offset = 0;
-    _buffer = nil;
-    _lineBuilder = nil;
 }
 
 @end

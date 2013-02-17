@@ -177,7 +177,7 @@
     [self clearMessages];
     [self clearUsers];
     
-    [hub invoke:@"GetUsers" withArgs:@[] continueWith:^(id users) {
+    [hub invoke:@"GetUsers" withArgs:@[] completionHandler:^(id users) {
         for(id user in users)
         {
             if([user isKindOfClass:[NSDictionary class]]){

@@ -28,9 +28,9 @@
 
 @implementation SRHubRegistrationData
 
-static NSString * const kName = @"name";
+static NSString * const kName = @"Name";
 
-- (id) init {
+- (instancetype) init {
     if (self = [super init]) {
         _name = [NSString stringWithFormat:@""];
     }
@@ -47,10 +47,6 @@ static NSString * const kName = @"name";
 
 - (NSString *)description {     
     return [NSString stringWithFormat:@"HubRegistrationData: Name=%@",_name];
-}
-
-- (void)dealloc {
-    _name = nil;
 }
 
 @end

@@ -33,7 +33,7 @@ static NSString * const kMethod = @"M";
 static NSString * const kArgs = @"A";
 static NSString * const kState = @"S";
 
-- (id) init {
+- (instancetype) init {
     if (self = [super init]) {
         _hub = [NSString stringWithFormat:@""];
 		_method = [NSString stringWithFormat:@""];
@@ -43,7 +43,7 @@ static NSString * const kState = @"S";
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary*)dict {
+- (instancetype)initWithDictionary:(NSDictionary*)dict {
 	if (self = [self init]) {
         self.hub  = [NSString stringWithFormat:@"%@",dict[kHub]];
         self.method = [NSString stringWithFormat:@"%@",dict[kMethod]];
@@ -66,13 +66,6 @@ static NSString * const kState = @"S";
 
 - (NSString *)description  {  
     return [NSString stringWithFormat:@"HubInvocation: Hub=%@ Method=%@",_hub,_method];
-}
-
-- (void)dealloc {
-    _hub = nil;
-    _method = nil;
-    _args = nil;
-    _state = nil;
 }
 
 @end

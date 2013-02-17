@@ -33,7 +33,7 @@ static NSString * const kUrl = @"Url";
 static NSString * const kProtocolVersion = @"ProtocolVersion";
 static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
 
-- (id) init {
+- (instancetype)init {
     if (self = [super init]) {
         _connectionId = [NSString stringWithFormat:@""];
 		_url = [NSString stringWithFormat:@""];
@@ -43,7 +43,7 @@ static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary*)dict {
+- (instancetype)initWithDictionary:(NSDictionary*)dict {
 	if (self = [super init]) {
 		_connectionId = [NSString stringWithFormat:@"%@",dict[kConnectionId]];
 		_url = [NSString stringWithFormat:@"%@",dict[kUrl]];
@@ -55,13 +55,6 @@ static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
 
 - (NSString *)description {  
     return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];
-}
-
-- (void)dealloc {
-    _connectionId = nil;
-    _url = nil;
-    _protocolVersion = nil;
-    _disconnectTimeout = nil;
 }
 
 @end

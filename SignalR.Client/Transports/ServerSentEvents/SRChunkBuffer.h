@@ -24,10 +24,6 @@
 
 @interface SRChunkBuffer : NSObject
 
-@property (assign, nonatomic, readwrite) int offset;
-@property (strong, nonatomic, readwrite) NSMutableString *buffer;
-@property (strong, nonatomic, readwrite) NSMutableString *lineBuilder;
-
 - (BOOL)hasChunks;
 - (void)add:(id)buffer length:(NSInteger)length;
 - (NSString *)readLine;

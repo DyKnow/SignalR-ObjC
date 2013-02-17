@@ -30,7 +30,9 @@
 
 @interface SRHubConnection ()
 
-- (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
+@property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
+
++ (NSString *)getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
 
 @end
 
@@ -39,40 +41,40 @@
 #pragma mark - 
 #pragma mark Initialization
 
-- (id)initWithURLString:(NSString *)URL {
+- (instancetype)initWithURLString:(NSString *)URL {
     return [self initWithURLString:URL useDefault:YES];
 }
 
-- (id)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault {
-    if (self = [super initWithURLString:[self _getUrl:URL useDefault:useDefault]])  {
+- (instancetype)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault {
+    if (self = [super initWithURLString:[[self class] getUrl:URL useDefault:useDefault]])  {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
     return [self initWithURLString:url queryString:queryString useDefault:YES];
 }
 
-- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault {
-    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] queryString:queryString]) {
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault {
+    if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] queryString:queryString]) {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
+- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
     return [self initWithURLString:url query:queryString useDefault:YES];
 }
 
-- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
-    if (self = [super initWithURLString:[self _getUrl:url useDefault:useDefault] query:queryString]) {
+- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
+    if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] query:queryString]) {
         _hubs = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
-- (SRHubProxy *)createHubProxy:(NSString *)hubName {
+- (id <SRHubProxyInterface>)createHubProxy:(NSString *)hubName {
     if (self.state != disconnected) {
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
     }
@@ -90,7 +92,7 @@
 #pragma mark - 
 #pragma mark Private
 
-- (NSString *)_getUrl:(NSString *)URL useDefault:(BOOL)useDefault {
++ (NSString *)getUrl:(NSString *)URL useDefault:(BOOL)useDefault {
     if([URL hasSuffix:@"/"] == false) {
         URL = [URL stringByAppendingString:@"/"];
     }
@@ -110,7 +112,7 @@
     NSMutableArray *data = [[NSMutableArray alloc] init];
     for(id key in _hubs) {
         SRHubRegistrationData *registration = [[SRHubRegistrationData alloc] init];
-        registration.name = [_hubs[key] hubName];
+        registration.name = key;
         [data addObject:registration];
     }
         
@@ -135,10 +137,6 @@
     }
     
     [super didReceiveData:data];
-}
-
-- (void)dealloc {
-    _hubs = nil;
 }
 
 @end

@@ -21,7 +21,7 @@
 //
 
 #import "SRServerSentEventsTransport.h"
-#import "SRConnection.h"
+#import "SRConnectionInterface.h"
 #import "SRDefaultHttpClient.h"
 #import "SREventSourceStreamReader.h"
 #import "SRExceptionHelper.h"
@@ -31,7 +31,7 @@
 
 @interface SRServerSentEventsTransport ()
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
+- (void)openConnection:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 @end
 
@@ -39,45 +39,45 @@
 
 static NSString * const kTransportName = @"serverSentEvents";
 
-- (id)init {
+- (instancetype)init {
     if(self = [self initWithHttpClient:[[SRDefaultHttpClient alloc] init]]) {
     }
     return self;
 }
 
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient {
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient {
     if (self = [super initWithHttpClient:httpClient transport:kTransportName]) {
-        _connectionTimeout = 2;
-        _reconnectDelay = 2;
+        _connectionTimeout = @2;
+        _reconnectDelay = @2;
     }
     return self;
 }
 
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback {
+- (void)onStart:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback {
     [self openConnection:connection data:data initializeCallback:initializeCallback errorCallback:errorCallback];
 }
 
-- (void)reconnect:(SRConnection *)connection data:(NSString *)data {
+- (void)reconnect:(id <SRConnectionInterface>)connection data:(NSString *)data {
     SRLogServerSentEvents(@"reconnecting");
     
     //Wait for a bit before reconnecting
     [[NSBlockOperation blockOperationWithBlock:^{
         #warning make sure request is not cancelled
         //if (!disconnectToken.IsCancellationRequested && [connection ensureReconnecting]) {
-        if ([connection ensureReconnecting]) {
+        //if ([connection ensureReconnecting]) {
             //Now attempt a reconnect
             [self openConnection:connection data:data initializeCallback:nil errorCallback:nil];
-        }
-    }] performSelector:@selector(start) withObject:nil afterDelay:_reconnectDelay];
+        //}
+    }] performSelector:@selector(start) withObject:nil afterDelay:[_reconnectDelay integerValue]];
 }
 
-- (void)openConnection:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
+- (void)openConnection:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback
 {
     // If we're reconnecting add /connect to the url
     BOOL _reconnecting = initializeCallback == nil;
     SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
     
-    NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingFormat:@"%@",[self getReceiveQueryString:connection data:data]];
+    NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingFormat:@"%@",[self receiveQueryString:connection data:data]];
     __block id <SRRequest> request = nil;
     __block SREventSourceStreamReader *eventSource;
 
@@ -86,7 +86,7 @@ static NSString * const kTransportName = @"serverSentEvents";
         [connection prepareRequest:request];
 
         [request setAccept:@"text/event-stream"];
-    } continueWith:^(id<SRResponse> response) {
+    } completionHandler:^(id<SRResponse> response) {
         BOOL isFaulted = (response.error || 
                           [response.string isEqualToString:@""] ||
                           [response.string isEqualToString:@"null"]);
@@ -225,7 +225,7 @@ static NSString * const kTransportName = @"serverSentEvents";
     
     if (errorCallback != nil) {
         [[NSBlockOperation blockOperationWithBlock:^{
-            [callbackInvoker invoke:^(callback cb, SRConnection *conn) {
+            [callbackInvoker invoke:^(callback cb, id <SRConnectionInterface> conn) {
                 [connection disconnect];
                 
                 SRErrorByReferenceBlock errorBlock = ^(NSError ** error) {
@@ -243,13 +243,8 @@ static NSString * const kTransportName = @"serverSentEvents";
             }
             withCallback:errorCallback
             withObject:connection];
-        }] performSelector:@selector(start) withObject:nil afterDelay:_connectionTimeout];
+        }] performSelector:@selector(start) withObject:nil afterDelay:[_connectionTimeout integerValue]];
     }
-}
-
-- (void)dealloc {
-    _connectionTimeout = 0;
-    _reconnectDelay = 0;
 }
 
 @end

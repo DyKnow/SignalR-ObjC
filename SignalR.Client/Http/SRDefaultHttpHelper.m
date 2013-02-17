@@ -73,7 +73,7 @@ didReceiveResponse:(NSURLResponse *)response {
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block;
++ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters completionHandler:(SRCompletionHandler)block;
 
 #pragma mark - 
 #pragma mark POST Requests Implementation
@@ -88,7 +88,7 @@ didReceiveResponse:(NSURLResponse *)response {
  * This can be used to modify properties of the POST, for example timeout or cache protocol
  * @param block: A function to be called when the post finishes. The block should handle both SUCCESS and FAILURE
  */
-+ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block;
++ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData completionHandler:(SRCompletionHandler)block;
 
 @end
 
@@ -97,23 +97,23 @@ didReceiveResponse:(NSURLResponse *)response {
 #pragma mark - 
 #pragma mark GET Requests Implementation
 
-+ (void)getAsync:(NSString *)url continueWith:(SRContinueWithBlock)block {
-    [[self class] getAsync:url requestPreparer:nil continueWith:block];
++ (void)getAsync:(NSString *)url completionHandler:(SRCompletionHandler)block {
+    [[self class] getAsync:url requestPreparer:nil completionHandler:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block {
-    [[self class] getAsync:url requestPreparer:requestPreparer parameters:[[NSDictionary alloc] init] continueWith:block];
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer completionHandler:(SRCompletionHandler)block {
+    [[self class] getAsync:url requestPreparer:requestPreparer parameters:[[NSDictionary alloc] init] completionHandler:block];
 }
 
-+ (void)getAsync:(NSString *)url parameters:(id)parameters continueWith:(SRContinueWithBlock)block {
-    [[self class] getAsync:url requestPreparer:nil parameters:parameters continueWith:block];
++ (void)getAsync:(NSString *)url parameters:(id)parameters completionHandler:(SRCompletionHandler)block {
+    [[self class] getAsync:url requestPreparer:nil parameters:parameters completionHandler:block];
 }
 
-+ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block {
-    [[self class] getInternal:url requestPreparer:requestPreparer parameters:parameters continueWith:block];
++ (void)getAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters completionHandler:(SRCompletionHandler)block {
+    [[self class] getInternal:url requestPreparer:requestPreparer parameters:parameters completionHandler:block];
 }
 
-+ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters continueWith:(SRContinueWithBlock)block {
++ (void)getInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer parameters:(id)parameters completionHandler:(SRCompletionHandler)block {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
@@ -155,23 +155,23 @@ didReceiveResponse:(NSURLResponse *)response {
 #pragma mark -
 #pragma mark POST Requests Implementation
 
-+ (void)postAsync:(NSString *)url continueWith:(SRContinueWithBlock)block {
-    [[self class] postAsync:url requestPreparer:nil continueWith:block];
++ (void)postAsync:(NSString *)url completionHandler:(SRCompletionHandler)block {
+    [[self class] postAsync:url requestPreparer:nil completionHandler:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer continueWith:(SRContinueWithBlock)block {
-    [[self class] postAsync:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] continueWith:block];
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer completionHandler:(SRCompletionHandler)block {
+    [[self class] postAsync:url requestPreparer:requestPreparer postData:[[NSDictionary alloc] init] completionHandler:block];
 }
 
-+ (void)postAsync:(NSString *)url postData:(id)postData continueWith:(SRContinueWithBlock)block {
-    [[self class] postAsync:url requestPreparer:nil postData:postData continueWith:block];
++ (void)postAsync:(NSString *)url postData:(id)postData completionHandler:(SRCompletionHandler)block {
+    [[self class] postAsync:url requestPreparer:nil postData:postData completionHandler:block];
 }
 
-+ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block {
-    [[self class] postInternal:url requestPreparer:requestPreparer postData:postData continueWith:block];
++ (void)postAsync:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData completionHandler:(SRCompletionHandler)block {
+    [[self class] postInternal:url requestPreparer:requestPreparer postData:postData completionHandler:block];
 }
 
-+ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData continueWith:(SRContinueWithBlock)block {
++ (void)postInternal:(NSString *)url requestPreparer:(SRPrepareRequestBlock)requestPreparer postData:(id)postData completionHandler:(SRCompletionHandler)block {
     NSMutableArray *components = [NSMutableArray array];
     for (NSString *key in [postData allKeys]) {
         [components addObject:[NSString stringWithFormat:@"%@=%@",key,postData[key]]];
@@ -182,7 +182,7 @@ didReceiveResponse:(NSURLResponse *)response {
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%ld", (unsigned long)[requestData length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody: requestData];
     [request setTimeoutInterval:240];
     if(requestPreparer != nil) {

@@ -35,7 +35,7 @@ void (^prepareRequest)(id);
 @interface SRConnection ()
 
 @property (strong, nonatomic, readonly) SRVersion *assemblyVersion;
-@property (strong, nonatomic, readonly) id <SRClientTransport> transport;
+@property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
 
 @property (assign, nonatomic, readwrite) connectionState state;
@@ -43,55 +43,65 @@ void (^prepareRequest)(id);
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 @property (strong, nonatomic, readwrite) NSString *queryString;
 
-- (void)negotiate:(id <SRClientTransport>)transport;
+- (void)negotiate:(id <SRClientTransportInterface>)transport;
 - (void)verifyProtocolVersion:(NSString *)versionString;
 - (NSString *)createQueryString:(NSDictionary *)queryString;
+- (NSString *)createUserAgentString:(NSString *)client;
 
 @end
 
 @implementation SRConnection
 
+@synthesize messageId = _messageId;
+@synthesize groups = _groups;
+@synthesize items = _items;
+@synthesize connectionId = _connectionId;
+@synthesize url = _url;
+@synthesize queryString = _queryString;
+@synthesize state = _state;
+@synthesize credentials = _credentials;
+@synthesize headers = _headers;
+
 #pragma mark - 
 #pragma mark Initialization
 
-+ (id)connectionWithURL:(NSString *)url {
++ (instancetype)connectionWithURL:(NSString *)url {
     return [[[self class] alloc] initWithURLString:url];
 }
 
-+ (id)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString {
++ (instancetype)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString {
     return [[[self class] alloc] initWithURLString:url query:queryString];
 }
 
-+ (id)connectionWithURL:(NSString *)url queryString:(NSString *)queryString {
++ (instancetype)connectionWithURL:(NSString *)url queryString:(NSString *)queryString {
     return [[[self class] alloc] initWithURLString:url queryString:queryString];
 }
 
-- (id)initWithURLString:(NSString *)url {
-    return [self initWithURLString:url queryString:@""];
+- (instancetype)initWithURLString:(NSString *)url {
+    return [self initWithURLString:url queryString:nil];
 }
 
-- (id)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
-    return [self initWithURLString:url queryString:[self createQueryString:queryString]];
+- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
+    return [self initWithURLString:url queryString:[[self class] createQueryString:queryString]];
 }
 
-- (id)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
     if (self = [super init]) {
-        
         if (url == nil) {
             [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
         }
         
-        if([queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch].location != NSNotFound) {
+        if(queryString && [queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch].location != NSNotFound) {
             [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url cannot contain query string directly. Pass query string values in using available overload.",@"")];
         }
         
-        if([url hasSuffix:@"/"] == false) {
+        if([url hasSuffix:@"/"] == NO) {
             url = [url stringByAppendingString:@"/"];
         }
         
         _url = url;
         _queryString = queryString;
-        _groups = [NSMutableArray array];
+        _groups = [NSMutableSet set];
         _items = [NSMutableDictionary dictionary];
         _headers = [NSMutableDictionary dictionary];
         _state = disconnected;
@@ -103,15 +113,15 @@ void (^prepareRequest)(id);
 #pragma mark Connection management
 
 - (void)start {
-    [self startHttpClient:[[SRDefaultHttpClient alloc] init]];
+    [self startHttpClient:[SRDefaultHttpClient new]];
 }
 
 - (void)startHttpClient:(id <SRHttpClient>)httpClient {
     // Pick the best transport supported by the client
-    [self start:[[SRAutoTransport alloc] initWithHttpClient:httpClient]];
+    [self startTransport:[[SRAutoTransport alloc] initWithHttpClient:httpClient]];
 }
 
-- (void)start:(id <SRClientTransport>)transport {
+- (void)startTransport:(id <SRClientTransportInterface>)transport {
     if (![self changeState:disconnected toState:connecting]) {
         return;
     }
@@ -121,10 +131,10 @@ void (^prepareRequest)(id);
     [self negotiate:transport];
 }
 
-- (void)negotiate:(id<SRClientTransport>)transport {
+- (void)negotiate:(id<SRClientTransportInterface>)transport {
     SRLogConnection(@"will negotiate");
     
-    [transport negotiate:self continueWith:^(SRNegotiationResponse *negotiationResponse) {
+    [transport negotiate:self completionHandler:^(SRNegotiationResponse *negotiationResponse) {
         SRLogConnection(@"negotiation was successful %@",negotiationResponse);
 
         [self verifyProtocolVersion:negotiationResponse.protocolVersion];
@@ -135,7 +145,7 @@ void (^prepareRequest)(id);
             
             NSString *data = [self onSending];
             
-            [_transport start:self withData:data continueWith:^(id task) {
+            [_transport start:self withData:data completionHandler:^(id task) {
                 [self changeState:connecting toState:connected];
                 
                 if(self.started != nil) {
@@ -194,11 +204,11 @@ void (^prepareRequest)(id);
         
         _state = disconnected;
         
-        if(_closed != nil) {
+        if(self.closed != nil) {
             self.closed();
         }
         
-        if (_delegate && [_delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnectionDidClose:)]) {
             [self.delegate SRConnectionDidClose:self];
         }
     }
@@ -212,10 +222,10 @@ void (^prepareRequest)(id);
 }
 
 - (void)send:(id)object {
-    [self send:object continueWith:nil];
+    [self send:object completionHandler:nil];
 }
 
-- (void)send:(id)object continueWith:(void (^)(id response))block {
+- (void)send:(id)object completionHandler:(void (^)(id response))block {
     if (self.state == disconnected) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
@@ -242,7 +252,7 @@ void (^prepareRequest)(id);
     } else {
         message = [object SRJSONRepresentation];
     }
-    [_transport send:self withData:message continueWith:block];
+    [_transport send:self withData:message completionHandler:block];
 }
 
 #pragma mark - 
@@ -347,24 +357,6 @@ void (^prepareRequest)(id);
         [self willReconnect];
     }
     return (self.state == reconnecting);
-}
-
-- (void)dealloc {
-    _assemblyVersion = nil;
-    _transport = nil;
-    _started = nil;
-    _received = nil;
-    _error = nil;
-    _closed = nil;
-    _groups = nil;
-    _credentials = nil;
-    _url = nil;
-    _messageId = nil;
-    _connectionId = nil;
-    _items = nil;
-    _queryString = nil;
-    _headers = nil;
-    _delegate = nil;
 }
 
 @end

@@ -25,8 +25,7 @@
 #import "SRLog.h"
 #import "SRSseEvent.h"
 
-typedef enum
-{
+typedef enum {
     initial,
     processing,
     stopped
@@ -53,10 +52,8 @@ typedef enum
 
 @implementation SREventSourceStreamReader   
 
-- (id)initWithStream:(NSOutputStream *)steam
-{
-    if (self = [super init])
-    {
+- (instancetype)initWithStream:(NSOutputStream *)steam {
+    if (self = [super init]) {
         _stream = steam;
         _buffer = [[SRChunkBuffer alloc] init];
         _reading = initial;
@@ -65,37 +62,28 @@ typedef enum
     return self;
 }
 
-- (void)start
-{
+- (void)start {
     _stream.delegate = self;
     [_stream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
-- (BOOL)processing
-{
+- (BOOL)processing {
     return _reading == processing;
 }
 
-- (void)close
-{
+- (void)close {
     [self onClosed:nil];
 }
 
-- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
-{
-    switch (eventCode)
-    {
-        case NSStreamEventOpenCompleted:
-        {
+- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode {
+    switch (eventCode) {
+        case NSStreamEventOpenCompleted: {
             SRLogServerSentEvents(@"Opened");
 
             _reading = processing;
             [self onOpened];
-        }
-        case NSStreamEventHasSpaceAvailable:
-        {
-            if (![self processing])
-            {
+        } case NSStreamEventHasSpaceAvailable: {
+            if (![self processing]) {
                 return;
             }
             
@@ -103,17 +91,14 @@ typedef enum
             buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
             
             NSInteger read = [buffer length];            
-            if(read > 0)
-            {
+            if(read > 0) {
                 // Put chunks in the buffer
                 _offset = _offset + read;
                 [self processBuffer:buffer read:read];
             }
             
             break;
-        }
-        case NSStreamEventErrorOccurred:
-        {
+        } case NSStreamEventErrorOccurred: {
             [self onClosed:[stream streamError]];
             break;
         }
@@ -125,23 +110,19 @@ typedef enum
     }
 }
 
-- (void)processBuffer:(NSData *)buffer read:(NSInteger)read
-{
+- (void)processBuffer:(NSData *)buffer read:(NSInteger)read {
     [_buffer add:buffer length:read];
     
-    while ([_buffer hasChunks])
-    {
+    while ([_buffer hasChunks]) {
         NSString *line = [_buffer readLine];
         
         // No new lines in the buffer so stop processing
-        if (line == nil)
-        {
+        if (line == nil) {
             break;
         }
         
         SRSseEvent *sseEvent = nil;
-        if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent])
-        {
+        if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent]) {
             continue;
         }
         
@@ -188,21 +169,9 @@ typedef enum
         [_stream close];
     }
     
-    if (previousState != stopped && self.disabled)
-    {
+    if (previousState != stopped && self.disabled) {
         self.disabled();
     }
-}
-
-- (void)dealloc {
-    _opened = nil;
-    _message = nil;
-    _closed = nil;
-    _disabled = nil;
-    _stream.delegate = nil;
-    _stream = nil;
-    _buffer = nil;
-    _reading = NO;
 }
 
 @end

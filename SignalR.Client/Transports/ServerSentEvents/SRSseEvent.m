@@ -28,7 +28,7 @@
 
 @implementation SRSseEvent
 
-- (id)initWithType:(EventType)type data:(NSString *)data {
+- (instancetype)initWithType:(EventType)type data:(NSString *)data {
     if (self = [super init]) {
         _eventType = type;
         _data = data;
@@ -54,10 +54,6 @@
     }
     
     return NO;
-}
-
-- (void)dealloc {
-    _data = nil;
 }
 
 @end

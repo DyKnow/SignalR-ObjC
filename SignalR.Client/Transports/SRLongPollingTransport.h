@@ -41,23 +41,23 @@
  *
  * By default, this is 5 seconds
  */
-@property (assign, nonatomic, readwrite) NSInteger reconnectDelay;
+@property (strong, nonatomic, readwrite) NSNumber *reconnectDelay;
 
 /**
  * The time to wait after an error happens to continue polling.
  *
  * By default, this is 2 seconds
  */
-@property (assign, nonatomic, readwrite) NSInteger errorDelay;
+@property (strong, nonatomic, readwrite) NSNumber *errorDelay;
 
 /**
  * The time to wait after the initial connect http request before it is considered open.
  *
  * By default, this is 2 seconds
  */
-@property (assign, nonatomic, readwrite) NSInteger connectDelay;
+@property (strong, nonatomic, readwrite) NSNumber *connectDelay;
 
 
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient;
 
 @end

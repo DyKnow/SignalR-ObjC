@@ -24,8 +24,7 @@
 
 @implementation SRExceptionHelper
 
-+ (BOOL)isRequestAborted:(NSError *)error
-{
++ (BOOL)isRequestAborted:(NSError *)error {
     return (error != nil && (error.code == NSURLErrorCancelled));
 }
 

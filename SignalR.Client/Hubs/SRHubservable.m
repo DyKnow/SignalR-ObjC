@@ -20,7 +20,6 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRHubProxy.h"
 #import "SRHubservable.h"
 #import "SRSubscription.h"
 
@@ -33,11 +32,11 @@
 #pragma mark - 
 #pragma mark Initialization
 
-+ (id)observe:(SRHubProxy *)proxy event:(NSString *)eventName {
++ (instancetype)observe:(id <SRHubProxyInterface>)proxy event:(NSString *)eventName {
     return [[SRHubservable alloc] initWithProxy:proxy eventName:eventName];
 }
 
-- (id)initWithProxy:(SRHubProxy *)proxy eventName:(NSString *)eventName {
+- (instancetype)initWithProxy:(id <SRHubProxyInterface>)proxy eventName:(NSString *)eventName {
     if (self = [super init]) {
         _proxy = proxy;
         _eventName = eventName;
@@ -55,11 +54,6 @@
 
 - (NSString *)description {  
     return [NSString stringWithFormat:@"Hubservable: Hub:%@ Event=%@",_proxy, _eventName];
-}
-
-- (void)dealloc {
-    _proxy = nil;
-    _eventName = nil;
 }
 
 @end
