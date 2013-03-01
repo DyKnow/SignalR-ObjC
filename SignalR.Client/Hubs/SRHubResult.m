@@ -28,13 +28,14 @@
 
 @implementation SRHubResult
 
+static NSString * const kId = @"I";
 static NSString * const kResult = @"R";
 static NSString * const kError = @"E";
 static NSString * const kState = @"S";
 
 - (instancetype) init {
     if (self = [super init]) {
-        _error = [NSString stringWithFormat:@""];
+        _error = @"";
 		_state = @{};
     }
     return self;
@@ -42,6 +43,7 @@ static NSString * const kState = @"S";
 
 - (instancetype)initWithDictionary:(NSDictionary*)dict {
 	if (self = [self init]) {
+        self.id = dict[kId];
         self.result  = dict[kResult];
         self.error = dict[kError];
         self.state = dict[kState];
@@ -50,7 +52,7 @@ static NSString * const kState = @"S";
 }
 
 - (NSString *)description  {  
-    return [NSString stringWithFormat:@"HubResult: Result:%@ Error=%@ State=%@",_result,_error,_state];
+    return [NSString stringWithFormat:@"HubResult: Id=%@ Result:%@ Error=%@ State=%@",_id,_result,_error,_state];
 }
 
 @end

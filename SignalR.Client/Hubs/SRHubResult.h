@@ -32,6 +32,8 @@
 /// @name Properties
 ///-------------------------------
 
+@property (strong, nonatomic, readwrite) NSString *id;
+
 /**
  * A generic result object received from the server
  */

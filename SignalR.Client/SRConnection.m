@@ -54,7 +54,8 @@ void (^prepareRequest)(id);
 @implementation SRConnection
 
 @synthesize messageId = _messageId;
-@synthesize groups = _groups;
+@synthesize groupsToken = _groupsToken;
+@synthesize connectionToken = _connectionToken;
 @synthesize items = _items;
 @synthesize connectionId = _connectionId;
 @synthesize url = _url;
@@ -102,7 +103,6 @@ void (^prepareRequest)(id);
         
         _url = url;
         _queryString = queryString;
-        _groups = [NSMutableSet set];
         _items = [NSMutableDictionary dictionary];
         _headers = [NSMutableDictionary dictionary];
         _state = disconnected;
@@ -143,6 +143,7 @@ void (^prepareRequest)(id);
         if(negotiationResponse.connectionId) {
             _connectionId = negotiationResponse.connectionId;
             _disconnectTimeout = negotiationResponse.disconnectTimeout;
+            _connectionToken = negotiationResponse.connectionToken;
             
             NSString *data = [self onSending];
             
@@ -185,7 +186,7 @@ void (^prepareRequest)(id);
     SRVersion *version = nil;
     if((versionString == nil || [versionString isEqualToString:@""] == YES) ||
        ![SRVersion tryParse:versionString forVersion:&version] ||
-       !(version.major == 1 && version.minor == 1)) {
+       !(version.major == 1 && version.minor == 2)) {
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Incompatible Protocol Version",@"NSInternalInconsistencyException")];
     }
 }
@@ -300,7 +301,9 @@ void (^prepareRequest)(id);
 }
 
 - (void)didReconnect {
-
+    [NSObject cancelPreviousPerformRequestsWithTarget:self.disconnectTimeoutOperation
+                                             selector:@selector(start)
+                                               object:nil];
     self.disconnectTimeoutOperation = nil;
     
     if(self.reconnected != nil) {

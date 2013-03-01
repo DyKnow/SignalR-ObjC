@@ -21,7 +21,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnectionInterface.h"
+#import "SRHubConnectionInterface.h"
 #import "SRHubProxyInterface.h"
     
 /**
@@ -42,7 +42,7 @@
  * @param hubname an `NSString` representing the hubname 
  * @return an `SRHubProxy` object 
  */
-- (instancetype)initWithConnection:(id <SRConnectionInterface>)connection hubName:(NSString *)hubname;
+- (instancetype)initWithConnection:(id <SRHubConnectionInterface>)connection hubName:(NSString *)hubname;
 
 ///-------------------------------
 /// @name Subscription Management

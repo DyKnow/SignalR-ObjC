@@ -84,7 +84,7 @@ static NSString * const kTransportName = @"longPolling";
     
     url = [url stringByAppendingString:[self receiveQueryString:connection data:data]];
     
-    [self.httpClient postAsync:url requestPreparer:^(id<SRRequest> req) {
+    [self.httpClient post:url requestPreparer:^(id<SRRequest> req) {
         request = req;
         [connection prepareRequest:request];
     } completionHandler:^(id<SRResponse> response) {

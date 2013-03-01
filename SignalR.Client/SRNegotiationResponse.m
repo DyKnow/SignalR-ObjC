@@ -32,13 +32,17 @@ static NSString * const kConnectionId = @"ConnectionId";
 static NSString * const kUrl = @"Url";
 static NSString * const kProtocolVersion = @"ProtocolVersion";
 static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
+static NSString * const kConnectionToken = @"ConnectionToken";
+static NSString * const kTryWebSockets = @"TryWebSockets";
 
 - (instancetype)init {
     if (self = [super init]) {
-        _connectionId = [NSString stringWithFormat:@""];
-		_url = [NSString stringWithFormat:@""];
-        _protocolVersion = [NSString stringWithFormat:@""];
+        _connectionId = @"";
+        _connectionToken = @"";
+		_url = @"";
+        _protocolVersion = @"";
         _disconnectTimeout = @0;
+        _tryWebSockets = NO;
     }
     return self;
 }
@@ -46,15 +50,17 @@ static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
 - (instancetype)initWithDictionary:(NSDictionary*)dict {
 	if (self = [super init]) {
 		_connectionId = [NSString stringWithFormat:@"%@",dict[kConnectionId]];
+        _connectionToken = dict[kConnectionToken];
 		_url = [NSString stringWithFormat:@"%@",dict[kUrl]];
         _protocolVersion = [NSString stringWithFormat:@"%@",dict[kProtocolVersion]];
         _disconnectTimeout = dict[kDisconnectTimeout];
+        _tryWebSockets = [[dict objectForKey:kTryWebSockets] boolValue];
 	}
 	return self;
 }
 
 - (NSString *)description {  
-    return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ Url=%@ ProtocolVersion=%@",_connectionId,_url,_protocolVersion];
+    return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ ConnectionToken=%@ Url=%@ ProtocolVersion=%@ TryWebSockets=%d",_connectionId,_connectionToken,_url,_protocolVersion,_tryWebSockets];
 }
 
 @end

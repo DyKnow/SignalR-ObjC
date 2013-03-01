@@ -353,6 +353,7 @@
 		39EBAC3F16D07D5100C6F359 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.md; path = ../LICENSE.md; sourceTree = "<group>"; };
 		39EBAC4016D07D5100C6F359 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SREventSourceStreamReaderTests.m; path = SignalR.Client.Tests/SREventSourceStreamReaderTests.m; sourceTree = "<group>"; };
+		8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubConnectionInterface.h; sourceTree = "<group>"; };
 		E1168910CBED44F49353CF85 /* Pods-SignalR.Client.OSX.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.OSX.xcconfig"; path = "../Pods/Pods-SignalR.Client.OSX.xcconfig"; sourceTree = SOURCE_ROOT; };
 		F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -604,6 +605,7 @@
 				3920783415AF13F6009B959E /* SRHubservable.m */,
 				3920783515AF13F6009B959E /* SRSubscription.h */,
 				3920783615AF13F6009B959E /* SRSubscription.m */,
+				8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */,
 			);
 			path = Hubs;
 			sourceTree = "<group>";
