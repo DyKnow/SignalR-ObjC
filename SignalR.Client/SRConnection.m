@@ -338,7 +338,7 @@ void (^prepareRequest)(id);
 
 - (NSString *)createUserAgentString:(NSString *)client {
     if(_assemblyVersion == nil) {
-        _assemblyVersion = [[SRVersion alloc] initWithMajor:1 minor:0 build:0 revision:2];
+        _assemblyVersion = [[SRVersion alloc] initWithMajor:1 minor:0 build:1 revision:0];
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR

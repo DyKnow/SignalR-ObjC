@@ -42,4 +42,4 @@
 
 ## [1.0.1]((https://github.com/DyKnow/SignalR-ObjC/compare/1.0rc1...1.0.1)
 
-* Adds support for SignalR protocol version 1.2 (SignalR library v1.0.0)
+* Adds support for SignalR protocol version 1.2 (SignalR library v1.0.1)

@@ -96,7 +96,7 @@
     NSString *id = [[NSNumber numberWithInt:_callbackId] stringValue];
     _callbacks[id] = callback;
     _callbackId += 1;
-    return id;
+    return [[NSNumber numberWithInt:_callbackId] stringValue];
 }
 
 #pragma mark - 
