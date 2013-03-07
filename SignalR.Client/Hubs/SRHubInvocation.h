@@ -33,6 +33,8 @@
 /// @name Properties
 ///-------------------------------
 
+@property (strong, nonatomic, readwrite) NSString *callbackId;
+
 /**
  * The `NSString` object corresponding to the hub to preform an invocation on
  */

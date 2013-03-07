@@ -48,7 +48,7 @@ static NSString * const kTransportName = @"serverSentEvents";
 
 - (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient {
     if (self = [super initWithHttpClient:httpClient transport:kTransportName]) {
-        _connectionTimeout = @2;
+        _connectionTimeout = @5;
         _reconnectDelay = @2;
     }
     return self;
@@ -81,7 +81,7 @@ static NSString * const kTransportName = @"serverSentEvents";
     __block SREventSourceStreamReader *eventSource;
     __block id requestDisposer;
 
-    [self.httpClient getAsync:url requestPreparer:^(id<SRRequest> req) {
+    [self.httpClient get:url requestPreparer:^(id<SRRequest> req) {
         request = req;
         [connection prepareRequest:request];
 

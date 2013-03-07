@@ -46,6 +46,11 @@
     return self;
 }
 
+- (NSString *)name {
+    if (self.transport == nil) return nil;
+    return self.transport.name;
+}
+
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
 }

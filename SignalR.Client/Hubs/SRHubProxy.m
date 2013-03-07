@@ -25,10 +25,11 @@
 #import "SRHubResult.h"
 #import "SRLog.h"
 #import "SRSubscription.h"
+#import "SRHubConnectionInterface.h"
 
 @interface SRHubProxy ()
 
-@property (assign, nonatomic, readonly) id <SRConnectionInterface> connection;
+@property (assign, nonatomic, readonly) id <SRHubConnectionInterface> connection;
 @property (strong, nonatomic, readonly) NSString *hubName;
 @property (strong, nonatomic, readonly) NSMutableDictionary *state;
 @property (strong, nonatomic, readonly) NSMutableDictionary *subscriptions;
@@ -41,7 +42,7 @@
 #pragma mark - 
 #pragma mark Initialization
 
-- (instancetype)initWithConnection:(id <SRConnectionInterface>)connection hubName:(NSString *)hubname {
+- (instancetype)initWithConnection:(id <SRHubConnectionInterface>)connection hubName:(NSString *)hubname {
     if (self = [super init]) {
         _connection = connection;
         _hubName = hubname;
@@ -115,43 +116,41 @@
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument args is null",@"NSInvalidArgumentException")];
     }
     
+    NSString *callbackId = [_connection registerCallback:^(SRHubResult *hubResult) {
+        if (hubResult != nil) {
+            if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil) {
+                NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
+                userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:@"%@",hubResult.error];
+                NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
+                                                     code:0
+                                                 userInfo:userInfo];
+                [_connection didReceiveError:error];
+            }
+            
+            if(![hubResult.state isKindOfClass:[NSNull class]] && hubResult.state != nil) {
+                for (id key in hubResult.state) {
+                    [self setMember:key object:(hubResult.state)[key]];
+                }
+            }
+            
+            if (block != nil) {
+                block(hubResult.result);
+            }
+        }
+    }];
+    
     SRHubInvocation *hubData = [[SRHubInvocation alloc] init];
     hubData.hub = _hubName;
     hubData.method = method;
     hubData.args = [NSMutableArray arrayWithArray:args];
+    hubData.callbackId = callbackId;
     
     if (_state.count > 0) {
         hubData.state = _state;
     }
     
-    [_connection send:hubData completionHandler:^(NSDictionary *response) {
-        SRLogConnection(@"did receive response %@",response);
-
-        if(response) {
-            SRHubResult *hubResult = [[SRHubResult alloc] initWithDictionary:response];
-            if (hubResult != nil) {
-                if(![hubResult.error isKindOfClass:[NSNull class]] && hubResult.error != nil) {
-                    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-                    userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
-                    userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:@"%@",hubResult.error];
-                    NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                                         code:0 
-                                                     userInfo:userInfo];
-                    [_connection didReceiveError:error];
-                }
-                
-                if(![hubResult.state isKindOfClass:[NSNull class]] && hubResult.state != nil) {
-                    for (id key in hubResult.state) {
-                        [self setMember:key object:(hubResult.state)[key]];
-                    }
-                }
-                
-                if(block != nil) {
-                    block(hubResult.result);
-                }
-            }
-        }
-    }];
+    [_connection send:hubData];
 }
 
 - (NSString *)description {     
