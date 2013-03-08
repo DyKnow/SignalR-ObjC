@@ -28,6 +28,7 @@
 
 @implementation SRHubInvocation
 
+static NSString * const kCallbackId = @"I";
 static NSString * const kHub = @"H";
 static NSString * const kMethod = @"M";
 static NSString * const kArgs = @"A";
@@ -35,6 +36,7 @@ static NSString * const kState = @"S";
 
 - (instancetype) init {
     if (self = [super init]) {
+        _callbackId = @"";
         _hub = [NSString stringWithFormat:@""];
 		_method = [NSString stringWithFormat:@""];
         _args = [NSMutableArray array];
@@ -45,6 +47,7 @@ static NSString * const kState = @"S";
 
 - (instancetype)initWithDictionary:(NSDictionary*)dict {
 	if (self = [self init]) {
+        self.callbackId = dict[kCallbackId];
         self.hub  = [NSString stringWithFormat:@"%@",dict[kHub]];
         self.method = [NSString stringWithFormat:@"%@",dict[kMethod]];
         self.args = dict[kArgs];
@@ -56,6 +59,7 @@ static NSString * const kState = @"S";
 - (id)proxyForJson {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     
+    dict[kCallbackId] = _callbackId;
     dict[kHub] = [NSString stringWithFormat:@"%@",_hub];
     dict[kMethod] = [NSString stringWithFormat:@"%@",_method];
     dict[kArgs] = _args;
@@ -65,7 +69,7 @@ static NSString * const kState = @"S";
 }
 
 - (NSString *)description  {  
-    return [NSString stringWithFormat:@"HubInvocation: Hub=%@ Method=%@",_hub,_method];
+    return [NSString stringWithFormat:@"HubInvocation: CallbackId=%@ Hub=%@ Method=%@",_callbackId,_hub,_method];
 }
 
 @end

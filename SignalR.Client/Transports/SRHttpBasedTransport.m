@@ -29,7 +29,7 @@
 
 @interface SRHttpBasedTransport()
 
-- (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection;
++ (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection;
 
 @end
 
@@ -43,14 +43,19 @@
     return self;
 }
 
+- (NSString *)name {
+    return _transport;
+}
+
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
 }
 
 + (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     NSString *negotiateUrl = [connection.url stringByAppendingString:@"negotiate"];
+    negotiateUrl = [negotiateUrl stringByAppendingString:[self getCustomQueryString:connection]];
     
-    [httpClient getAsync:negotiateUrl requestPreparer:^(id<SRRequest> request) {
+    [httpClient get:negotiateUrl requestPreparer:^(id<SRRequest> request) {
         [request setTimeoutInterval:30];
         
         [connection prepareRequest:request];
@@ -114,7 +119,7 @@
     
     SRLogHTTPTransport(@"will send data");
     
-    [_httpClient postAsync:url requestPreparer:^(id<SRRequest> request) {
+    [_httpClient post:url requestPreparer:^(id<SRRequest> request) {
         [connection prepareRequest:request];
     } postData:postData completionHandler:^(id<SRResponse> response) {
         NSString *raw = response.string;
@@ -135,31 +140,31 @@
     NSString *url = [connection.url stringByAppendingString:@"abort"];
     url = [url stringByAppendingFormat:@"%@",[self sendQueryString:connection]];
     
-    [_httpClient postAsync:url requestPreparer:^(id <SRRequest> request){ [connection prepareRequest:request]; } completionHandler:nil];
+    [_httpClient post:url requestPreparer:^(id <SRRequest> request){ [connection prepareRequest:request]; } completionHandler:nil];
 }
 
 #pragma mark - 
 #pragma mark Protected Helpers
 
-//?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
+//?transport=<transportname>&connectionToken=<connectionToken>&messageId=<messageId_or_Null>&groupsToken=<groupsToken>&connectionData=<data><customquerystring>
 - (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data {
     NSMutableString *queryStringBuilder = [NSMutableString string];
     [queryStringBuilder appendFormat:@"?transport=%@",_transport];
-    [queryStringBuilder appendFormat:@"&connectionId=%@",[connection.connectionId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    [queryStringBuilder appendFormat:@"&connectionToken=%@",[connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
 
     if(connection.messageId) {
         [queryStringBuilder appendFormat:@"&messageId=%@",[connection.messageId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     }
     
-    if (connection.groups && [connection.groups count] > 0) {
-        [queryStringBuilder appendFormat:@"&groups=%@",[[connection.groups SRJSONRepresentation] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    if (connection.groupsToken != nil) {
+        [queryStringBuilder appendFormat:@"&groupsToken=%@",[connection.groupsToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     }
     
     if (data != nil) {
         [queryStringBuilder appendFormat:@"&connectionData=%@",[data stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     }
 
-    NSString *customQuery = [self getCustomQueryString:connection];
+    NSString *customQuery = [SRHttpBasedTransport getCustomQueryString:connection];
     
     if (customQuery != nil && ![customQuery isEqualToString:@""]) {
         [queryStringBuilder appendFormat:@"&%@",customQuery];
@@ -168,9 +173,11 @@
     return queryStringBuilder;
 }
 
-//?transport=<transportname>&connectionId=<connectionId><customquerystring>
+//?transport=<transportname>&connectionToken=<connectionToken><customquerystring>
 - (NSString *)sendQueryString:(id <SRConnectionInterface>)connection {
-    return [NSString stringWithFormat:@"?transport=%@&connectionId=%@%@",_transport,connection.connectionId,[self getCustomQueryString:connection]];
+    return [NSString stringWithFormat:@"?transport=%@&connectionToken=%@%@",_transport,
+            [connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+            [SRHttpBasedTransport getCustomQueryString:connection]];
 }
 
 - (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected {
@@ -187,11 +194,16 @@
             *timedOut = [result[@"T"] boolValue];
             *disconnected = [result[@"D"] boolValue];
             
+            if (result[@"I"] != nil) {
+                [connection didReceiveData:response];
+                return;
+            }
+            
             if(*disconnected) {
                 return;
             }
             
-            [self updateGroups:connection resetGroups:result[@"R"] addedGroups:result[@"G"] removedGroups:result[@"g"]];
+            [self updateGroups:connection groupsToken:result[@"G"]];
             
             id messages = result[@"M"];
             if(messages && [messages isKindOfClass:[NSArray class]])
@@ -223,24 +235,13 @@
     }
 }
 
-- (void)updateGroups:(id <SRConnectionInterface>)connection resetGroups:(NSArray *)resetGroups addedGroups:(NSArray *)addedGroups removedGroups:(NSArray *)removedGroups {
-    if (resetGroups){
-        [connection.groups removeAllObjects];
-        for (id group in resetGroups) {
-            [connection.groups addObject:group];
-        }
-    } else {
-        for (id group in addedGroups) {
-            [connection.groups addObject:group];
-        }
-        
-        for (id group in removedGroups) {
-            [connection.groups removeObject:group];
-        }
+- (void)updateGroups:(id <SRConnectionInterface>)connection groupsToken:(NSString *)token {
+    if (token != nil) {
+        connection.groupsToken = token;
     }
 }
 
-- (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection {
++ (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection {
     return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
 }
 

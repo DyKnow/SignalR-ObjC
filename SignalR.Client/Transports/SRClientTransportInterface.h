@@ -30,6 +30,8 @@
  **/
 @protocol SRClientTransportInterface <NSObject>
 
+@property (strong, nonatomic, readonly) NSString *name;
+
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block;
 
 /**

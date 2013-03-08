@@ -29,9 +29,9 @@ typedef void (^SRResponseBlock)(id <SRResponse> response);
 
 @protocol SRHttpClient <NSObject>
 
-- (void)getAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block;
+- (void)get:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block;
 
-- (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block;
-- (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData completionHandler:(SRResponseBlock)block;
+- (void)post:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block;
+- (void)post:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData completionHandler:(SRResponseBlock)block;
 
 @end

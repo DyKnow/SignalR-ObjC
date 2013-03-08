@@ -27,7 +27,7 @@
 
 @implementation SRDefaultHttpClient
 
-- (void)getAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block {
+- (void)get:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block {
     if (url == nil) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
     }
@@ -44,7 +44,7 @@
                   }];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block {
+- (void)post:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block {
     if (url == nil) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
     }
@@ -61,7 +61,7 @@
                    }];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData completionHandler:(SRResponseBlock)block {
+- (void)post:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData completionHandler:(SRResponseBlock)block {
     if (url == nil) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
     }

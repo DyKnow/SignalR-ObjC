@@ -36,3 +36,10 @@
 * Throw Exception if JSONSerialization Fails
 * Makes the Long Polling and Server Sent Events Transports more configurable
 * Bug Fixes
+
+## [1.0RC1](https://github.com/DyKnow/SignalR-ObjC/compare/0.5.3...1.0rc1)
+
+
+## [1.0.1]((https://github.com/DyKnow/SignalR-ObjC/compare/1.0rc1...1.0.1)
+
+* Adds support for SignalR protocol version 1.2 (SignalR library v1.0.1)

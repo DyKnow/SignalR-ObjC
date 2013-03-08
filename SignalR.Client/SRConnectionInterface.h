@@ -31,7 +31,8 @@
 ///-------------------------------
 
 @property (strong, nonatomic, readwrite) NSString *messageId;
-@property (strong, nonatomic, readonly) NSMutableSet *groups;
+@property (strong, nonatomic, readwrite) NSString *groupsToken;
+@property (strong, nonatomic, readonly) NSString *connectionToken;
 @property (strong, nonatomic, readonly) NSMutableDictionary *items;
 @property (strong, nonatomic, readonly) NSString *connectionId;
 @property (strong, nonatomic, readonly) NSString *url;

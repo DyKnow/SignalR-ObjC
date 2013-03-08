@@ -25,12 +25,14 @@
 #import "SRHubProxy.h"
 #import "SRHubRegistrationData.h"
 #import "SRLog.h"
+#import "SRHubResult.h"
 
 #import "NSObject+SRJSON.h"
 
 @interface SRHubConnection ()
 
 @property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
+@property (strong, nonatomic, readonly) NSMutableDictionary *callbacks;
 
 + (NSString *)getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
 
@@ -70,6 +72,7 @@
 - (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] query:queryString]) {
         _hubs = [[NSMutableDictionary alloc] init];
+        _callbacks = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -87,6 +90,13 @@
         _hubs[[hubName lowercaseString]] = hubProxy;
     }
     return hubProxy;
+}
+
+- (NSString *)registerCallback:(SRHubResultBlock)callback {
+    NSString *id = [[NSNumber numberWithInt:_callbackId] stringValue];
+    _callbacks[id] = callback;
+    _callbackId += 1;
+    return [[NSNumber numberWithInt:_callbackId] stringValue];
 }
 
 #pragma mark - 
@@ -124,15 +134,25 @@
 
 - (void)didReceiveData:(NSString *)data {
     if([data isKindOfClass:[NSString class]]) {
-        SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:[data SRJSONValue]];
-        SRHubProxy *hubProxy = _hubs[[invocation.hub lowercaseString]];
-        if(hubProxy) {
-            if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]]) {
-                for (id key in invocation.state) {
-                    [hubProxy setMember:key object:(invocation.state)[key]];
-                }
+        NSDictionary *message = [data SRJSONValue];
+        if ([message valueForKey:@"I"]) {
+            SRHubResult *result = [[SRHubResult alloc] initWithDictionary:message];
+            SRHubResultBlock callback = _callbacks[result.id];
+            if (callback) {
+                [_callbacks removeObjectForKey:result.id];
+                callback(result);
             }
-            [hubProxy invokeEvent:invocation.method withArgs:invocation.args];
+        } else {
+            SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:message];
+            SRHubProxy *hubProxy = _hubs[[invocation.hub lowercaseString]];
+            if(hubProxy) {
+                if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]]) {
+                    for (id key in invocation.state) {
+                        [hubProxy setMember:key object:(invocation.state)[key]];
+                    }
+                }
+                [hubProxy invokeEvent:invocation.method withArgs:invocation.args];
+            }
         }
     }
     
