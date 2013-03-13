@@ -50,6 +50,7 @@
 - (instancetype)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:URL useDefault:useDefault]])  {
         _hubs = [[NSMutableDictionary alloc] init];
+        _callbacks = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -93,10 +94,10 @@
 }
 
 - (NSString *)registerCallback:(SRHubResultBlock)callback {
-    NSString *id = [[NSNumber numberWithInt:_callbackId] stringValue];
-    _callbacks[id] = callback;
+    NSString *newId = [[NSNumber numberWithInt:_callbackId] stringValue];
+    _callbacks[newId] = callback;
     _callbackId += 1;
-    return [[NSNumber numberWithInt:_callbackId] stringValue];
+    return newId;
 }
 
 #pragma mark - 
