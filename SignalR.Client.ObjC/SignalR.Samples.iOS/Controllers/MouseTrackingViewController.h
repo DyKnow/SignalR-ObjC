@@ -9,14 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "SignalR.h"
 
-@interface MouseTrackingViewController : UIViewController <UISplitViewControllerDelegate, SRConnectionDelegate>
-{
-    SRHubConnection *connection;
-    SRHubProxy *hub;
-    NSMutableArray *messagesReceived;
-}
-@property (nonatomic, strong) IBOutlet UITableView *messageTable;
+@interface MouseTrackingViewController : UITableViewController <UISplitViewControllerDelegate>
 
-- (IBAction)connectClicked:(id)sender;
+@property (strong, nonatomic, readwrite) SRHubConnection *connection;
+@property (strong, nonatomic, readwrite) SRHubProxy *hub;
+@property (strong, nonatomic, readwrite) NSMutableArray *data;
 
 @end

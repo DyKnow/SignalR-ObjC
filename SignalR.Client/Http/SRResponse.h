@@ -25,9 +25,16 @@
 @protocol SRResponse <NSObject>
 
 @property (strong, nonatomic, readwrite) NSString *string;
+
+/*
+ * Gets the steam that represents the response body.
+ */
 @property (strong, nonatomic, readwrite) NSOutputStream *stream;
 @property (strong, nonatomic, readwrite) NSError *error;
 
+/*
+ * Closes the response.
+ */
 - (void)close;
 
 @end

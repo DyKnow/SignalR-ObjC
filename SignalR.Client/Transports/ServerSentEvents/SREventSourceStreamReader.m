@@ -25,11 +25,18 @@
 #import "SRLog.h"
 #import "SRSseEvent.h"
 
+typedef enum {
+    initial,
+    processing,
+    stopped
+} SREventSourceStreamReaderState;
+
+
 @interface SREventSourceStreamReader ()
 
 @property (weak, nonatomic, readwrite) NSOutputStream *stream;
 @property (strong, nonatomic, readonly)  SRChunkBuffer *buffer;
-@property (assign, nonatomic, readonly)  BOOL reading;
+@property (assign, nonatomic, readonly)  SREventSourceStreamReaderState reading;
 @property (assign, nonatomic, readwrite) NSInteger offset;
 
 - (BOOL)processing;
@@ -38,65 +45,45 @@
 
 - (void)onOpened;
 - (void)onMessage:(SRSseEvent *)sseEvent;
+- (void)onDisabled;
 - (void)onClosed:(NSError *)error;
 
 @end
 
-@implementation SREventSourceStreamReader
+@implementation SREventSourceStreamReader   
 
-@synthesize opened = _opened;
-@synthesize closed = _closed;
-@synthesize message = _message;
-
-@synthesize stream = _stream;
-@synthesize buffer = _buffer;
-@synthesize reading = _reading;
-@synthesize offset = _offset;
-
-- (id)initWithStream:(NSOutputStream *)steam
-{
-    if (self = [super init])
-    {
+- (instancetype)initWithStream:(NSOutputStream *)steam {
+    if (self = [super init]) {
         _stream = steam;
         _buffer = [[SRChunkBuffer alloc] init];
-        _reading = NO;
-
+        _reading = initial;
         _offset = 0;
     }
     return self;
 }
 
-- (void)start
-{
+- (void)start {
     _stream.delegate = self;
     [_stream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
-- (BOOL)processing
-{
-    return _reading;
+- (BOOL)processing {
+    return _reading == processing;
 }
 
-- (void)close
-{
+- (void)close {
     [self onClosed:nil];
 }
 
-- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode 
-{
-    switch (eventCode)
-    {
-        case NSStreamEventOpenCompleted:
-        {
+- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode {
+    switch (eventCode) {
+        case NSStreamEventOpenCompleted: {
             SRLogServerSentEvents(@"Opened");
 
-            _reading = YES;
+            _reading = processing;
             [self onOpened];
-        }
-        case NSStreamEventHasSpaceAvailable:
-        {
-            if (![self processing])
-            {
+        } case NSStreamEventHasSpaceAvailable: {
+            if (![self processing]) {
                 return;
             }
             
@@ -104,17 +91,14 @@
             buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
             
             NSInteger read = [buffer length];            
-            if(read > 0)
-            {
+            if(read > 0) {
                 // Put chunks in the buffer
                 _offset = _offset + read;
                 [self processBuffer:buffer read:read];
             }
             
             break;
-        }
-        case NSStreamEventErrorOccurred:
-        {
+        } case NSStreamEventErrorOccurred: {
             [self onClosed:[stream streamError]];
             break;
         }
@@ -126,23 +110,19 @@
     }
 }
 
-- (void)processBuffer:(NSData *)buffer read:(NSInteger)read
-{
+- (void)processBuffer:(NSData *)buffer read:(NSInteger)read {
     [_buffer add:buffer length:read];
     
-    while ([_buffer hasChunks])
-    {
+    while ([_buffer hasChunks]) {
         NSString *line = [_buffer readLine];
         
         // No new lines in the buffer so stop processing
-        if (line == nil)
-        {
+        if (line == nil) {
             break;
         }
         
         SRSseEvent *sseEvent = nil;
-        if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent])
-        {
+        if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent]) {
             continue;
         }
         
@@ -155,48 +135,43 @@
 #pragma mark -
 #pragma mark Dispatch Blocks
 
-- (void)onOpened
-{
-    if(self.opened)
-    {
+- (void)onOpened {
+    if(self.opened) {
         self.opened();
     }
 }
 
-- (void)onMessage:(SRSseEvent *)sseEvent
-{
-    if(self.message)
-    {
+- (void)onMessage:(SRSseEvent *)sseEvent {
+    if(self.message) {
         self.message(sseEvent);
     }
 }
 
-- (void)onClosed:(NSError *)error;
-{
-    if (_reading)
-    {
-        SRLogServerSentEvents(@"Closed");
-
-        _stream.delegate = nil;
-        [_stream close];
-        _reading = NO;
-        
-        if(self.closed)
-        {
-            self.closed(error);
-        }
+- (void)onDisabled {
+    if (self.disabled) {
+        self.disabled();
     }
 }
 
-- (void)dealloc
-{
-    _opened = nil;
-    _message = nil;
-    _closed = nil;
-    _stream.delegate = nil;
-    _stream = nil;
-    _buffer = nil;
-    _reading = NO;
+- (void)onClosed:(NSError *)error; {
+    
+    SREventSourceStreamReaderState previousState = _reading;
+    _reading = stopped;
+    
+    if (previousState == processing){
+        SRLogServerSentEvents(@"Closed");
+
+        if(self.closed) {
+            self.closed(error);
+        }
+        
+        _stream.delegate = nil;
+        [_stream close];
+    }
+    
+    if (previousState != stopped && self.disabled) {
+        self.disabled();
+    }
 }
 
 @end

@@ -71,7 +71,7 @@
  * @param major an `NSInteger` representing the major component of a version
  * @param minor an `NSInteger` representing the minior component of a version
  */
-- (id)initWithMajor:(NSInteger)major minor:(NSInteger)minor;
+- (instancetype)initWithMajor:(NSInteger)major minor:(NSInteger)minor;
 
 /**
  * Initializes a new instance of the `SRVersion` class using the specified major, minor, and build values.
@@ -80,7 +80,7 @@
  * @param minor an `NSInteger` representing the minior component of a version
  * @param build an `NSInteger` representing the build component of a version
  */
-- (id)initWithMajor:(NSInteger)major minor:(NSInteger)minor build:(NSInteger)build;
+- (instancetype)initWithMajor:(NSInteger)major minor:(NSInteger)minor build:(NSInteger)build;
 
 /**
  * Initializes a new instance of the `SRVersion` class using the specified major, minor, build and revision values.
@@ -90,7 +90,7 @@
  * @param build an `NSInteger` representing the build component of a version
  * @param revision an `NSInteger` representing the revision component of a version
  */
-- (id)initWithMajor:(NSInteger)major minor:(NSInteger)minor build:(NSInteger)build revision:(NSInteger)revision;
+- (instancetype)initWithMajor:(NSInteger)major minor:(NSInteger)minor build:(NSInteger)build revision:(NSInteger)revision;
 
 /**
  * Tries to convert the string representation of a version number to an equivalent `SRVersion` object, and returns a value that indicates whether the conversion succeeded.

@@ -28,20 +28,15 @@
 
 @implementation SRHubInvocation
 
-@synthesize hub = _hub;
-@synthesize method = _method;
-@synthesize args = _args;
-@synthesize state = _state;
+static NSString * const kCallbackId = @"I";
+static NSString * const kHub = @"H";
+static NSString * const kMethod = @"M";
+static NSString * const kArgs = @"A";
+static NSString * const kState = @"S";
 
-static NSString * const kHub = @"Hub";
-static NSString * const kMethod = @"Method";
-static NSString * const kArgs = @"Args";
-static NSString * const kState = @"State";
-
-- (id) init
-{
-    if (self = [super init])
-    {
+- (instancetype) init {
+    if (self = [super init]) {
+        _callbackId = @"";
         _hub = [NSString stringWithFormat:@""];
 		_method = [NSString stringWithFormat:@""];
         _args = [NSMutableArray array];
@@ -50,41 +45,31 @@ static NSString * const kState = @"State";
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary*)dict
-{
-	if (self = [self init])
-	{
-        self.hub  = [NSString stringWithFormat:@"%@",[dict objectForKey:kHub]];
-        self.method = [NSString stringWithFormat:@"%@",[dict objectForKey:kMethod]];
-        self.args = [dict objectForKey:kArgs];
-        self.state = [dict objectForKey:kState];
+- (instancetype)initWithDictionary:(NSDictionary*)dict {
+	if (self = [self init]) {
+        self.callbackId = dict[kCallbackId];
+        self.hub  = [NSString stringWithFormat:@"%@",dict[kHub]];
+        self.method = [NSString stringWithFormat:@"%@",dict[kMethod]];
+        self.args = dict[kArgs];
+        self.state = dict[kState];
     }
     return self;
 }
 
-- (id)proxyForJson
-{
+- (id)proxyForJson {
     NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
     
-    [dict setObject:[NSString stringWithFormat:@"%@",_hub] forKey:kHub];
-    [dict setObject:[NSString stringWithFormat:@"%@",_method] forKey:kMethod];
-    [dict setObject:_args forKey:kArgs];
-    [dict setObject:_state forKey:kState];
+    dict[kCallbackId] = _callbackId;
+    dict[kHub] = [NSString stringWithFormat:@"%@",_hub];
+    dict[kMethod] = [NSString stringWithFormat:@"%@",_method];
+    dict[kArgs] = _args;
+    dict[kState] = _state;
     
     return dict;
 }
 
-- (NSString *)description 
-{  
-    return [NSString stringWithFormat:@"HubInvocation: Hub=%@ Method=%@",_hub,_method];
-}
-
-- (void)dealloc
-{
-    _hub = nil;
-    _method = nil;
-    _args = nil;
-    _state = nil;
+- (NSString *)description  {  
+    return [NSString stringWithFormat:@"HubInvocation: CallbackId=%@ Hub=%@ Method=%@",_callbackId,_hub,_method];
 }
 
 @end

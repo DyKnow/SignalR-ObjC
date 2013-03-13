@@ -25,6 +25,6 @@
 
 @interface SRDefaultHttpWebRequestWrapper : NSObject <SRRequest>
 
-- (id)initWithRequest:(id)request;
+- (instancetype)initWithRequest:(id)request;
 
 @end

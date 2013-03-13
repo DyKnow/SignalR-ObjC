@@ -27,38 +27,54 @@
 
 @implementation SRDefaultHttpClient
 
-- (void)getAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest continueWith:(SRResponseBlock)block
-{
+- (void)get:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block {
+    if (url == nil) {
+        [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
+    }
+    
     __block id <SRRequest> req = nil;
     [SRDefaultHttpHelper getAsync:url 
                   requestPreparer:^(id request) {
                       req = [[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request];
-                      if (prepareRequest) prepareRequest(req);
-                  }
-                     continueWith:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithRequest:req withResponse:response]); }];
+                      if (prepareRequest)
+                          prepareRequest(req);
+                  } completionHandler:^(id response) {
+                      if (block)
+                          block([[SRDefaultHttpWebResponseWrapper alloc] initWithRequest:req withResponse:response]);
+                  }];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest continueWith:(SRResponseBlock)block
-{
+- (void)post:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest completionHandler:(SRResponseBlock)block {
+    if (url == nil) {
+        [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
+    }
+    
     __block id <SRRequest> req = nil;
     [SRDefaultHttpHelper postAsync:url 
                    requestPreparer:^(id request) {
                        req = [[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request];
-                       if (prepareRequest) prepareRequest(req);
-                   }
-                      continueWith:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithRequest:req withResponse:response]); }];
+                       if (prepareRequest)
+                           prepareRequest(req);
+                   } completionHandler:^(id response) {
+                       if (block)
+                           block([[SRDefaultHttpWebResponseWrapper alloc] initWithRequest:req withResponse:response]);
+                   }];
 }
 
-- (void)postAsync:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData continueWith:(SRResponseBlock)block
-{
+- (void)post:(NSString *)url requestPreparer:(SRRequestBlock)prepareRequest postData:(id)postData completionHandler:(SRResponseBlock)block {
+    if (url == nil) {
+        [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
+    }
+    
     __block id <SRRequest> req = nil;
     [SRDefaultHttpHelper postAsync:url 
                    requestPreparer:^(id request) {
                        req = [[SRDefaultHttpWebRequestWrapper alloc] initWithRequest:request];
-                       if (prepareRequest) prepareRequest(req);
+                       if (prepareRequest)
+                           prepareRequest(req);
                    }
-                          postData:postData 
-                      continueWith:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithRequest:req withResponse:response]); }];
+                          postData:postData
+                       completionHandler:^(id response) { if (block) block([[SRDefaultHttpWebResponseWrapper alloc] initWithRequest:req withResponse:response]); }];
 }
 
 @end

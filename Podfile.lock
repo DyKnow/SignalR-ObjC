@@ -1,12 +1,11 @@
 
-COCOAPODS: 0.14.0
+PODS:
+- AFNetworking (1.1.0)
 
-PODS: 
-- AFNetworking (1.0RC2)
+DEPENDENCIES:
+- AFNetworking (>= 1.0.0)
 
-SPEC CHECKSUMS: 
-  AFNetworking: e7e40cf197f0cc6dea43ce448cc2a442c3c51137
+SPEC CHECKSUMS:
+  AFNetworking: 761a418233d280c1e0580bcb76ff9cb4c3073d17
 
-DEPENDENCIES: 
-- AFNetworking (= 1.0RC2)
-- AFNetworking (= 1.0RC2)
+COCOAPODS: 0.16.4

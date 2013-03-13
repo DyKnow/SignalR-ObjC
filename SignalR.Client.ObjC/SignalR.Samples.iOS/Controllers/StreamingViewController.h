@@ -9,13 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "SignalR.h"
 
-@interface StreamingViewController : UIViewController<UISplitViewControllerDelegate, SRConnectionDelegate>
-{
-    SRConnection *connection;
-    NSMutableArray *messagesReceived;
-}
-@property (nonatomic, strong) IBOutlet UITableView *messageTable;
+@interface StreamingViewController : UITableViewController<UISplitViewControllerDelegate>
 
-- (IBAction)connectClicked:(id)sender;
+@property (strong, nonatomic, readwrite) SRConnection *connection;
+@property (strong, nonatomic, readwrite) NSMutableArray *data;
 
 @end

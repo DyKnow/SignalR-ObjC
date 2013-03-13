@@ -11,38 +11,27 @@
 
 @implementation StreamingViewController
 
-@synthesize messageTable;
-
-- (void)dealloc
+- (void)awakeFromNib
 {
-    [connection stop];
-    connection.delegate = nil;
-    connection = nil;
+    [super awakeFromNib];
 }
-
 
 - (void)didReceiveMemoryWarning
 {
-    // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
-#pragma mark - 
+- (void)dealloc
+{
+
+}
+
+#pragma mark -
 #pragma mark View lifecycle
 
-- (void)viewDidLoad
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    [super viewDidAppear:animated];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -50,24 +39,56 @@
     [super viewWillAppear:animated];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewDidDisappear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [_connection stop];
+    _connection.delegate = nil;
+    _connection = nil;
+    
+    [super viewDidDisappear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [super viewWillDisappear:animated];
+	[super viewWillDisappear:animated];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewDidLoad
 {
-    [super viewDidDisappear:animated];
+    [super viewDidLoad];
+    
+    if(_data == nil)
+    {
+        _data = [NSMutableArray array];
+    }
+    
+    __weak __typeof(&*self)weakSelf = self;
+    _connection = [SRConnection connectionWithURL:[[Router sharedRouter].server_url stringByAppendingFormat:@"streaming-connection"]];
+    _connection.started = ^{
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        [strongSelf.data insertObject:@"Connection Opened" atIndex:0];
+        [strongSelf.tableView reloadData];
+    };
+    _connection.received = ^(NSString * data){
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        [strongSelf.data insertObject:data atIndex:0];
+        [strongSelf.tableView reloadData];
+    };
+    _connection.closed = ^{
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        [strongSelf.data insertObject:@"Connection Closed" atIndex:0];
+        [strongSelf.tableView reloadData];
+    };
+    _connection.error = ^(NSError *error){
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        [strongSelf.data insertObject:error.localizedDescription atIndex:0];
+        [strongSelf.tableView reloadData];
+    };
+    [_connection start];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
 	return YES;
 }
 
@@ -79,9 +100,14 @@
     return 1;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return NSLocalizedString(@"Streaming Messages", @"Streaming Messages");
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
 {
-    return [messagesReceived count];
+    return [self.data count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath 
@@ -93,53 +119,9 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    cell.textLabel.text = [messagesReceived objectAtIndex:indexPath.row];
+    cell.textLabel.text = (self.data)[indexPath.row];
     
     return cell;
-}
-
-#pragma mark - 
-#pragma mark View Actions
-
-- (IBAction)connectClicked:(id)sender
-{
-    NSString *server = [Router sharedRouter].server_url;
-    server = [server stringByAppendingFormat:@"Streaming/Streaming.ashx"];
-    connection = [SRConnection connectionWithURL:server];
-    [connection setDelegate:self];
-    [connection start];
-    
-    if(messagesReceived == nil)
-    {
-        messagesReceived = [[NSMutableArray alloc] init];
-    }
-}
-
-#pragma mark - 
-#pragma mark SRConnection Delegate
-
-- (void)SRConnectionDidOpen:(SRConnection *)connection
-{
-    [messagesReceived insertObject:@"Connection Opened" atIndex:0];
-    [messageTable reloadData];
-}
-
-- (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
-{
-    [messagesReceived insertObject:data atIndex:0];
-    [messageTable reloadData];
-}
-
-- (void)SRConnectionDidClose:(SRConnection *)connection
-{
-    [messagesReceived insertObject:@"Connection Closed" atIndex:0];
-    [messageTable reloadData];
-}
-
-- (void)SRConnection:(SRConnection *)connection didReceiveError:(NSError *)error
-{
-    //[messagesReceived insertObject:[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription] atIndex:0];
-    //[messageTable reloadData];
 }
 
 @end

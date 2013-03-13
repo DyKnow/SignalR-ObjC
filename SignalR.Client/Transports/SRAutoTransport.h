@@ -21,7 +21,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransport.h"
+#import "SRClientTransportInterface.h"
 #import "SRHttpClient.h"
 
 /**
@@ -31,10 +31,10 @@
  * 1. Server-Sent Events SRServerSentEventsTransport
  * 1. Long Polling SRLongPollingTransport
  */
-@interface SRAutoTransport : NSObject <SRClientTransport>
+@interface SRAutoTransport : NSObject <SRClientTransportInterface>
 
 @property (strong, nonatomic, readonly) id <SRHttpClient> httpClient;
 
-- (id)initWithHttpClient:(id<SRHttpClient>)httpClient;
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient;
 
 @end

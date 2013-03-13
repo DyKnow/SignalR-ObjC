@@ -21,7 +21,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransport+Constants.h"
+#import "SRClientTransportInterface.h"
 #import "SRHttpClient.h"
 #import "SRRequest.h"
 
@@ -32,7 +32,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * 
  * `SRHttpBasedTransport` is responsible for starting, sending data, processing server responses, and stopping the http based transports.
  */
-@interface SRHttpBasedTransport : NSObject <SRClientTransport>
+@interface SRHttpBasedTransport : NSObject <SRClientTransportInterface>
 
 ///-------------------------------
 /// @name Properties
@@ -57,9 +57,9 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  *
  * @param transport the name of the transport
  */
-- (id) initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport;
+- (instancetype)initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport;
 
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(SRConnection *)connection continueWith:(void (^)(SRNegotiationResponse *response))block;
++ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block;
 
 /**
  * @warning *Important:* this method should only be called from a subclass of `SRHttpBasedTransport` 
@@ -69,19 +69,11 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param initializeCallback a block to call when the `SRHttpBasedTransport` has been initialized successfully
  * @param errorCallback a block to call when the `SRHttpBasedTransport` failed to initialize successfully
  */
-- (void)onStart:(SRConnection *)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
+- (void)onStart:(id <SRConnectionInterface>)connection data:(NSString *)data initializeCallback:(void (^)(void))initializeCallback errorCallback:(void (^)(SRErrorByReferenceBlock))errorCallback;
 
 ///-------------------------------
 /// @name Preparing requests
 ///-------------------------------
-
-/**
- * Prepares http requests to be sent to the server
- * 
- * @param request id <SRRequest> associated with the request
- * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
- */
-- (void)prepareRequest:(id <SRRequest>)request forConnection:(SRConnection *)connection;
 
 /**
  * Generates a query string for request made to receive data from the server
@@ -90,7 +82,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param data the additional data to be sent to the server
  * @return an URL encoded `NSString` object of the form ?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
  */
-- (NSString *)getReceiveQueryString:(SRConnection *)connection data:(NSString *)data;
+- (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data;
 
 /**
  * Generates a query string for request made to send data from the server
@@ -98,14 +90,7 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
  * @return an URL encoded `NSString` object of the form ?transport=<transportname>&connectionId=<connectionId><customquerystring>
  */
-- (NSString *)getSendQueryString:(SRConnection *)connection;
-
-/**
- * Subclasses of `SRHttpBasedTransport` should override this method if the `SRHttpBasedTransport` needs to perform cleanup before closing
- *
- * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
- */
-- (void)onBeforeAbort:(SRConnection *)connection;
+- (NSString *)sendQueryString:(id <SRConnectionInterface>)connection;
 
 ///-------------------------------
 /// @name Processing a response
@@ -119,8 +104,6 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param timedOut a `BOOL` respresenting if the connection received a server side timeout
  * @param disconnected a `BOOL` respresenting if the connection received a disconnect from the server
  */
-- (void)processResponse:(SRConnection *)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
-
-#define kHttpRequestKey @"http.Request"
+- (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
 
 @end
