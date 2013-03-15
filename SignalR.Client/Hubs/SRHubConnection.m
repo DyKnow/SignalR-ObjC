@@ -50,6 +50,7 @@
 - (instancetype)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:URL useDefault:useDefault]])  {
         _hubs = [[NSMutableDictionary alloc] init];
+        _callbacks = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -61,6 +62,7 @@
 - (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] queryString:queryString]) {
         _hubs = [[NSMutableDictionary alloc] init];
+        _callbacks = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
