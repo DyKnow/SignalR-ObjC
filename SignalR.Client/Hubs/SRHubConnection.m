@@ -75,10 +75,12 @@
     }
     return self;
 }
+
 - (void)commonInit {
 	_hubs = [[NSMutableDictionary alloc] init];
 	_callbacks = [[NSMutableDictionary alloc] init];
 }
+
 - (id <SRHubProxyInterface>)createHubProxy:(NSString *)hubName {
     if (self.state != disconnected) {
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
