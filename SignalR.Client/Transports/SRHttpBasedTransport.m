@@ -127,6 +127,8 @@
         if (raw == nil || [raw isEqualToString:@""]) {
             return;
         }
+        
+        [connection didReceiveData:raw];
 
         if(block) {
             block([raw SRJSONValue]);
