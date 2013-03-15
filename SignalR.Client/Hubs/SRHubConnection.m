@@ -49,8 +49,7 @@
 
 - (instancetype)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:URL useDefault:useDefault]])  {
-        _hubs = [[NSMutableDictionary alloc] init];
-        _callbacks = [[NSMutableDictionary alloc] init];
+		[self commonInit];
     }
     return self;
 }
@@ -61,7 +60,7 @@
 
 - (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] queryString:queryString]) {
-        _hubs = [[NSMutableDictionary alloc] init];
+		[self commonInit];
     }
     return self;
 }
@@ -72,12 +71,14 @@
 
 - (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] query:queryString]) {
-        _hubs = [[NSMutableDictionary alloc] init];
-        _callbacks = [[NSMutableDictionary alloc] init];
+        [self commonInit];
     }
     return self;
 }
-
+- (void)commonInit {
+	_hubs = [[NSMutableDictionary alloc] init];
+	_callbacks = [[NSMutableDictionary alloc] init];
+}
 - (id <SRHubProxyInterface>)createHubProxy:(NSString *)hubName {
     if (self.state != disconnected) {
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Proxies cannot be added after the connection has been started.",@"NSInternalInconsistencyException")];
