@@ -84,7 +84,7 @@ void (^prepareRequest)(id);
 }
 
 - (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
-    return [self initWithURLString:url queryString:[[self class] createQueryString:queryString]];
+    return [self initWithURLString:url queryString:[self createQueryString:queryString]];
 }
 
 - (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
