@@ -53,7 +53,7 @@
 
 + (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     NSString *negotiateUrl = [connection.url stringByAppendingString:@"negotiate"];
-    negotiateUrl = [negotiateUrl stringByAppendingString:[self getCustomQueryString:connection]];
+    negotiateUrl = [negotiateUrl stringByAppendingFormat:@"?%@", [self getCustomQueryString:connection] ];
     
     [httpClient get:negotiateUrl requestPreparer:^(id<SRRequest> request) {
         [request setTimeoutInterval:30];
