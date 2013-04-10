@@ -24,12 +24,14 @@
 #import "SRConnectionInterface.h"
 #import "SRLog.h"
 #import "SRNegotiationResponse.h"
-
+#import "SRTransportHelper.h"
 #import "NSObject+SRJSON.h"
 
 @interface SRHttpBasedTransport()
 
-+ (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection;
+@property (strong, nonatomic, readonly) NSString *transport;
+
+- (NSString *)sendQueryString:(id <SRConnectionInterface>)connection;
 
 @end
 
@@ -48,40 +50,7 @@
 }
 
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
-}
-
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    NSString *negotiateUrl = [connection.url stringByAppendingString:@"negotiate"];
-    negotiateUrl = [negotiateUrl stringByAppendingFormat:@"?%@", [self getCustomQueryString:connection] ];
-    
-    [httpClient get:negotiateUrl requestPreparer:^(id<SRRequest> request) {
-        [request setTimeoutInterval:30];
-        
-        [connection prepareRequest:request];
-    } completionHandler:^(id<SRResponse> response) {
-        NSString *raw = response.string;
-        
-        if (raw == nil || [raw isEqualToString:@""]) {
-            SRLogHTTPTransport(@"negotiation failed, connection will stop");
-
-            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
-            userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"Server negotiation failed.",@"NSInternalInconsistencyException")];
-            NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                                 code:0 
-                                             userInfo:userInfo];
-            [connection didReceiveError:error];
-            [connection stop];
-            return;
-        }
-        
-        SRLogHTTPTransport(@"negotiation did receive response %@",raw);
-        
-        if(block) {
-            block([[SRNegotiationResponse alloc] initWithDictionary:[raw SRJSONValue]]);
-        }
-    }];
+    [SRTransportHelper getNegotiationResponse:_httpClient connection:connection completionHandler:block];
 }
 
 #pragma mark -
@@ -111,7 +80,7 @@
     }
     
     NSString *url = [connection.url stringByAppendingString:@"send"];
-    url = [url stringByAppendingFormat:@"%@",[self sendQueryString:connection]];
+    url = [url stringByAppendingString:[self sendQueryString:connection]];
 
     NSDictionary *postData = @{
         @"data" : data
@@ -140,7 +109,7 @@
     SRLogHTTPTransport(@"will stop transport");
 
     NSString *url = [connection.url stringByAppendingString:@"abort"];
-    url = [url stringByAppendingFormat:@"%@",[self sendQueryString:connection]];
+    url = [url stringByAppendingString:[self sendQueryString:connection]];
     
     [_httpClient post:url requestPreparer:^(id <SRRequest> request){ [connection prepareRequest:request]; } completionHandler:nil];
 }
@@ -148,103 +117,16 @@
 #pragma mark - 
 #pragma mark Protected Helpers
 
-//?transport=<transportname>&connectionToken=<connectionToken>&messageId=<messageId_or_Null>&groupsToken=<groupsToken>&connectionData=<data><customquerystring>
 - (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data {
-    NSMutableString *queryStringBuilder = [NSMutableString string];
-    [queryStringBuilder appendFormat:@"?transport=%@",_transport];
-    [queryStringBuilder appendFormat:@"&connectionToken=%@",[connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-
-    if(connection.messageId) {
-        [queryStringBuilder appendFormat:@"&messageId=%@",[connection.messageId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-    }
-    
-    if (connection.groupsToken != nil) {
-        [queryStringBuilder appendFormat:@"&groupsToken=%@",[connection.groupsToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-    }
-    
-    if (data != nil) {
-        [queryStringBuilder appendFormat:@"&connectionData=%@",[data stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-    }
-
-    NSString *customQuery = [SRHttpBasedTransport getCustomQueryString:connection];
-    
-    if (customQuery != nil && ![customQuery isEqualToString:@""]) {
-        [queryStringBuilder appendFormat:@"&%@",customQuery];
-    }
-    
-    return queryStringBuilder;
+    return [SRTransportHelper receiveQueryString:connection data:data transport:_transport];
 }
 
 //?transport=<transportname>&connectionToken=<connectionToken><customquerystring>
 - (NSString *)sendQueryString:(id <SRConnectionInterface>)connection {
+    NSString *customQueryString = (connection.queryString == nil || [connection.queryString isEqualToString:@""]) ? @"" : [@"&" stringByAppendingString:connection.queryString];
     return [NSString stringWithFormat:@"?transport=%@&connectionToken=%@%@",_transport,
             [connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-            [SRHttpBasedTransport getCustomQueryString:connection]];
-}
-
-- (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected {
-    *timedOut = NO;
-    *disconnected = NO;
-    
-    if(response == nil || [response isEqualToString:@""]) {
-        return;
-    }
-    
-    @try {
-        id result = [response SRJSONValue];
-        if([result isKindOfClass:[NSDictionary class]]) {
-            *timedOut = [result[@"T"] boolValue];
-            *disconnected = [result[@"D"] boolValue];
-            
-            if (result[@"I"] != nil) {
-                [connection didReceiveData:response];
-                return;
-            }
-            
-            if(*disconnected) {
-                return;
-            }
-            
-            [self updateGroups:connection groupsToken:result[@"G"]];
-            
-            id messages = result[@"M"];
-            if(messages && [messages isKindOfClass:[NSArray class]])
-            {
-                for (id message in messages) 
-                {   
-                    if([message isKindOfClass:[NSDictionary class]])
-                    {
-                        [connection didReceiveData:[message SRJSONRepresentation]];
-                    }
-                    else if([message isKindOfClass:[NSString class]])
-                    {
-                        [connection didReceiveData:message];
-                    }
-                }
-                
-                NSString *messageId = result[@"C"];
-                if(messageId)
-                {
-                    connection.messageId = messageId;
-                }
-            }
-        }
-    }
-    @catch (NSError *ex) {
-        SRLogHTTPTransport(@"error while processing messages %@",ex);
-
-        [connection didReceiveError:ex];
-    }
-}
-
-- (void)updateGroups:(id <SRConnectionInterface>)connection groupsToken:(NSString *)token {
-    if (token != nil) {
-        connection.groupsToken = token;
-    }
-}
-
-+ (NSString *)getCustomQueryString:(id <SRConnectionInterface>)connection {
-    return (connection.queryString == nil || [connection.queryString isEqualToString:@""] == YES) ? @"" : [@"&" stringByAppendingString:connection.queryString] ;
+            customQueryString];
 }
 
 @end

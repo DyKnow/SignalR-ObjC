@@ -182,6 +182,18 @@
 		39423B6016D139B0003E7516 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39423B5E16D139B0003E7516 /* Router.m */; };
 		396D2867165ABE4F0000D19E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2866165ABE4F0000D19E /* SystemConfiguration.framework */; };
 		396D286A165ABE6C0000D19E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2869165ABE6C0000D19E /* MobileCoreServices.framework */; };
+		3994AAA81714D03B00E452F7 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAA51714D01900E452F7 /* CFNetwork.framework */; };
+		3994AAA91714D03D00E452F7 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAA51714D01900E452F7 /* CFNetwork.framework */; };
+		3994AAAC1714D06C00E452F7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAA1714D06900E452F7 /* Security.framework */; };
+		3994AAAD1714D06E00E452F7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAA1714D06900E452F7 /* Security.framework */; };
+		3994AAB01714D09200E452F7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
+		3994AAB11714D09400E452F7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
+		39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */; };
+		39AF0D7F17138E3800E13E6E /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
+		39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */; };
+		39AF0D831713935A00E13E6E /* SRWebSocketConnectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D811713935A00E13E6E /* SRWebSocketConnectionInfo.m */; };
+		39AF0D861713946F00E13E6E /* SRTransportHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D841713946F00E13E6E /* SRTransportHelper.h */; };
+		39AF0D871713946F00E13E6E /* SRTransportHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D851713946F00E13E6E /* SRTransportHelper.m */; };
 		39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
 		39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
 		39BB8D7915CAA59C007B7245 /* libSignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3920780715AF13C3009B959E /* libSignalR.Client.iOS.a */; };
@@ -327,6 +339,15 @@
 		396D2851165ABCD50000D19E /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; };
 		396D2866165ABE4F0000D19E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		396D2869165ABE6C0000D19E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		3994AAA51714D01900E452F7 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		3994AAAA1714D06900E452F7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		3994AAAE1714D08E00E452F7 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketTransport.h; sourceTree = "<group>"; };
+		39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketTransport.m; sourceTree = "<group>"; };
+		39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRWebSocketConnectionInfo.h; path = WebSockets/SRWebSocketConnectionInfo.h; sourceTree = "<group>"; };
+		39AF0D811713935A00E13E6E /* SRWebSocketConnectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRWebSocketConnectionInfo.m; path = WebSockets/SRWebSocketConnectionInfo.m; sourceTree = "<group>"; };
+		39AF0D841713946F00E13E6E /* SRTransportHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRTransportHelper.h; sourceTree = "<group>"; };
+		39AF0D851713946F00E13E6E /* SRTransportHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRTransportHelper.m; sourceTree = "<group>"; };
 		39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubConnectionTests.m; path = SignalR.Client.Tests/SRHubConnectionTests.m; sourceTree = "<group>"; };
 		39C97CEE15D3DDD600F66B50 /* SRHubProxyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRHubProxyTests.m; path = SignalR.Client.Tests/SRHubProxyTests.m; sourceTree = "<group>"; };
 		39E6FCD515C6BDC600434098 /* SignalR.Client.Tests.OSX.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalR.Client.Tests.OSX.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -366,6 +387,9 @@
 				3919637915AF21F500DDC946 /* libSignalR.Client.OSX.a in Frameworks */,
 				39E6FCEF15C6BE6800434098 /* Cocoa.framework in Frameworks */,
 				392353DD165BE723001A0D21 /* SystemConfiguration.framework in Frameworks */,
+				3994AAA91714D03D00E452F7 /* CFNetwork.framework in Frameworks */,
+				3994AAAD1714D06E00E452F7 /* Security.framework in Frameworks */,
+				3994AAB11714D09400E452F7 /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +420,9 @@
 				3920794015AF187D009B959E /* libSignalR.Client.iOS.a in Frameworks */,
 				3920792115AF1853009B959E /* UIKit.framework in Frameworks */,
 				3920792215AF1853009B959E /* Foundation.framework in Frameworks */,
+				3994AAA81714D03B00E452F7 /* CFNetwork.framework in Frameworks */,
+				3994AAAC1714D06C00E452F7 /* Security.framework in Frameworks */,
+				3994AAB01714D09200E452F7 /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +540,9 @@
 		3920780915AF13C3009B959E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3994AAAE1714D08E00E452F7 /* libicucore.dylib */,
+				3994AAAA1714D06900E452F7 /* Security.framework */,
+				3994AAA51714D01900E452F7 /* CFNetwork.framework */,
 				396D2869165ABE6C0000D19E /* MobileCoreServices.framework */,
 				396D2866165ABE4F0000D19E /* SystemConfiguration.framework */,
 				39E7A5DA15E532380097F395 /* CoreGraphics.framework */,
@@ -588,6 +618,7 @@
 			isa = PBXGroup;
 			children = (
 				3920783215AF13F6009B959E /* SRHubs.h */,
+				8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */,
 				3920782615AF13F6009B959E /* SRHubConnection.h */,
 				3920782715AF13F6009B959E /* SRHubConnection.m */,
 				39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */,
@@ -605,7 +636,6 @@
 				3920783415AF13F6009B959E /* SRHubservable.m */,
 				3920783515AF13F6009B959E /* SRSubscription.h */,
 				3920783615AF13F6009B959E /* SRSubscription.m */,
-				8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */,
 			);
 			path = Hubs;
 			sourceTree = "<group>";
@@ -631,6 +661,7 @@
 			isa = PBXGroup;
 			children = (
 				3920785015AF13F6009B959E /* ServerSentEvents */,
+				39AF0D7B17138E1600E13E6E /* WebSockets */,
 				3920785B15AF13F6009B959E /* SRClientTransportInterface.h */,
 				3920785815AF13F6009B959E /* SRAutoTransport.h */,
 				3920785915AF13F6009B959E /* SRAutoTransport.m */,
@@ -640,6 +671,10 @@
 				3920785F15AF13F6009B959E /* SRLongPollingTransport.m */,
 				3920786015AF13F6009B959E /* SRServerSentEventsTransport.h */,
 				3920786115AF13F6009B959E /* SRServerSentEventsTransport.m */,
+				39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */,
+				39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */,
+				39AF0D841713946F00E13E6E /* SRTransportHelper.h */,
+				39AF0D851713946F00E13E6E /* SRTransportHelper.m */,
 			);
 			path = Transports;
 			sourceTree = "<group>";
@@ -703,6 +738,15 @@
 				3920795015AF1BEA009B959E /* MouseTrackingViewController.m */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		39AF0D7B17138E1600E13E6E /* WebSockets */ = {
+			isa = PBXGroup;
+			children = (
+				39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */,
+				39AF0D811713935A00E13E6E /* SRWebSocketConnectionInfo.m */,
+			);
+			name = WebSockets;
 			sourceTree = "<group>";
 		};
 		39E6FCDD15C6BDC600434098 /* SignalR.Client.Tests.OSX */ = {
@@ -850,6 +894,9 @@
 				392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */,
 				392078A315AF13F6009B959E /* SRLongPollingTransport.h in Headers */,
 				392078A515AF13F6009B959E /* SRServerSentEventsTransport.h in Headers */,
+				39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */,
+				39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */,
+				39AF0D861713946F00E13E6E /* SRTransportHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1182,6 +1229,9 @@
 				392078A415AF13F6009B959E /* SRLongPollingTransport.m in Sources */,
 				392078A615AF13F6009B959E /* SRServerSentEventsTransport.m in Sources */,
 				39423B5916D13515003E7516 /* SRConnectionExtensions.m in Sources */,
+				39AF0D7F17138E3800E13E6E /* SRWebSocketTransport.m in Sources */,
+				39AF0D831713935A00E13E6E /* SRWebSocketConnectionInfo.m in Sources */,
+				39AF0D871713946F00E13E6E /* SRTransportHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

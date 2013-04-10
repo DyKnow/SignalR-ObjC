@@ -29,6 +29,7 @@
 #import "SRSseEvent.h"
 #import "SRThreadSafeInvoker.h"
 #import "SRConnectionExtensions.h"
+#import "SRTransportHelper.h"
 
 @interface SRServerSentEventsTransport ()
 
@@ -76,7 +77,7 @@ static NSString * const kTransportName = @"serverSentEvents";
     BOOL _reconnecting = initializeCallback == nil;
     SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
     
-    NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingFormat:@"%@",[self receiveQueryString:connection data:data]];
+    NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingString:[self receiveQueryString:connection data:data]];
     __block id <SRRequest> request = nil;
     __block SREventSourceStreamReader *eventSource;
     __block id requestDisposer;
@@ -151,7 +152,6 @@ static NSString * const kTransportName = @"serverSentEvents";
             };
             
             eventSource.message = ^(SRSseEvent * sseEvent) {
-                __strong __typeof(&*weakSelf)strongSelf = weakSelf;
                 __strong __typeof(&*weakConnection)strongConnection = weakConnection;
 
                 if(sseEvent.eventType == Data) {
@@ -161,7 +161,7 @@ static NSString * const kTransportName = @"serverSentEvents";
                     
                     BOOL timedOut = NO;
                     BOOL disconnect = NO;
-                    [strongSelf processResponse:strongConnection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
+                    [SRTransportHelper processResponse:strongConnection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
                     
                     if(disconnect) {
                         SRLogServerSentEvents(@"disconnect received should disconnect");

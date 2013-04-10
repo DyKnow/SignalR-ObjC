@@ -50,6 +50,7 @@ typedef void (^onStateChanged)(connectionState);
 @property (copy) onReconnecting reconnecting;
 @property (copy) onReconnected reconnected;
 @property (copy) onStateChanged stateChanged;
+@property (strong, nonatomic, readonly) id<SRClientTransportInterface> transport;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 

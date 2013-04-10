@@ -26,6 +26,7 @@
 #import "SRLog.h"
 #import "SRThreadSafeInvoker.h"
 #import "SRConnectionExtensions.h"
+#import "SRTransportHelper.h"
 
 typedef void (^onInitialized)(void);
 
@@ -113,7 +114,7 @@ static NSString * const kTransportName = @"longPolling";
                 // Get the response
                 NSString *raw = response.string;
                 
-                [self processResponse:connection response:raw timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
+                [SRTransportHelper processResponse:connection response:raw timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
             }
         } @finally {
             if(disconnectedReceived) {

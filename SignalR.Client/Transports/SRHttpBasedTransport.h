@@ -40,11 +40,6 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
 
 @property (strong, nonatomic, readonly) id <SRHttpClient> httpClient;
 
-/**
- * Returns an `NSString` object with the name of the active `SRHttpBasedTransport`
- */
-@property (strong, nonatomic, readonly) NSString *transport;
-
 ///-------------------------------
 /// @name Initializing an SRHttpBasedTransport Object
 ///-------------------------------
@@ -58,8 +53,6 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @param transport the name of the transport
  */
 - (instancetype)initWithHttpClient:(id <SRHttpClient>)httpClient transport:(NSString *)transport;
-
-+ (void)getNegotiationResponse:(id <SRHttpClient>)httpClient connection:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block;
 
 /**
  * @warning *Important:* this method should only be called from a subclass of `SRHttpBasedTransport` 
@@ -83,27 +76,5 @@ typedef void (^SRErrorByReferenceBlock)(NSError **);
  * @return an URL encoded `NSString` object of the form ?transport=<transportname>&connectionId=<connectionId>&messageId=<messageId_or_Null>&groups=<groups>&connectionData=<data><customquerystring>
  */
 - (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data;
-
-/**
- * Generates a query string for request made to send data from the server
- *
- * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
- * @return an URL encoded `NSString` object of the form ?transport=<transportname>&connectionId=<connectionId><customquerystring>
- */
-- (NSString *)sendQueryString:(id <SRConnectionInterface>)connection;
-
-///-------------------------------
-/// @name Processing a response
-///-------------------------------
-
-/**
- * Processes a successful server response by updating relevant connection properties and dispatching calls to [SRConnection didReceiveData]
- *
- * @param connection the `SRConnection` object that initialized the `SRHttpBasedTransport`
- * @param response an `NSString` representation of the server's JSON response object 
- * @param timedOut a `BOOL` respresenting if the connection received a server side timeout
- * @param disconnected a `BOOL` respresenting if the connection received a disconnect from the server
- */
-- (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
 
 @end
