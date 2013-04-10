@@ -27,7 +27,7 @@
 /**
  * Performs a check to see if the underlying HTTP request was cancelled
  *
- * @param error an error returned from the underlying HTTP request `SRHttpHelper`
+ * @param error an error returned from the underlying HTTP request
  * @return YES if the request was aborted, NO if not
  */
 + (BOOL)isRequestAborted:(NSError *)error;

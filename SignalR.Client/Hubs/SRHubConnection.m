@@ -33,6 +33,7 @@
 
 @property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
 @property (strong, nonatomic, readonly) NSMutableDictionary *callbacks;
+@property (assign, nonatomic, readonly) int callbackId;
 
 + (NSString *)getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
 
@@ -157,10 +158,10 @@
                 }
                 [hubProxy invokeEvent:invocation.method withArgs:invocation.args];
             }
+            
+            [super didReceiveData:data];
         }
-    }
-    
-    [super didReceiveData:data];
+    }    
 }
 
 @end

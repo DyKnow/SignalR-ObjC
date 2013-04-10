@@ -22,7 +22,6 @@
 
 #import <Foundation/Foundation.h>
 #import "SRConnectionState.h"
-#import "SRRequest.h"
 
 @protocol SRConnectionInterface <NSObject>
 
@@ -32,9 +31,9 @@
 
 @property (strong, nonatomic, readwrite) NSString *messageId;
 @property (strong, nonatomic, readwrite) NSString *groupsToken;
-@property (strong, nonatomic, readonly) NSString *connectionToken;
 @property (strong, nonatomic, readonly) NSMutableDictionary *items;
 @property (strong, nonatomic, readonly) NSString *connectionId;
+@property (strong, nonatomic, readonly) NSString *connectionToken;
 @property (strong, nonatomic, readonly) NSString *url;
 @property (strong, nonatomic, readonly) NSString *queryString;
 @property (assign, nonatomic, readonly) connectionState state;
@@ -69,6 +68,6 @@
 /// @name Preparing Requests
 ///-------------------------------
 
-- (void)prepareRequest:(id <SRRequest>)request;
+- (void)prepareRequest:(NSMutableURLRequest *)request;
 
 @end

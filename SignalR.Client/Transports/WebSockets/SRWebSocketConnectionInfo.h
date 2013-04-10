@@ -1,8 +1,8 @@
 //
-//  SRConnectionDelegate.h
+//  SRWebSocketConnectionInfo.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 10/17/11.
+//  Created by Alex Billingsley on 4/8/13.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -23,21 +23,11 @@
 #import <Foundation/Foundation.h>
 #import "SRConnectionInterface.h"
 
-@protocol SRConnectionDelegate<NSObject>
-@optional
+@interface SRWebSocketConnectionInfo : NSObject
 
-- (void)SRConnectionDidOpen:(id <SRConnectionInterface>)connection;
+@property (weak, nonatomic, readwrite) id <SRConnectionInterface> connection;
+@property (strong, nonatomic, readwrite) NSString *data;
 
-- (void)SRConnectionWillReconnect:(id <SRConnectionInterface>)connection;
-
-- (void)SRConnectionDidReconnect:(id <SRConnectionInterface>)connection;
-
-- (void)SRConnection:(id <SRConnectionInterface>)connection didReceiveData:(NSString *)data;
-
-- (void)SRConnectionDidClose:(id <SRConnectionInterface>)connection;
-
-- (void)SRConnection:(id <SRConnectionInterface>)connection didReceiveError:(NSError *)error;
-
-- (void)SRConnection:(id <SRConnectionInterface>)connection didChangeState:(connectionState)oldState newState:(connectionState)newState;
+- (instancetype)initConnection:(id <SRConnectionInterface>)connection data:(NSString *)data;
 
 @end
