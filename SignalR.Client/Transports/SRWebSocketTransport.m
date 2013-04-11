@@ -27,10 +27,12 @@
 #import "SRWebSocketConnectionInfo.h"
 #import "SRTransportHelper.h"
 #import "SRConnectionInterface.h"
+#import "SRWebSocketWrapperRequest.h"
 
 @interface SRWebSocketTransport () <SRWebSocketDelegate>
 
 @property (strong, nonatomic, readonly) id <SRHttpClient> client;
+@property (strong, nonatomic, readonly) SRWebSocket *webSocket;
 @property (strong, nonatomic, readonly) SRWebSocketConnectionInfo *connectionInfo;
 
 @end
@@ -64,16 +66,25 @@ static NSString * const kTransportName = @"webSockets";
 
 - (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
     _connectionInfo = [[SRWebSocketConnectionInfo alloc] initConnection:connection data:data];
+    [self performConnect];
+}
+
+- (void)performConnect {
+    [self performConnect:false];
 }
 
 - (void)performConnect:(BOOL)reconnecting {
     NSString *urlString = (reconnecting) ? _connectionInfo.connection.url : [_connectionInfo.connection.url stringByAppendingString:@"connect"];
     urlString = [urlString stringByAppendingString:[SRTransportHelper receiveQueryString:_connectionInfo.connection data:_connectionInfo.data transport:[self name]]];
     
-    NSURL *builder = [NSURL URLWithString:urlString];
-    NSURL *url = [[NSURL alloc] initWithScheme:([builder.scheme isEqualToString:@"https"]) ? @"wss" : @"ws" host:[builder host] path:[builder path]];
+    NSURL *url = [NSURL URLWithString:urlString];
     
     SRLogWebSocket(@"WS: %@",[url absoluteString]);
+    
+    _webSocket = [[SRWebSocket alloc] initWithURL:url];
+    [_connectionInfo.connection prepareRequest:[[SRWebSocketWrapperRequest alloc] initWithWebSocket:_webSocket]];
+    [_webSocket setDelegate:self];
+    [_webSocket open];
 }
 
 - (void)send:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
@@ -81,7 +92,7 @@ static NSString * const kTransportName = @"webSockets";
 }
 
 - (void)abort:(id <SRConnectionInterface>)connection {
-    
+    [_webSocket close];
 }
 
 #pragma mark - 
@@ -90,21 +101,69 @@ static NSString * const kTransportName = @"webSockets";
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket;
 {
     SRLogWebSocket(@"Websocket Connected");
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
-{
-    SRLogWebSocket(@":( Websocket Failed With Error %@", error);
+    
+    /*if (!_startTcs.TrySetResult(null) &&
+        _connectionInfo.Connection.ChangeState(ConnectionState.Reconnecting, ConnectionState.Connected))
+    {
+        _connectionInfo.Connection.OnReconnected();
+    }*/
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 {
-    SRLogWebSocket(@"Received \"%@\"", message);
+    SRLogWebSocket(@"WS Receive: %@", message);
+        
+    BOOL timedOut = NO;
+    BOOL disconnected = NO;
+    
+    [SRTransportHelper processResponse:_connectionInfo.connection response:message timedOut:&timedOut disconnected:&disconnected];
+
+    if (disconnected)
+    {
+        [[_connectionInfo connection] disconnect];
+        [_webSocket close];
+    }
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
+{
+    SRLogWebSocket(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
+    
+    [[_connectionInfo connection] didReceiveError:error];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
 {
     SRLogWebSocket(@"WebSocket closed");
+    
+    /*if (_disconnectToken.IsCancellationRequested)
+    {
+        return;
+    }
+    
+    while (_connectionInfo.Connection.EnsureReconnecting())
+    {
+        try
+        {
+            await PerformConnect(reconnecting: true);
+            break;
+        }
+        catch (OperationCanceledException)
+        {
+            break;
+        }
+        catch (Exception ex)
+        {
+            if (ExceptionHelper.IsRequestAborted(ex))
+            {
+                break;
+            }
+            
+            _connectionInfo.Connection.OnError(ex);
+        }
+        
+        await Task.Delay(ReconnectDelay);
+    }*/
 }
 
 @end
