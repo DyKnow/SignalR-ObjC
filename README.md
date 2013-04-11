@@ -1,39 +1,97 @@
-# SignalR 
-Async signaling library for .NET to help build real-time, multi-user interactive web applications
-for the official SignalR Library for .NET see the [SignalR Repository](https://github.com/SignalR/SignalR/wiki)
+<p align="center">
+    SignalR Objective-C
+</p>
 
-# SignalR Objective-C
-Extends the reach of the main SignalR project by providing a client that is written in Objective-C and is compaitible
-with iOS and Mac
+SignalR-ObjC is a client library for iOS and Mac OS X.  It's built on top of two popular open source libraries [AFNetworking](https://github.com/AFNetworking/AFNetworking) and [SocketRocket](https://github.com/square/SocketRocket).
+SignalR-ObjC is intended to be used along side ASP.NET SignalR, a new library for ASP.NET developers that makes it incredibly simple to add real-time functionality to your applications. What is "real-time web" functionality? It's the ability to have your server-side code push content to the connected clients as it happens, in real-time.
 
-## What can it be used for?
-Pushing data from the server to the client (not just browser clients) has always been a tough problem. SignalR makes 
-it dead easy and handles all the heavy lifting for you.
+For example, here's how easy it is to get started:
+```objective-c
+SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite/echo"];
+connection.received = ^(NSString * data) {
+    NSLog(data);
+};
+[connection start];
 
 
-## Documentation
-See the [documentation](https://github.com/DyKnow/SignalR-ObjC/wiki) and [api reference](http://dyknow.github.com/SignalR-ObjC/Documentation/index.html)
-	
-## Installation
+[connection send:@"hello world"];
+```
 
-### [CocoaPods](http://cocoapods.org/)
-1. Install CocoaPods (if you have not already done so)
+## How To Get Started
+
+- Download SignalR-ObjC and try out the included Mac and iPhone example apps
+    1. Install [CocoaPods](http://cocoapods.org/)
+        * $ [sudo] gem install cocoapods
+        * $ pod setup
+    1. cd SignalR-ObjC project directory
+    1. $ pod install
+- Check out the [documentation](http://dyknow.github.com/SignalR-ObjC/Documentation/index.html) for a comprehensive look at the APIs available in SignalR-ObjC. **NOTE:** this is a work in progress and is currently outdated.
+- Questions? [JabbR](https://jabbr.net/#/rooms/signalr-objc) is the best place to find answers
+
+### Installation
+1. Install [CocoaPods](http://cocoapods.org/)
     * $ [sudo] gem install cocoapods
     * $ pod setup
 1. Create or Add SignalR to your "Podfile"
-    * ```platform :ios, '5.0'``` or ```platform :osx, '10.7'```
-    * ```pod 'SignalR-ObjC'```
-1. Install SignalR-ObjC into your project
-    * pod install
 
-## Running the Samples
-1. Install CocoaPods (if you have not already done so)
-    * $ [sudo] gem install cocoapods
-    * $ pod setup
-1. cd SignalR-ObjC project directory
-1. $ pod install
+```ruby
+//Sample iOS Podfile
+platform :ios, '5.0'
+pod 'SignalR-ObjC'
+```
+
+```ruby
+//Sample OSX Podfile
+platform :osx, '10.7'
+pod 'SignalR-ObjC'
+```
+1. Install SignalR-ObjC into your project
+    * $ pod install
+
+## Overview
+
+<table>
+  <tr><th colspan="2" style="text-align:center;">Core</th></tr>
+  <tr>
+    <td>SRConnection</td>
+    <td></td>
+  </tr>
+  <tr><th colspan="2" style="text-align:center;">Hubs</th></tr>
+  <tr>
+    <td>SRHubConnection</td>
+    <td></td>
+  </tr>
+  <tr><th colspan="2" style="text-align:center;">Transports</th></tr>
+  <tr>
+    <td>SRWebSocketTransport</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>SRServerSentEventsTransport</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>SRLongPollingTransport</td>
+    <td></td>
+  </tr>
+</table>
+
+## Example Usage
 
 ## Requirements
+
+SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#releasenotes/General/WhatsNewIniPhoneOS/Articles/iPhoneOS4.html) and above, or [Mac OS 10.7](http://developer.apple.com/library/mac/#releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_6.html#//apple_ref/doc/uid/TP40008898-SW7) ([64-bit with modern Cocoa runtime](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtVersionsPlatforms.html)) and above.
+
+### ARC
+
+SignalR-ObjC requires ARC
+
+### Networking
+
+SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 1.0.0
+SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.2.0
+
+### JSON
 
 SignalR-ObjC uses [`NSJSONSerialization`](http://developer.apple.com/library/mac/#documentation/Foundation/Reference/NSJSONSerialization_Class/Reference/Reference.html) if it is available. You can include one of the following JSON libraries to your project for SignalR-ObjC to automatically detect and use.
 
@@ -42,15 +100,8 @@ SignalR-ObjC uses [`NSJSONSerialization`](http://developer.apple.com/library/mac
 * [YAJL](http://lloyd.github.com/yajl/)
 * [NextiveJson](https://github.com/nextive/NextiveJson)
 
-### ARC Support
-
-SignalR-ObjC requires ARC
 
 ## LICENSE
 [MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
 
 SignalR-ObjC uses 3rd-party code, see [ACKNOWLEDGEMENTS](https://github.com/DyKnow/SignalR-ObjC/blob/master/ACKNOWLEDGEMENTS.md) for contributions
-
-## Questions?
-- The SignalR team hangs out in the **signalr** room at http://jabbr.net/
-- The SignalR-ObjC team hangs out in the **signalr-objc** room at http://jabbr.net/
