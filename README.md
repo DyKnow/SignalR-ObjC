@@ -32,33 +32,37 @@ connection.received = ^(NSString * data) {
 1. Install [CocoaPods](http://cocoapods.org/)
     * $ [sudo] gem install cocoapods
     * $ pod setup
-1. Create or Add SignalR to your "Podfile"
-
-```ruby
-//Sample iOS Podfile
-platform :ios, '5.0'
+2. Create or Add SignalR to your "Podfile"
+<table>
+  <tr>
+    <th>Sample iOS Podfile</th>
+    <th>Sample OSX Podfile</th>
+  </tr>
+  <tr>
+    <td>
+platform :ios, '5.0'<br/>
 pod 'SignalR-ObjC'
-```
-
-```ruby
-//Sample OSX Podfile
-platform :osx, '10.7'
+    </td>
+    <td>
+platform :osx, '10.7'<br/>
 pod 'SignalR-ObjC'
-```
-1. Install SignalR-ObjC into your project
+    </td>
+  </tr>
+</table>
+3. Install SignalR-ObjC into your project
     * $ pod install
 
 ## Overview
 
 <table>
-  <tr><th colspan="2" style="text-align:center;">Core</th></tr>
-  <tr>
-    <td>SRConnection</td>
-    <td></td>
-  </tr>
   <tr><th colspan="2" style="text-align:center;">Hubs</th></tr>
   <tr>
     <td>SRHubConnection</td>
+    <td></td>
+  </tr>
+  <tr><th colspan="2" style="text-align:center;">Core</th></tr>
+  <tr>
+    <td>SRConnection</td>
     <td></td>
   </tr>
   <tr><th colspan="2" style="text-align:center;">Transports</th></tr>
@@ -84,12 +88,12 @@ SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#r
 
 ### ARC
 
-SignalR-ObjC requires ARC
+- SignalR-ObjC requires ARC
 
 ### Networking
 
-SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 1.0.0
-SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.2.0
+- SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 1.0.0
+- SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.2.0
 
 ### JSON
 
