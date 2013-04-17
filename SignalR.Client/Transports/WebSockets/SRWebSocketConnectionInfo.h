@@ -25,7 +25,7 @@
 
 @interface SRWebSocketConnectionInfo : NSObject
 
-@property (strong, nonatomic, readwrite) id <SRConnectionInterface> connection;
+@property (weak, nonatomic, readwrite) id <SRConnectionInterface> connection;
 @property (strong, nonatomic, readwrite) NSString *data;
 
 - (instancetype)initConnection:(id <SRConnectionInterface>)connection data:(NSString *)data;

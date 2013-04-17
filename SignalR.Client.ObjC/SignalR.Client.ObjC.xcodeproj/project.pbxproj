@@ -62,11 +62,11 @@
 		391963B315AF22FF00DDC946 /* SRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782315AF13F6009B959E /* SRRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963B415AF22FF00DDC946 /* SRResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782415AF13F6009B959E /* SRResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963B515AF22FF00DDC946 /* SRHubConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782615AF13F6009B959E /* SRHubConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963B615AF22FF00DDC946 /* SRHubInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782815AF13F6009B959E /* SRHubInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		391963B615AF22FF00DDC946 /* SRHubInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782815AF13F6009B959E /* SRHubInvocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963B715AF22FF00DDC946 /* SRHubProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782A15AF13F6009B959E /* SRHubProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963B815AF22FF00DDC946 /* SRHubProxyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782C15AF13F6009B959E /* SRHubProxyExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963B915AF22FF00DDC946 /* SRHubRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782E15AF13F6009B959E /* SRHubRegistrationData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		391963BA15AF22FF00DDC946 /* SRHubResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783015AF13F6009B959E /* SRHubResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		391963B915AF22FF00DDC946 /* SRHubRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782E15AF13F6009B959E /* SRHubRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		391963BA15AF22FF00DDC946 /* SRHubResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783015AF13F6009B959E /* SRHubResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391963BB15AF22FF00DDC946 /* SRHubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783215AF13F6009B959E /* SRHubs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963BC15AF22FF00DDC946 /* SRHubservable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783315AF13F6009B959E /* SRHubservable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		391963BD15AF22FF00DDC946 /* SRSubscription.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783515AF13F6009B959E /* SRSubscription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -107,15 +107,15 @@
 		3920786D15AF13F6009B959E /* SRResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782415AF13F6009B959E /* SRResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920786E15AF13F6009B959E /* SRHubConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782615AF13F6009B959E /* SRHubConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920786F15AF13F6009B959E /* SRHubConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782715AF13F6009B959E /* SRHubConnection.m */; };
-		3920787015AF13F6009B959E /* SRHubInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782815AF13F6009B959E /* SRHubInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3920787015AF13F6009B959E /* SRHubInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782815AF13F6009B959E /* SRHubInvocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920787115AF13F6009B959E /* SRHubInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782915AF13F6009B959E /* SRHubInvocation.m */; };
 		3920787215AF13F6009B959E /* SRHubProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782A15AF13F6009B959E /* SRHubProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920787315AF13F6009B959E /* SRHubProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782B15AF13F6009B959E /* SRHubProxy.m */; };
 		3920787415AF13F6009B959E /* SRHubProxyExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782C15AF13F6009B959E /* SRHubProxyExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920787515AF13F6009B959E /* SRHubProxyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782D15AF13F6009B959E /* SRHubProxyExtensions.m */; };
-		3920787615AF13F6009B959E /* SRHubRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782E15AF13F6009B959E /* SRHubRegistrationData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3920787615AF13F6009B959E /* SRHubRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920782E15AF13F6009B959E /* SRHubRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920787715AF13F6009B959E /* SRHubRegistrationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782F15AF13F6009B959E /* SRHubRegistrationData.m */; };
-		3920787815AF13F6009B959E /* SRHubResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783015AF13F6009B959E /* SRHubResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3920787815AF13F6009B959E /* SRHubResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783015AF13F6009B959E /* SRHubResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920787915AF13F6009B959E /* SRHubResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783115AF13F6009B959E /* SRHubResult.m */; };
 		3920787A15AF13F6009B959E /* SRHubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783215AF13F6009B959E /* SRHubs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920787B15AF13F6009B959E /* SRHubservable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920783315AF13F6009B959E /* SRHubservable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -136,7 +136,7 @@
 		3920789015AF13F6009B959E /* SRConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784915AF13F6009B959E /* SRConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920789115AF13F6009B959E /* SRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784A15AF13F6009B959E /* SRConnection.m */; };
 		3920789215AF13F6009B959E /* SRConnectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784B15AF13F6009B959E /* SRConnectionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3920789315AF13F6009B959E /* SRNegotiationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784C15AF13F6009B959E /* SRNegotiationResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3920789315AF13F6009B959E /* SRNegotiationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784C15AF13F6009B959E /* SRNegotiationResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3920789415AF13F6009B959E /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784D15AF13F6009B959E /* SRNegotiationResponse.m */; };
 		3920789515AF13F6009B959E /* SRLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920784E15AF13F6009B959E /* SRLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3920789615AF13F6009B959E /* SRChunkBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3920785115AF13F6009B959E /* SRChunkBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -170,8 +170,8 @@
 		3920795A15AF1BEA009B959E /* RawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795215AF1BEA009B959E /* RawViewController.m */; };
 		3920795B15AF1BEA009B959E /* StreamingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920795415AF1BEA009B959E /* StreamingViewController.m */; };
 		392353DD165BE723001A0D21 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2866165ABE4F0000D19E /* SystemConfiguration.framework */; };
-		392734691716312C0017090E /* SRWebSocketWrapperRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 392734671716312C0017090E /* SRWebSocketWrapperRequest.h */; };
-		3927346A1716312C0017090E /* SRWebSocketWrapperRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 392734671716312C0017090E /* SRWebSocketWrapperRequest.h */; };
+		392734691716312C0017090E /* SRWebSocketWrapperRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 392734671716312C0017090E /* SRWebSocketWrapperRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3927346A1716312C0017090E /* SRWebSocketWrapperRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 392734671716312C0017090E /* SRWebSocketWrapperRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3927346B1716312C0017090E /* SRWebSocketWrapperRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 392734681716312C0017090E /* SRWebSocketWrapperRequest.m */; };
 		3927346C1716312C0017090E /* SRWebSocketWrapperRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 392734681716312C0017090E /* SRWebSocketWrapperRequest.m */; };
 		3940059415CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3940059315CC6A2C006673E2 /* SRChunkBufferTests.m */; };
@@ -186,17 +186,23 @@
 		39423B6016D139B0003E7516 /* Router.m in Sources */ = {isa = PBXBuildFile; fileRef = 39423B5E16D139B0003E7516 /* Router.m */; };
 		396D2867165ABE4F0000D19E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2866165ABE4F0000D19E /* SystemConfiguration.framework */; };
 		396D286A165ABE6C0000D19E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2869165ABE6C0000D19E /* MobileCoreServices.framework */; };
+		3973E7CD171B4DDF00F36AAA /* SRWebSocketConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3973E7CE171B4DE300F36AAA /* SRWebSocketConnectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D811713935A00E13E6E /* SRWebSocketConnectionInfo.m */; };
+		3973E7CF171B4DF600F36AAA /* SRWebSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3973E7D0171B4DFA00F36AAA /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
+		3973E7D1171B4DFF00F36AAA /* SRTransportHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D841713946F00E13E6E /* SRTransportHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3973E7D2171B4E0200F36AAA /* SRTransportHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D851713946F00E13E6E /* SRTransportHelper.m */; };
 		3994AAA81714D03B00E452F7 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAA51714D01900E452F7 /* CFNetwork.framework */; };
 		3994AAA91714D03D00E452F7 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAA51714D01900E452F7 /* CFNetwork.framework */; };
 		3994AAAC1714D06C00E452F7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAA1714D06900E452F7 /* Security.framework */; };
 		3994AAAD1714D06E00E452F7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAA1714D06900E452F7 /* Security.framework */; };
 		3994AAB01714D09200E452F7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
 		3994AAB11714D09400E452F7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
-		39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */; };
+		39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		39AF0D7F17138E3800E13E6E /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
-		39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */; };
+		39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39AF0D831713935A00E13E6E /* SRWebSocketConnectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D811713935A00E13E6E /* SRWebSocketConnectionInfo.m */; };
-		39AF0D861713946F00E13E6E /* SRTransportHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D841713946F00E13E6E /* SRTransportHelper.h */; };
+		39AF0D861713946F00E13E6E /* SRTransportHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D841713946F00E13E6E /* SRTransportHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39AF0D871713946F00E13E6E /* SRTransportHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D851713946F00E13E6E /* SRTransportHelper.m */; };
 		39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
 		39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */; };
@@ -855,6 +861,9 @@
 				391963CF15AF22FF00DDC946 /* SRSseEvent.h in Headers */,
 				391963BF15AF22FF00DDC946 /* NSObject+SRJSON.h in Headers */,
 				3927346A1716312C0017090E /* SRWebSocketWrapperRequest.h in Headers */,
+				3973E7CD171B4DDF00F36AAA /* SRWebSocketConnectionInfo.h in Headers */,
+				3973E7CF171B4DF600F36AAA /* SRWebSocketTransport.h in Headers */,
+				3973E7D1171B4DFF00F36AAA /* SRTransportHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1207,6 +1216,9 @@
 				3919639715AF224500DDC946 /* SRServerSentEventsTransport.m in Sources */,
 				39423B5A16D13515003E7516 /* SRConnectionExtensions.m in Sources */,
 				3927346C1716312C0017090E /* SRWebSocketWrapperRequest.m in Sources */,
+				3973E7CE171B4DE300F36AAA /* SRWebSocketConnectionInfo.m in Sources */,
+				3973E7D0171B4DFA00F36AAA /* SRWebSocketTransport.m in Sources */,
+				3973E7D2171B4E0200F36AAA /* SRTransportHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,12 +28,16 @@
 #import "SRTransportHelper.h"
 #import "SRConnectionInterface.h"
 #import "SRWebSocketWrapperRequest.h"
+#import "SRConnectionExtensions.h"
+
+typedef void (^SRWebSocketStartBlock)(id response);
 
 @interface SRWebSocketTransport () <SRWebSocketDelegate>
 
 @property (strong, nonatomic, readonly) id <SRHttpClient> client;
 @property (strong, nonatomic, readonly) SRWebSocket *webSocket;
 @property (strong, nonatomic, readonly) SRWebSocketConnectionInfo *connectionInfo;
+@property (copy) SRWebSocketStartBlock startBlock;
 
 @end
 
@@ -66,20 +70,22 @@ static NSString * const kTransportName = @"webSockets";
 
 - (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
     _connectionInfo = [[SRWebSocketConnectionInfo alloc] initConnection:connection data:data];
-    [self performConnect];
+    [self performConnect:block];
 }
 
-- (void)performConnect {
-    [self performConnect:false];
+- (void)performConnect:(void (^)(id response))block {
+    [self performConnect:block reconnecting:NO];
 }
 
-- (void)performConnect:(BOOL)reconnecting {
+- (void)performConnect:(void (^)(id response))block reconnecting:(BOOL)reconnecting {
     NSString *urlString = (reconnecting) ? _connectionInfo.connection.url : [_connectionInfo.connection.url stringByAppendingString:@"connect"];
     urlString = [urlString stringByAppendingString:[SRTransportHelper receiveQueryString:_connectionInfo.connection data:_connectionInfo.data transport:[self name]]];
     
     NSURL *url = [NSURL URLWithString:urlString];
     
     SRLogWebSocket(@"WS: %@",[url absoluteString]);
+    
+    [self setStartBlock:block];
     
     _webSocket = [[SRWebSocket alloc] initWithURL:url];
     [_connectionInfo.connection prepareRequest:[[SRWebSocketWrapperRequest alloc] initWithWebSocket:_webSocket]];
@@ -88,36 +94,39 @@ static NSString * const kTransportName = @"webSockets";
 }
 
 - (void)send:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
+    [_webSocket send:data];
     
+    if(block) {
+        block(nil);
+    }
 }
 
 - (void)abort:(id <SRConnectionInterface>)connection {
     [_webSocket close];
+    _webSocket = nil;
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark SRWebSocketDelegate
 
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket;
-{
+- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     SRLogWebSocket(@"Websocket Connected");
     
-    /*if (!_startTcs.TrySetResult(null) &&
-        _connectionInfo.Connection.ChangeState(ConnectionState.Reconnecting, ConnectionState.Connected))
-    {
-        _connectionInfo.Connection.OnReconnected();
-    }*/
+    if (self.startBlock) {
+        self.startBlock(nil);
+    } else if ([[_connectionInfo connection] changeState:reconnecting toState:connected]) {
+        [[_connectionInfo connection] didReconnect];
+    }
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
-{
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
     SRLogWebSocket(@"WS Receive: %@", message);
-        
+    
     BOOL timedOut = NO;
     BOOL disconnected = NO;
     
     [SRTransportHelper processResponse:_connectionInfo.connection response:message timedOut:&timedOut disconnected:&disconnected];
-
+    
     if (disconnected)
     {
         [[_connectionInfo connection] disconnect];
@@ -125,45 +134,14 @@ static NSString * const kTransportName = @"webSockets";
     }
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
-{
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
     SRLogWebSocket(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
     
     [[_connectionInfo connection] didReceiveError:error];
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
-{
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
     SRLogWebSocket(@"WebSocket closed");
-    
-    /*if (_disconnectToken.IsCancellationRequested)
-    {
-        return;
-    }
-    
-    while (_connectionInfo.Connection.EnsureReconnecting())
-    {
-        try
-        {
-            await PerformConnect(reconnecting: true);
-            break;
-        }
-        catch (OperationCanceledException)
-        {
-            break;
-        }
-        catch (Exception ex)
-        {
-            if (ExceptionHelper.IsRequestAborted(ex))
-            {
-                break;
-            }
-            
-            _connectionInfo.Connection.OnError(ex);
-        }
-        
-        await Task.Delay(ReconnectDelay);
-    }*/
 }
 
 @end
