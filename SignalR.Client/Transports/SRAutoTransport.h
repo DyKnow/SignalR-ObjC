@@ -33,8 +33,6 @@
  */
 @interface SRAutoTransport : NSObject <SRClientTransportInterface>
 
-@property (strong, nonatomic, readonly) id <SRHttpClient> httpClient;
-
 - (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient;
 
 @end

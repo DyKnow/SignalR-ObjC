@@ -35,7 +35,6 @@ void (^prepareRequest)(id);
 @interface SRConnection ()
 
 @property (strong, nonatomic, readonly) SRVersion *assemblyVersion;
-@property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
 @property (strong, nonatomic, readwrite) NSBlockOperation * disconnectTimeoutOperation;
 

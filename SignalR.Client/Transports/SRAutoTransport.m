@@ -25,12 +25,16 @@
 #import "SRLog.h"
 #import "SRLongPollingTransport.h"
 #import "SRServerSentEventsTransport.h"
+#import "SRWebSocketTransport.h"
+#import "SRTransportHelper.h"
 
 @interface SRAutoTransport ()
 
+@property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
+@property (strong, nonatomic, readonly) id <SRHttpClient> httpClient;
 // List of transports in fallback order
 @property (strong, nonatomic, readonly) NSArray *transports;
-@property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
+@property (assign, nonatomic, readonly) int startIndex;
 
 - (void)resolveTransport:(id <SRConnectionInterface>)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index;
 
@@ -39,9 +43,19 @@
 @implementation SRAutoTransport
 
 - (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient {
+    NSArray *transports = @[[[SRWebSocketTransport alloc] initWithHttpClient:httpClient],
+                            [[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],
+                            [[SRLongPollingTransport alloc] initWithHttpClient:httpClient]];
+    /*NSArray *transports = @[[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],
+                            [[SRLongPollingTransport alloc] initWithHttpClient:httpClient]];*/
+    return [self initWithHttpClient:httpClient transports:transports];
+}
+
+- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient transports:(NSArray *)transports {
     if(self = [super init]) {
         _httpClient = httpClient;
-        _transports = @[[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],[[SRLongPollingTransport alloc] initWithHttpClient:httpClient]];
+        _transports = transports;
+        _startIndex = 0;
     }
     return self;
 }
@@ -52,11 +66,20 @@
 }
 
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
+    [SRTransportHelper getNegotiationResponse:_httpClient connection:connection completionHandler:^(SRNegotiationResponse *response) {
+        
+        if (![response tryWebSockets]) {
+            _startIndex = 1;
+        }
+        
+        if (block) {
+            block(response);
+        }
+    }];
 }
 
 - (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
-    [self resolveTransport:connection data:data taskCompletionSource:block index:0];
+    [self resolveTransport:connection data:data taskCompletionSource:block index:_startIndex];
 }
 
 - (void)resolveTransport:(id <SRConnectionInterface>)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index {

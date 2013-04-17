@@ -1,11 +1,13 @@
-
 PODS:
-- AFNetworking (1.1.0)
+  - AFNetworking (1.1.0)
+  - SocketRocket (0.2.0)
 
 DEPENDENCIES:
-- AFNetworking (>= 1.0.0)
+  - AFNetworking (>= 1.0.0)
+  - SocketRocket (= 0.2.0)
 
 SPEC CHECKSUMS:
   AFNetworking: 761a418233d280c1e0580bcb76ff9cb4c3073d17
+  SocketRocket: bca43a94bd9aac3a629df42c06843402399ee67b
 
-COCOAPODS: 0.16.4
+COCOAPODS: 0.18.0
