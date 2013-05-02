@@ -76,7 +76,7 @@ static NSString * const kTransportName = @"serverSentEvents";
     BOOL _reconnecting = initializeCallback == nil;
     SRThreadSafeInvoker *callbackInvoker = [[SRThreadSafeInvoker alloc] init];
     
-    NSString *url = [(_reconnecting ? connection.url : [connection.url stringByAppendingString:@"connect"]) stringByAppendingFormat:@"%@",[self receiveQueryString:connection data:data]];
+    NSString *url = [(_reconnecting ? [connection.url stringByAppendingString:@"reconnect"] : [connection.url stringByAppendingString:@"connect"] ) stringByAppendingFormat:@"%@",[self receiveQueryString:connection data:data]];
     __block id <SRRequest> request = nil;
     __block SREventSourceStreamReader *eventSource;
     __block id requestDisposer;
@@ -107,6 +107,8 @@ static NSString * const kTransportName = @"serverSentEvents";
                     } 
                     withCallback:errorCallback 
                     withObject:exception];
+
+                    [self reconnect:connection data:data];
                 } else if(_reconnecting) {
                     // Only raise the error event if we failed to reconnect
                     [connection didReceiveError:exception];
