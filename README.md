@@ -67,15 +67,19 @@ pod 'SignalR-ObjC'
   </tr>
   <tr><th colspan="2" style="text-align:center;">Transports</th></tr>
   <tr>
-    <td>SRWebSocketTransport</td>
+    <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRAutoTransport.h" >SRAutoTransport</a></td>
+    <td>SRAutoTransport chooses the best supported transport for both client and server.  This achieved by falling back to less performant transports.<br/>The default transport fallback is:<br/> 1. SRWebSocketTransport <br/> 2. SRServerSentEventsTransport <br/> 3. SRLongPollingTransport</td>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRWebSocketsTransport.h" >SRWebSocketsTransport</a></td>
     <td>WebSockets is the only transport that establishes a true persistent, two-way connection between the client and server.</td>
   </tr>
   <tr>
-    <td>SRServerSentEventsTransport</td>
+    <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRServerSentEventsTransport.h" >SRServerSentEventsTransport</a></td>
     <td>With Server Sent Events, also known as EventSource, it's possible for a server to send new data to a client at any time, by pushing messages to the client. Server Sent Events requires few new connections then Long Polling and therefore will have less latency.</td>
   </tr>
   <tr>
-    <td>SRLongPollingTransport</td>
+    <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRLongPollingTransport.h" >SRLongPollingTransport</a></td>
     <td>Long polling does not create a persistent connection, but instead polls the server with a request that stays open until the server responds, at which point the connection closes, and a new connection is requested immediately. This may introduce some latency while the connection resets.</td>
   </tr>
 </table>
