@@ -105,6 +105,6 @@ SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#r
 
 
 ## LICENSE
-[MIT License](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md)
 
-SignalR-ObjC uses 3rd-party code, see [ACKNOWLEDGEMENTS](https://github.com/DyKnow/SignalR-ObjC/blob/master/ACKNOWLEDGEMENTS.md) for contributions
+SignalR-ObjC is available under the MIT license. See the [LICENSE](https://github.com/DyKnow/SignalR-ObjC/blob/master/LICENSE.md) file for more info.
+SignalR-ObjC uses 3rd-party code which each have specific licenses, see [ACKNOWLEDGEMENTS](https://github.com/DyKnow/SignalR-ObjC/blob/master/ACKNOWLEDGEMENTS.md) for contributions
