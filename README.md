@@ -1,5 +1,5 @@
 <p align="center">
-    SignalR Objective-C
+    <img src="https://f.cloud.github.com/assets/1089907/475156/237c7c22-b780-11e2-92e8-3787fdfe5f08.png" />
 </p>
 
 SignalR-ObjC is a client library for iOS and Mac OS X.  It's built on top of two popular open source libraries [AFNetworking](https://github.com/AFNetworking/AFNetworking) and [SocketRocket](https://github.com/square/SocketRocket).
