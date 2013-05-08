@@ -68,15 +68,15 @@ pod 'SignalR-ObjC'
   <tr><th colspan="2" style="text-align:center;">Transports</th></tr>
   <tr>
     <td>SRWebSocketTransport</td>
-    <td></td>
+    <td>WebSockets is the only transport that establishes a true persistent, two-way connection between the client and server.</td>
   </tr>
   <tr>
     <td>SRServerSentEventsTransport</td>
-    <td></td>
+    <td>With Server Sent Events, also known as EventSource, it's possible for a server to send new data to a client at any time, by pushing messages to the client. Server Sent Events requires few new connections then Long Polling and therefore will have less latency.</td>
   </tr>
   <tr>
     <td>SRLongPollingTransport</td>
-    <td></td>
+    <td>Long polling does not create a persistent connection, but instead polls the server with a request that stays open until the server responds, at which point the connection closes, and a new connection is requested immediately. This may introduce some latency while the connection resets.</td>
   </tr>
 </table>
 
