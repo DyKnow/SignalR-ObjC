@@ -97,12 +97,7 @@ SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#r
 
 ### JSON
 
-SignalR-ObjC uses [`NSJSONSerialization`](http://developer.apple.com/library/mac/#documentation/Foundation/Reference/NSJSONSerialization_Class/Reference/Reference.html) if it is available. You can include one of the following JSON libraries to your project for SignalR-ObjC to automatically detect and use.
-
-* [JSONKit](https://github.com/johnezang/JSONKit)
-* [SBJson](http://stig.github.com/json-framework/)
-* [YAJL](http://lloyd.github.com/yajl/)
-* [NextiveJson](https://github.com/nextive/NextiveJson)
+- SignalR-ObjC uses  [AnyJSON](https://github.com/mattt/AnyJSON).  The minimum supported version of SocketRocket is 0.0.1
 
 
 ## LICENSE
