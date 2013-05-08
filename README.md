@@ -97,7 +97,7 @@ SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#r
 
 ### JSON
 
-- SignalR-ObjC uses  [AnyJSON](https://github.com/mattt/AnyJSON).  The minimum supported version of SocketRocket is 0.0.1
+- SignalR-ObjC uses  [AnyJSON](https://github.com/mattt/AnyJSON).  The minimum supported version of AnyJSON is 0.0.1
 
 
 ## LICENSE
