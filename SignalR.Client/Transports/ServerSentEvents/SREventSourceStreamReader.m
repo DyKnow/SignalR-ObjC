@@ -45,7 +45,6 @@ typedef enum {
 
 - (void)onOpened;
 - (void)onMessage:(SRSseEvent *)sseEvent;
-- (void)onDisabled;
 - (void)onClosed:(NSError *)error;
 
 @end
@@ -152,18 +151,12 @@ typedef enum {
     }
 }
 
-- (void)onDisabled {
-    if (self.disabled) {
-        self.disabled();
-    }
-}
-
 - (void)onClosed:(NSError *)error; {
     
     SREventSourceStreamReaderState previousState = _reading;
     _reading = stopped;
     
-    if (previousState == processing){
+    if (previousState != stopped){
         SRLogServerSentEvents(@"Closed");
 
         if(self.closed) {
@@ -172,10 +165,6 @@ typedef enum {
         
         _stream.delegate = nil;
         [_stream close];
-    }
-    
-    if (previousState != stopped && self.disabled) {
-        self.disabled();
     }
 }
 

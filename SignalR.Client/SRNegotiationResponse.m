@@ -29,11 +29,12 @@
 @implementation SRNegotiationResponse
 
 static NSString * const kConnectionId = @"ConnectionId";
+static NSString * const kConnectionToken = @"ConnectionToken";
 static NSString * const kUrl = @"Url";
 static NSString * const kProtocolVersion = @"ProtocolVersion";
 static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
-static NSString * const kConnectionToken = @"ConnectionToken";
 static NSString * const kTryWebSockets = @"TryWebSockets";
+static NSString * const kKeepAliveTimeout= @"KeepAliveTimeout";
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -55,6 +56,7 @@ static NSString * const kTryWebSockets = @"TryWebSockets";
         _protocolVersion = [NSString stringWithFormat:@"%@",dict[kProtocolVersion]];
         _disconnectTimeout = dict[kDisconnectTimeout];
         _tryWebSockets = [[dict objectForKey:kTryWebSockets] boolValue];
+        _keepAliveTimeout = dict[kKeepAliveTimeout];
 	}
 	return self;
 }

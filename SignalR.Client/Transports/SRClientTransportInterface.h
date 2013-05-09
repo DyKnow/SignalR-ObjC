@@ -21,8 +21,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnectionInterface.h"
 
+@protocol SRConnectionInterface;
 @class SRNegotiationResponse;
 
 /**
@@ -31,6 +31,7 @@
 @protocol SRClientTransportInterface <NSObject>
 
 @property (strong, nonatomic, readonly) NSString *name;
+@property (assign, nonatomic, readonly) BOOL supportsKeepAlive;
 
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block;
 
@@ -57,6 +58,8 @@
  *
  * @param connection the `SRConnectionInterface` owning the transport that should be stopped
  */
-- (void)abort:(id <SRConnectionInterface>)connection;
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout;
+
+- (void)lostConnection:(id <SRConnectionInterface>)connection;
 
 @end

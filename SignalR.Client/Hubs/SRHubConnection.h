@@ -22,8 +22,9 @@
 
 #import <Foundation/Foundation.h>
 #import "SRConnection.h"
-#import "SRHubProxyInterface.h"
 #import "SRHubConnectionInterface.h"
+
+@protocol SRHubProxyInterface;
 
 /**
  * An `SRHubConnection` object provides an abstraction over `SRConnection` and provides support for publishing and subscribing to custom events

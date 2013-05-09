@@ -21,7 +21,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransportInterface.h"
 #import "SRConnectionDelegate.h"
 #import "SRConnectionInterface.h"
 #import "SRConnectionState.h"
@@ -35,6 +34,7 @@ typedef void (^onClosed)();
 typedef void (^onReconnecting)();
 typedef void (^onReconnected)();
 typedef void (^onStateChanged)(connectionState);
+typedef void (^onConnectionSlow)();
 
 @interface SRConnection : NSObject <SRConnectionInterface>
 
@@ -49,7 +49,7 @@ typedef void (^onStateChanged)(connectionState);
 @property (copy) onReconnecting reconnecting;
 @property (copy) onReconnected reconnected;
 @property (copy) onStateChanged stateChanged;
-@property (strong, nonatomic, readonly) id<SRClientTransportInterface> transport;
+@property (copy) onConnectionSlow connectionSlow;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -70,6 +70,8 @@ typedef void (^onStateChanged)(connectionState);
 
 - (void)start;
 - (void)start:(id <SRClientTransportInterface>)transport;
+- (void)stop:(NSNumber *)timeout;
+- (void)didClose;
 
 ///-------------------------------
 /// @name Sending Data

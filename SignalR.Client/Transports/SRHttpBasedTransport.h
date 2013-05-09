@@ -25,6 +25,8 @@
 
 @interface SRHttpBasedTransport : NSObject <SRClientTransportInterface>
 
+- (void)completeAbort;
+- (BOOL)tryCompleteAbort;
 - (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data;
 - (NSString *)appendBaseUrl:(NSString *)baseUrl withConnectionQueryString:(id <SRConnectionInterface>)connection;
 - (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;

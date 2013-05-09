@@ -21,6 +21,7 @@
 //
 
 #import "AFHTTPRequestOperation.h"
+#import "SRConnectionInterface.h"
 #import "SRConnectionExtensions.h"
 #import "SRExceptionHelper.h"
 #import "SRLog.h"
@@ -57,6 +58,10 @@ static NSString * const kTransportName = @"longPolling";
 
 - (NSString *)name {
     return @"longPolling";
+}
+
+- (BOOL)supportsKeepAlive {
+    return NO;
 }
 
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
@@ -171,8 +176,8 @@ static NSString * const kTransportName = @"longPolling";
     [super send:connection data:data completionHandler:block];
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection {
-    [super abort:connection];
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
+    [super abort:connection timeout:timeout];
 }
 
 @end

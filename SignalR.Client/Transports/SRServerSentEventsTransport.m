@@ -95,6 +95,10 @@ static NSString * const kTransportName = @"serverSentEvents";
     return @"serverSentEvents";
 }
 
+- (BOOL)supportsKeepAlive {
+    return YES;
+}
+
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     [super negotiate:connection completionHandler:block];
 }
@@ -136,7 +140,10 @@ static NSString * const kTransportName = @"serverSentEvents";
         __weak __typeof(&*connection)weakConnection = connection;
         __weak __typeof(&*data)weakData = data;
         
-        __block BOOL retry = YES;
+        __block BOOL stop = NO;
+        
+#warning TODO: handle connection disconnect event, abort any pending requests and set stop to YES
+        
         eventSource.opened = ^() {
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             __strong __typeof(&*weakConnection)strongConnection = weakConnection;
@@ -168,12 +175,12 @@ static NSString * const kTransportName = @"serverSentEvents";
                 
                 if(disconnect) {
                     SRLogServerSentEvents(@"disconnect received should disconnect");
-                    retry = NO;
+                    stop = YES;
                     [strongConnection disconnect];
                 }
             }
         };
-        eventSource.closed = ^(NSError *error) {
+        eventSource.closed = ^(NSError *exception) {
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             __strong __typeof(&*weakConnection)strongConnection = weakConnection;
             __strong __typeof(&*weakData)strongData = weakData;
@@ -181,36 +188,44 @@ static NSString * const kTransportName = @"serverSentEvents";
             SRLogServerSentEvents(@"did close");
             BOOL isRequestAborted = NO;
             
-            if (error != nil) {
+            if (exception != nil) {
                 // Check if the request is aborted
-                isRequestAborted = [SRExceptionHelper isRequestAborted:error];
+                isRequestAborted = [SRExceptionHelper isRequestAborted:exception];
                 
                 if (!isRequestAborted) {
                     // Don't raise exceptions if the request was aborted (connection was stopped).
-                    [strongConnection didReceiveError:error];
+                    [strongConnection didReceiveError:exception];
                 }
             }
             
-            // Skip reconnect attempt for aborted requests
-            if (!isRequestAborted && retry)
+#warning TODO: dispose of handle connection disconnect block defined above
+            
+            if (stop)
+            {
+                [strongSelf completeAbort];
+            }
+            else if ([strongSelf tryCompleteAbort])
+            {
+            }
+            else
             {
                 [strongSelf reconnect:strongConnection data:strongData];
             }
-        };
-        eventSource.disabled = ^() {
-            __strong __typeof(&*weakOperation)strongOperation = weakOperation;
-            [strongOperation cancel];
         };
         [eventSource start];
     }];
     [operation start];
     //[self.serverSentEventsOperationQueue addOperation:operation];
+    
+#warning TODO: register disconnect handler
 }
 
 - (void)reconnect:(id <SRConnectionInterface>)connection data:(NSString *)data {
     SRLogServerSentEvents(@"reconnecting");
     if (connection.state != disconnected && [SRConnection ensureReconnecting:connection]) {
         //Now attempt a reconnect
+        [self setInitializeCallback:nil];
+        [self setErrorCallback:nil];
         [self openConnection:connection data:data];
     }
 }
@@ -219,8 +234,12 @@ static NSString * const kTransportName = @"serverSentEvents";
     [super send:connection data:data completionHandler:block];
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection {
-    [super abort:connection];
+- (void)lostConnection:(id<SRConnectionInterface>)connection {
+#warning TODO: abort any pending requests
+}
+
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout{
+    [super abort:connection timeout:timeout];
 }
 
 @end

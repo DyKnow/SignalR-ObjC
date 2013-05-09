@@ -1,9 +1,9 @@
 //
-//  SRHubConnectionInterface.h
+//  SRHeartbeatMonitor.h
 //  SignalR
 //
-//  Created by Bryce Kahle on 3/1/13.
-//  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
+//  Created by Alex Billingsley on 5/9/13.
+//  Copyright (c) 2013 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 //  documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -23,13 +23,14 @@
 #import <Foundation/Foundation.h>
 
 @protocol SRConnectionInterface;
-@class SRHubResult;
 
-typedef void (^SRHubResultBlock)(SRHubResult *result);
+@interface SRHeartbeatMonitor : NSObject
 
-@protocol SRHubConnectionInterface <NSObject, SRConnectionInterface>
+@property (assign, nonatomic, readonly, getter = hasBeenWarned) BOOL beenWarned;
+@property (assign, nonatomic, readonly) BOOL timedOut;
 
-- (NSString *)registerCallback:(SRHubResultBlock)callback;
-- (void)removeCallback:(NSString *)callbackId;
+- (instancetype)initWithConnection:(id <SRConnectionInterface>)connection;
+- (void)start;
+- (void)stop;
 
 @end

@@ -1,9 +1,9 @@
 //
-//  SRHubConnectionInterface.h
+//  SRKeepAliveData.m
 //  SignalR
 //
-//  Created by Bryce Kahle on 3/1/13.
-//  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
+//  Created by Alex Billingsley on 5/8/13.
+//  Copyright (c) 2013 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 //  documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -20,16 +20,30 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import "SRKeepAliveData.h"
 
-@protocol SRConnectionInterface;
-@class SRHubResult;
+@interface SRKeepAliveData ()
 
-typedef void (^SRHubResultBlock)(SRHubResult *result);
+@end
 
-@protocol SRHubConnectionInterface <NSObject, SRConnectionInterface>
+@implementation SRKeepAliveData
 
-- (NSString *)registerCallback:(SRHubResultBlock)callback;
-- (void)removeCallback:(NSString *)callbackId;
+- (instancetype)initWithTimeout:(NSNumber *)timeout {
+    if (self = [super init]) {
+        _timeout = timeout;
+        _timeoutWarning = [NSNumber numberWithInteger:([_timeout integerValue] * (2.0 / 3.0))];
+        _checkInterval = [NSNumber numberWithInteger:(([_timeout integerValue] - [_timeoutWarning integerValue]) / 3)];
+    }
+    return self;
+}
 
+- (instancetype)initWithLastKeepAlive:(NSDate *)lastKeepAlive timeout:(NSNumber *)timeout timeoutWarning:(NSNumber *)timeoutWarning checkInterval:(NSNumber *)checkInterval {
+    if (self = [super init]) {
+        _lastKeepAlive = lastKeepAlive;
+        _timeout = timeout;
+        _timeoutWarning = timeoutWarning;
+        _checkInterval = checkInterval;
+    }
+    return self;
+}
 @end

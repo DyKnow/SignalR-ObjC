@@ -54,6 +54,10 @@ typedef void (^SRWebSocketStartBlock)(id response);
     return @"webSockets";
 }
 
+- (BOOL)supportsKeepAlive {
+    return YES;
+}
+
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
     [super negotiate:connection completionHandler:block];
 }
@@ -68,7 +72,7 @@ typedef void (^SRWebSocketStartBlock)(id response);
 }
 
 - (void)performConnect:(void (^)(id response))block reconnecting:(BOOL)reconnecting {
-    NSString *urlString = (reconnecting) ? _connectionInfo.connection.url : [_connectionInfo.connection.url stringByAppendingString:@"connect"];
+    NSString *urlString = [_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"];
     urlString = [urlString stringByAppendingString:[self receiveQueryString:_connectionInfo.connection data:_connectionInfo.data]];
         
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
@@ -92,7 +96,13 @@ typedef void (^SRWebSocketStartBlock)(id response);
     }
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection {
+- (void)lostConnection:(id<SRConnectionInterface>)connection {
+    [_webSocket close];
+    [_webSocket setDelegate:nil];
+    _webSocket = nil;
+}
+
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
     [_webSocket close];
     [_webSocket setDelegate:nil];
     _webSocket = nil;
@@ -119,8 +129,7 @@ typedef void (^SRWebSocketStartBlock)(id response);
     
     [self processResponse:_connectionInfo.connection response:message timedOut:&timedOut disconnected:&disconnected];
     
-    if (disconnected)
-    {
+    if (disconnected) {
         [[_connectionInfo connection] disconnect];
         [_webSocket close];
     }

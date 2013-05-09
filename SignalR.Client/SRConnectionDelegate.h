@@ -40,4 +40,6 @@
 
 - (void)SRConnection:(id <SRConnectionInterface>)connection didChangeState:(connectionState)oldState newState:(connectionState)newState;
 
+- (void)SRConnectionDidSlow:(id <SRConnectionInterface>)connection;
+
 @end

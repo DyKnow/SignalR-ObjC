@@ -49,8 +49,10 @@
  */
 @property (strong, nonatomic, readonly) NSString *protocolVersion;
 
+@property (strong, nonatomic, readonly) NSNumber *disconnectTimeout;
+
 @property (assign, nonatomic, readonly) BOOL tryWebSockets;
 
-@property (strong, nonatomic, readonly) NSNumber *disconnectTimeout;
+@property (strong, nonatomic, readonly) NSNumber *keepAliveTimeout;
 
 @end
