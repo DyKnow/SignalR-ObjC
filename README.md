@@ -11,10 +11,10 @@ SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/my
 connection.received = ^(NSString * data) {
     NSLog(data);
 };
+connection.started =  ^{
+    [connection send:@"hello world"];
+};
 [connection start];
-
-
-[connection send:@"hello world"];
 ```
 
 ## How To Get Started
@@ -85,7 +85,65 @@ pod 'SignalR-ObjC'
 </table>
 
 ## Example Usage
+### Persistent Connection
+```c#
+using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
 
+//Server
+public class MyConnection : PersistentConnection 
+{
+    protected override Task OnReceived(IRequest request, string connectionId, string data) 
+    {
+        // Broadcast data to all clients
+        return Connection.Broadcast(data);
+    }
+}
+```
+
+```objective-c
+#import "SignalR.h"
+
+//Client
+SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite/echo"];
+connection.received = ^(NSString * data) {
+    NSLog(data);
+};
+connection.started =  ^{
+    [connection send:@"hello world"];
+};
+[connection start];
+```
+### Hubs
+```c#
+//Server
+public class Chat : Hub 
+{
+    public void Send(string message)
+    {
+        // Call the addMessage method on all clients            
+        Clients.All.addMessage(message);
+    }
+}
+```
+
+```objective-c
+//Client
+#import "SignalR.h"
+
+// Connect to the service
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+// Create a proxy to the chat service
+SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
+[chat on:@"addMessage" perform:self selector:@selector(addMessage:)];
+// Start the connection
+[hubConnection start];
+
+- (void)addMessage:(NSString *)message {
+    // Print the message when it comes in
+    NSLog(message);
+}
+```
 ## Requirements
 
 SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#releasenotes/General/WhatsNewIniPhoneOS/Articles/iPhoneOS4.html) and above, or [Mac OS 10.7](http://developer.apple.com/library/mac/#releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_6.html#//apple_ref/doc/uid/TP40008898-SW7) ([64-bit with modern Cocoa runtime](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtVersionsPlatforms.html)) and above.
