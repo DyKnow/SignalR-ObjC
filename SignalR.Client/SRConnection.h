@@ -25,7 +25,6 @@
 #import "SRConnectionDelegate.h"
 #import "SRConnectionInterface.h"
 #import "SRConnectionState.h"
-#import "SRHttpClient.h"
 
 @class SRConnection;
 
@@ -50,6 +49,7 @@ typedef void (^onStateChanged)(connectionState);
 @property (copy) onReconnecting reconnecting;
 @property (copy) onReconnected reconnected;
 @property (copy) onStateChanged stateChanged;
+@property (strong, nonatomic, readonly) id<SRClientTransportInterface> transport;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -69,8 +69,7 @@ typedef void (^onStateChanged)(connectionState);
 ///-------------------------------
 
 - (void)start;
-- (void)startHttpClient:(id <SRHttpClient>)httpClient;
-- (void)startTransport:(id <SRClientTransportInterface>)transport;
+- (void)start:(id <SRClientTransportInterface>)transport;
 
 ///-------------------------------
 /// @name Sending Data

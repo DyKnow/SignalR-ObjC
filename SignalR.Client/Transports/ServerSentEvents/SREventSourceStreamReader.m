@@ -76,38 +76,43 @@ typedef enum {
 }
 
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode {
-    switch (eventCode) {
-        case NSStreamEventOpenCompleted: {
-            SRLogServerSentEvents(@"Opened");
-
-            _reading = processing;
-            [self onOpened];
-        } case NSStreamEventHasSpaceAvailable: {
-            if (![self processing]) {
-                return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        switch (eventCode) {
+            case NSStreamEventOpenCompleted: {
+                SRLogServerSentEvents(@"Opened");
+                
+                _reading = processing;
+                [self onOpened];
+            } case NSStreamEventHasSpaceAvailable: {
+                if (![self processing]) {
+                    return;
+                }
+                
+                NSData *buffer = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+                if ([buffer length] >= 4096) {
+                    [self close];
+                    return;
+                }
+                buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
+                
+                NSInteger read = [buffer length];
+                if(read > 0) {
+                    // Put chunks in the buffer
+                    _offset = _offset + read;
+                    [self processBuffer:buffer read:read];
+                }
+                break;
+            } case NSStreamEventErrorOccurred: {
+                [self onClosed:[stream streamError]];
+                break;
             }
-            
-            NSData *buffer = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-            buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
-            
-            NSInteger read = [buffer length];            
-            if(read > 0) {
-                // Put chunks in the buffer
-                _offset = _offset + read;
-                [self processBuffer:buffer read:read];
-            }
-            
-            break;
-        } case NSStreamEventErrorOccurred: {
-            [self onClosed:[stream streamError]];
-            break;
+            case NSStreamEventEndEncountered:
+            case NSStreamEventNone:
+            case NSStreamEventHasBytesAvailable:
+            default:
+                break;
         }
-        case NSStreamEventEndEncountered:
-        case NSStreamEventNone:
-        case NSStreamEventHasBytesAvailable:
-        default:
-            break;
-    }
+    });
 }
 
 - (void)processBuffer:(NSData *)buffer read:(NSInteger)read {
