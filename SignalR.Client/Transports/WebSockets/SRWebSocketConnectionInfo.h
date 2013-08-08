@@ -1,8 +1,8 @@
 //
-//  SRHubConnectionInterface.h
+//  SRWebSocketConnectionInfo.h
 //  SignalR
 //
-//  Created by Bryce Kahle on 3/1/13.
+//  Created by Alex Billingsley on 4/8/13.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -21,15 +21,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRConnectionInterface.h"
 
-@protocol SRConnectionInterface;
-@class SRHubResult;
+@interface SRWebSocketConnectionInfo : NSObject
 
-typedef void (^SRHubResultBlock)(SRHubResult *result);
+@property (weak, nonatomic, readwrite) id <SRConnectionInterface> connection;
+@property (strong, nonatomic, readwrite) NSString *data;
 
-@protocol SRHubConnectionInterface <NSObject, SRConnectionInterface>
-
-- (NSString *)registerCallback:(SRHubResultBlock)callback;
-- (void)removeCallback:(NSString *)callbackId;
+- (instancetype)initConnection:(id <SRConnectionInterface>)connection data:(NSString *)data;
 
 @end

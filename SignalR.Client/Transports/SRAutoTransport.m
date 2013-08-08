@@ -20,91 +20,126 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import "AFHTTPRequestOperation.h"
 #import "SRAutoTransport.h"
 #import "SRConnectionInterface.h"
 #import "SRLog.h"
 #import "SRLongPollingTransport.h"
+#import "SRNegotiationResponse.h"
 #import "SRServerSentEventsTransport.h"
+#import "SRWebSocketTransport.h"
 
 @interface SRAutoTransport ()
 
+@property (strong, nonatomic, readwrite) id <SRClientTransportInterface> transport;
 // List of transports in fallback order
 @property (strong, nonatomic, readonly) NSArray *transports;
-@property (strong, nonatomic, readonly) id <SRClientTransportInterface> transport;
-
-- (void)resolveTransport:(id <SRConnectionInterface>)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index;
+@property (assign, nonatomic, readwrite) int startIndex;
 
 @end
 
 @implementation SRAutoTransport
 
-- (instancetype)initWithHttpClient:(id<SRHttpClient>)httpClient {
+- (instancetype)init {
+    NSArray *transports = @[[[SRWebSocketTransport alloc] init],
+                            [[SRServerSentEventsTransport alloc] init],
+                            [[SRLongPollingTransport alloc] init]];
+    return [self initWithTransports:transports];
+}
+
+- (instancetype)initWithTransports:(NSArray *)transports {
     if(self = [super init]) {
-        _httpClient = httpClient;
-        _transports = @[[[SRServerSentEventsTransport alloc] initWithHttpClient:httpClient],[[SRLongPollingTransport alloc] initWithHttpClient:httpClient]];
+        _transports = transports;
+        _startIndex = 0;
     }
     return self;
 }
+
+#pragma mark
+#pragma mark SRClientTransportInterface
 
 - (NSString *)name {
     if (self.transport == nil) return nil;
     return self.transport.name;
 }
 
+- (BOOL)supportsKeepAlive {
+    if (self.transport == nil) return NO;
+    return self.transport.supportsKeepAlive;
+}
+
 - (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    [SRHttpBasedTransport getNegotiationResponse:_httpClient connection:connection completionHandler:block];
+    __weak __typeof(&*self)weakSelf = self;
+    [super negotiate:connection completionHandler:^(SRNegotiationResponse *response) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        if (![response tryWebSockets]) {
+            strongSelf.startIndex = 1;
+        }
+        
+        if (block) {
+            block(response);
+        }
+    }];
 }
 
-- (void)start:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
-    [self resolveTransport:connection data:data taskCompletionSource:block index:0];
+- (void)start:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
+    [self start:connection data:data transportIndex:self.startIndex completionHandler:block];
 }
 
-- (void)resolveTransport:(id <SRConnectionInterface>)connection data:(NSString *)data taskCompletionSource:(void (^)(id response))block index:(int)index {
-    id <SRClientTransportInterface> transport = _transports[index];
+- (void)start:(id <SRConnectionInterface>)connection data:(NSString *)data transportIndex:(int)index completionHandler:(void (^)(id response))block  {
+    __weak id <SRClientTransportInterface> transport = self.transports[index];
     
-    [transport start:connection withData:data completionHandler:^(id task) {
-        if (task != nil) {
-            SRLogAutoTransport(@"will switch to next transport");
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
+    [transport start:connection data:data completionHandler:^(id response) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        __strong __typeof(&*transport)strongTransport = transport;
 
+        if ([response isKindOfClass:[NSError class]]) {
+            SRLogAutoTransport(@"will switch to next transport");
+            
             // If that transport fails to initialize then fallback
             int next = index + 1;
-            if (next < [_transports count]) {
+            if (next < [strongSelf.transports count]) {
                 // Try the next transport
-                [self resolveTransport:connection data:data taskCompletionSource:block index:next];
+                [strongSelf start:strongConnection data:data transportIndex:next completionHandler:block];
             } else {
                 // If there's nothing else to try then just fail
                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                 userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
                 userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",@"")];
-                NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
-                                                     code:0 
+                NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([strongSelf class])]
+                                                     code:0
                                                  userInfo:userInfo];
-                [connection didReceiveError:error];
+                [strongConnection didReceiveError:error];
             }
         } else {
             SRLogAutoTransport(@"did set active transport");
             
             //Set the active transport
-            _transport = transport;
-             
-            if(block) 
-            {
+            strongSelf.transport = strongTransport;
+            
+            if(block) {
                 block(nil);
             }
         }
     }];
 }
 
-- (void)send:(id <SRConnectionInterface>)connection withData:(NSString *)data completionHandler:(void (^)(id response))block {
+- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
     SRLogAutoTransport(@"will send data from active transport");
-
-    [_transport send:connection withData:data completionHandler:block];
+    [self.transport send:connection data:data completionHandler:block];
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection {
-    SRLogAutoTransport(@"will stop transport");
+- (void)lostConnection:(id<SRConnectionInterface>)connection {
+    SRLogAutoTransport(@"lost connection");
+    [self.transport lostConnection:connection];
+}
 
-    [_transport abort:connection];
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
+    SRLogAutoTransport(@"will stop transport");
+    [self.transport abort:connection timeout:timeout];
 }
 
 @end

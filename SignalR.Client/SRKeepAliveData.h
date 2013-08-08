@@ -1,9 +1,9 @@
 //
-//  SRHubConnectionInterface.h
+//  SRKeepAliveData.h
 //  SignalR
 //
-//  Created by Bryce Kahle on 3/1/13.
-//  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
+//  Created by Alex Billingsley on 5/8/13.
+//  Copyright (c) 2013 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 //  documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -22,14 +22,14 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol SRConnectionInterface;
-@class SRHubResult;
+@interface SRKeepAliveData : NSObject
 
-typedef void (^SRHubResultBlock)(SRHubResult *result);
+@property (strong, nonatomic, readwrite) NSDate *lastKeepAlive;
+@property (strong, nonatomic, readwrite) NSNumber *timeout;
+@property (strong, nonatomic, readwrite) NSNumber *timeoutWarning;
+@property (strong, nonatomic, readwrite) NSNumber *checkInterval;
 
-@protocol SRHubConnectionInterface <NSObject, SRConnectionInterface>
-
-- (NSString *)registerCallback:(SRHubResultBlock)callback;
-- (void)removeCallback:(NSString *)callbackId;
+- (instancetype)initWithTimeout:(NSNumber *)timeout;
+- (instancetype)initWithLastKeepAlive:(NSDate *)lastKeepAlive timeout:(NSNumber *)timeout timeoutWarning:(NSNumber *)timeoutWarning checkInterval:(NSNumber *)checkInterval;
 
 @end

@@ -28,7 +28,7 @@
     self = [super init];
     if (self) {
         #warning Set your server location here.
-        _server_url = @"http://192.168.85.133:9090/";
+        _server_url = @"http://abill-win8:9090/";
     }
     return self;
 }

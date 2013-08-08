@@ -1,11 +1,16 @@
-
 PODS:
-- AFNetworking (1.1.0)
+  - AFNetworking (1.2.1)
+  - AnyJSON (0.0.1)
+  - SocketRocket (0.2.0)
 
 DEPENDENCIES:
-- AFNetworking (>= 1.0.0)
+  - AFNetworking (>= 1.0.0)
+  - AnyJSON (= 0.0.1)
+  - SocketRocket (= 0.2.0)
 
 SPEC CHECKSUMS:
-  AFNetworking: 761a418233d280c1e0580bcb76ff9cb4c3073d17
+  AFNetworking: 616da0028916ce296f5c3cef74e5552eb4e10e13
+  AnyJSON: 0a7d4f6da555fe32c6547dd178ddd48dee7d8bae
+  SocketRocket: bca43a94bd9aac3a629df42c06843402399ee67b
 
-COCOAPODS: 0.16.4
+COCOAPODS: 0.19.1
