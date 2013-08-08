@@ -11,6 +11,10 @@
 @implementation SRConnection (Extensions)
 
 + (BOOL)ensureReconnecting:(id <SRConnectionInterface>)connection {
+    if (connection == nil) {
+        //TODO: Throw
+    }
+    
     if ([connection changeState:connected toState:reconnecting]) {
         [connection willReconnect];
     }

@@ -21,11 +21,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRClientTransportInterface.h"
 #import "SRConnectionDelegate.h"
 #import "SRConnectionInterface.h"
 #import "SRConnectionState.h"
-#import "SRHttpClient.h"
 
 @class SRConnection;
 
@@ -36,6 +34,7 @@ typedef void (^onClosed)();
 typedef void (^onReconnecting)();
 typedef void (^onReconnected)();
 typedef void (^onStateChanged)(connectionState);
+typedef void (^onConnectionSlow)();
 
 @interface SRConnection : NSObject <SRConnectionInterface>
 
@@ -50,6 +49,7 @@ typedef void (^onStateChanged)(connectionState);
 @property (copy) onReconnecting reconnecting;
 @property (copy) onReconnected reconnected;
 @property (copy) onStateChanged stateChanged;
+@property (copy) onConnectionSlow connectionSlow;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -69,8 +69,9 @@ typedef void (^onStateChanged)(connectionState);
 ///-------------------------------
 
 - (void)start;
-- (void)startHttpClient:(id <SRHttpClient>)httpClient;
-- (void)startTransport:(id <SRClientTransportInterface>)transport;
+- (void)start:(id <SRClientTransportInterface>)transport;
+- (void)stop:(NSNumber *)timeout;
+- (void)didClose;
 
 ///-------------------------------
 /// @name Sending Data

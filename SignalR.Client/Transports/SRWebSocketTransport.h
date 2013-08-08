@@ -1,8 +1,8 @@
 //
-//  SRHubConnectionInterface.h
+//  SRWebSocketTransport.h
 //  SignalR
 //
-//  Created by Bryce Kahle on 3/1/13.
+//  Created by Alex Billingsley on 4/8/13.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -21,15 +21,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRConnectionInterface.h"
+#import "SRHttpBasedTransport.h"
 
-@protocol SRConnectionInterface;
-@class SRHubResult;
+@interface SRWebSocketTransport : SRHttpBasedTransport <SRClientTransportInterface>
 
-typedef void (^SRHubResultBlock)(SRHubResult *result);
-
-@protocol SRHubConnectionInterface <NSObject, SRConnectionInterface>
-
-- (NSString *)registerCallback:(SRHubResultBlock)callback;
-- (void)removeCallback:(NSString *)callbackId;
+@property (strong, nonatomic, readwrite) NSNumber *reconnectDelay;
 
 @end

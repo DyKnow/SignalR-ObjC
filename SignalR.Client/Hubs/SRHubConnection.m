@@ -33,6 +33,7 @@
 
 @property (strong, nonatomic, readonly) NSMutableDictionary *hubs;
 @property (strong, nonatomic, readonly) NSMutableDictionary *callbacks;
+@property (assign, nonatomic, readonly) int callbackId;
 
 + (NSString *)getUrl:(NSString *)URL useDefault:(BOOL)useDefault;
 
@@ -103,7 +104,22 @@
     return newId;
 }
 
-#pragma mark - 
+- (void)removeCallback:(NSString *)callbackId {
+    [[self callbacks] removeObjectForKey:callbackId];
+}
+
+- (void)clearInvocationCallbacks:(NSString *)error {
+    SRHubResult *result = [[SRHubResult alloc] init];
+    [result setError:error];
+    
+    for (SRHubResultBlock callback in [self.callbacks allValues]) {
+        callback(result);
+    }
+    
+    [self.callbacks removeAllObjects];
+}
+
+#pragma mark -
 #pragma mark Private
 
 + (NSString *)getUrl:(NSString *)URL useDefault:(BOOL)useDefault {
@@ -157,10 +173,20 @@
                 }
                 [hubProxy invokeEvent:invocation.method withArgs:invocation.args];
             }
+            
+            [super didReceiveData:data];
         }
-    }
-    
-    [super didReceiveData:data];
+    }    
+}
+
+- (void)willReconnect {
+    [self clearInvocationCallbacks:@"Connection started reconnecting before invocation result was received."];
+    [super willReconnect];
+}
+
+- (void)didClose {
+    [self clearInvocationCallbacks:@"Connection was disconnected before invocation result was received."];
+    [super didClose];
 }
 
 @end

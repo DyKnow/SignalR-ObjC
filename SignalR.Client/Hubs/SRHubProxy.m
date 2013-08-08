@@ -26,6 +26,7 @@
 #import "SRLog.h"
 #import "SRSubscription.h"
 #import "SRHubConnectionInterface.h"
+#import "SRConnectionInterface.h"
 
 @interface SRHubProxy ()
 
@@ -33,7 +34,6 @@
 @property (strong, nonatomic, readonly) NSString *hubName;
 @property (strong, nonatomic, readonly) NSMutableDictionary *state;
 @property (strong, nonatomic, readonly) NSMutableDictionary *subscriptions;
-
 
 @end
 

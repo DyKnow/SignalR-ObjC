@@ -43,6 +43,10 @@
 + (BOOL)tryParseEvent:(NSString *)line sseEvent:(SRSseEvent **)sseEvent {
     *sseEvent = nil;
     
+    if (line == nil) {
+        //TODO: Throw HERE
+    }
+    
     if([line hasPrefix:@"data:"]) {
         NSString *data = [[line substringFromIndex:@"data:".length] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         *sseEvent = [[SRSseEvent alloc] initWithType:Data data:data];
