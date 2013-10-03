@@ -20,7 +20,6 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AFHTTPRequestOperation.h"
 #import "SRAutoTransport.h"
 #import "SRConnectionInterface.h"
 #import "SRLog.h"

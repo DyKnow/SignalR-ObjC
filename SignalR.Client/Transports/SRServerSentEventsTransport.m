@@ -136,7 +136,6 @@ static NSString * const kTransportName = @"serverSentEvents";
     [operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response) {
         eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
         __weak __typeof(&*self)weakSelf = self;
-        __weak __typeof(&*operation)weakOperation = operation;
         __weak __typeof(&*connection)weakConnection = connection;
         __weak __typeof(&*data)weakData = data;
         
