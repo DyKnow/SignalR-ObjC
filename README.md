@@ -146,7 +146,7 @@ SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
 ```
 ## Requirements
 
-SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#releasenotes/General/WhatsNewIniPhoneOS/Articles/iPhoneOS4.html) and above, or [Mac OS 10.7](http://developer.apple.com/library/mac/#releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_6.html#//apple_ref/doc/uid/TP40008898-SW7) ([64-bit with modern Cocoa runtime](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtVersionsPlatforms.html)) and above.
+SignalR-ObjC requires either [iOS 6.0](http://developer.apple.com/library/ios/#releasenotes/General/WhatsNewIniPhoneOS/Articles/iPhoneOS4.html) and above, or [Mac OS 10.8](http://developer.apple.com/library/mac/#releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_6.html#//apple_ref/doc/uid/TP40008898-SW7) ([64-bit with modern Cocoa runtime](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtVersionsPlatforms.html)) and above.
 
 ### ARC
 
@@ -154,7 +154,7 @@ SignalR-ObjC requires either [iOS 5.0](http://developer.apple.com/library/ios/#r
 
 ### Networking
 
-- SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 1.0.0
+- SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 2.0.0
 - SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.2.0
 
 ### JSON
