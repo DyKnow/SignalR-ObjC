@@ -157,10 +157,6 @@ SignalR-ObjC requires either [iOS 6.0](http://developer.apple.com/library/ios/#r
 - SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 2.0.0
 - SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.2.0
 
-### JSON
-
-- SignalR-ObjC uses  [AnyJSON](https://github.com/mattt/AnyJSON).  The minimum supported version of AnyJSON is 0.0.1
-
 
 ## LICENSE
 
