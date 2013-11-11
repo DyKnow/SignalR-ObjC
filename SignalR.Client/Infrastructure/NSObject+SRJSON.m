@@ -20,7 +20,6 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AnyJSON.h"
 #import "NSObject+SRJSON.h"
 
 @implementation NSObject (SRJSON)
@@ -119,7 +118,9 @@ throw:;
 }
 
 - (NSString *)SRJSONRepresentation  {
-    return [[NSString alloc] initWithData:AnyJSONEncode([self ensureFoundationObject:self], nil) encoding:NSUTF8StringEncoding];
+    id object = [self ensureFoundationObject:self];
+    NSData *data = [NSJSONSerialization dataWithJSONObject:object options:(NSJSONWritingOptions)0 error:NULL];
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 @end
@@ -128,7 +129,8 @@ throw:;
 @implementation NSString (SRJSON)
 
 - (id)SRJSONValue {
-    return AnyJSONDecode([self dataUsingEncoding:NSUTF8StringEncoding],nil);
+    NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization JSONObjectWithData:data options:(NSJSONReadingOptions)0 error:NULL];
 }
 
 @end
