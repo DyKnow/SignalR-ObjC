@@ -55,6 +55,8 @@ void (^prepareRequest)(id);
 
 @implementation SRConnection
 
+@synthesize protocol = _protocol;
+@synthesize transportConnectTimeout = _transportConnectTimeout;
 @synthesize keepAliveData = _keepAliveData;
 @synthesize messageId = _messageId;
 @synthesize groupsToken = _groupsToken;
@@ -107,10 +109,16 @@ void (^prepareRequest)(id);
         
         _url = url;
         _queryString = queryString;
+        #warning Init a Disconnect Handler
+        //_disconnectTimeoutOperation = DisposableAction.Empty;
+        #warning Init a Connection Message Buffer
+        //_connectingMessageBuffer = new ConnectingMessageBuffer(this, OnMessageReceived);
         _items = [NSMutableDictionary dictionary];
         _headers = [NSMutableDictionary dictionary];
         _state = disconnected;
         _defaultAbortTimeout = @30;
+        _transportConnectTimeout = @0;
+        _protocol = [[SRVersion alloc] initWithMajor:1 minor:3];
     }
     return self;
 }
@@ -138,42 +146,48 @@ void (^prepareRequest)(id);
     SRLogConnection(@"will negotiate");
     
     __weak __typeof(&*self)weakSelf = self;
-    [transport negotiate:self completionHandler:^(SRNegotiationResponse *negotiationResponse) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        SRLogConnection(@"negotiation was successful %@",negotiationResponse);
-
-        [strongSelf verifyProtocolVersion:negotiationResponse.protocolVersion];
-        
-        _connectionId = negotiationResponse.connectionId;
-        _connectionToken = negotiationResponse.connectionToken;
-        _disconnectTimeout = negotiationResponse.disconnectTimeout;
-        
-        // If we have a keep alive
-        if (negotiationResponse.keepAliveTimeout != nil) {
-            _keepAliveData = [[SRKeepAliveData alloc] initWithTimeout:negotiationResponse.keepAliveTimeout];
+//TODO: Set ConnectionData
+    [transport negotiate:self connectionData:nil completionHandler:^(SRNegotiationResponse *negotiationResponse, NSError *error) {
+        if (!error) {
+            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+            SRLogConnection(@"negotiation was successful %@",negotiationResponse);
+            
+            [strongSelf verifyProtocolVersion:negotiationResponse.protocolVersion];
+            
+            _connectionId = negotiationResponse.connectionId;
+            _connectionToken = negotiationResponse.connectionToken;
+            _disconnectTimeout = negotiationResponse.disconnectTimeout;
+            _transportConnectTimeout = @([_transportConnectTimeout integerValue] + [negotiationResponse.transportConnectTimeout integerValue]);
+            
+            // If we have a keep alive
+            if (negotiationResponse.keepAliveTimeout != nil) {
+                _keepAliveData = [[SRKeepAliveData alloc] initWithTimeout:negotiationResponse.keepAliveTimeout];
+            }
+            
+            NSString *data = [strongSelf onSending];
+            [strongSelf startTransport:data];
         }
-        
-        NSString *data = [strongSelf onSending];
-        [strongSelf startTransport:data];
     }];
 }
 
 - (void)startTransport:(NSString *)data {
     __weak __typeof(&*self)weakSelf = self;
-    [self.transport start:self data:data completionHandler:^(id task) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        
-        [strongSelf changeState:connecting toState:connected];
-        
-        if (_keepAliveData != nil) {
-            [_monitor start];
-        }
-        
-        if(strongSelf.started != nil) {
-            strongSelf.started();
-        }
-        if(strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]) {
-            [strongSelf.delegate SRConnectionDidOpen:strongSelf];
+    [self.transport start:self connectionData:data completionHandler:^(id response, NSError *error) {
+        if (!error) {
+            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+            
+            [strongSelf changeState:connecting toState:connected];
+            
+            if (_keepAliveData != nil && [_transport supportsKeepAlive]) {
+                [_monitor start];
+            }
+            
+            if(strongSelf.started != nil) {
+                strongSelf.started();
+            }
+            if(strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]) {
+                [strongSelf.delegate SRConnectionDidOpen:strongSelf];
+            }
         }
     }];
 }
@@ -203,7 +217,7 @@ void (^prepareRequest)(id);
     SRVersion *version = nil;
     if((versionString == nil || [versionString isEqualToString:@""] == YES) ||
        ![SRVersion tryParse:versionString forVersion:&version] ||
-       !(version.major == 1 && version.minor == 2)) {
+       !([version isEqual:_protocol])) {
         [NSException raise:NSInternalInconsistencyException format:NSLocalizedString(@"Incompatible Protocol Version",@"NSInternalInconsistencyException")];
     }
 }
@@ -222,7 +236,8 @@ void (^prepareRequest)(id);
         [_monitor stop];
         _monitor = nil;
         
-        [_transport abort:self timeout:timeout];
+        //TODO: set connectiondata
+        [_transport abort:self timeout:timeout connectionData:nil];
         [self disconnect];
         
         _transport = nil;
@@ -260,7 +275,7 @@ void (^prepareRequest)(id);
     [self send:object completionHandler:nil];
 }
 
-- (void)send:(id)object completionHandler:(void (^)(id response))block {
+- (void)send:(id)object completionHandler:(void (^)(id response, NSError *error))block {
     if (self.state == disconnected) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
@@ -269,6 +284,10 @@ void (^prepareRequest)(id);
                                              code:0 
                                          userInfo:userInfo];
         [self didReceiveError:error];
+        if (block) {
+            block(nil, error);
+        }
+        return;
     }
     
     if (self.state == connecting) {
@@ -279,6 +298,10 @@ void (^prepareRequest)(id);
                                              code:0 
                                          userInfo:userInfo];
         [self didReceiveError:error];
+        if (block) {
+            block(nil, error);
+        }
+        return;
     }
 
     NSString *message = nil;
@@ -287,14 +310,14 @@ void (^prepareRequest)(id);
     } else {
         message = [object SRJSONRepresentation];
     }
-    [self.transport send:self data:message completionHandler:block];
+    //TODO: set connectiondata
+    [self.transport send:self data:message connectionData:@"" completionHandler:block];
 }
 
 #pragma mark - 
 #pragma mark Received Data
 
-#warning TODO: Change type to id or NSDictionary (This is a JSON object)
-- (void)didReceiveData:(NSString *)message {
+- (void)didReceiveData:(id)message {
     if(self.received != nil) {
         self.received(message);
     }
@@ -403,7 +426,7 @@ void (^prepareRequest)(id);
 
 - (NSString *)createUserAgentString:(NSString *)client {
     if(_assemblyVersion == nil) {
-        _assemblyVersion = [[SRVersion alloc] initWithMajor:1 minor:3 build:0 revision:0];
+        _assemblyVersion = [[SRVersion alloc] initWithMajor:2 minor:0 build:0 revision:0];
     }
    
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR

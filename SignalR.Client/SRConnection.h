@@ -28,7 +28,7 @@
 @class SRConnection;
 
 typedef void (^onStarted)();
-typedef void (^onReceived)(NSString *);
+typedef void (^onReceived)(id);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
 typedef void (^onReconnecting)();

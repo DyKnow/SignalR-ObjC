@@ -76,8 +76,6 @@ typedef void (^SRServerSentEventsErrorBlock)(NSError *);
 
 @implementation SRServerSentEventsTransport
 
-static NSString * const kTransportName = @"serverSentEvents";
-
 - (instancetype)init {
     if (self = [super init]) {
         _serverSentEventsOperationQueue = [[NSOperationQueue alloc] init];
@@ -99,23 +97,38 @@ static NSString * const kTransportName = @"serverSentEvents";
     return YES;
 }
 
-- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    [super negotiate:connection completionHandler:block];
+- (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
+    [super negotiate:connection connectionData:connectionData completionHandler:nil];
 }
 
-- (void)start:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
+- (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
     [self setInitializeCallback:^{
         if (block) {
-            block(nil);
+            block(nil, nil);
         }
     }];
     [self setErrorCallback:^(NSError * error){
         if (block) {
-            block(error);
+            block(nil, error);
         }
     }];
-    [self openConnection:connection data:data];
+    [self openConnection:connection data:connectionData];
 }
+
+- (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    [super send:connection data:data connectionData:connectionData completionHandler:block];
+}
+
+- (void)lostConnection:(id<SRConnectionInterface>)connection {
+#warning TODO: abort any pending requests
+}
+
+- (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
+    [super abort:connection timeout:timeout connectionData:connectionData];
+}
+
+#pragma mark -
+#pragma mark SSE Transport
 
 - (void)openConnection:(id <SRConnectionInterface>)connection data:(NSString *)data {
     BOOL _reconnecting = self.initializeCallback == nil;
@@ -133,6 +146,7 @@ static NSString * const kTransportName = @"serverSentEvents";
     
     __block SREventSourceStreamReader *eventSource;
     SRHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:urlRequest];
+    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
     [operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response) {
         eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
         __weak __typeof(&*self)weakSelf = self;
@@ -170,7 +184,7 @@ static NSString * const kTransportName = @"serverSentEvents";
                 
                 BOOL timedOut = NO;
                 BOOL disconnect = NO;
-                [strongSelf processResponse:strongConnection response:sseEvent.data timedOut:&timedOut disconnected:&disconnect];
+                [strongSelf processResponse:strongConnection response:sseEvent.data shouldReconnect:&timedOut disconnected:&disconnect];
                 
                 if(disconnect) {
                     SRLogServerSentEvents(@"disconnect received should disconnect");
@@ -227,18 +241,6 @@ static NSString * const kTransportName = @"serverSentEvents";
         [self setErrorCallback:nil];
         [self openConnection:connection data:data];
     }
-}
-
-- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
-    [super send:connection data:data completionHandler:block];
-}
-
-- (void)lostConnection:(id<SRConnectionInterface>)connection {
-#warning TODO: abort any pending requests
-}
-
-- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout{
-    [super abort:connection timeout:timeout];
 }
 
 @end

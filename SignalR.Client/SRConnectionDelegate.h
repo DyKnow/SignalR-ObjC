@@ -32,7 +32,7 @@
 
 - (void)SRConnectionDidReconnect:(id <SRConnectionInterface>)connection;
 
-- (void)SRConnection:(id <SRConnectionInterface>)connection didReceiveData:(NSString *)data;
+- (void)SRConnection:(id <SRConnectionInterface>)connection didReceiveData:(id)data;
 
 - (void)SRConnectionDidClose:(id <SRConnectionInterface>)connection;
 

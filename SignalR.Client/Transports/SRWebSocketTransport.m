@@ -20,7 +20,6 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AFHTTPRequestOperation.h"
 #import "SRWebSocketTransport.h"
 #import "SRWebSocket.h"
 #import "SRLog.h"
@@ -28,7 +27,7 @@
 #import "SRConnectionInterface.h"
 #import "SRConnectionExtensions.h"
 
-typedef void (^SRWebSocketStartBlock)(id response);
+typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
 @interface SRWebSocketTransport () <SRWebSocketDelegate>
 
@@ -58,41 +57,20 @@ typedef void (^SRWebSocketStartBlock)(id response);
     return YES;
 }
 
-- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    [super negotiate:connection completionHandler:block];
+- (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
+    [super negotiate:connection connectionData:connectionData completionHandler:block];
 }
 
-- (void)start:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
-    _connectionInfo = [[SRWebSocketConnectionInfo alloc] initConnection:connection data:data];
+- (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    _connectionInfo = [[SRWebSocketConnectionInfo alloc] initConnection:connection data:connectionData];
     [self performConnect:block];
 }
 
-- (void)performConnect:(void (^)(id response))block {
-    [self performConnect:block reconnecting:NO];
-}
-
-- (void)performConnect:(void (^)(id response))block reconnecting:(BOOL)reconnecting {
-    NSString *urlString = [_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"];
-    urlString = [urlString stringByAppendingString:[self receiveQueryString:_connectionInfo.connection data:_connectionInfo.data]];
-        
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
-    
-    [_connectionInfo.connection prepareRequest:urlRequest];
-    
-    SRLogWebSocket(@"WS: %@",[urlRequest.URL absoluteString]);
-    
-    [self setStartBlock:block];
-    
-    _webSocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest];
-    [_webSocket setDelegate:self];
-    [_webSocket open];
-}
-
-- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
+- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response, NSError *error))block {
     [_webSocket send:data];
     
     if(block) {
-        block(nil);
+        block(nil,nil);
     }
 }
 
@@ -109,13 +87,37 @@ typedef void (^SRWebSocketStartBlock)(id response);
 }
 
 #pragma mark -
+#pragma mark Websockets Transport
+
+- (void)performConnect:(void (^)(id response, NSError *error))block {
+    [self performConnect:block reconnecting:NO];
+}
+
+- (void)performConnect:(void (^)(id response, NSError *error))block reconnecting:(BOOL)reconnecting {
+    NSString *urlString = [_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"];
+    urlString = [urlString stringByAppendingString:[self receiveQueryString:_connectionInfo.connection data:_connectionInfo.data]];
+        
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+    
+    [_connectionInfo.connection prepareRequest:urlRequest];
+    
+    SRLogWebSocket(@"WS: %@",[urlRequest.URL absoluteString]);
+    
+    [self setStartBlock:block];
+    
+    _webSocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest];
+    [_webSocket setDelegate:self];
+    [_webSocket open];
+}
+
+#pragma mark -
 #pragma mark SRWebSocketDelegate
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     SRLogWebSocket(@"Websocket Connected");
     
     if (self.startBlock) {
-        self.startBlock(nil);
+        self.startBlock(nil, nil);
     } else if ([[_connectionInfo connection] changeState:reconnecting toState:connected]) {
         [[_connectionInfo connection] didReconnect];
     }
@@ -127,7 +129,7 @@ typedef void (^SRWebSocketStartBlock)(id response);
     BOOL timedOut = NO;
     BOOL disconnected = NO;
     
-    [self processResponse:_connectionInfo.connection response:message timedOut:&timedOut disconnected:&disconnected];
+    [self processResponse:_connectionInfo.connection response:message shouldReconnect:&timedOut disconnected:&disconnected];
     
     if (disconnected) {
         [[_connectionInfo connection] disconnect];

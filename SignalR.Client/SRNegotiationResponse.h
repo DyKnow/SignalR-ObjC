@@ -55,4 +55,6 @@
 
 @property (strong, nonatomic, readonly) NSNumber *keepAliveTimeout;
 
+@property (strong, nonatomic, readonly) NSNumber *transportConnectTimeout;
+
 @end

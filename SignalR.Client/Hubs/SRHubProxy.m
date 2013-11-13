@@ -71,7 +71,7 @@
 
 - (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args {
     SRSubscription *eventObj = _subscriptions[eventName];
-    if(eventObj != nil) {
+    if(eventObj != nil && eventObj.object != nil) {
         NSMethodSignature *signature = [eventObj.object methodSignatureForSelector:eventObj.selector];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         NSUInteger numberOfArguments = [signature numberOfArguments] - 2;

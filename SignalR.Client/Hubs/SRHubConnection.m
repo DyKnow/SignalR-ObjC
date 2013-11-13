@@ -152,18 +152,17 @@
 #pragma mark - 
 #pragma mark Received Data
 
-- (void)didReceiveData:(NSString *)data {
-    if([data isKindOfClass:[NSString class]]) {
-        NSDictionary *message = [data SRJSONValue];
-        if ([message valueForKey:@"I"]) {
-            SRHubResult *result = [[SRHubResult alloc] initWithDictionary:message];
+- (void)didReceiveData:(id)data {
+    if([data isKindOfClass:[NSDictionary class]]) {
+        if ([data valueForKey:@"I"]) {
+            SRHubResult *result = [[SRHubResult alloc] initWithDictionary:data];
             SRHubResultBlock callback = _callbacks[result.id];
             if (callback) {
                 [_callbacks removeObjectForKey:result.id];
                 callback(result);
             }
         } else {
-            SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:message];
+            SRHubInvocation *invocation = [[SRHubInvocation alloc] initWithDictionary:data];
             SRHubProxy *hubProxy = _hubs[[invocation.hub lowercaseString]];
             if(hubProxy) {
                 if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]]) {
@@ -176,7 +175,7 @@
             
             [super didReceiveData:data];
         }
-    }    
+    }
 }
 
 - (void)willReconnect {

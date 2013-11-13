@@ -35,6 +35,7 @@ static NSString * const kProtocolVersion = @"ProtocolVersion";
 static NSString * const kDisconnectTimeout = @"DisconnectTimeout";
 static NSString * const kTryWebSockets = @"TryWebSockets";
 static NSString * const kKeepAliveTimeout= @"KeepAliveTimeout";
+static NSString * const kTransportConnectTimeout= @"TransportConnectTimeout";
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -57,6 +58,7 @@ static NSString * const kKeepAliveTimeout= @"KeepAliveTimeout";
         _disconnectTimeout = dict[kDisconnectTimeout];
         _tryWebSockets = [[dict objectForKey:kTryWebSockets] boolValue];
         _keepAliveTimeout = dict[kKeepAliveTimeout];
+        _transportConnectTimeout = dict[kTransportConnectTimeout];
 	}
 	return self;
 }
