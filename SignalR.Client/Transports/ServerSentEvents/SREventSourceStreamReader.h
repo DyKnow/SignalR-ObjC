@@ -22,11 +22,11 @@
 
 #import <Foundation/Foundation.h>
 
-@class SRSseEvent;
+@class SRServerSentEvent;
 
 typedef void (^onStreamOpened)();
 typedef void (^onStreamClosed)(NSError * error);
-typedef void (^onStreamMessage)(SRSseEvent * event);
+typedef void (^onStreamMessage)(SRServerSentEvent * event);
 
 @interface SREventSourceStreamReader : NSObject <NSStreamDelegate>
 

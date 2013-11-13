@@ -76,7 +76,7 @@ completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))bl
     
     if (connectionData != nil && ![connectionData isEqualToString:@""]) {
         negotiateUrl = [negotiateUrl stringByAppendingString:@"&connectionData="];
-        negotiateUrl = [negotiateUrl stringByAppendingString:connectionData];
+        negotiateUrl = [negotiateUrl stringByAppendingString:SREscapeData(connectionData)];
     }
         
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:negotiateUrl]];
@@ -102,19 +102,6 @@ completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))bl
 - (void)start:(id<SRConnectionInterface>)connection
 connectionData:(NSString *)connectionData
 completionHandler:(void (^)(id response, NSError *error))block {
-    //TODO: Throw here
-    /*
-     if (connection == null)
-     {
-     throw new ArgumentNullException("connection");
-     }
-     
-     var initializeHandler = new TransportInitializationHandler(connection.TransportConnectTimeout, disconnectToken);
-     
-     OnStart(connection, connectionData, disconnectToken, initializeHandler);
-     
-     return initializeHandler.Task;
-     */
 }
 
 - (void)send:(id<SRConnectionInterface>)connection
@@ -180,7 +167,6 @@ completionHandler:(void (^)(id response, NSError *error))block {
     //TODO: Throw, Subclass should implement this.
 }
 
-#warning TODO: HANDLE TIMEOUT
 - (void)abort:(id<SRConnectionInterface>)connection
       timeout:(NSNumber *)timeout
 connectionData:(NSString *)connectionData {
@@ -326,7 +312,6 @@ connectionData:(NSString *)connectionData {
             if ([result[@"S"] boolValue])
             {
                 //TODO: Call Initialized Callback
-                NSLog(@"Call Init Callback");
                 //onInitialized();
             }
         }

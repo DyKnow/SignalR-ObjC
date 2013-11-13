@@ -92,5 +92,3 @@ typedef void (^onConnectionSlow)();
 - (void)addValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 
 @end
-
-extern NSString * const SRConnectionDidDisconnect;

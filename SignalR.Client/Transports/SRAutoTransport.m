@@ -70,14 +70,15 @@
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse *, NSError *))block {
     __weak __typeof(&*self)weakSelf = self;
     [super negotiate:connection connectionData:connectionData completionHandler:^(SRNegotiationResponse *response, NSError *error) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        if (![response tryWebSockets]) {
-            NSIndexSet *invalidTransports = [strongSelf.transports indexesOfObjectsPassingTest:^BOOL(id <SRClientTransportInterface> transport, NSUInteger idx, BOOL *stop) {
-                return [transport.name isEqualToString:@"webSockets"];
-            }];
-            [strongSelf.transports removeObjectsAtIndexes:invalidTransports];
+        if(!error) {
+            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+            if (![response tryWebSockets]) {
+                NSIndexSet *invalidTransports = [strongSelf.transports indexesOfObjectsPassingTest:^BOOL(id <SRClientTransportInterface> transport, NSUInteger idx, BOOL *stop) {
+                    return [transport.name isEqualToString:@"webSockets"];
+                }];
+                [strongSelf.transports removeObjectsAtIndexes:invalidTransports];
+            }
         }
-        
         if (block) {
             block(response, error);
         }

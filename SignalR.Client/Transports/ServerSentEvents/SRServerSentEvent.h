@@ -1,5 +1,5 @@
 //
-//  SRConnectionExtensions.m
+//  SRServerSentEvent.h
 //  SignalR
 //
 //  Created by Alex Billingsley on 6/8/12.
@@ -20,19 +20,50 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "SRConnectionExtensions.h"
+#import <Foundation/Foundation.h>
 
-@implementation SRConnection (Extensions)
+/**
+    Copied from AFRocketClient, When AFRocket is more stable it will probably make sense to replace our SSE implementation with theirs.
+ */
+@interface SRServerSentEvent : NSObject <NSCoding, NSCopying>
 
-+ (BOOL)ensureReconnecting:(id <SRConnectionInterface>)connection {
-    if (connection == nil) {
-        //TODO: Throw
-    }
-    
-    if ([connection changeState:connected toState:reconnecting]) {
-        [connection willReconnect];
-    }
-    return (connection.state == reconnecting);
-}
+///---------------------------------
+/// @name Managing Event Information
+///---------------------------------
 
+/**
+ The event type.
+ */
+@property (nonatomic, copy) NSString *event;
+
+/**
+ The event identifier.
+ */
+@property (nonatomic, copy) NSString *identifier;
+
+/**
+ The data associated with the event.
+ */
+@property (nonatomic, strong) NSData *data;
+
+/**
+ The retry interval sent with the event.
+ */
+@property (nonatomic, assign) NSTimeInterval retry;
+
+/**
+ Any additional fields in the event.
+ */
+@property (nonatomic, strong) NSDictionary *userInfo;
+
+///------------------------
+/// @name Creating an Event
+///------------------------
+
+/**
+ Creates and returns an event with the specified fields.
+ */
++ (instancetype)eventWithFields:(NSDictionary *)fields;
+
++ (BOOL)tryParseEvent:(NSString *)line sseEvent:(SRServerSentEvent **)sseEvent __attribute__((deprecated));
 @end

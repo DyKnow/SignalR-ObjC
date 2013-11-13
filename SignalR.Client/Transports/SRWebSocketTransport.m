@@ -116,9 +116,8 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     SRLogWebSocket(@"Websocket Connected");
     
-    if (self.startBlock) {
-        self.startBlock(nil, nil);
-    } else if ([[_connectionInfo connection] changeState:reconnecting toState:connected]) {
+    // This will noop if we're not in the reconnecting state
+    if ([[_connectionInfo connection] changeState:reconnecting toState:connected]) {
         [[_connectionInfo connection] didReconnect];
     }
 }
@@ -130,6 +129,10 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     BOOL disconnected = NO;
     
     [self processResponse:_connectionInfo.connection response:message shouldReconnect:&timedOut disconnected:&disconnected];
+    if (self.startBlock) {
+        self.startBlock(nil,nil);
+        self.startBlock = nil;
+    }
     
     if (disconnected) {
         [[_connectionInfo connection] disconnect];
@@ -141,10 +144,22 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     SRLogWebSocket(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
     
     [[_connectionInfo connection] didReceiveError:error];
+    
+    if ([SRConnection ensureReconnecting:[_connectionInfo connection]]) {
+        [self performConnect:nil reconnecting:YES];
+    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
     SRLogWebSocket(@"WebSocket closed");
+    
+    if ([self tryCompleteAbort]) {
+        return;
+    }
+    
+    if ([SRConnection ensureReconnecting:[_connectionInfo connection]]) {
+        [self performConnect:nil reconnecting:YES];
+    }
 }
 
 @end

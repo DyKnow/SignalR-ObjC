@@ -44,6 +44,7 @@ void (^prepareRequest)(id);
 @property (strong, nonatomic, readwrite) NSString *url;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
 @property (strong, nonatomic, readwrite) NSString *queryString;
+@property (strong, nonatomic, readwrite) NSString *connectionData;
 @property (strong, nonatomic, readwrite) SRHeartbeatMonitor *monitor;
 
 - (void)negotiate:(id <SRClientTransportInterface>)transport;
@@ -109,9 +110,7 @@ void (^prepareRequest)(id);
         
         _url = url;
         _queryString = queryString;
-        #warning Init a Disconnect Handler
         //_disconnectTimeoutOperation = DisposableAction.Empty;
-        #warning Init a Connection Message Buffer
         //_connectingMessageBuffer = new ConnectingMessageBuffer(this, OnMessageReceived);
         _items = [NSMutableDictionary dictionary];
         _headers = [NSMutableDictionary dictionary];
@@ -145,9 +144,10 @@ void (^prepareRequest)(id);
 - (void)negotiate:(id<SRClientTransportInterface>)transport {
     SRLogConnection(@"will negotiate");
     
+    _connectionData = [self onSending];
+    
     __weak __typeof(&*self)weakSelf = self;
-//TODO: Set ConnectionData
-    [transport negotiate:self connectionData:nil completionHandler:^(SRNegotiationResponse *negotiationResponse, NSError *error) {
+    [transport negotiate:self connectionData:_connectionData completionHandler:^(SRNegotiationResponse *negotiationResponse, NSError *error) {
         if (!error) {
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             SRLogConnection(@"negotiation was successful %@",negotiationResponse);
@@ -164,15 +164,14 @@ void (^prepareRequest)(id);
                 _keepAliveData = [[SRKeepAliveData alloc] initWithTimeout:negotiationResponse.keepAliveTimeout];
             }
             
-            NSString *data = [strongSelf onSending];
-            [strongSelf startTransport:data];
+            [strongSelf startTransport];
         }
     }];
 }
 
-- (void)startTransport:(NSString *)data {
+- (void)startTransport {
     __weak __typeof(&*self)weakSelf = self;
-    [self.transport start:self connectionData:data completionHandler:^(id response, NSError *error) {
+    [self.transport start:self connectionData:_connectionData completionHandler:^(id response, NSError *error) {
         if (!error) {
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             
@@ -228,8 +227,6 @@ void (^prepareRequest)(id);
 
 - (void)stop:(NSNumber *)timeout {
     
-    //TODO: Handle Timeout HERE
-    
     // Do nothing if the connection is offline
     if (self.state != disconnected) {
         
@@ -237,7 +234,7 @@ void (^prepareRequest)(id);
         _monitor = nil;
         
         //TODO: set connectiondata
-        [_transport abort:self timeout:timeout connectionData:nil];
+        [_transport abort:self timeout:timeout connectionData:_connectionData];
         [self disconnect];
         
         _transport = nil;
@@ -246,8 +243,6 @@ void (^prepareRequest)(id);
 
 - (void)disconnect {
     if (self.state != disconnected) {
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:SRConnectionDidDisconnect object:self];
         
         _state = disconnected;
         
@@ -310,8 +305,8 @@ void (^prepareRequest)(id);
     } else {
         message = [object SRJSONRepresentation];
     }
-    //TODO: set connectiondata
-    [self.transport send:self data:message connectionData:@"" completionHandler:block];
+
+    [self.transport send:self data:message connectionData:_connectionData completionHandler:block];
 }
 
 #pragma mark - 
@@ -455,5 +450,3 @@ void (^prepareRequest)(id);
 }
 
 @end
-
-NSString * const SRConnectionDidDisconnect = @"SRConnectionDidDisconnect";
