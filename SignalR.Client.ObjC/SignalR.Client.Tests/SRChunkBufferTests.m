@@ -32,7 +32,7 @@
     NSData *data = [[NSString stringWithFormat:@"hello world"] dataUsingEncoding:NSUTF8StringEncoding];
     
     // Act
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     
     // Assert
     STAssertNil([buffer readLine], @"Expected nil received object");
@@ -45,7 +45,7 @@
     NSData *data = [[NSString stringWithFormat:@"hello world\noy"] dataUsingEncoding:NSUTF8StringEncoding];
     
     // Act
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     
     // Assert
     STAssertTrue([[buffer readLine] isEqualToString:@"hello world"], @"Expected to read first line only");
@@ -58,7 +58,7 @@
     NSData *data = [[NSString stringWithFormat:@"hel\nlo world\noy"] dataUsingEncoding:NSUTF8StringEncoding];
     
     // Act
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     
     // Assert
     STAssertTrue([[buffer readLine] isEqualToString:@"hel"], @"Expected to read first line");
@@ -71,16 +71,16 @@
     // Arrange
     SRChunkBuffer *buffer = [[SRChunkBuffer alloc] init];
     NSData *data = [[NSString stringWithFormat:@"hello"] dataUsingEncoding:NSUTF8StringEncoding];
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     STAssertNil([buffer readLine], @"Expected nil received object");
     data = [[NSString stringWithFormat:@"\n"] dataUsingEncoding:NSUTF8StringEncoding];
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     STAssertTrue([[buffer readLine] isEqualToString:@"hello"], @"Expected to read first line only");
     data = [[NSString stringWithFormat:@"Another line"] dataUsingEncoding:NSUTF8StringEncoding];
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     STAssertNil([buffer readLine], @"Expected nil received object");
     data = [[NSString stringWithFormat:@"\nnext"] dataUsingEncoding:NSUTF8StringEncoding];
-    [buffer add:data length:[data length]];
+    [buffer add:data];
     STAssertTrue([[buffer readLine] isEqualToString:@"Another line"], @"Expected to read first line only");
 }
 

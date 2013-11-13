@@ -199,8 +199,6 @@
 		39EBAC3A16D07CF300C6F359 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39EBAC3716D07CF300C6F359 /* Default-568h@2x.png */; };
 		39EBAC3B16D07CF300C6F359 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 39EBAC3816D07CF300C6F359 /* Default.png */; };
 		39EBAC3C16D07CF300C6F359 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 39EBAC3916D07CF300C6F359 /* Default@2x.png */; };
-		39EF033B15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */; };
-		39EF033C15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */; };
 		39F7D7B01833FC99002590A6 /* SRServerSentEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F7D7AE1833FC99002590A6 /* SRServerSentEvent.h */; };
 		39F7D7B11833FC99002590A6 /* SRServerSentEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F7D7AE1833FC99002590A6 /* SRServerSentEvent.h */; };
 		39F7D7B21833FC99002590A6 /* SRServerSentEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */; };
@@ -340,7 +338,6 @@
 		39EBAC3E16D07D5000C6F359 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGES.md; path = ../CHANGES.md; sourceTree = "<group>"; };
 		39EBAC3F16D07D5100C6F359 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.md; path = ../LICENSE.md; sourceTree = "<group>"; };
 		39EBAC4016D07D5100C6F359 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SREventSourceStreamReaderTests.m; path = SignalR.Client.Tests/SREventSourceStreamReaderTests.m; sourceTree = "<group>"; };
 		39F7D7AE1833FC99002590A6 /* SRServerSentEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRServerSentEvent.h; sourceTree = "<group>"; };
 		39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEvent.m; sourceTree = "<group>"; };
 		8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubConnectionInterface.h; sourceTree = "<group>"; };
@@ -750,7 +747,6 @@
 				39BB8D7515CAA576007B7245 /* SRHubConnectionTests.m */,
 				39C97CEE15D3DDD600F66B50 /* SRHubProxyTests.m */,
 				3940059315CC6A2C006673E2 /* SRChunkBufferTests.m */,
-				39EF033A15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m */,
 				3940059815CC6DD6006673E2 /* SRConnectionTests.m */,
 			);
 			name = SignalR.Client.Tests;
@@ -1198,7 +1194,6 @@
 				39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				3940059515CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059A15CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
-				39EF033C15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m in Sources */,
 				39C97CF015D3DDD600F66B50 /* SRHubProxyTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1212,7 +1207,6 @@
 				39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				3940059415CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059915CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
-				39EF033B15CFE8F7001C66EA /* SREventSourceStreamReaderTests.m in Sources */,
 				39C97CEF15D3DDD600F66B50 /* SRHubProxyTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
