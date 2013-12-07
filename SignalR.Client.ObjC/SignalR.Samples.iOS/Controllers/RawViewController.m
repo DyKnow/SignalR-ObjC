@@ -187,10 +187,16 @@
     [messageTable reloadData];
 }
 
-- (void)SRConnection:(SRConnection *)connection didReceiveData:(NSString *)data
+- (void)SRConnection:(SRConnection *)connection didReceiveData:(id)data
 {
-    [messagesReceived insertObject:data atIndex:0];
-    [messageTable reloadData];
+    if (data != nil) {
+        if([data isKindOfClass:[NSDictionary class]]) {
+            [messagesReceived insertObject:data[@"data"] atIndex:0];
+        } else {
+            [messagesReceived insertObject:[NSString stringWithFormat:@"%@",data] atIndex:0];
+        }
+        [messageTable reloadData];
+    }
 }
 
 - (void)SRConnectionDidClose:(SRConnection *)connection

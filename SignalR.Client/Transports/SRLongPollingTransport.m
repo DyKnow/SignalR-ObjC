@@ -27,20 +27,13 @@
 #import "SRLog.h"
 #import "SRLongPollingTransport.h"
 
-typedef void (^SRLongPollingInitializedBlock)(void);
-typedef void (^SRLongPollingErrorBlock)(NSError *);
-
-@interface SRLongPollingTransport()
-
-@property (strong, nonatomic, readwrite) NSOperationQueue *pollingOperationQueue;
-@property (copy) SRLongPollingInitializedBlock initializeCallback;
-@property (copy) SRLongPollingErrorBlock errorCallback;
-
-@end
+ @interface SRLongPollingTransport()
+ 
+ @property (strong, nonatomic, readwrite) NSOperationQueue *pollingOperationQueue;
+ 
+ @end
 
 @implementation SRLongPollingTransport
-
-static NSString * const kTransportName = @"longPolling";
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -48,7 +41,6 @@ static NSString * const kTransportName = @"longPolling";
         [_pollingOperationQueue setMaxConcurrentOperationCount:1];
         _reconnectDelay = @5;
         _errorDelay = @2;
-        _connectDelay = @2;
     }
     return self;
 }
@@ -64,120 +56,150 @@ static NSString * const kTransportName = @"longPolling";
     return NO;
 }
 
-- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block {
-    [super negotiate:connection completionHandler:block];
+- (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse *response, NSError *error))block {
+    [super negotiate:connection connectionData:connectionData completionHandler:block];
 }
 
-- (void)start:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
-    [self setInitializeCallback:^{
-        if (block) {
-            block(nil);
-        }
-    }];
-    [self setErrorCallback:^(NSError * error){
-        if (block) {
-            block(error);
-        }
-    }];
-    [self pollingLoop:connection data:data raiseReconnect:NO];
+- (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    [self poll:connection connectionData:connectionData completionHandler:block];
 }
 
-- (void)pollingLoop:(id <SRConnectionInterface>)connection data:(NSString *)data raiseReconnect:(BOOL)raiseReconnect {
+- (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    [super send:connection data:data connectionData:connectionData completionHandler:block];
+}
+
+- (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
+    [super abort:connection timeout:timeout connectionData:connectionData];
+}
+
+- (void)lostConnection:(id<SRConnectionInterface>)connection {
+    
+}
+
+#pragma mark -
+#pragma mark LongPolling
+
+- (void)poll:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    
+    __block NSNumber *canReconnect = @(YES);
+
     NSString *url = connection.url;
     if(connection.messageId == nil) {
         url = [url stringByAppendingString:@"connect"];
-    } else if (raiseReconnect) {
+    } else if ([self isConnectionReconnecting:connection]) {
         url = [url stringByAppendingString:@"reconnect"];
-        
-        if (connection.state == disconnected || ![SRConnection ensureReconnecting:connection]) {
-            return;
-        }
+    } else {
+        url = [url stringByAppendingString:@"poll"];
     }
-    url = [url stringByAppendingString:[self receiveQueryString:connection data:data]];
+    url = [url stringByAppendingString:[self receiveQueryString:connection data:connectionData]];
     
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [urlRequest setHTTPMethod:@"GET"];
     [urlRequest setTimeoutInterval:240];
-
+    
     [connection prepareRequest:urlRequest];
+    
+    [self delayConnectionReconnect:connection canReconnect:canReconnect];
     
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
 
-        if (strongSelf.initializeCallback != nil) {
-            strongSelf.initializeCallback();
-            strongSelf.initializeCallback = nil;
-        }
-        
-        if(raiseReconnect) {
-            if ([strongConnection changeState:reconnecting toState:connected]) {
-                SRLogLongPolling(@"did fire reconnected");
-                [strongConnection didReconnect];
-            }
-        }
-        
-        if (strongSelf.errorCallback != nil) {
-            strongSelf.errorCallback = nil;
-        }
-        
-        BOOL shouldRaiseReconnect = NO;
+        BOOL shouldReconnect = NO;
         BOOL disconnectedReceived = NO;
         
         SRLogLongPolling(@"LP Receive: %@", operation.responseString);
         
-        [strongSelf processResponse:strongConnection response:operation.responseString timedOut:&shouldRaiseReconnect disconnected:&disconnectedReceived];
-        if(disconnectedReceived) {
-            SRLogLongPolling(@"did disconnect");
+        [strongSelf processResponse:strongConnection response:operation.responseString shouldReconnect:&shouldReconnect disconnected:&disconnectedReceived];
+        if (block) {
+            block(nil, nil);
+        }
+        
+        if ([strongSelf isConnectionReconnecting:strongConnection]) {
+            // If the timeout for the reconnect hasn't fired as yet just fire the
+            // event here before any incoming messages are processed
+            [strongSelf connectionReconnect:strongConnection canReconnect:canReconnect];
+        }
+        
+        if (shouldReconnect) {
+            // Transition into reconnecting state
+            [SRConnection ensureReconnecting:strongConnection];
+        }
+        
+        if (disconnectedReceived) {
             [strongConnection disconnect];
-        } else if (connection.state != disconnected) {
-            SRLogLongPolling(@"will poll again immediately");
-            [strongSelf pollingLoop:strongConnection data:data raiseReconnect:shouldRaiseReconnect];
+        }
+        
+        if (![strongSelf tryCompleteAbort]) {
+            //Abort has not been called so continue polling...
+            canReconnect = @(YES);
+            [strongSelf poll:strongConnection connectionData:connectionData completionHandler:nil];
+        } else {
+            SRLogLongPolling(@"LongPolling has shutdown due to abort");
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
 
-        if (strongSelf.errorCallback) {
-            strongSelf.errorCallback(error);
-            strongSelf.errorCallback = nil;
+        canReconnect = @(NO);
+        
+        // Transition into reconnecting state
+        [SRConnection ensureReconnecting:strongConnection];
+        
+        if (![strongSelf tryCompleteAbort] &&
+            ![SRExceptionHelper isRequestAborted:error]) {
+            [strongConnection didReceiveError:error];
+            
+            SRLogLongPolling(@"will poll again in %ld seconds",(long)[_errorDelay integerValue]);
+            
+            canReconnect = @(YES);
+            
+            [[NSBlockOperation blockOperationWithBlock:^{
+                [strongSelf poll:strongConnection connectionData:connectionData completionHandler:nil];
+            }] performSelector:@selector(start) withObject:nil afterDelay:[strongSelf.errorDelay integerValue]];
+            
         } else {
-            BOOL requestAborted = [SRExceptionHelper isRequestAborted:error];
-            if(!requestAborted) {
-                //Raise Error
-                [strongConnection didReceiveError:error];
-                SRLogLongPolling(@"will poll again in %ld seconds",(long)[_errorDelay integerValue]);
-                [[NSBlockOperation blockOperationWithBlock:^{
-                    if (connection.state != disconnected) {
-                        [strongSelf pollingLoop:strongConnection data:data raiseReconnect:YES];
-                    }
-                }] performSelector:@selector(start) withObject:nil afterDelay:[strongSelf.errorDelay integerValue]];
+            [strongSelf completeAbort];
+            if (block) {
+                block(nil,error);
             }
         }
     }];
     [self.pollingOperationQueue addOperation:operation];
-    
-    if (self.initializeCallback != nil) {
+}
+
+- (void)delayConnectionReconnect:(id<SRConnectionInterface>)connection canReconnect:(NSNumber *)canReconnect {
+    if ([self isConnectionReconnecting:connection]) {
+        __weak __typeof(&*self)weakSelf = self;
+        __weak __typeof(&*connection)weakConnection = connection;
+        __weak __typeof(&*canReconnect)weakCanReconnect = canReconnect;
         [[NSBlockOperation blockOperationWithBlock:^{
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+            __strong __typeof(&*weakCanReconnect)strongCanReconnect = weakCanReconnect;
+
+            [strongSelf connectionReconnect:strongConnection canReconnect:strongCanReconnect];
             
-            if (strongSelf.initializeCallback != nil) {
-                strongSelf.initializeCallback();
-                strongSelf.initializeCallback = nil;
-            }
-        }] performSelector:@selector(start) withObject:nil afterDelay:[self.connectDelay integerValue]];
+        }] performSelector:@selector(start) withObject:nil afterDelay:[self.reconnectDelay integerValue]];
     }
 }
 
-- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block {
-    [super send:connection data:data completionHandler:block];
+- (void)connectionReconnect:(id<SRConnectionInterface>)connection canReconnect:(NSNumber *)canReconnect {
+    if ([canReconnect boolValue]) {
+        canReconnect = @(NO);
+        // Mark the connection as connected
+        if ([connection changeState:reconnecting toState:connected]) {
+            [connection didReconnect];
+        }
+    }
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
-    [super abort:connection timeout:timeout];
+- (BOOL)isConnectionReconnecting:(id<SRConnectionInterface>)connection {
+    return connection.state == reconnecting;
 }
 
 @end

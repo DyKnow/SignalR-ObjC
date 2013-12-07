@@ -78,7 +78,7 @@
         [strongSelf.data insertObject:@"Connection Opened" atIndex:0];
         [strongSelf.tableView reloadData];
     };
-    _connection.received = ^(NSString * data){
+    _connection.received = ^(NSDictionary * data){
         //__strong __typeof(&*weakSelf)strongSelf = weakSelf;
         //[strongSelf.data insertObject:data atIndex:0];
         //[self.tableView reloadData];

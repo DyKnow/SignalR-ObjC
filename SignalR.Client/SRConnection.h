@@ -28,7 +28,7 @@
 @class SRConnection;
 
 typedef void (^onStarted)();
-typedef void (^onReceived)(NSString *);
+typedef void (^onReceived)(id);
 typedef void (^onError)(NSError *);
 typedef void (^onClosed)();
 typedef void (^onReconnecting)();
@@ -92,5 +92,3 @@ typedef void (^onConnectionSlow)();
 - (void)addValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 
 @end
-
-extern NSString * const SRConnectionDidDisconnect;

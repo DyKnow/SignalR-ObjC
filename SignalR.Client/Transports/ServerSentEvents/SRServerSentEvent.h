@@ -1,8 +1,8 @@
 //
-//  SRConnectionDelegate.h
+//  SRServerSentEvent.h
 //  SignalR
 //
-//  Created by Alex Billingsley on 10/17/11.
+//  Created by Alex Billingsley on 6/8/12.
 //  Copyright (c) 2011 DyKnow LLC. (http://dyknow.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -21,25 +21,49 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRConnectionInterface.h"
 
-@protocol SRConnectionDelegate<NSObject>
-@optional
+/**
+    Copied from AFRocketClient, When AFRocket is more stable it will probably make sense to replace our SSE implementation with theirs.
+ */
+@interface SRServerSentEvent : NSObject <NSCoding, NSCopying>
 
-- (void)SRConnectionDidOpen:(id <SRConnectionInterface>)connection;
+///---------------------------------
+/// @name Managing Event Information
+///---------------------------------
 
-- (void)SRConnectionWillReconnect:(id <SRConnectionInterface>)connection;
+/**
+ The event type.
+ */
+@property (nonatomic, copy) NSString *event;
 
-- (void)SRConnectionDidReconnect:(id <SRConnectionInterface>)connection;
+/**
+ The event identifier.
+ */
+@property (nonatomic, copy) NSString *identifier;
 
-- (void)SRConnection:(id <SRConnectionInterface>)connection didReceiveData:(id)data;
+/**
+ The data associated with the event.
+ */
+@property (nonatomic, strong) NSData *data;
 
-- (void)SRConnectionDidClose:(id <SRConnectionInterface>)connection;
+/**
+ The retry interval sent with the event.
+ */
+@property (nonatomic, assign) NSTimeInterval retry;
 
-- (void)SRConnection:(id <SRConnectionInterface>)connection didReceiveError:(NSError *)error;
+/**
+ Any additional fields in the event.
+ */
+@property (nonatomic, strong) NSDictionary *userInfo;
 
-- (void)SRConnection:(id <SRConnectionInterface>)connection didChangeState:(connectionState)oldState newState:(connectionState)newState;
+///------------------------
+/// @name Creating an Event
+///------------------------
 
-- (void)SRConnectionDidSlow:(id <SRConnectionInterface>)connection;
+/**
+ Creates and returns an event with the specified fields.
+ */
++ (instancetype)eventWithFields:(NSDictionary *)fields;
 
++ (BOOL)tryParseEvent:(NSString *)line sseEvent:(SRServerSentEvent **)sseEvent __attribute__((deprecated));
 @end

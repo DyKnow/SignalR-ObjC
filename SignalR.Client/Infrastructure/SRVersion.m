@@ -110,6 +110,22 @@
     return success;
 }
 
+- (BOOL)isEqual:(id)object {
+    
+    if (self == object) {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[SRVersion class]]) {
+        return NO;
+    }
+    
+    return (self.major == [(SRVersion *)object major] &&
+            self.minor == [(SRVersion *)object minor] &&
+            self.build == [(SRVersion *)object build] &&
+            self.revision == [(SRVersion *)object revision]);
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"%ld.%ld.%ld.%ld",(long)_major,(long)_minor,(long)_build,(long)_revision];

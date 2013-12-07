@@ -29,6 +29,6 @@
 - (BOOL)tryCompleteAbort;
 - (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data;
 - (NSString *)appendBaseUrl:(NSString *)baseUrl withConnectionQueryString:(id <SRConnectionInterface>)connection;
-- (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response timedOut:(BOOL *)timedOut disconnected:(BOOL *)disconnected;
+- (void)processResponse:(id <SRConnectionInterface>)connection response:(NSString *)response shouldReconnect:(BOOL *)shouldReconnect disconnected:(BOOL *)disconnected;
 
 @end

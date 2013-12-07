@@ -44,11 +44,4 @@
  */
 @property (strong, nonatomic, readwrite) NSNumber *errorDelay;
 
-/**
- * The time to wait after the initial connect http request before it is considered open.
- *
- * By default, this is 2 seconds
- */
-@property (strong, nonatomic, readwrite) NSNumber *connectDelay;
-
 @end

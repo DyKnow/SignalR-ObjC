@@ -25,6 +25,7 @@
 
 @protocol SRClientTransportInterface;
 @class SRKeepAliveData;
+@class SRVersion;
 
 @protocol SRConnectionInterface <NSObject>
 
@@ -32,6 +33,8 @@
 /// @name Properties
 ///-------------------------------
 
+@property (strong, nonatomic, readwrite) SRVersion *protocol;
+@property (strong, nonatomic, readwrite) NSNumber *transportConnectTimeout;
 @property (strong, nonatomic, readwrite) SRKeepAliveData *keepAliveData;
 @property (strong, nonatomic, readwrite) NSString *messageId;
 @property (strong, nonatomic, readwrite) NSString *groupsToken;
@@ -58,13 +61,13 @@
 ///-------------------------------
 
 - (void)send:(id)object;
-- (void)send:(id)object completionHandler:(void (^)(id response))block;
+- (void)send:(id)object completionHandler:(void (^)(id response, NSError *error))block;
 
 ///-------------------------------
 /// @name Receiving Data
 ///-------------------------------
 
-- (void)didReceiveData:(NSString *)data;
+- (void)didReceiveData:(id)data;
 - (void)didReceiveError:(NSError *)error;
 - (void)willReconnect;
 - (void)didReconnect;

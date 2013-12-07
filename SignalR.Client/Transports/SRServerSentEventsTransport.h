@@ -31,13 +31,6 @@
 ///-------------------------------
 
 /**
- * Returns an `NSInteger` object with the time allowed before failing the connect request.
- *
- * By default, this is 2 seconds
- */
-@property (strong, nonatomic, readwrite) NSNumber *connectionTimeout;
-
-/**
  * Returns an `NSInteger` object with the time to wait after a connection drops to try reconnecting.
  *
  * By default, this is 2 seconds

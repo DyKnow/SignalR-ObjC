@@ -33,7 +33,7 @@
 @property (strong, nonatomic, readonly) NSString *name;
 @property (assign, nonatomic, readonly) BOOL supportsKeepAlive;
 
-- (void)negotiate:(id <SRConnectionInterface>)connection completionHandler:(void (^)(SRNegotiationResponse *response))block;
+- (void)negotiate:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse *response, NSError *error))block;
 
 /**
  * Opens a connection to the server for the active transport
@@ -42,7 +42,7 @@
  * @param data the data to send when starting the transport on, may be nil
  * @param block the block to be called once start finishes, block may be nil
  */
-- (void)start:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block;
+- (void)start:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block;
 
 /**
  * Sends data to the server for the active transport
@@ -51,14 +51,14 @@
  * @param data the data to send the server
  * @param block the block to be called once send finishes, block may be nil
  */
-- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response))block;
+- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block;
 
 /**
  * Stops the active transport from receiving data from the server
  *
  * @param connection the `SRConnectionInterface` owning the transport that should be stopped
  */
-- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout;
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData;
 
 - (void)lostConnection:(id <SRConnectionInterface>)connection;
 

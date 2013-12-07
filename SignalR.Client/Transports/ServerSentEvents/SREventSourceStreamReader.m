@@ -23,7 +23,7 @@
 #import "SREventSourceStreamReader.h"
 #import "SRChunkBuffer.h"
 #import "SRLog.h"
-#import "SRSseEvent.h"
+#import "SRServerSentEvent.h"
 
 typedef enum {
     initial,
@@ -41,10 +41,8 @@ typedef enum {
 
 - (BOOL)processing;
 
-- (void)processBuffer:(NSData *)buffer read:(NSInteger)read;
-
 - (void)onOpened;
-- (void)onMessage:(SRSseEvent *)sseEvent;
+- (void)onMessage:(SRServerSentEvent *)sseEvent;
 - (void)onClosed:(NSError *)error;
 
 @end
@@ -88,17 +86,35 @@ typedef enum {
                 }
                 
                 NSData *buffer = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-                if ([buffer length] >= 4096) {
+                /*if ([buffer length] >= 4096) {
                     [self close];
                     return;
-                }
+                }*/
                 buffer = [buffer subdataWithRange:NSMakeRange(_offset, [buffer length] - _offset)];
                 
                 NSInteger read = [buffer length];
                 if(read > 0) {
                     // Put chunks in the buffer
                     _offset = _offset + read;
-                    [self processBuffer:buffer read:read];
+                    
+                    [_buffer add:buffer];
+                    while ([_buffer hasChunks]) {
+                        NSString *line = [_buffer readLine];
+                        
+                        // No new lines in the buffer so stop processing
+                        if (line == nil) {
+                            break;
+                        }
+                        
+                        SRServerSentEvent *sseEvent = nil;
+                        if(![SRServerSentEvent tryParseEvent:line sseEvent:&sseEvent]) {
+                            continue;
+                        }
+                        
+                        SRLogServerSentEvents(@"SSE READ: %@",sseEvent);
+                        
+                        [self onMessage:sseEvent];
+                    }
                 }
                 break;
             } case NSStreamEventErrorOccurred: {
@@ -114,28 +130,6 @@ typedef enum {
     });
 }
 
-- (void)processBuffer:(NSData *)buffer read:(NSInteger)read {
-    [_buffer add:buffer length:read];
-    
-    while ([_buffer hasChunks]) {
-        NSString *line = [_buffer readLine];
-        
-        // No new lines in the buffer so stop processing
-        if (line == nil) {
-            break;
-        }
-        
-        SRSseEvent *sseEvent = nil;
-        if(![SRSseEvent tryParseEvent:line sseEvent:&sseEvent]) {
-            continue;
-        }
-        
-        SRLogServerSentEvents(@"SSE READ: %@",sseEvent);
-        
-        [self onMessage:sseEvent];
-    }
-}
-
 #pragma mark -
 #pragma mark Dispatch Blocks
 
@@ -145,7 +139,7 @@ typedef enum {
     }
 }
 
-- (void)onMessage:(SRSseEvent *)sseEvent {
+- (void)onMessage:(SRServerSentEvent *)sseEvent {
     if(self.message) {
         self.message(sseEvent);
     }
