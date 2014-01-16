@@ -297,7 +297,10 @@ connectionData:(NSString *)connectionData {
             return;
         }
         
-        connection.groupsToken = result[@"G"];
+        NSString *groupsToken = result[@"G"];
+        if (groupsToken) {
+            connection.groupsToken = groupsToken;
+        }
         
         id messages = result[@"M"];
         if(messages && [messages isKindOfClass:[NSArray class]])
