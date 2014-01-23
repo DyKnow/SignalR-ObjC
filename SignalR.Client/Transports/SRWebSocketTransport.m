@@ -57,7 +57,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     return YES;
 }
 
-- (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
+- (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse *response, NSError *error))block {
     [super negotiate:connection connectionData:connectionData completionHandler:block];
 }
 
@@ -66,7 +66,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     [self performConnect:block];
 }
 
-- (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data completionHandler:(void (^)(id response, NSError *error))block {
+- (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
     [_webSocket send:data];
     
     if(block) {
@@ -74,13 +74,13 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     }
 }
 
-- (void)lostConnection:(id<SRConnectionInterface>)connection {
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
     [_webSocket close];
     [_webSocket setDelegate:nil];
     _webSocket = nil;
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
+- (void)lostConnection:(id<SRConnectionInterface>)connection {
     [_webSocket close];
     [_webSocket setDelegate:nil];
     _webSocket = nil;

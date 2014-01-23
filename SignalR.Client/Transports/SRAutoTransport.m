@@ -40,8 +40,8 @@
 @implementation SRAutoTransport
 
 - (instancetype)init {
-    NSArray *transports = @[//[[SRWebSocketTransport alloc] init],
-                            //[[SRServerSentEventsTransport alloc] init],
+    NSArray *transports = @[[[SRWebSocketTransport alloc] init],
+                            [[SRServerSentEventsTransport alloc] init],
                             [[SRLongPollingTransport alloc] init]];
     return [self initWithTransports:[NSMutableArray arrayWithArray:transports]];
 }
