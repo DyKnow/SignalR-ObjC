@@ -303,17 +303,14 @@ connectionData:(NSString *)connectionData {
         }
         
         id messages = result[@"M"];
-        if(messages && [messages isKindOfClass:[NSArray class]])
-        {
+        if(messages && [messages isKindOfClass:[NSArray class]]) {
             connection.messageId = result[@"C"];
             
-            for (id message in messages)
-            {
+            for (id message in messages) {
                 [connection didReceiveData:message];
             }
             
-            if ([result[@"S"] boolValue])
-            {
+            if ([result[@"S"] boolValue]) {
                 //TODO: Call Initialized Callback
                 //onInitialized();
             }

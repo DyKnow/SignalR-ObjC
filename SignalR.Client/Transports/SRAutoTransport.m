@@ -98,7 +98,7 @@
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         __strong __typeof(&*transport)strongTransport = transport;
 
-        if ([response isKindOfClass:[NSError class]]) {
+        if (error) {
             SRLogAutoTransport(@"will switch to next transport");
             
             // If that transport fails to initialize then fallback
