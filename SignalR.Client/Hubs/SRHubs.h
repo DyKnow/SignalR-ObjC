@@ -23,8 +23,6 @@
 #import "SRHubConnection.h"
 #import "SRHubInvocation.h"
 #import "SRHubProxy.h"
-#import "SRHubProxyExtensions.h"
 #import "SRHubRegistrationData.h"
 #import "SRHubResult.h"
-#import "SRHubservable.h"
 #import "SRSubscription.h"

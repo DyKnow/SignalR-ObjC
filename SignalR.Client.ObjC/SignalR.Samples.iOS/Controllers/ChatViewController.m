@@ -113,8 +113,8 @@
     connection = [SRHubConnection connectionWithURL:server];
     hub = [connection createHubProxy:@"Chat"];
     
-    [hub setMember:@"focus" object:@YES];
-    [hub setMember:@"unread" object:@0];
+    [[hub state] setValue:@YES forKey:@"focus"];
+    [[hub state] setValue:0 forKey:@"unread"];
     
     [hub on:@"refreshRoom" perform:self selector:@selector(refreshRoom:)];
     [hub on:@"showRooms" perform:self selector:@selector(showRooms:)];

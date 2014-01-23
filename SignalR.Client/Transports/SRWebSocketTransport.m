@@ -75,14 +75,14 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 }
 
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
-    [_webSocket close];
     [_webSocket setDelegate:nil];
+    [_webSocket close];
     _webSocket = nil;
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
-    [_webSocket close];
     [_webSocket setDelegate:nil];
+    [_webSocket close];
     _webSocket = nil;
 }
 

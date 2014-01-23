@@ -27,37 +27,23 @@
 @protocol SRHubProxyInterface <NSObject>
 
 ///-------------------------------
-/// @name State Management
+/// @name Subscribe
 ///-------------------------------
 
 /**
- * Returns the object corresponding to name in the state dictionary
+ * Creates a new `SRSubscription` object
  *
- * @param name the key for which to return the corresponding value.
- *
- * @return Returns the value associated with a given key.
+ * @param eventName the name of the event to subscribe to
+ * @param object The receiver to perform selector on
+ * @param selector A selector identifying the message to send.
+ * @return An instance of an `SRSubscription` object
  */
-- (id)getMember:(NSString *)name;
+- (SRSubscription *)on:(NSString *)eventName perform:(NSObject *)object selector:(SEL)selector;
 
-/**
- * Adds a given key-value pair to the state dictionary.
- *
- * @param name The key for value
- * @param value The value for key.
- */
-- (void)setMember:(NSString *)name object:(id)value;
 
 ///-------------------------------
-/// @name Subscription Management
+/// @name Publish
 ///-------------------------------
-
-/**
- * Adds a new `SRSubscription` to the hubproxy for eventName
- *
- * @param eventName the `NSString` object representing the name of the subscription event
- * @return the `SRSubscription` object created
- */
-- (SRSubscription *)subscribe:(NSString *)eventName;
 
 /**
  * Invokes a SignalR Server Hub method with the specified method name and arguments

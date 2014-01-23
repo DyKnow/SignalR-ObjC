@@ -167,7 +167,7 @@
             if(hubProxy) {
                 if(invocation.state != nil && ![invocation.state isKindOfClass:[NSNull class]]) {
                     for (id key in invocation.state) {
-                        [hubProxy setMember:key object:(invocation.state)[key]];
+                        [[hubProxy state] setValue:(invocation.state)[key] forKey:key];
                     }
                 }
                 [hubProxy invokeEvent:invocation.method withArgs:invocation.args];

@@ -12,3 +12,8 @@ target :"SignalR.Client.OSX", :exclusive => true do
   pod 'AFNetworking', '2.0.2'
   pod 'SocketRocket', '0.3.1-beta2'
 end
+
+target :"SignalR.Client.Tests.OSX", :exclusive => true do
+    platform :osx, '10.8'
+    pod 'OCMock'
+end
