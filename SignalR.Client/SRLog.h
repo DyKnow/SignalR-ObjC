@@ -125,7 +125,7 @@ do{ \
         NSLog((@"Thread %@:%s [Line %d]\n[HTTP_BASED_TRANSPORT]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 } while(0)
 
-#define SRLogWebSocket(fmt, ...) \
+#define SRLogWebSockets(fmt, ...) \
 do{ \
 if(ddLogLevel & LOG_WEBSOCKETS) \
 NSLog((@"Thread %@:%s [Line %d]\n[WEB_SOCKETS]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \

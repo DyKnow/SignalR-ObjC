@@ -55,8 +55,4 @@ static NSString * const kState = @"S";
     return self;
 }
 
-- (NSString *)description  {  
-    return [NSString stringWithFormat:@"HubResult: Id=%@ Result:%@ Error=%@ State=%@",_id,_result,_error,_state];
-}
-
 @end

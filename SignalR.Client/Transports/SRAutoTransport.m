@@ -33,7 +33,6 @@
 @property (strong, nonatomic, readwrite) id <SRClientTransportInterface> transport;
 // List of transports in fallback order
 @property (strong, nonatomic, readonly) NSMutableArray *transports;
-@property (assign, nonatomic, readwrite) int startIndex;
 
 @end
 
@@ -49,7 +48,6 @@
 - (instancetype)initWithTransports:(NSMutableArray *)transports {
     if(self = [super init]) {
         _transports = transports;
-        _startIndex = 0;
     }
     return self;
 }
@@ -86,7 +84,7 @@
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
-    [self start:connection connectionData:connectionData transportIndex:self.startIndex completionHandler:block];
+    [self start:connection connectionData:connectionData transportIndex:0 completionHandler:block];
 }
 
 - (void)start:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData transportIndex:(int)index completionHandler:(void (^)(id response, NSError *error))block  {

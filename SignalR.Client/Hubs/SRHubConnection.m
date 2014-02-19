@@ -55,23 +55,12 @@
     return self;
 }
 
-- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSDictionary *)queryString {
     return [self initWithURLString:url queryString:queryString useDefault:YES];
 }
 
-- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault {
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
     if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] queryString:queryString]) {
-		[self commonInit];
-    }
-    return self;
-}
-
-- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
-    return [self initWithURLString:url query:queryString useDefault:YES];
-}
-
-- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault {
-    if (self = [super initWithURLString:[[self class] getUrl:url useDefault:useDefault] query:queryString]) {
         [self commonInit];
     }
     return self;
@@ -97,7 +86,7 @@
     return hubProxy;
 }
 
-- (NSString *)registerCallback:(SRHubResultBlock)callback {
+- (NSString *)registerCallback:(SRHubConnectionHubResultBlock)callback {
     NSString *newId = [[NSNumber numberWithInt:_callbackId] stringValue];
     _callbacks[newId] = callback;
     _callbackId += 1;
@@ -112,7 +101,7 @@
     SRHubResult *result = [[SRHubResult alloc] init];
     [result setError:error];
     
-    for (SRHubResultBlock callback in [self.callbacks allValues]) {
+    for (SRHubConnectionHubResultBlock callback in [self.callbacks allValues]) {
         callback(result);
     }
     
@@ -156,7 +145,7 @@
     if([data isKindOfClass:[NSDictionary class]]) {
         if ([data valueForKey:@"I"]) {
             SRHubResult *result = [[SRHubResult alloc] initWithDictionary:data];
-            SRHubResultBlock callback = _callbacks[result.id];
+            SRHubConnectionHubResultBlock callback = _callbacks[result.id];
             if (callback) {
                 [_callbacks removeObjectForKey:result.id];
                 callback(result);

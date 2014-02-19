@@ -45,8 +45,4 @@ static NSString * const kName = @"Name";
     return dict;
 }
 
-- (NSString *)description {     
-    return [NSString stringWithFormat:@"HubRegistrationData: Name=%@",_name];
-}
-
 @end

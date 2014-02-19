@@ -110,7 +110,7 @@
 - (IBAction)connectClicked:(id)sender
 {
     NSString *server = [Router sharedRouter].server_url;
-    connection = [SRHubConnection connectionWithURL:server];
+    connection = [SRHubConnection connectionWithURLString:server];
     hub = [connection createHubProxy:@"Chat"];
     
     [[hub state] setValue:@YES forKey:@"focus"];
@@ -177,13 +177,15 @@
     [self clearMessages];
     [self clearUsers];
     
-    [hub invoke:@"GetUsers" withArgs:@[] completionHandler:^(id users) {
-        for(id user in users)
-        {
-            if([user isKindOfClass:[NSDictionary class]]){
-                [self addUser:user exists:TRUE];
+    [hub invoke:@"GetUsers" withArgs:@[] completionHandler:^(id users, NSError *error) {
+        if (!error) {
+            for(id user in users)
+            {
+                if([user isKindOfClass:[NSDictionary class]]){
+                    [self addUser:user exists:TRUE];
+                }
+                [self refreshUsers];
             }
-            [self refreshUsers];
         }
     }];
     

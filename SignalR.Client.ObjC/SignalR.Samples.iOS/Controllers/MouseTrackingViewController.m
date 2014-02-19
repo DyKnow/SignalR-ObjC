@@ -70,7 +70,7 @@
     }
     
     __weak __typeof(&*self)weakSelf = self;
-    _connection = [SRHubConnection connectionWithURL:[Router sharedRouter].server_url];
+    _connection = [SRHubConnection connectionWithURLString:[Router sharedRouter].server_url];
     _hub = [_connection createHubProxy:@"MouseTracking"];
     [_hub on:@"move" perform:self selector:@selector(moveMouse:x:y:)];
     _connection.started = ^{

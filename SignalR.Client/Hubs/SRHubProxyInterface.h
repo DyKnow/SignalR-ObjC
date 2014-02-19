@@ -61,6 +61,6 @@
  * @param args the arguments to pass as part of the invocation
  * @param block the block to be called once the server method is invoked, this may be nil
  */
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args completionHandler:(void (^)(id response))block;
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args completionHandler:(void (^)(id response, NSError *error))block;
 
 @end

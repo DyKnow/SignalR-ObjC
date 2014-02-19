@@ -107,7 +107,7 @@
     [self invoke:method withArgs:args completionHandler:nil];
 }
 
-- (void)invoke:(NSString *)method withArgs:(NSArray *)args completionHandler:(void (^)(id response))block {
+- (void)invoke:(NSString *)method withArgs:(NSArray *)args completionHandler:(void (^)(id response, NSError *error))block {
     if(method == nil || [method isEqualToString:@""]) {
         [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Argument method is null",@"NSInvalidArgumentException")];
     }
@@ -127,7 +127,7 @@
                                                  userInfo:userInfo];
                 [_connection didReceiveError:error];
                 if (block != nil) {
-                    block(error);
+                    block(nil, error);
                 }
             } else {
                 if(result.state != nil && ![result.state isKindOfClass:[NSNull class]]) {
@@ -138,11 +138,11 @@
                 
                 if(result.result != nil && ![result.result isKindOfClass:[NSNull class]]) {
                     if (block != nil) {
-                        block(result.result);
+                        block(result.result, nil);
                     }
                 } else {
                     if (block != nil) {
-                        block(@{});
+                        block(nil, nil);
                     }
                 }
             }
@@ -159,11 +159,7 @@
         hubData.state = _state;
     }
     
-    [_connection send:hubData];
-}
-
-- (NSString *)description {     
-    return [NSString stringWithFormat:@"HubProxy: Name=%@ State=%@ Subscriptions:%@",_hubName,_state,_subscriptions];
+    [_connection send:hubData completionHandler:block];
 }
 
 @end

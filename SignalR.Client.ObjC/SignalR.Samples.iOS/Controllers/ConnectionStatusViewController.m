@@ -64,7 +64,7 @@
     }
     
     __weak __typeof(&*self)weakSelf = self;
-    _connection = [SRHubConnection connectionWithURL:[Router sharedRouter].server_url];
+    _connection = [SRHubConnection connectionWithURLString:[Router sharedRouter].server_url];
     _hub = [_connection createHubProxy:@"statushub"];
     [_hub on:@"joined" perform:self selector:@selector(joined:when:)];
     [_hub on:@"rejoined" perform:self selector:@selector(rejoined:when:)];

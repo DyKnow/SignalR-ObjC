@@ -20,8 +20,9 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
+#import <AFNetworking/AFNetworking.h>
+#import <SocketRocket/SRWebSocket.h>
 #import "SRWebSocketTransport.h"
-#import "SRWebSocket.h"
 #import "SRLog.h"
 #import "SRWebSocketConnectionInfo.h"
 #import "SRConnectionInterface.h"
@@ -94,18 +95,29 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 }
 
 - (void)performConnect:(void (^)(id response, NSError *error))block reconnecting:(BOOL)reconnecting {
-    NSString *urlString = [_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"];
-    urlString = [urlString stringByAppendingString:[self receiveQueryString:_connectionInfo.connection data:_connectionInfo.data]];
-        
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
     
-    [_connectionInfo.connection prepareRequest:urlRequest];
+    id parameters = @{
+        @"transport" : [self name],
+        @"connectionToken" : [[_connectionInfo connection] connectionToken],
+        @"messageId" : ([[_connectionInfo connection] messageId]) ? [[_connectionInfo connection] messageId] : @"",
+        @"groupsToken" : ([[_connectionInfo connection] groupsToken]) ? [[_connectionInfo connection] groupsToken] : @"",
+        @"connectionData" : ([_connectionInfo data]) ? [_connectionInfo data] : @"",
+    };
     
-    SRLogWebSocket(@"WS: %@",[urlRequest.URL absoluteString]);
+    if ([[_connectionInfo connection] queryString]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:[[_connectionInfo connection] queryString]];
+        parameters = _parameters;
+    }
+    
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"] parameters:parameters error:nil];
+    //TODO: prepareRequest
+    
+    SRLogWebSockets(@"WS: %@",[request.URL absoluteString]);
     
     [self setStartBlock:block];
     
-    _webSocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest];
+    _webSocket = [[SRWebSocket alloc] initWithURLRequest:request];
     [_webSocket setDelegate:self];
     [_webSocket open];
 }
@@ -114,7 +126,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 #pragma mark SRWebSocketDelegate
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    SRLogWebSocket(@"Websocket Connected");
+    SRLogWebSockets(@"Websocket Connected");
     
     // This will noop if we're not in the reconnecting state
     if ([[_connectionInfo connection] changeState:reconnecting toState:connected]) {
@@ -123,7 +135,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
-    SRLogWebSocket(@"WS Receive: %@", message);
+    SRLogWebSockets(@"WS Receive: %@", message);
     
     BOOL timedOut = NO;
     BOOL disconnected = NO;
@@ -141,7 +153,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    SRLogWebSocket(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
+    SRLogWebSockets(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
     
     if (self.startBlock) {
         self.startBlock(nil,error);
@@ -156,7 +168,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
-    SRLogWebSocket(@"WebSocket closed");
+    SRLogWebSockets(@"WebSocket closed");
     
     if ([self tryCompleteAbort]) {
         return;

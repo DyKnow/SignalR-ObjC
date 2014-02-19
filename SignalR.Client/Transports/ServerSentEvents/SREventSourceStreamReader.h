@@ -24,26 +24,26 @@
 
 @class SRServerSentEvent;
 
-typedef void (^onStreamOpened)();
-typedef void (^onStreamClosed)(NSError * error);
-typedef void (^onStreamMessage)(SRServerSentEvent * event);
+typedef void (^SREventSourceStreamReaderStreamOpenedBlock)();
+typedef void (^SREventSourceStreamReaderStreamClosedBlock)(NSError * error);
+typedef void (^SREventSourceStreamReaderStreamMessageBlock)(SRServerSentEvent * event);
 
 @interface SREventSourceStreamReader : NSObject <NSStreamDelegate>
 
 /*
  * Invoked when the connection is open.
  */
-@property (copy) onStreamOpened opened;
+@property (copy) SREventSourceStreamReaderStreamOpenedBlock opened;
 
 /*
  * Invoked when the reader is closed while in the Processing state.
  */
-@property (copy) onStreamClosed closed;
+@property (copy) SREventSourceStreamReaderStreamClosedBlock closed;
 
 /*
  * Invoked when there's a message if received in the stream.
  */
-@property (copy) onStreamMessage message;
+@property (copy) SREventSourceStreamReaderStreamMessageBlock message;
 
 - (id)initWithStream:(NSOutputStream *)steam;
 

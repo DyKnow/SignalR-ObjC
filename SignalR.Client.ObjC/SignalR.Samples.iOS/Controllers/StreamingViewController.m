@@ -63,7 +63,7 @@
     }
     
     __weak __typeof(&*self)weakSelf = self;
-    _connection = [SRConnection connectionWithURL:[[Router sharedRouter].server_url stringByAppendingFormat:@"streaming-connection"]];
+    _connection = [SRConnection connectionWithURLString:[[Router sharedRouter].server_url stringByAppendingFormat:@"streaming-connection"]];
     _connection.started = ^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         [strongSelf.data insertObject:@"Connection Opened" atIndex:0];
