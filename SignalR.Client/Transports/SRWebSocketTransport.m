@@ -75,7 +75,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     }
 }
 
-- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout {
+- (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
     [_webSocket setDelegate:nil];
     [_webSocket close];
     _webSocket = nil;
