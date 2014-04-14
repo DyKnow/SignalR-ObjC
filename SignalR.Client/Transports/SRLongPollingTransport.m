@@ -112,8 +112,8 @@
     }
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:240];
-    //TODO: prepareRequest
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
     //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;

@@ -137,8 +137,8 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     }
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"connect"] parameters:parameters error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:240];
-    //TODO: Use ResponseSerializer for this...
     [request setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
     [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
     //TODO: prepareRequest

@@ -111,7 +111,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     }
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"] parameters:parameters error:nil];
-    //TODO: prepareRequest
+    [_connectionInfo.connection prepareRequest:request]; //TODO: prepareRequest
     
     SRLogWebSockets(@"WS: %@",[request.URL absoluteString]);
     

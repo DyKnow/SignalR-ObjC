@@ -61,8 +61,8 @@
     }
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"negotiate"] parameters:parameters error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:30];
-    //TODO: prepareRequest
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
     //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
@@ -100,7 +100,7 @@
     //So we let AFNetworking Generate our URL with proper encoding and then create the POST url which will encode the data in the body.
     NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"send"] parameters:parameters error:nil];
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:@{ @"data" : data } error:nil];
-    //TODO: prepareRequest
+    [connection prepareRequest:request]; //TODO: prepareRequest
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
     //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
@@ -160,8 +160,8 @@
         
         NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"abort"] parameters:parameters error:nil];
         NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:nil error:nil];
+        [connection prepareRequest:request]; //TODO: prepareRequest
         [request setTimeoutInterval:2];
-        //TODO: prepareRequest
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
         //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
