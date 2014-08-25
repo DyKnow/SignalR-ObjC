@@ -133,8 +133,8 @@
     
     __weak __typeof(&*self)weakSelf = self;
     [transport negotiate:self connectionData:_connectionData completionHandler:^(SRNegotiationResponse *negotiationResponse, NSError *error) {
+         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!error) {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             SRLogConnection(@"negotiation was successful %@",negotiationResponse);
             
             [strongSelf verifyProtocolVersion:negotiationResponse.protocolVersion];
@@ -150,6 +150,10 @@
             }
             
             [strongSelf startTransport];
+        } else {
+            SRLogConnection(@"negotiation failed %@", error);
+            
+            [strongSelf didReceiveError:error];
         }
     }];
 }
