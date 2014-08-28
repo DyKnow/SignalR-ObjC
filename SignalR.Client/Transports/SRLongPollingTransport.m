@@ -190,7 +190,6 @@
 
 - (void)connectionReconnect:(id<SRConnectionInterface>)connection canReconnect:(NSNumber *)canReconnect {
     if ([canReconnect boolValue]) {
-        canReconnect = @(NO);
         // Mark the connection as connected
         if ([connection changeState:reconnecting toState:connected]) {
             [connection didReconnect];
