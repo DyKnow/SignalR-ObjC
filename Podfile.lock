@@ -1,32 +1,43 @@
 PODS:
-  - AFNetworking (2.0.2):
+  - AFNetworking (2.5.1):
+    - AFNetworking/NSURLConnection (= 2.5.1)
+    - AFNetworking/NSURLSession (= 2.5.1)
+    - AFNetworking/Reachability (= 2.5.1)
+    - AFNetworking/Security (= 2.5.1)
+    - AFNetworking/Serialization (= 2.5.1)
+    - AFNetworking/UIKit (= 2.5.1)
+  - AFNetworking/NSURLConnection (2.5.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.5.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.5.1)
+  - AFNetworking/Security (2.5.1)
+  - AFNetworking/Serialization (2.5.1)
+  - AFNetworking/UIKit (2.5.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-    - AFNetworking/UIKit
-  - AFNetworking/NSURLConnection (2.0.2):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.0.2):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.0.2)
-  - AFNetworking/Security (2.0.2)
-  - AFNetworking/Serialization (2.0.2)
-  - AFNetworking/UIKit (2.0.2):
-    - AFNetworking/NSURLConnection
   - SocketRocket (0.3.1-beta2)
 
 DEPENDENCIES:
-  - AFNetworking (= 2.0.2)
-  - SocketRocket (= 0.3.1-beta2)
+  - AFNetworking
+  - SocketRocket (from `https://github.com/square/SocketRocket.git`, branch `master`)
+
+EXTERNAL SOURCES:
+  SocketRocket:
+    :branch: master
+    :git: https://github.com/square/SocketRocket.git
+
+CHECKOUT OPTIONS:
+  SocketRocket:
+    :commit: a2dd92a13b42e14fee0c93253e464121c1de67d5
+    :git: https://github.com/square/SocketRocket.git
 
 SPEC CHECKSUMS:
-  AFNetworking: 22de50ae71ab1c4859773f61068d6fcd1d8f9a4d
-  SocketRocket: 7ac946bcce46287a791dfff3c1f8daa692821dae
+  AFNetworking: 8bee59492a6ff15d69130efa4d0dc67e0094a52a
+  SocketRocket: 70df1983148525857ced17c57207bfb939bc6b8e
 
-COCOAPODS: 0.26.2
+COCOAPODS: 0.36.0
