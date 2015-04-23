@@ -21,9 +21,7 @@
 //
 
 #import "SRWebSocketTransport.h"
-#import "SRWebSocket.h"
 #import "SRLog.h"
-#import "SRWebSocketConnectionInfo.h"
 #import "SRConnectionInterface.h"
 #import "SRConnectionExtensions.h"
 
@@ -31,8 +29,6 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
 @interface SRWebSocketTransport () <SRWebSocketDelegate>
 
-@property (strong, nonatomic, readonly) SRWebSocket *webSocket;
-@property (strong, nonatomic, readonly) SRWebSocketConnectionInfo *connectionInfo;
 @property (copy) SRWebSocketStartBlock startBlock;
 
 @end
