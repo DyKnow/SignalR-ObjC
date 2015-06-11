@@ -23,8 +23,13 @@
 #import <Foundation/Foundation.h>
 #import "SRConnectionInterface.h"
 #import "SRHttpBasedTransport.h"
+#import "SRWebSocket.h"
+#import "SRWebSocketConnectionInfo.h"
 
 @interface SRWebSocketTransport : SRHttpBasedTransport <SRClientTransportInterface>
+
+@property (strong, nonatomic, readonly) SRWebSocket *webSocket;
+@property (strong, nonatomic, readonly) SRWebSocketConnectionInfo *connectionInfo;
 
 @property (strong, nonatomic, readwrite) NSNumber *reconnectDelay;
 

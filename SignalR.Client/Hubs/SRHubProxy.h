@@ -56,4 +56,10 @@
  */
 - (void)invokeEvent:(NSString *)eventName withArgs:(NSArray *)args;
 
+/**
+ *  Clear all subscriptionfrom the hub
+ */
+- (void)clearAllSubscription;
+
+
 @end
