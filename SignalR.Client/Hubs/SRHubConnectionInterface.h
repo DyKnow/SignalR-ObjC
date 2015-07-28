@@ -25,11 +25,11 @@
 @protocol SRConnectionInterface;
 @class SRHubResult;
 
-typedef void (^SRHubResultBlock)(SRHubResult *result);
+typedef void (^SRHubConnectionHubResultBlock)(SRHubResult *result);
 
 @protocol SRHubConnectionInterface <NSObject, SRConnectionInterface>
 
-- (NSString *)registerCallback:(SRHubResultBlock)callback;
+- (NSString *)registerCallback:(SRHubConnectionHubResultBlock)callback;
 - (void)removeCallback:(NSString *)callbackId;
 
 @end

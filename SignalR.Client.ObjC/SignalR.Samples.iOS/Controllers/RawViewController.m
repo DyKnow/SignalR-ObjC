@@ -100,7 +100,7 @@
 {
     NSString *server = [Router sharedRouter].server_url;
     server = [server stringByAppendingFormat:@"raw-connection"];
-    connection = [SRConnection connectionWithURL:server];
+    connection = [SRConnection connectionWithURLString:server];
     [connection setDelegate:self];
     [connection start];
     
@@ -116,7 +116,7 @@
     message[@"type"] = @0;
     message[@"value"] = meField.text;
 
-    [connection send:message];
+    [connection send:message completionHandler:nil];
 }
 
 - (IBAction)broadcastClicked:(id)sender
@@ -125,7 +125,7 @@
     message[@"type"] = @1;
     message[@"value"] = messageField.text;
     
-    [connection send:message];
+    [connection send:message completionHandler:nil];
 }
 
 - (IBAction)enternameClicked:(id)sender
@@ -134,7 +134,7 @@
     message[@"type"] = @2;
     message[@"value"] = messageField.text;
     
-    [connection send:message];
+    [connection send:message completionHandler:nil];
 }
 
 - (IBAction)sendToUserClicked:(id)sender
@@ -143,7 +143,7 @@
     message[@"type"] = @3;
     message[@"value"] = [NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text];
     
-    [connection send:message];
+    [connection send:message completionHandler:nil];
 }
 
 - (IBAction)joingroupClicked:(id)sender
@@ -152,7 +152,7 @@
     message[@"type"] = @4;
     message[@"value"] = messageField.text;
 
-    [connection send:message];
+    [connection send:message completionHandler:nil];
 }
 
 - (IBAction)leavegroupClicked:(id)sender
@@ -161,7 +161,7 @@
     message[@"type"] = @5;
     message[@"value"] = messageField.text;
     
-   [connection send:message];
+   [connection send:message completionHandler:nil];
 }
 
 - (IBAction)sendToGroupClicked:(id)sender
@@ -170,7 +170,7 @@
     message[@"type"] = @6;
     message[@"value"] = [NSString stringWithFormat:@"%@|%@",privateMessageToField.text,privateMessageField.text];
     
-    [connection send:message];
+    [connection send:message completionHandler:nil];
 }
 
 - (IBAction)stopClicked:(id)sender

@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 DyKnow LLC. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "SRChunkBuffer.h"
 
-@interface SRChunkBufferTests : SenTestCase
+@interface SRChunkBufferTests : XCTestCase
 
 @end
 
@@ -35,7 +35,7 @@
     [buffer add:data];
     
     // Assert
-    STAssertNil([buffer readLine], @"Expected nil received object");
+    XCTAssertNil([buffer readLine], @"Expected nil received object");
 }
 
 - (void)testReturnsTextUpToNewLine
@@ -48,7 +48,7 @@
     [buffer add:data];
     
     // Assert
-    STAssertTrue([[buffer readLine] isEqualToString:@"hello world"], @"Expected to read first line only");
+    XCTAssertTrue([[buffer readLine] isEqualToString:@"hello world"], @"Expected to read first line only");
 }
 
 - (void)testCanReadMultipleLines
@@ -61,9 +61,9 @@
     [buffer add:data];
     
     // Assert
-    STAssertTrue([[buffer readLine] isEqualToString:@"hel"], @"Expected to read first line");
-    STAssertTrue([[buffer readLine] isEqualToString:@"lo world"], @"Expected to read second line");
-    STAssertNil([buffer readLine], @"Expected nil received object");
+    XCTAssertTrue([[buffer readLine] isEqualToString:@"hel"], @"Expected to read first line");
+    XCTAssertTrue([[buffer readLine] isEqualToString:@"lo world"], @"Expected to read second line");
+    XCTAssertNil([buffer readLine], @"Expected nil received object");
 }
 
 - (void)testWillCompleteNewLin
@@ -72,16 +72,16 @@
     SRChunkBuffer *buffer = [[SRChunkBuffer alloc] init];
     NSData *data = [[NSString stringWithFormat:@"hello"] dataUsingEncoding:NSUTF8StringEncoding];
     [buffer add:data];
-    STAssertNil([buffer readLine], @"Expected nil received object");
+    XCTAssertNil([buffer readLine], @"Expected nil received object");
     data = [[NSString stringWithFormat:@"\n"] dataUsingEncoding:NSUTF8StringEncoding];
     [buffer add:data];
-    STAssertTrue([[buffer readLine] isEqualToString:@"hello"], @"Expected to read first line only");
+    XCTAssertTrue([[buffer readLine] isEqualToString:@"hello"], @"Expected to read first line only");
     data = [[NSString stringWithFormat:@"Another line"] dataUsingEncoding:NSUTF8StringEncoding];
     [buffer add:data];
-    STAssertNil([buffer readLine], @"Expected nil received object");
+    XCTAssertNil([buffer readLine], @"Expected nil received object");
     data = [[NSString stringWithFormat:@"\nnext"] dataUsingEncoding:NSUTF8StringEncoding];
     [buffer add:data];
-    STAssertTrue([[buffer readLine] isEqualToString:@"Another line"], @"Expected to read first line only");
+    XCTAssertTrue([[buffer readLine] isEqualToString:@"Another line"], @"Expected to read first line only");
 }
 
 @end

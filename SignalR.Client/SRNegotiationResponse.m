@@ -63,8 +63,4 @@ static NSString * const kTransportConnectTimeout= @"TransportConnectTimeout";
 	return self;
 }
 
-- (NSString *)description {  
-    return [NSString stringWithFormat:@"NegotiationResponse: ConnectionId=%@ ConnectionToken=%@ Url=%@ ProtocolVersion=%@ TryWebSockets=%d",_connectionId,_connectionToken,_url,_protocolVersion,_tryWebSockets];
-}
-
 @end

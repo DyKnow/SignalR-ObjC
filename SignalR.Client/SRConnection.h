@@ -27,14 +27,14 @@
 
 @class SRConnection;
 
-typedef void (^onStarted)();
-typedef void (^onReceived)(id);
-typedef void (^onError)(NSError *);
-typedef void (^onClosed)();
-typedef void (^onReconnecting)();
-typedef void (^onReconnected)();
-typedef void (^onStateChanged)(connectionState);
-typedef void (^onConnectionSlow)();
+typedef void (^SRConnectionStartedBlock)();
+typedef void (^SRConnectionReceivedBlock)(id);
+typedef void (^SRConnectionErrorBlock)(NSError *);
+typedef void (^SRConnectionClosedBlock)();
+typedef void (^SRConnectionReconnectingBlock)();
+typedef void (^SRConnectionReconnectedBlock)();
+typedef void (^SRConnectionStateChangedBlock)(connectionState);
+typedef void (^SRConnectionConnectionSlowBlock)();
 
 @interface SRConnection : NSObject <SRConnectionInterface>
 
@@ -42,14 +42,14 @@ typedef void (^onConnectionSlow)();
 /// @name Properties
 ///-------------------------------
 
-@property (copy) onStarted started;
-@property (copy) onReceived received;
-@property (copy) onError error; 
-@property (copy) onClosed closed;
-@property (copy) onReconnecting reconnecting;
-@property (copy) onReconnected reconnected;
-@property (copy) onStateChanged stateChanged;
-@property (copy) onConnectionSlow connectionSlow;
+@property (copy) SRConnectionStartedBlock started;
+@property (copy) SRConnectionReceivedBlock received;
+@property (copy) SRConnectionErrorBlock error;
+@property (copy) SRConnectionClosedBlock closed;
+@property (copy) SRConnectionReconnectingBlock reconnecting;
+@property (copy) SRConnectionReconnectedBlock reconnected;
+@property (copy) SRConnectionStateChangedBlock stateChanged;
+@property (copy) SRConnectionConnectionSlowBlock connectionSlow;
 
 @property (nonatomic, assign) id<SRConnectionDelegate> delegate;
 
@@ -57,12 +57,10 @@ typedef void (^onConnectionSlow)();
 /// @name Initializing an SRConnection Object
 ///-------------------------------
 
-+ (instancetype)connectionWithURL:(NSString *)URL;
-+ (instancetype)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString;
-+ (instancetype)connectionWithURL:(NSString *)url queryString:(NSString *)queryString;
++ (instancetype)connectionWithURLString:(NSString *)URL;
++ (instancetype)connectionWithURLString:(NSString *)url queryString:(NSDictionary *)queryString;
 - (instancetype)initWithURLString:(NSString *)url;
-- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString;
-- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString;
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSDictionary *)queryString;
 
 ///-------------------------------
 /// @name Connection Management

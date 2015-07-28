@@ -110,11 +110,11 @@
 - (IBAction)connectClicked:(id)sender
 {
     NSString *server = [Router sharedRouter].server_url;
-    connection = [SRHubConnection connectionWithURL:server];
+    connection = [SRHubConnection connectionWithURLString:server];
     hub = [connection createHubProxy:@"Chat"];
     
-    [hub setMember:@"focus" object:@YES];
-    [hub setMember:@"unread" object:@0];
+    [[hub state] setValue:@YES forKey:@"focus"];
+    [[hub state] setValue:0 forKey:@"unread"];
     
     [hub on:@"refreshRoom" perform:self selector:@selector(refreshRoom:)];
     [hub on:@"showRooms" perform:self selector:@selector(showRooms:)];
@@ -177,13 +177,15 @@
     [self clearMessages];
     [self clearUsers];
     
-    [hub invoke:@"GetUsers" withArgs:@[] completionHandler:^(id users) {
-        for(id user in users)
-        {
-            if([user isKindOfClass:[NSDictionary class]]){
-                [self addUser:user exists:TRUE];
+    [hub invoke:@"GetUsers" withArgs:@[] completionHandler:^(id users, NSError *error) {
+        if (!error) {
+            for(id user in users)
+            {
+                if([user isKindOfClass:[NSDictionary class]]){
+                    [self addUser:user exists:TRUE];
+                }
+                [self refreshUsers];
             }
-            [self refreshUsers];
         }
     }];
     

@@ -30,7 +30,9 @@
 
 static NSString * const kId = @"I";
 static NSString * const kResult = @"R";
+static NSString * const kHubException = @"H";
 static NSString * const kError = @"E";
+static NSString * const kErrorData = @"D";
 static NSString * const kState = @"S";
 
 - (instancetype) init {
@@ -45,14 +47,12 @@ static NSString * const kState = @"S";
 	if (self = [self init]) {
         self.id = dict[kId];
         self.result  = dict[kResult];
+        self.hubException = (dict[kHubException] != nil) ? [dict[kHubException] boolValue] : NO;
         self.error = dict[kError];
+        self.errorData = dict[kErrorData];
         self.state = dict[kState];
     }
     return self;
-}
-
-- (NSString *)description  {  
-    return [NSString stringWithFormat:@"HubResult: Id=%@ Result:%@ Error=%@ State=%@",_id,_result,_error,_state];
 }
 
 @end

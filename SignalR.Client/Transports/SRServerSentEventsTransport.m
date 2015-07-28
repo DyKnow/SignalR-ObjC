@@ -20,7 +20,7 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AFHTTPRequestOperation.h"
+#import <AFNetworking/AFNetworking.h>
 #import "SRServerSentEventsTransport.h"
 #import "SRConnectionInterface.h"
 #import "SREventSourceStreamReader.h"
@@ -121,20 +121,32 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 - (void)open:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData {
     BOOL reconnecting = self.completionHandler == nil;
     
-    NSString *url = (reconnecting) ? connection.url : [connection.url stringByAppendingString:@"connect"];
-    url = [url stringByAppendingString:[self receiveQueryString:connection data:connectionData]];
-    
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [urlRequest setHTTPMethod:@"GET"];
-    [urlRequest setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
-    [urlRequest setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
-    [urlRequest setTimeoutInterval:240];
-    
-    [connection prepareRequest:urlRequest];
-    
     __block SREventSourceStreamReader *eventSource;
-    SRHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:urlRequest];
+    id parameters = @{
+        @"transport" : [self name],
+        @"connectionToken" : [connection connectionToken],
+        @"messageId" : ([connection messageId]) ? [connection messageId] : @"",
+        @"groupsToken" : ([connection groupsToken]) ? [connection groupsToken] : @"",
+        @"connectionData" : (connectionData) ? connectionData : @"",
+    };
+    
+    if ([connection queryString]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:[connection queryString]];
+        parameters = _parameters;
+    }
+    
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"connect"] parameters:parameters error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
+    [request setTimeoutInterval:240];
+    [request setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
+    //TODO: prepareRequest
+    SRHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
+    //operation.credential = self.credential;
+    //operation.securityPolicy = self.securityPolicy;
     [operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response) {
         eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
         __weak __typeof(&*self)weakSelf = self;

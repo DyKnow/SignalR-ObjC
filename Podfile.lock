@@ -1,32 +1,33 @@
 PODS:
-  - AFNetworking (2.0.2):
+  - AFNetworking (2.1.0):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
     - AFNetworking/UIKit
-  - AFNetworking/NSURLConnection (2.0.2):
+  - AFNetworking/NSURLConnection (2.1.0):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.0.2):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.0.2)
-  - AFNetworking/Security (2.0.2)
-  - AFNetworking/Serialization (2.0.2)
-  - AFNetworking/UIKit (2.0.2):
+  - AFNetworking/NSURLSession (2.1.0):
     - AFNetworking/NSURLConnection
+  - AFNetworking/Reachability (2.1.0)
+  - AFNetworking/Security (2.1.0)
+  - AFNetworking/Serialization (2.1.0)
+  - AFNetworking/UIKit (2.1.0):
+    - AFNetworking/NSURLConnection
+  - OCMock (2.2.2)
   - SocketRocket (0.3.1-beta2)
 
 DEPENDENCIES:
-  - AFNetworking (= 2.0.2)
+  - AFNetworking (= 2.1.0)
+  - OCMock
   - SocketRocket (= 0.3.1-beta2)
 
 SPEC CHECKSUMS:
-  AFNetworking: 22de50ae71ab1c4859773f61068d6fcd1d8f9a4d
+  AFNetworking: c7d7901a83f631414c7eda1737261f696101a5cd
+  OCMock: ffba68873fd32cfd35d885bddad23bfa816da4a3
   SocketRocket: 7ac946bcce46287a791dfff3c1f8daa692821dae
 
-COCOAPODS: 0.26.2
+COCOAPODS: 0.29.0

@@ -20,7 +20,7 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AFHTTPRequestOperation.h"
+#import <AFNetworking/AFNetworking.h>
 #import "SRConnectionInterface.h"
 #import "SRConnectionExtensions.h"
 #import "SRExceptionHelper.h"
@@ -91,20 +91,34 @@
     } else {
         url = [url stringByAppendingString:@"poll"];
     }
-    url = [url stringByAppendingString:[self receiveQueryString:connection data:connectionData]];
-    
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [urlRequest setHTTPMethod:@"GET"];
-    [urlRequest setTimeoutInterval:240];
-    
-    [connection prepareRequest:urlRequest];
     
     [self delayConnectionReconnect:connection canReconnect:canReconnect];
     
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+    
+    id parameters = @{
+        @"transport" : [self name],
+        @"connectionToken" : [connection connectionToken],
+        @"messageId" : ([connection messageId]) ? [connection messageId] : @"",
+        @"groupsToken" : ([connection groupsToken]) ? [connection groupsToken] : @"",
+        @"connectionData" : (connectionData) ? connectionData : @"",
+    };
+    
+    if ([connection queryString]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:[connection queryString]];
+        parameters = _parameters;
+    }
+    
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
+    [request setTimeoutInterval:240];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
+    //operation.credential = self.credential;
+    //operation.securityPolicy = self.securityPolicy;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;

@@ -6,11 +6,12 @@
 //  Copyright (c) 2012 DyKnow LLC. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "SignalR.h"
 //#import "NSDictionary+QueryString.h"
 
-@interface SRHubProxyTests : SenTestCase
+@interface SRHubProxyTests : XCTestCase
 
 @end
 
@@ -24,6 +25,34 @@
 - (void)tearDown
 {
     [super tearDown];
+}
+
+#pragma mark -
+#pragma mark Subscriptions
+
+- (void)testSubscribingToNothingThrows {
+    
+    id mockConnection = [OCMockObject mockForProtocol:@protocol(SRConnectionInterface)];
+    id hub = [[SRHubProxy alloc] initWithConnection:mockConnection hubName:@"myHub"];
+    @try {
+        [hub on:nil perform:nil selector:nil];
+        XCTFail(@"Event Name must not be nil");
+    }
+    @catch (NSException *exception) {
+        
+    }
+}
+
+- (void)testSubscribingToEmptyStringThrows {
+    id mockConnection = [OCMockObject mockForProtocol:@protocol(SRConnectionInterface)];
+    id hub = [[SRHubProxy alloc] initWithConnection:mockConnection hubName:@"myHub"];
+    @try {
+        [hub on:@"" perform:nil selector:nil];
+        XCTFail(@"Event Name must not be empty");
+    }
+    @catch (NSException *exception) {
+        
+    }
 }
 
 /**

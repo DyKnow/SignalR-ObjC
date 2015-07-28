@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 DyKnow LLC. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "SignalR.h"
 
-@interface SRHubConnectionTests : SenTestCase
+@interface SRHubConnectionTests : XCTestCase
 
 @end
 

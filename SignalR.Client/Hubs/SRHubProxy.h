@@ -29,6 +29,8 @@
  */
 @interface SRHubProxy : NSObject <SRHubProxyInterface>
 
+@property (strong, nonatomic, readonly) NSMutableDictionary *state;
+
 ///-------------------------------
 /// @name Initializing an SRHubProxy Object
 ///-------------------------------

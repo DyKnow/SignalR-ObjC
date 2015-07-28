@@ -64,14 +64,14 @@
         if (timeElapsed >= [[[_connection keepAliveData] timeout] integerValue]) {
             if (!self.timedOut) {
                 // Connection has been lost
-                SRLogConnection("Connection Timed-out : Transport Lost Connection");
+                SRLogConnection(@"Connection Timed-out : Transport Lost Connection");
                 _timedOut = true;
                 [[_connection transport] lostConnection:_connection];
             }
         } else if (timeElapsed >= [[[_connection keepAliveData] timeoutWarning] integerValue]) {
             if (!self.hasBeenWarned) {
                 // Inform user and set HasBeenWarned to true
-                SRLogConnection("Connection Timeout Warning : Notifying user");
+                SRLogConnection(@"Connection Timeout Warning : Notifying user");
                 _beenWarned = true;
                 [_connection connectionDidSlow];
             }

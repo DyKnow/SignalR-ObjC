@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 DyKnow LLC. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "NSObject+SRJSON.h"
 #import "SRSerializable.h"
 
@@ -33,7 +33,7 @@
 
 
 
-@interface SRJSONTests : SenTestCase
+@interface SRJSONTests : XCTestCase
 
 @end
 
@@ -57,7 +57,7 @@
 - (void)testThrowWhenEnsureFoundationObjectShouldReturnNil
 {
     InvalidModel *model = [[InvalidModel alloc] init];
-    STAssertThrowsSpecificNamed([model SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
+    XCTAssertThrowsSpecificNamed([model SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
 }
 
 /**
@@ -68,7 +68,7 @@
 - (void)testThrowWhenEnsureFoundationObjectShouldReturnNil_NSArray
 {
     NSArray *nonConformingArray = @[[[InvalidModel alloc] init]];
-    STAssertThrowsSpecificNamed([nonConformingArray SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
+    XCTAssertThrowsSpecificNamed([nonConformingArray SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
 }
 
 /**
@@ -79,7 +79,7 @@
 - (void)testThrowWhenEnsureFoundationObjectShouldReturnNil_NSDictionary
 {
     NSDictionary *nonConformingDictionary = @{@"somekey": [[InvalidModel alloc] init]};
-    STAssertThrowsSpecificNamed([nonConformingDictionary SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
+    XCTAssertThrowsSpecificNamed([nonConformingDictionary SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
 }
 
 /**
@@ -90,7 +90,7 @@
 - (void)testThrowWhenEnsureFoundationObjectShouldReturnNil_ConformingObjectReturnsNil
 {
     InvalidConformingModel *model = [[InvalidConformingModel alloc] init];
-    STAssertThrowsSpecificNamed([model SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
+    XCTAssertThrowsSpecificNamed([model SRJSONRepresentation], NSException, NSInternalInconsistencyException, @"SRJSONRepresentation succeeded when it was expected to throw an exception") ;
 }
 
 @end

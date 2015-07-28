@@ -20,7 +20,7 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "AFHTTPRequestOperation.h"
+#import <AFNetworking/AFNetworking.h>
 #import "SRConnectionInterface.h"
 #import "SRHttpBasedTransport.h"
 #import "SRLog.h"
@@ -34,19 +34,7 @@
 
 @end
 
-static inline NSString * SREscapeData(NSString *string) {
-    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)(NSString *)string, NULL,
-                                                                                 (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-                                                                                 kCFStringEncodingUTF8));
-}
-
 @implementation SRHttpBasedTransport
-
-- (instancetype)init {
-    if (self = [super init]) {
-    }
-    return self;
-}
 
 #pragma mark
 #pragma mark SRClientTransportInterface
@@ -59,34 +47,27 @@ static inline NSString * SREscapeData(NSString *string) {
     return NO;
 }
 
-- (void)negotiate:(id<SRConnectionInterface>)connection
-   connectionData:(NSString *)connectionData
-completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
-
-    NSString *negotiateUrl = [connection.url stringByAppendingString:@"negotiate"];
-    negotiateUrl = [negotiateUrl stringByAppendingString:[self appendBaseUrl:negotiateUrl withConnectionQueryString:connection]];
+- (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
     
-    NSString *appender = @"?";
-    if ([negotiateUrl rangeOfString:appender].location != NSNotFound) {
-        appender = @"&";
+    id parameters = @{
+        @"clientProtocol" : connection.protocol,
+        @"connectionData" : (connectionData) ? connectionData : @"",
+    };
+    
+    if ([connection queryString]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:[connection queryString]];
+        parameters = _parameters;
     }
-    negotiateUrl = [negotiateUrl stringByAppendingString:appender];
-    negotiateUrl = [negotiateUrl stringByAppendingString:@"clientProtocol="];
-    negotiateUrl = [negotiateUrl stringByAppendingFormat:@"%@",connection.protocol];
     
-    if (connectionData != nil && ![connectionData isEqualToString:@""]) {
-        negotiateUrl = [negotiateUrl stringByAppendingString:@"&connectionData="];
-        negotiateUrl = [negotiateUrl stringByAppendingString:SREscapeData(connectionData)];
-    }
-        
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:negotiateUrl]];
-    [urlRequest setHTTPMethod:@"GET"];
-    [urlRequest setTimeoutInterval:30];
-    
-    [connection prepareRequest:urlRequest];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"negotiate"] parameters:parameters error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
+    [request setTimeoutInterval:30];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
+    //operation.credential = self.credential;
+    //operation.securityPolicy = self.securityPolicy;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         if(block) {
             block([[SRNegotiationResponse alloc] initWithDictionary:responseObject], nil);
@@ -99,42 +80,32 @@ completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))bl
     [operation start];
 }
 
-- (void)start:(id<SRConnectionInterface>)connection
-connectionData:(NSString *)connectionData
-completionHandler:(void (^)(id response, NSError *error))block {
+- (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
 }
 
-- (void)send:(id<SRConnectionInterface>)connection
-        data:(NSString *)data
-connectionData:(NSString *)connectionData
-completionHandler:(void (^)(id response, NSError *error))block {
-
-    SRLogHTTPTransport(@"will send data");
-    
-    NSString *url = [connection.url stringByAppendingString:@"send"];
-    url = [url stringByAppendingString:[self sendQueryString:connection connectionData:connectionData]];
-    
-    id postData = @{
-        @"data" : data
+- (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    id parameters = @{
+        @"transport" : [self name],
+        @"connectionData" : (connectionData) ? connectionData : @"",
+        @"connectionToken" : [connection connectionToken],
     };
     
-    NSMutableArray *components = [NSMutableArray array];
-    for (NSString *key in [postData allKeys]) {
-        [components addObject:[NSString stringWithFormat:@"%@=%@",key,SREscapeData(postData[key])]];
+    if ([connection queryString]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:[connection queryString]];
+        parameters = _parameters;
     }
-    NSData *requestData = [[components componentsJoinedByString:@"&"] dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [urlRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [urlRequest setValue:[NSString stringWithFormat:@"%ld", (unsigned long)[requestData length]] forHTTPHeaderField:@"Content-Length"];
-    [urlRequest setHTTPBody: requestData];
-    
-    [connection prepareRequest:urlRequest];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+    //TODO: this is a little strange but SignalR Expects the parameters in the queryString and fails if in the body.
+    //So we let AFNetworking Generate our URL with proper encoding and then create the POST url which will encode the data in the body.
+    NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"send"] parameters:parameters error:nil];
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:@{ @"data" : data } error:nil];
+    [connection prepareRequest:request]; //TODO: prepareRequest
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
+    //operation.credential = self.credential;
+    //operation.securityPolicy = self.securityPolicy;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         [connection didReceiveData:responseObject];
         if(block) {
@@ -167,9 +138,7 @@ completionHandler:(void (^)(id response, NSError *error))block {
     //TODO: Throw, Subclass should implement this.
 }
 
-- (void)abort:(id<SRConnectionInterface>)connection
-      timeout:(NSNumber *)timeout
-connectionData:(NSString *)connectionData {
+- (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
 
     // Ensure that an abort request is only made once
     if (!_startedAbort)
@@ -177,18 +146,27 @@ connectionData:(NSString *)connectionData {
         SRLogHTTPTransport(@"will stop transport");
         _startedAbort = YES;
         
-        NSString *url = [connection.url stringByAppendingString:@"abort"];
-        url = [url stringByAppendingString:[self sendQueryString:connection connectionData:connectionData]];
+        id parameters = @{
+            @"transport" : [self name],
+            @"connectionData" : (connectionData) ? connectionData : @"",
+            @"connectionToken" : [connection connectionToken],
+        };
         
-        NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-        [urlRequest setHTTPMethod:@"POST"];
-        [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        //[urlRequest setTimeoutInterval:2];
+        if ([connection queryString]) {
+            NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+            [_parameters addEntriesFromDictionary:[connection queryString]];
+            parameters = _parameters;
+        }
         
-        [connection prepareRequest:urlRequest];
-        
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+        NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"abort"] parameters:parameters error:nil];
+        NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:nil error:nil];
+        [connection prepareRequest:request]; //TODO: prepareRequest
+        [request setTimeoutInterval:2];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
+        //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
+        //operation.credential = self.credential;
+        //operation.securityPolicy = self.securityPolicy;
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             SRLogHTTPTransport(@"Clean disconnect failed. %@",error);
@@ -196,77 +174,6 @@ connectionData:(NSString *)connectionData {
         }];
         [operation start];
     }
-}
-
-- (NSString *)sendQueryString:(id <SRConnectionInterface>)connection
-               connectionData:(NSString *)connectionData {
-
-    NSMutableString *queryStringBuilder = [NSMutableString string];
-    [queryStringBuilder appendFormat:@"?transport=%@",[self name]];
-    [queryStringBuilder appendFormat:@"&connectionData=%@",SREscapeData(connectionData)];
-    [queryStringBuilder appendFormat:@"&connectionToken=%@",SREscapeData(connection.connectionToken)];
-    
-    NSString *customQuery = connection.queryString;
-    
-    if (customQuery != nil && ![customQuery isEqualToString:@""]) {
-        [queryStringBuilder appendFormat:@"&%@",customQuery];
-    }
-    return queryStringBuilder;
-}
-
-- (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection
-                            data:(NSString *)data {
-    
-    NSMutableString *queryStringBuilder = [NSMutableString string];
-    [queryStringBuilder appendFormat:@"?transport=%@",[self name]];
-    [queryStringBuilder appendFormat:@"&connectionToken=%@",SREscapeData(connection.connectionToken)];
-    
-    if(connection.messageId) {
-        [queryStringBuilder appendFormat:@"&messageId=%@",SREscapeData(connection.messageId)];
-    }
-    
-    if (connection.groupsToken != nil) {
-        [queryStringBuilder appendFormat:@"&groupsToken=%@",SREscapeData(connection.groupsToken)];
-    }
-    
-    if (data != nil) {
-        [queryStringBuilder appendFormat:@"&connectionData=%@",SREscapeData(data)];
-    }
-    
-    NSString *customQuery = connection.queryString;
-    
-    if (customQuery != nil && ![customQuery isEqualToString:@""]) {
-        [queryStringBuilder appendFormat:@"&%@",customQuery];
-    }
-
-    return queryStringBuilder;
-}
-
-- (NSString *)appendBaseUrl:(NSString *)baseUrl
-  withConnectionQueryString:(id <SRConnectionInterface>)connection {
-    
-    if (baseUrl == nil) {
-        baseUrl = @"";
-    }
-    
-    NSString *queryString = @"";
-    
-    if (connection.queryString != nil && ![connection.queryString isEqualToString:@""]) {
-        NSString *appender = @"";
-        // If the custom query string already starts with an ampersand or question mark
-        // then we dont have to use any appender, it can be empty.
-        if (![connection.queryString hasPrefix:@"?"] && ![connection.queryString hasPrefix:@"&"]) {
-            appender = @"?";
-            
-            if ([baseUrl rangeOfString:appender options:NSCaseInsensitiveSearch].location != NSNotFound) {
-                appender = @"&";
-            }
-        }
-        
-        queryString = [[queryString stringByAppendingString:appender] stringByAppendingString:connection.queryString];
-    }
-    
-    return queryString;
 }
 
 - (void)processResponse:(id <SRConnectionInterface>)connection
@@ -303,17 +210,14 @@ connectionData:(NSString *)connectionData {
         }
         
         id messages = result[@"M"];
-        if(messages && [messages isKindOfClass:[NSArray class]])
-        {
+        if(messages && [messages isKindOfClass:[NSArray class]]) {
             connection.messageId = result[@"C"];
             
-            for (id message in messages)
-            {
+            for (id message in messages) {
                 [connection didReceiveData:message];
             }
             
-            if ([result[@"S"] boolValue])
-            {
+            if ([result[@"S"] boolValue]) {
                 //TODO: Call Initialized Callback
                 //onInitialized();
             }

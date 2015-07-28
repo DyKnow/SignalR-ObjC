@@ -28,8 +28,4 @@
 
 @implementation SRSubscription
 
-- (NSString *)description  {  
-    return [NSString stringWithFormat:@"Subscription: Object:%@ Selector=%@",_object, NSStringFromSelector(_selector)];
-}
-
 @end

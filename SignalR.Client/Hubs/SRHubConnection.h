@@ -32,8 +32,7 @@
 @interface SRHubConnection : SRConnection <SRHubConnectionInterface>
 
 - (instancetype)initWithURLString:(NSString *)URL useDefault:(BOOL)useDefault;
-- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString useDefault:(BOOL)useDefault;
-- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString useDefault:(BOOL)useDefault;
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSDictionary *)queryString useDefault:(BOOL)useDefault;
 
 /**
  * Creates a client side proxy to the hub on the server side.

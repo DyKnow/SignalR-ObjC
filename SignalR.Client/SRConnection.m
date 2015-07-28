@@ -31,8 +31,6 @@
 
 #import "NSObject+SRJSON.h"
 
-void (^prepareRequest)(id);
-
 @interface SRConnection ()
 
 @property (strong, nonatomic, readwrite) NSNumber * defaultAbortTimeout;
@@ -43,13 +41,12 @@ void (^prepareRequest)(id);
 @property (assign, nonatomic, readwrite) connectionState state;
 @property (strong, nonatomic, readwrite) NSString *url;
 @property (strong, nonatomic, readwrite) NSMutableDictionary *items;
-@property (strong, nonatomic, readwrite) NSString *queryString;
+@property (strong, nonatomic, readwrite) NSDictionary *queryString;
 @property (strong, nonatomic, readwrite) NSString *connectionData;
 @property (strong, nonatomic, readwrite) SRHeartbeatMonitor *monitor;
 
 - (void)negotiate:(id <SRClientTransportInterface>)transport;
 - (void)verifyProtocolVersion:(NSString *)versionString;
-- (NSString *)createQueryString:(NSDictionary *)queryString;
 - (NSString *)createUserAgentString:(NSString *)client;
 
 @end
@@ -74,15 +71,11 @@ void (^prepareRequest)(id);
 #pragma mark - 
 #pragma mark Initialization
 
-+ (instancetype)connectionWithURL:(NSString *)url {
++ (instancetype)connectionWithURLString:(NSString *)url {
     return [[[self class] alloc] initWithURLString:url];
 }
 
-+ (instancetype)connectionWithURL:(NSString *)url query:(NSDictionary *)queryString {
-    return [[[self class] alloc] initWithURLString:url query:queryString];
-}
-
-+ (instancetype)connectionWithURL:(NSString *)url queryString:(NSString *)queryString {
++ (instancetype)connectionWithURLString:(NSString *)url queryString:(NSDictionary *)queryString {
     return [[[self class] alloc] initWithURLString:url queryString:queryString];
 }
 
@@ -90,18 +83,10 @@ void (^prepareRequest)(id);
     return [self initWithURLString:url queryString:nil];
 }
 
-- (instancetype)initWithURLString:(NSString *)url query:(NSDictionary *)queryString {
-    return [self initWithURLString:url queryString:[self createQueryString:queryString]];
-}
-
-- (instancetype)initWithURLString:(NSString *)url queryString:(NSString *)queryString {
+- (instancetype)initWithURLString:(NSString *)url queryString:(NSDictionary *)queryString {
     if (self = [super init]) {
         if (url == nil) {
             [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url should be non-null",@"")];
-        }
-        
-        if(queryString && [queryString rangeOfString:@"?" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [NSException raise:NSInvalidArgumentException format:NSLocalizedString(@"Url cannot contain query string directly. Pass query string values in using available overload.",@"")];
         }
         
         if([url hasSuffix:@"/"] == NO) {
@@ -148,8 +133,8 @@ void (^prepareRequest)(id);
     
     __weak __typeof(&*self)weakSelf = self;
     [transport negotiate:self connectionData:_connectionData completionHandler:^(SRNegotiationResponse *negotiationResponse, NSError *error) {
+         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!error) {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             SRLogConnection(@"negotiation was successful %@",negotiationResponse);
             
             [strongSelf verifyProtocolVersion:negotiationResponse.protocolVersion];
@@ -165,6 +150,10 @@ void (^prepareRequest)(id);
             }
             
             [strongSelf startTransport];
+        } else {
+            SRLogConnection(@"negotiation failed %@", error);
+            
+            [strongSelf didReceiveError:error];
         }
     }];
 }
@@ -264,10 +253,6 @@ void (^prepareRequest)(id);
 
 - (NSString *)onSending {
     return nil;
-}
-
-- (void)send:(id)object {
-    [self send:object completionHandler:nil];
 }
 
 - (void)send:(id)object completionHandler:(void (^)(id response, NSError *error))block {
@@ -438,15 +423,6 @@ void (^prepareRequest)(id);
     }
     return [NSString stringWithFormat:@"%@/%@",client,_assemblyVersion];
 #endif
-}
-
-- (NSString *)createQueryString:(NSDictionary *)queryString {
-    NSMutableArray *components = [NSMutableArray array];
-    for (NSString *key in [queryString allKeys]) {
-        [components addObject:[NSString stringWithFormat:@"%@=%@",key,queryString[key]]];
-    }
-
-    return [components componentsJoinedByString:@"&"];
 }
 
 @end

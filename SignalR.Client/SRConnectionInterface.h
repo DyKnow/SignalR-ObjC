@@ -42,7 +42,7 @@
 @property (strong, nonatomic, readonly) NSString *connectionId;
 @property (strong, nonatomic, readonly) NSString *connectionToken;
 @property (strong, nonatomic, readonly) NSString *url;
-@property (strong, nonatomic, readonly) NSString *queryString;
+@property (strong, nonatomic, readonly) NSDictionary *queryString;
 @property (assign, nonatomic, readonly) connectionState state;
 @property (strong, nonatomic, readonly) id<SRClientTransportInterface> transport;
 @property (strong, nonatomic, readwrite) NSURLCredential *credentials;
@@ -60,7 +60,6 @@
 /// @name Sending Data
 ///-------------------------------
 
-- (void)send:(id)object;
 - (void)send:(id)object completionHandler:(void (^)(id response, NSError *error))block;
 
 ///-------------------------------

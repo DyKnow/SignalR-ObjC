@@ -33,15 +33,14 @@
 @property (strong, nonatomic, readwrite) id <SRClientTransportInterface> transport;
 // List of transports in fallback order
 @property (strong, nonatomic, readonly) NSMutableArray *transports;
-@property (assign, nonatomic, readwrite) int startIndex;
 
 @end
 
 @implementation SRAutoTransport
 
 - (instancetype)init {
-    NSArray *transports = @[//[[SRWebSocketTransport alloc] init],
-                            //[[SRServerSentEventsTransport alloc] init],
+    NSArray *transports = @[[[SRWebSocketTransport alloc] init],
+                            [[SRServerSentEventsTransport alloc] init],
                             [[SRLongPollingTransport alloc] init]];
     return [self initWithTransports:[NSMutableArray arrayWithArray:transports]];
 }
@@ -49,7 +48,6 @@
 - (instancetype)initWithTransports:(NSMutableArray *)transports {
     if(self = [super init]) {
         _transports = transports;
-        _startIndex = 0;
     }
     return self;
 }
@@ -86,7 +84,7 @@
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
-    [self start:connection connectionData:connectionData transportIndex:self.startIndex completionHandler:block];
+    [self start:connection connectionData:connectionData transportIndex:0 completionHandler:block];
 }
 
 - (void)start:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData transportIndex:(int)index completionHandler:(void (^)(id response, NSError *error))block  {
@@ -98,7 +96,7 @@
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         __strong __typeof(&*transport)strongTransport = transport;
 
-        if ([response isKindOfClass:[NSError class]]) {
+        if (error) {
             SRLogAutoTransport(@"will switch to next transport");
             
             // If that transport fails to initialize then fallback

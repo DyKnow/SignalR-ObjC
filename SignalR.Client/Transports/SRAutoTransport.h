@@ -28,8 +28,9 @@
  * `SRAutoTransport` object provides support for choosing the best transport for the client
  *
  * ## Fallback order
- * 1. Server-Sent Events SRServerSentEventsTransport
- * 1. Long Polling SRLongPollingTransport
+ * 1. Websockets SRWebSocketTransport
+ * 2. Server-Sent Events SRServerSentEventsTransport
+ * 3. Long Polling SRLongPollingTransport
  */
 @interface SRAutoTransport : SRHttpBasedTransport <SRClientTransportInterface>
 

@@ -68,8 +68,4 @@ static NSString * const kState = @"S";
     return dict;
 }
 
-- (NSString *)description  {  
-    return [NSString stringWithFormat:@"HubInvocation: CallbackId=%@ Hub=%@ Method=%@",_callbackId,_hub,_method];
-}
-
 @end
