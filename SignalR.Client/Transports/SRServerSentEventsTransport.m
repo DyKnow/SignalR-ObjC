@@ -225,10 +225,10 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        if (strongSelf.completionHandler) {
+        if (strongSelf.completionHandler) {//this is equivalent to the !reconnecting onStartFailed from c#
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
-        } else if (!_stop && reconnecting) {
+        } else if (!_stop) {
             [strongConnection didReceiveError:error];
             [strongSelf reconnect:strongConnection data:connectionData];
         }
