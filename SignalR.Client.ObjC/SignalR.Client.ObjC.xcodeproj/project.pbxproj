@@ -195,13 +195,17 @@
 		39F7D7B31833FC99002590A6 /* SRServerSentEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */; };
 		39FA64291891654500C035DC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FA64281891654500C035DC /* XCTest.framework */; };
 		39FA642A1891655300C035DC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FA64281891654500C035DC /* XCTest.framework */; };
+		6FE6F0A774C8D2D1017F0564 /* libPods-SignalR.Samples.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE2106FAC15B5AB83B2D9FF /* libPods-SignalR.Samples.iOS.a */; };
 		D27CBDC3D95B4241B1B76237 /* libPods-SignalR.Client.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */; };
+		D6EA1B4723845A80662B21C1 /* libPods-SignalR.Client.Tests.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25C27A9B33E56E827BE43CF1 /* libPods-SignalR.Client.Tests.iOS.a */; };
+		EEAB34CD5B714149B6E39F27 /* libPods-SignalR.Samples.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DFF7F7B3D943624308D856E /* libPods-SignalR.Samples.OSX.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		09893F87C8C94DFD96B7E8EC /* libPods-SignalR.Client.Tests.OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.Tests.OSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D4E148135DC73339395F50E /* Pods-SignalR.Client.OSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.OSX.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.OSX/Pods-SignalR.Client.OSX.debug.xcconfig"; sourceTree = "<group>"; };
 		2526AA83173A4BCF8707E847 /* libPods-SignalR.Client.OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.OSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		25C27A9B33E56E827BE43CF1 /* libPods-SignalR.Client.Tests.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.Tests.iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D64C09D8DB7E1E9D9282AD1 /* Pods-SignalR.Client.OSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.OSX.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.OSX/Pods-SignalR.Client.OSX.release.xcconfig"; sourceTree = "<group>"; };
 		3903084A173C660E00FE660E /* SRHeartbeatMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHeartbeatMonitor.h; sourceTree = "<group>"; };
 		3903084B173C660E00FE660E /* SRHeartbeatMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHeartbeatMonitor.m; sourceTree = "<group>"; };
@@ -330,11 +334,19 @@
 		39F7D7AE1833FC99002590A6 /* SRServerSentEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRServerSentEvent.h; sourceTree = "<group>"; };
 		39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEvent.m; sourceTree = "<group>"; };
 		39FA64281891654500C035DC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		3DFF7F7B3D943624308D856E /* libPods-SignalR.Samples.OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Samples.OSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6967368C934C142727A4A9C0 /* Pods-SignalR.Client.iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.iOS/Pods-SignalR.Client.iOS.release.xcconfig"; sourceTree = "<group>"; };
+		88097B83298C1B8C8C2CD178 /* Pods-SignalR.Samples.iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Samples.iOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Samples.iOS/Pods-SignalR.Samples.iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubConnectionInterface.h; sourceTree = "<group>"; };
 		91FEE5E4D041DB1A146160EF /* Pods-SignalR.Client.Tests.OSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.Tests.OSX.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.Tests.OSX/Pods-SignalR.Client.Tests.OSX.release.xcconfig"; sourceTree = "<group>"; };
+		9EE2106FAC15B5AB83B2D9FF /* libPods-SignalR.Samples.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Samples.iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEFB7F3FAB0FB728F6C1AE71 /* Pods-SignalR.Samples.OSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Samples.OSX.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Samples.OSX/Pods-SignalR.Samples.OSX.debug.xcconfig"; sourceTree = "<group>"; };
+		C44F20EC6671E1DC8B7A9764 /* Pods-SignalR.Client.Tests.iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.Tests.iOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.Tests.iOS/Pods-SignalR.Client.Tests.iOS.release.xcconfig"; sourceTree = "<group>"; };
+		C6D7B43B08C437570A730444 /* Pods-SignalR.Samples.iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Samples.iOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Samples.iOS/Pods-SignalR.Samples.iOS.release.xcconfig"; sourceTree = "<group>"; };
 		CF4802ED18CD82E41B1A684C /* Pods-SignalR.Client.iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.iOS/Pods-SignalR.Client.iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		D05D00ABA66BE058D3940ADD /* Pods-SignalR.Client.Tests.iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.Tests.iOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.Tests.iOS/Pods-SignalR.Client.Tests.iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D3DFD069832BDB241B6BE0C1 /* Pods-SignalR.Client.Tests.OSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.Tests.OSX.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.Tests.OSX/Pods-SignalR.Client.Tests.OSX.debug.xcconfig"; sourceTree = "<group>"; };
+		D7836E73660652A4FB5A36BD /* Pods-SignalR.Samples.OSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Samples.OSX.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Samples.OSX/Pods-SignalR.Samples.OSX.release.xcconfig"; sourceTree = "<group>"; };
 		F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SignalR.Client.iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -350,6 +362,7 @@
 				3994AAA91714D03D00E452F7 /* CFNetwork.framework in Frameworks */,
 				3994AAAD1714D06E00E452F7 /* Security.framework in Frameworks */,
 				3994AAB11714D09400E452F7 /* libicucore.dylib in Frameworks */,
+				EEAB34CD5B714149B6E39F27 /* libPods-SignalR.Samples.OSX.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,6 +396,7 @@
 				3994AAA81714D03B00E452F7 /* CFNetwork.framework in Frameworks */,
 				3994AAAC1714D06C00E452F7 /* Security.framework in Frameworks */,
 				3994AAB01714D09200E452F7 /* libicucore.dylib in Frameworks */,
+				6FE6F0A774C8D2D1017F0564 /* libPods-SignalR.Samples.iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,6 +419,7 @@
 				39BB8D7915CAA59C007B7245 /* libSignalR.Client.iOS.a in Frameworks */,
 				39E6FD1915C6BF4000434098 /* UIKit.framework in Frameworks */,
 				39E6FD1A15C6BF4000434098 /* Foundation.framework in Frameworks */,
+				D6EA1B4723845A80662B21C1 /* libPods-SignalR.Client.Tests.iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,6 +529,9 @@
 				F9E09B8C504C4E1BBE289746 /* libPods-SignalR.Client.iOS.a */,
 				2526AA83173A4BCF8707E847 /* libPods-SignalR.Client.OSX.a */,
 				09893F87C8C94DFD96B7E8EC /* libPods-SignalR.Client.Tests.OSX.a */,
+				25C27A9B33E56E827BE43CF1 /* libPods-SignalR.Client.Tests.iOS.a */,
+				3DFF7F7B3D943624308D856E /* libPods-SignalR.Samples.OSX.a */,
+				9EE2106FAC15B5AB83B2D9FF /* libPods-SignalR.Samples.iOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -751,6 +769,12 @@
 				91FEE5E4D041DB1A146160EF /* Pods-SignalR.Client.Tests.OSX.release.xcconfig */,
 				CF4802ED18CD82E41B1A684C /* Pods-SignalR.Client.iOS.debug.xcconfig */,
 				6967368C934C142727A4A9C0 /* Pods-SignalR.Client.iOS.release.xcconfig */,
+				D05D00ABA66BE058D3940ADD /* Pods-SignalR.Client.Tests.iOS.debug.xcconfig */,
+				C44F20EC6671E1DC8B7A9764 /* Pods-SignalR.Client.Tests.iOS.release.xcconfig */,
+				BEFB7F3FAB0FB728F6C1AE71 /* Pods-SignalR.Samples.OSX.debug.xcconfig */,
+				D7836E73660652A4FB5A36BD /* Pods-SignalR.Samples.OSX.release.xcconfig */,
+				88097B83298C1B8C8C2CD178 /* Pods-SignalR.Samples.iOS.debug.xcconfig */,
+				C6D7B43B08C437570A730444 /* Pods-SignalR.Samples.iOS.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -845,9 +869,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3919635E15AF1EC200DDC946 /* Build configuration list for PBXNativeTarget "SignalR.Samples.OSX" */;
 			buildPhases = (
+				99CEA005020B26755C94C45A /* Check Pods Manifest.lock */,
 				3919634015AF1EC100DDC946 /* Sources */,
 				3919634115AF1EC100DDC946 /* Frameworks */,
 				3919634215AF1EC100DDC946 /* Resources */,
+				8173993C2A7B742E48CDF275 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -898,9 +924,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3920793D15AF1854009B959E /* Build configuration list for PBXNativeTarget "SignalR.Samples.iOS" */;
 			buildPhases = (
+				BF4B264AAA556E0535A33C5B /* Check Pods Manifest.lock */,
 				3920791A15AF1853009B959E /* Sources */,
 				3920791B15AF1853009B959E /* Frameworks */,
 				3920791C15AF1853009B959E /* Resources */,
+				86E66F5FC1529719DB437E8A /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -935,10 +963,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 39E6FD2715C6BF4000434098 /* Build configuration list for PBXNativeTarget "SignalR.Client.Tests.iOS" */;
 			buildPhases = (
+				0BD6C02E84D70EF340DA2F44 /* Check Pods Manifest.lock */,
 				39E6FD1215C6BF4000434098 /* Sources */,
 				39E6FD1315C6BF4000434098 /* Frameworks */,
 				39E6FD1415C6BF4000434098 /* Resources */,
 				39E6FD1515C6BF4000434098 /* ShellScript */,
+				4C31F9EBAC02BD1F9FAEEEC3 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1026,6 +1056,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0BD6C02E84D70EF340DA2F44 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		2757A39FF3A7450F845911C0 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1093,6 +1138,81 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Client.iOS/Pods-SignalR.Client.iOS-resources.sh\"\n";
+		};
+		4C31F9EBAC02BD1F9FAEEEC3 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Client.Tests.iOS/Pods-SignalR.Client.Tests.iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8173993C2A7B742E48CDF275 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Samples.OSX/Pods-SignalR.Samples.OSX-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		86E66F5FC1529719DB437E8A /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Samples.iOS/Pods-SignalR.Samples.iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		99CEA005020B26755C94C45A /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		BF4B264AAA556E0535A33C5B /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 		EE865CD5D57C4E9B9D114773 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1309,6 +1429,7 @@
 /* Begin XCBuildConfiguration section */
 		3919635F15AF1EC200DDC946 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BEFB7F3FAB0FB728F6C1AE71 /* Pods-SignalR.Samples.OSX.debug.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1322,7 +1443,7 @@
 				INFOPLIST_FILE = "SignalR.Samples.OSX/SignalR.Samples.OSX-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1332,6 +1453,7 @@
 		};
 		3919636015AF1EC200DDC946 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D7836E73660652A4FB5A36BD /* Pods-SignalR.Samples.OSX.release.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1345,7 +1467,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "SignalR.Samples.OSX/SignalR.Samples.OSX-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1368,15 +1490,7 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-framework",
-					CoreServices,
-					"-framework",
-					Security,
-					"-framework",
-					SystemConfiguration,
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1399,15 +1513,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-framework",
-					CoreServices,
-					"-framework",
-					Security,
-					"-framework",
-					SystemConfiguration,
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1500,7 +1606,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Client.iOS/SignalR.Client.iOS-Prefix.pch";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1515,7 +1621,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Client.iOS/SignalR.Client.iOS-Prefix.pch";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1524,12 +1630,13 @@
 		};
 		3920793E15AF1854009B959E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 88097B83298C1B8C8C2CD178 /* Pods-SignalR.Samples.iOS.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Samples.iOS/SignalR.Samples.iOS-Prefix.pch";
 				INFOPLIST_FILE = "SignalR.Samples.iOS/SignalR.Samples.iOS-Info.plist";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1539,13 +1646,14 @@
 		};
 		3920793F15AF1854009B959E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C6D7B43B08C437570A730444 /* Pods-SignalR.Samples.iOS.release.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Samples.iOS/SignalR.Samples.iOS-Prefix.pch";
 				INFOPLIST_FILE = "SignalR.Samples.iOS/SignalR.Samples.iOS-Info.plist";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1572,6 +1680,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1596,6 +1705,7 @@
 				GCC_PREFIX_HEADER = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Info.plist";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1603,6 +1713,7 @@
 		};
 		39E6FD2515C6BF4000434098 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D05D00ABA66BE058D3940ADD /* Pods-SignalR.Client.Tests.iOS.debug.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1622,6 +1733,7 @@
 		};
 		39E6FD2615C6BF4000434098 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C44F20EC6671E1DC8B7A9764 /* Pods-SignalR.Client.Tests.iOS.release.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
