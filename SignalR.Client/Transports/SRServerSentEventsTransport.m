@@ -229,7 +229,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
         } else if (!_stop) {
-            [strongConnection didReceiveError:error];
+            SRLogServerSentEvents("reconnect from errors: %@", error);
             [strongSelf reconnect:strongConnection data:connectionData];
         }
     }];
@@ -237,6 +237,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 }
 
 - (void)reconnect:(id <SRConnectionInterface>)connection data:(NSString *)data {
+    [connection willReconnect];
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
     [[NSBlockOperation blockOperationWithBlock:^{
