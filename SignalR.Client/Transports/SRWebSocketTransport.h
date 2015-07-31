@@ -27,5 +27,6 @@
 @interface SRWebSocketTransport : SRHttpBasedTransport <SRClientTransportInterface>
 
 @property (strong, nonatomic, readwrite) NSNumber *reconnectDelay;
+@property (assign, nonatomic, readwrite) BOOL startedAbort;//inherited from base
 
 @end
