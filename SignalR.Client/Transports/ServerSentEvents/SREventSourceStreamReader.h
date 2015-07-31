@@ -49,5 +49,6 @@ typedef void (^SREventSourceStreamReaderStreamMessageBlock)(SRServerSentEvent * 
 
 - (void)start;
 - (void)close;
+- (void)close:(NSError*) error;
 
 @end

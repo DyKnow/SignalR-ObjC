@@ -100,7 +100,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
     self.completionHandler = block;
-    [self open:connection connectionData:connectionData];
+    [self open:connection connectionData:connectionData isReconnecting:NO];
 }
 
 - (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
@@ -118,9 +118,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 #pragma mark -
 #pragma mark SSE Transport
 
-- (void)open:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData {
-    BOOL reconnecting = self.completionHandler == nil;
-    
+- (void)open:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData isReconnecting: (BOOL) isReconnecting {
     __block SREventSourceStreamReader *eventSource;
     id parameters = @{
         @"transport" : [self name],
@@ -136,7 +134,13 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         parameters = _parameters;
     }
     
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"connect"] parameters:parameters error:nil];
+    NSString *url = isReconnecting ?
+        [connection.url stringByAppendingString:@"reconnect"] :
+        [connection.url stringByAppendingString:@"connect"];
+    
+    SRLogServerSentEvents(@"SSE: GET %@", url);
+    
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:240];
     [request setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
@@ -186,13 +190,13 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                 }
             }
         };
-        eventSource.closed = ^(NSError *exception) {
+        eventSource.closed = ^(NSError *exception) { //server ended without error
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             __strong __typeof(&*weakConnection)strongConnection = weakConnection;
             
             SRLogServerSentEvents(@"did close");
             
-            if (exception != nil) {
+            if (exception != nil ){
                 // Check if the request is aborted
                 BOOL isRequestAborted = [SRExceptionHelper isRequestAborted:exception];
 
@@ -202,9 +206,10 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                 }
             }
             
-            //requestDisposer.Dispose();
-            //esCancellationRegistration.Dispose();
-            //response.Dispose();
+            //release eventSource, no other scopes have access, would like to release before
+            //eventSource will be nil for this scope before reconnect can call open, even if
+            //it wasn't doing a timeout first
+            eventSource = nil;
             
             if (_stop) {
                 [strongSelf completeAbort];
@@ -223,21 +228,32 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        //a little tough to read, but failure is mutually exclusive to open, message, or closed above
+        //also, you may start in the received above and end up in the failure case
+        //http://cocoadocs.org/docsets/AFNetworking/2.5.4/Classes/AFHTTPRequestOperation.html
+        //we however do close the eventSource below, which will lead us to the above code
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         if (strongSelf.completionHandler) {//this is equivalent to the !reconnecting onStartFailed from c#
+            SRLogServerSentEvents("error while starting: %@", error);
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
-        } else if (!_stop) {
-            SRLogServerSentEvents("reconnect from errors: %@", error);
-            [strongSelf reconnect:strongConnection data:connectionData];
+        } else if (!isReconnecting){//failure should first attempt to reconect
+            SRLogServerSentEvents("error but will restart: %@", error);
+        } else {//failure while reconnecting should error
+            //special case differs from above
+            SRLogServerSentEvents("error: %@", error);
+            [operation cancel];//clean up to avoid duplicates
+            [eventSource close: error];//clean up -> this should end up in eventSource.closed above
+            return;//bail out early as we've taken care of the below
         }
+        [operation cancel];//clean up to avoid duplicates
+        [eventSource close];//clean up -> this should end up in eventSource.closed above
     }];
     [self.serverSentEventsOperationQueue addOperation:operation];
 }
 
 - (void)reconnect:(id <SRConnectionInterface>)connection data:(NSString *)data {
-    [connection willReconnect];
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
     [[NSBlockOperation blockOperationWithBlock:^{
@@ -246,7 +262,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         
         if (connection.state != disconnected && [SRConnection ensureReconnecting:strongConnection]) {
             SRLogServerSentEvents(@"reconnecting");
-            [strongSelf open:strongConnection connectionData:data];
+            [strongSelf open:strongConnection connectionData:data isReconnecting:YES];
             [strongSelf.serverSentEventsOperationQueue cancelAllOperations];
         }
         

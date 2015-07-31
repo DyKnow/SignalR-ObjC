@@ -72,6 +72,10 @@ typedef enum {
     [self onClosed:nil];
 }
 
+- (void)close: (NSError*)error {
+    [self onClosed:error];
+}
+
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)eventCode {
     dispatch_async(dispatch_get_main_queue(), ^{
         switch (eventCode) {
