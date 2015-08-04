@@ -39,8 +39,8 @@
 @property (strong, nonatomic, readwrite) NSString *messageId;
 @property (strong, nonatomic, readwrite) NSString *groupsToken;
 @property (strong, nonatomic, readonly) NSMutableDictionary *items;
-@property (strong, nonatomic, readonly) NSString *connectionId;
-@property (strong, nonatomic, readonly) NSString *connectionToken;
+@property (strong, nonatomic, readwrite) NSString *connectionId;
+@property (strong, nonatomic, readwrite) NSString *connectionToken;
 @property (strong, nonatomic, readonly) NSString *url;
 @property (strong, nonatomic, readonly) NSDictionary *queryString;
 @property (assign, nonatomic, readonly) connectionState state;

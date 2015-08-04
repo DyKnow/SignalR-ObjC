@@ -98,7 +98,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     
     id parameters = @{
         @"transport" : [self name],
-        @"connectionToken" : [[_connectionInfo connection] connectionToken],
+        @"connectionToken" : ([[_connectionInfo connection] connectionToken]) ? [[_connectionInfo connection] connectionToken] :@"",
         @"messageId" : ([[_connectionInfo connection] messageId]) ? [[_connectionInfo connection] messageId] : @"",
         @"groupsToken" : ([[_connectionInfo connection] groupsToken]) ? [[_connectionInfo connection] groupsToken] : @"",
         @"connectionData" : ([_connectionInfo data]) ? [_connectionInfo data] : @"",
