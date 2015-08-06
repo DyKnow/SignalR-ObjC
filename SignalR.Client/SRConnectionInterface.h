@@ -49,6 +49,12 @@
 @property (strong, nonatomic, readwrite) NSMutableDictionary *headers;
 
 ///-------------------------------
+/// @name Internal state
+///-------------------------------
+
+- (NSString *)onSending;//TODO: this just encapsulates connectionData. can we pull this into a getUrl like js client does?
+
+///-------------------------------
 /// @name Connection Management
 ///-------------------------------
 

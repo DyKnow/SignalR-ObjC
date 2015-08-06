@@ -89,19 +89,106 @@
     [ws webSocket:mock didReceiveMessage:@"abcdefg"];
     
     //verify we init and open another
-    __block NSMutableURLRequest* request= nil;
+    __block NSMutableURLRequest* request;
      mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     [[[mock stub] andReturn:mock] alloc];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
         NSMutableURLRequest* requestOut;
         [invocation getArgument: &requestOut atIndex: 2];
         request = requestOut;
+        CFBridgingRetain(request);
     }] initWithURLRequest: [OCMArg any]];
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
 
     [ws webSocket:mock didFailWithError:[[NSError alloc] initWithDomain:@"Unit test" code:42 userInfo:nil ]];
     XCTAssertTrue([[[request URL] absoluteString] isEqualToString:@"http://localhost:0000/reconnect?connectionData=12345&connectionToken=10101010101&groupsToken=&messageId=&transport=webSockets"], "Did not reconnect");
+    CFBridgingRelease((__bridge CFTypeRef)(request));
    }
+
+- (void)testConnectionInitialFailureUsesCallback {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testConnectionErrorRetries_RetriesAfterADelay_CommunicatesLifeCycleViaConnection {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testLostConnectionAbortsAllConnectionsAndReconnects {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testDisconnectsOnReconnectTimeout {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testHandlesAbortFromConnection {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testTransportCanTimeoutWhenItDoesNotReceiveInitializeMessage {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testPingIntervalStopsTheConnectionOn401s {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testPingIntervalStopsTheConnectionOn403s {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testPingIntervalBehavesAppropriately {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testConnectionDataFlowsWithAllRequestsToServer {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testReconnectExceedingTheReconnectWindowResultsInTheConnectionDisconnect {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testConnectionCanBeStoppedDuringTransportStart {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testConnectionCanBeStoppedPriorToTransportState {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testTransportCanSendAndReceiveMessagesOnConnect {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testTransportThrowsAnErrorIfProtocolVersionIsIncorrect{
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
+
+- (void)testTransportAutoJSONEncodesMessagesCorrectlyWhenSending {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
+}
 
 @end

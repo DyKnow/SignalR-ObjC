@@ -112,7 +112,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
-    [self.serverSentEventsOperationQueue cancelAllOperations];
+    [self reconnect: connection data:[connection onSending]];
 }
 
 #pragma mark -
@@ -262,8 +262,9 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         
         if (connection.state != disconnected && [SRConnection ensureReconnecting:strongConnection]) {
             SRLogServerSentEvents(@"reconnecting");
-            [strongSelf open:strongConnection connectionData:data isReconnecting:YES];
             [strongSelf.serverSentEventsOperationQueue cancelAllOperations];
+            //now that all the current connections are tearing down, we have the queue to ourselves
+            [strongSelf open:strongConnection connectionData:data isReconnecting:YES];
         }
         
     }] performSelector:@selector(start) withObject:nil afterDelay:[self.reconnectDelay integerValue]];
