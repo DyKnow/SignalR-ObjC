@@ -24,6 +24,7 @@ target :"SignalR.Client.Tests.iOS", :exclusive => true do
     platform :ios, '6.0'
     pod 'OCMock'
     pod 'AFNetworking', '2.1.0'
+    pod 'SocketRocket', '0.3.1-beta2'
 end
 
 
