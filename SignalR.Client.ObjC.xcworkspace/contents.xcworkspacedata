@@ -1,1 +1,10 @@
-<?xml version='1.0' encoding='UTF-8'?><Workspace version='1.0'><FileRef location='group:Pods/Pods.xcodeproj'/><FileRef location='group:SignalR.Client.ObjC/SignalR.Client.ObjC.xcodeproj'/></Workspace>
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:SignalR.Client.ObjC/SignalR.Client.ObjC.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+</Workspace>

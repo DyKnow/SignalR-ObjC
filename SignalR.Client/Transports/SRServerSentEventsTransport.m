@@ -224,7 +224,6 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     }];
     
     __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -233,7 +232,6 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         //http://cocoadocs.org/docsets/AFNetworking/2.5.4/Classes/AFHTTPRequestOperation.html
         //we however do close the eventSource below, which will lead us to the above code
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         if (strongSelf.completionHandler) {//this is equivalent to the !reconnecting onStartFailed from c#
             SRLogServerSentEvents("error while starting: %@", error);
             strongSelf.completionHandler(nil, error);
