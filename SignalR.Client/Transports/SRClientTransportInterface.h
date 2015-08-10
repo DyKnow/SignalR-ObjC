@@ -57,6 +57,7 @@
  * Stops the active transport from receiving data from the server
  *
  * @param connection the `SRConnectionInterface` owning the transport that should be stopped
+ * @param timeout the allotted time for informing the server about the aborted connection. <= 0 means do not contact server 
  */
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData;
 

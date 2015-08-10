@@ -108,11 +108,14 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 }
 
 - (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
-    [super abort:connection timeout:timeout connectionData:connectionData];
+    SRLogServerSentEvents(@"abort disconnecting");
+    _stop = YES;
+    [self.serverSentEventsOperationQueue cancelAllOperations];//this will enqueue a failure on run loop
+    [super abort:connection timeout:timeout connectionData:connectionData];//we expect this to set stop to YES
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
-    [self reconnect: connection data:[connection onSending]];
+    [self.serverSentEventsOperationQueue cancelAllOperations];
 }
 
 #pragma mark -

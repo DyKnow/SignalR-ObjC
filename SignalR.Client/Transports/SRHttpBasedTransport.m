@@ -138,8 +138,14 @@
     //TODO: Throw, Subclass should implement this.
 }
 
+//@parameter: timeout, the amount of time we
 - (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
 
+    if (timeout <= 0) {
+        SRLogHTTPTransport(@"stopping transport without informing server");
+        return;
+    }
+    
     // Ensure that an abort request is only made once
     if (!_startedAbort)
     {

@@ -210,19 +210,27 @@
     }
 }
 
-- (void)stop {
+- (void)stopAndCallServer{
     [self stop:self.defaultAbortTimeout];
 }
 
-- (void)stop:(NSNumber *)timeout {
-    
+- (void)stopButDoNotCallServer{
+    NSNumber* timeout = @-1;//immediately give up telling the server
+    [self stop:timeout];
+}
+
+- (void)stop {
+    [self stopAndCallServer];
+}
+
+//timeout <= 0 does not call server (immediate timeout)
+- (void)stop: (NSNumber *) timeout {
     // Do nothing if the connection is offline
     if (self.state != disconnected) {
         
         [_monitor stop];
         _monitor = nil;
         
-        //TODO: set connectiondata
         [_transport abort:self timeout:timeout connectionData:_connectionData];
         [self disconnect];
         
@@ -326,7 +334,7 @@
     __weak __typeof(&*self)weakSelf = self;
     self.disconnectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        [strongSelf disconnect];
+        [strongSelf stopButDoNotCallServer];
     }];
     [self.disconnectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[_disconnectTimeout integerValue]];
     
