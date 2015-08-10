@@ -44,6 +44,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 @property (readwrite, nonatomic, copy) void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
 @property (readwrite, nonatomic, copy) void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
 -(void) openingResponse: (NSString*) initialData;
+@property (readwrite, nonatomic, copy) NSData* lastData;
 @end
 
 @implementation SSE_NetworkMock
@@ -87,6 +88,22 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
     [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
     [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
+    _lastData = data;
+}
+
+-(void) message: (NSString*) messageStr
+{
+    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
+    [[[self.mock stub] andReturn: dataStream] outputStream];
+    self.onGotResponse(self.mock, nil);
+    
+    NSMutableData* data = [[NSMutableData alloc] initWithData: _lastData];
+    [data appendData:[messageStr dataUsingEncoding:NSUTF8StringEncoding]];
+
+    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
+    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
+    _lastData = data;
 }
 @end
 
@@ -616,7 +633,59 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 }
 
 - (void)testHandlesAbortFromConnection {
-    // This is an example of a functional test case.
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetSSE = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
+    __weak __typeof(&*NetConnect)weakNetConnect = NetSSE;
+    connection.connectionToken =
+    connection.connectionId = @"10101";
+    connection.disconnectTimeout = @30;
+    
+    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0"
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    
+    connection.started = ^{
+        [initialized fulfill];
+    };
+    
+    [connection start:sse];
+    
+    //gets the response and pulls down data successfully at start
+    [NetSSE openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error); return;
+        }
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        __strong __typeof(&*weakNetConnect)strongNetSSE = weakNetConnect;
+        
+        [strongNetSSE message:@"data: {\"D\"True\"}\n\n"];
+        [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+            if (error) {
+                NSLog(@"Timeout Error: %@", error); return;
+            }
+            XCTAssert(NO, @"not implemented");
+            
+        }];
+    }];
+
     XCTAssert(NO, @"not implemented");
 }
 
@@ -803,7 +872,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     XCTAssert(NO, @"not implemented");
 }
 
-- (void)testConnectionCanBeStoppedPriorToTransportState {
+- (void)testConnectionCanBeStoppedPriorToTransportStart {
     // This is an example of a functional test case.
     XCTAssert(NO, @"not implemented");
 }
