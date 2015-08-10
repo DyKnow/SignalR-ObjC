@@ -615,11 +615,6 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     }];
 }
 
-- (void)testHeartbeatUpdatesKeepAliveAccess {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
-}
-
 - (void)testHandlesAbortFromConnection {
     // This is an example of a functional test case.
     XCTAssert(NO, @"not implemented");
