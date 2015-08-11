@@ -39,12 +39,12 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 @end
 
 @interface SSE_NetworkMock: NSObject
-@property (readwrite, nonatomic, copy) id mock;
+@property (readwrite, nonatomic, strong) id mock;
 //only call this directly if you don't want to trigger the stream.opened callback
 @property (readwrite, nonatomic, copy) void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
 @property (readwrite, nonatomic, copy) void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
 -(void) openingResponse: (NSString*) initialData;
-@property (readwrite, nonatomic, copy) NSData* lastData;
+@property (readwrite, nonatomic, strong) NSData* lastData;
 @end
 
 @implementation SSE_NetworkMock
@@ -52,6 +52,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 {
     self = [super init];
     __weak __typeof(&*self)weakSelf = self;
+    
     _mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[_mock stub] andDo:^(NSInvocation *invocation) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
@@ -61,7 +62,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     }] setDidReceiveResponseBlock: [OCMArg any]];
     
     [[[_mock stub] andDo:^(NSInvocation *invocation) {
-         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         void (^failureOut)(AFHTTPRequestOperation *operation, NSError *error);
         [invocation getArgument: &failureOut atIndex: 3];
         strongSelf.onFailure = failureOut;
@@ -105,12 +106,17 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
     _lastData = data;
 }
+
+- (void)dealloc {
+    [_mock stopMocking];
+}
+
 @end
 
 @interface SSE_WaitBlock: NSObject
 @property (readwrite, nonatomic, copy) void (^afterWait)();
-@property (readwrite, nonatomic) double waitTime;
-@property (readwrite, nonatomic, copy) id mock;
+@property (readwrite, nonatomic, assign) double waitTime;
+@property (readwrite, nonatomic, strong) id mock;
 @end
 
 @implementation SSE_WaitBlock
@@ -121,18 +127,23 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     _mock = [OCMockObject mockForClass:[NSBlockOperation class]];
     [[[[_mock stub] andReturn: _mock ] andDo:^(NSInvocation *invocation) {
          __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        void (^callbackOut)();
-        [invocation getArgument: &callbackOut atIndex: 2];
-        strongSelf.afterWait = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        strongSelf.afterWait = successCallback;
     }] blockOperationWithBlock: [OCMArg any]];
     [[[_mock stub] andDo:^(NSInvocation *invocation) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        double delay;
+        double delay = 0;
         [invocation getArgument: &delay atIndex:4];
         strongSelf.waitTime = delay;
     }] performSelector:@selector(start) withObject:nil afterDelay: expectedWait];
     return self;
 }
+
+- (void)dealloc {
+    [_mock stopMocking];
+}
+
 @end
 
 @interface SRServerSentEventsTransportTests : XCTestCase
@@ -151,7 +162,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     [super tearDown];
 }
 
-- (void) testStartCallsTheCompletionHandlerAfterSuccess {
+- (void)testStartCallsTheCompletionHandlerAfterSuccess {
      XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
     __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
@@ -159,13 +170,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
    
     id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        onGotResponse = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        onGotResponse = successCallback;
     }] setDidReceiveResponseBlock: [OCMArg any]];
 
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        [invocation getArgument: &onFailure atIndex: 3];
+        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     
@@ -183,7 +196,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __weak __typeof(&*mock)weakMock = mock;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         [expectation fulfill];
@@ -219,13 +232,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     
     id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        onGotResponse = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        onGotResponse = successCallback;
     }] setDidReceiveResponseBlock: [OCMArg any]];
     
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        [invocation getArgument: &onFailure atIndex: 3];
+        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     
@@ -243,7 +258,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __weak __typeof(&*mock)weakMock = mock;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         [expectation fulfill];
@@ -280,13 +295,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     
     id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        onGotResponse = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        onGotResponse = successCallback;
     }] setDidReceiveResponseBlock: [OCMArg any]];
     
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        [invocation getArgument: &onFailure atIndex: 3];
+        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     
@@ -312,7 +329,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     };
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
     
@@ -347,15 +364,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     
     id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        onGotResponse = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        onGotResponse = successCallback;
     }] setDidReceiveResponseBlock: [OCMArg any]];
     
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^failureOut)(AFHTTPRequestOperation *operation, NSError *error);
-        [invocation getArgument: &failureOut atIndex: 3];
-        onFailure = failureOut;
+        __unsafe_unretained void (^failureCallback)(AFHTTPRequestOperation *, NSError *) = nil;
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     
@@ -373,7 +390,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __weak __typeof(&*mock)weakMock = mock;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         if (error) {
@@ -411,7 +428,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     [connection changeState:disconnected toState:connected];
  
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         [initialized fulfill];
@@ -445,12 +462,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
             __block double reconnectDelay;
             id mock = [OCMockObject mockForClass:[NSBlockOperation class]];
             [[[[mock stub] andReturn: mock ] andDo:^(NSInvocation *invocation) {
-                void (^callbackOut)();
-                [invocation getArgument: &callbackOut atIndex: 2];
-                reconnectAfterTimeoutCallback = callbackOut;
+                __unsafe_unretained void (^successCallback)() = nil;
+                [invocation getArgument: &successCallback atIndex: 2];
+                reconnectAfterTimeoutCallback = successCallback;
             }] blockOperationWithBlock: [OCMArg any]];
             [[[mock stub] andDo:^(NSInvocation *invocation) {
-                [invocation getArgument: &reconnectDelay atIndex:4];
+                double reconnectDelayOut = 0;
+                [invocation getArgument: &reconnectDelayOut atIndex:4];
+                reconnectDelay = reconnectDelayOut;
             }] performSelector:@selector(start) withObject:nil afterDelay: [[sse reconnectDelay] integerValue]];
             
             strongNetConnect.onFailure(strongNetConnect.mock, [[NSError alloc]initWithDomain:@"EXPECTED" code:42 userInfo:nil]);
@@ -551,12 +570,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     connection.disconnectTimeout = @30;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
             @"ConnectionId": @"10101",
             @"ConnectionToken": @"10101010101",
@@ -607,7 +628,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         //we will be calling open again, so lets recapture the data to verify
         SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
         //prep to catch the reconnect timeout
-        SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
+        SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc] init:[connection.disconnectTimeout doubleValue]];
 
         //retry has waited now,
         reconnectBlock.afterWait();
@@ -645,13 +666,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     
     id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        onGotResponse = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        onGotResponse = successCallback;
     }] setDidReceiveResponseBlock: [OCMArg any]];
     
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        [invocation getArgument: &onFailure atIndex: 3];
+        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     
@@ -675,7 +698,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     };
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
     
@@ -710,13 +733,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     
     id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        onGotResponse = callbackOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        onGotResponse = successCallback;
     }] setDidReceiveResponseBlock: [OCMArg any]];
     
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        [invocation getArgument: &onFailure atIndex: 3];
+        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     
@@ -743,7 +768,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
     
@@ -787,12 +812,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SSE_WaitBlock* disconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        void (^callbackOut)(SRNegotiationResponse * response, NSError *error);
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
             @"ConnectionId": @"10101",
             @"ConnectionToken": @"10101010101",
@@ -836,12 +863,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SSE_WaitBlock* disconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
                                                                         @"ConnectionId": @"10101",
                                                                         @"ConnectionToken": @"10101010101",
@@ -883,12 +912,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
             @"ConnectionId": @"10101",
             @"ConnectionToken": @"10101010101",
@@ -919,12 +950,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
                                                                         @"ConnectionId": @"10101",
                                                                         @"ConnectionToken": @"10101010101",
@@ -968,12 +1001,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]
                      initWithDictionary:@{
                         @"ConnectionId": @"10101",
@@ -1049,12 +1084,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         callbackOut([[SRNegotiationResponse alloc ]
                      initWithDictionary:@{
                                           @"ConnectionId": @"10101",
@@ -1102,12 +1139,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
     [[[pmock stub] andDo:^(NSInvocation *invocation) {
         void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
         //do not respond to negotiate!!
         //we will stop the connection before its completion
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];

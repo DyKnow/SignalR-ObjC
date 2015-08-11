@@ -56,12 +56,12 @@
     __block void (^onFailure)(NSError*);
     id mock = [OCMockObject niceMockForClass:[AFHTTPRequestOperation class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(AFHTTPRequestOperation *operation, id responseObject);
-        void (^failureOut)(NSError*);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        [invocation getArgument: &failureOut atIndex: 3];
-        onGotResponse = callbackOut;
-        onFailure = failureOut;
+        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
+        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        [invocation getArgument: &failureCallback atIndex: 3];
+        onGotResponse = successCallback;
+        onFailure = failureCallback;
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     
     // Here we stub the alloc class method **
@@ -76,7 +76,7 @@
     [connection changeState:disconnected toState:connected];
     
     SRLongPollingTransport* lp = [[ SRLongPollingTransport alloc] init];
-    lp.pollingOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs
+    lp.pollingOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
 
     [lp start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         [expectation fulfill];

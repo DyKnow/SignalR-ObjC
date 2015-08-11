@@ -93,17 +93,15 @@
      mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     [[[mock stub] andReturn:mock] alloc];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        NSMutableURLRequest* requestOut;
+        __unsafe_unretained NSMutableURLRequest *requestOut = nil;
         [invocation getArgument: &requestOut atIndex: 2];
         request = requestOut;
-        CFBridgingRetain(request);
     }] initWithURLRequest: [OCMArg any]];
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
 
     [ws webSocket:mock didFailWithError:[[NSError alloc] initWithDomain:@"Unit test" code:42 userInfo:nil ]];
     XCTAssertTrue([[[request URL] absoluteString] isEqualToString:@"http://localhost:0000/reconnect?connectionData=12345&connectionToken=10101010101&groupsToken=&messageId=&transport=webSockets"], "Did not reconnect");
-    CFBridgingRelease((__bridge CFTypeRef)(request));
    }
 
 - (void)testConnectionInitialFailureUsesCallback {
