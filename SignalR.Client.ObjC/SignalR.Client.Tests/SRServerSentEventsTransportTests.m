@@ -117,6 +117,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (id) init: (int)expectedWait{
     self = [super init];
     __weak __typeof(&*self)weakSelf = self;
+    _afterWait = nil;
     _mock = [OCMockObject mockForClass:[NSBlockOperation class]];
     [[[[_mock stub] andReturn: _mock ] andDo:^(NSInvocation *invocation) {
          __strong __typeof(&*weakSelf)strongSelf = weakSelf;
@@ -632,61 +633,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     }];
 }
 
-- (void)testHandlesAbortFromConnection {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetSSE = [[SSE_NetworkMock alloc] init];
-    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetSSE;
-    connection.connectionToken =
-    connection.connectionId = @"10101";
-    connection.disconnectTimeout = @30;
-    
-    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
-    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
-    
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0"
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
-    
-    connection.started = ^{
-        [initialized fulfill];
-    };
-    
-    [connection start:sse];
-    
-    //gets the response and pulls down data successfully at start
-    [NetSSE openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
-    
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-        if (error) {
-            NSLog(@"Timeout Error: %@", error); return;
-        }
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        __strong __typeof(&*weakNetConnect)strongNetSSE = weakNetConnect;
-        
-        [strongNetSSE message:@"data: {\"D\"True\"}\n\n"];
-        [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-            if (error) {
-                NSLog(@"Timeout Error: %@", error); return;
-            }
-            XCTAssert(NO, @"not implemented");
-            
-        }];
-    }];
-
-    XCTAssert(NO, @"not implemented");
+- (void)testHandlesDisconnectMessageFromConnection {
+    XCTAssert(NO, @"not implemented - need to determine support. 2.0.2 sends the D:1 disconenct message but latest does not");
 }
 
 - (void)testHandlesExtraEmptyLinesWhenParsingMessages {
@@ -833,23 +781,172 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 }
 
 - (void)testTransportCanTimeoutWhenItDoesNotReceiveInitializeMessage {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SSE_WaitBlock* disconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
+    
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+            @"ConnectionId": @"10101",
+            @"ConnectionToken": @"10101010101",
+            @"DisconnectTimeout": @30,
+            @"ProtocolVersion": @"1.3.0.0",
+            @"TransportConnectTimeout": @10
+            }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    
+    connection.started = ^{
+        XCTAssert(NO, @"Connection started");
+    };
+    
+    connection.error = ^(NSError *error){
+        [initialized fulfill];
+    };
+    
+    [connection start:sse];
+    
+    double totalTransportConnectTimeout = 10000;//connection.transportConnectTimeout + TransportConnectTimeout * 1000
+    
+    //dont timeout the message but also dont receive initialized message
+    [NetConnect openingResponse: @""];
+    XCTAssertEqual(totalTransportConnectTimeout, disconnectTimeoutBlock.waitTime, @"not implemented");
+    XCTAssertNotNil(disconnectTimeoutBlock.afterWait, @"No timeout registered");
+    if (disconnectTimeoutBlock.afterWait) {
+        disconnectTimeoutBlock.afterWait();
+    }
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SSE_WaitBlock* disconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
+    
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+
+    __block BOOL firstErrorFailedCalled = NO;
+    __block int startCount = 0;
+    
+    connection.started = ^{
+        startCount++;
+        [initialized fulfill];
+        XCTAssertTrue(firstErrorFailedCalled, @"only get started after the error fails first");
+    };
+    
+    connection.error = ^(NSError *error){
+        firstErrorFailedCalled = YES;
+    };
+    
+    [connection start:sse];
+    [connection stop];
+    [connection start:sse];
+    
+    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+        XCTAssert(startCount == 1, @"expected exactly one started callback");
+    }];
 }
 
 - (void)testPingIntervalStopsTheConnectionOn401s {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+            @"ConnectionId": @"10101",
+            @"ConnectionToken": @"10101010101",
+            @"DisconnectTimeout": @30,
+            @"ProtocolVersion": @"1.3.0.0",
+            @"TransportConnectTimeout": @10
+            }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.error = ^(NSError *error){
+        [initialized fulfill];
+        XCTAssert(NO, @"todo: verify it's a 401");
+    };
+    
+    [connection start:sse];
+    
+    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
 - (void)testPingIntervalStopsTheConnectionOn403s {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.error = ^(NSError *error){
+        [initialized fulfill];
+        XCTAssert(NO, @"todo: verify it's a 403");
+    };
+    
+    [connection start:sse];
+    
+    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
 - (void)testPingIntervalBehavesAppropriately {
@@ -863,18 +960,181 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 }
 
 - (void)testReconnectExceedingTheReconnectWindowResultsInTheConnectionDisconnect {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
+    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
+    
+    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]
+                     initWithDictionary:@{
+                        @"ConnectionId": @"10101",
+                        @"ConnectionToken": @"10101010101",
+                        @"DisconnectTimeout": @30,
+                        @"ProtocolVersion": @"1.3.0.0"
+                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    
+    connection.started = ^{
+        [initialized fulfill];
+    };
+    
+    [connection start:sse];
+    
+    //gets the response and pulls down data successfully at start
+    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error); return;
+        }
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
+        
+        //trigger an error to see
+        //spoiler: we expect this to fail
+        XCTestExpectation *expectation2 = [strongSelf expectationWithDescription:@"disconnected callback called"];
+
+        strongConnection.reconnected = ^(){
+            XCTAssert(NO, @"unexpected change!");
+        };
+        
+        strongConnection.closed = ^(){
+            [expectation2 fulfill];
+        };
+        
+        //do setup to simulate and verify the reconnect delay
+        SSE_WaitBlock* reconnectBlock = [[SSE_WaitBlock alloc]init:[[sse reconnectDelay] doubleValue]];
+        NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
+        strongNetConnect.onFailure(strongNetConnect.mock, cancelledError);
+        [reconnectBlock.mock stopMocking];//dont want to accidentally get other blocks
+        
+        //we will be calling open again, so lets recapture the data to verify
+        SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
+        //prep to catch the reconnect timeout
+        SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
+        
+        //retry has waited now,
+        reconnectBlock.afterWait();
+        XCTAssertEqual([connection.disconnectTimeout doubleValue], reconnectTimeoutBlock.waitTime, @"got timeout value from an unexpected place - check to be sure we are pulling from the connection");
+     
+        //connection timed out without succeeding
+        reconnectTimeoutBlock.afterWait();
+        
+        [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+            if (error){
+                NSLog(@"Sub-Timeout Error: %@", error);
+            }
+            sse = nil;
+        }];
+    }];
 }
 
 - (void)testConnectionCanBeStoppedDuringTransportStart {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
+    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
+    
+    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        callbackOut([[SRNegotiationResponse alloc ]
+                     initWithDictionary:@{
+                                          @"ConnectionId": @"10101",
+                                          @"ConnectionToken": @"10101010101",
+                                          @"DisconnectTimeout": @30,
+                                          @"ProtocolVersion": @"1.3.0.0"
+                                          }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    
+    connection.closed = ^{
+        [initialized fulfill];
+    };
+    
+    connection.error = ^(NSError* err){
+        XCTAssert(NO, @"Error was triggered");
+    };
+    
+    connection.started = ^(){
+        XCTAssert(NO, @"start was triggered");
+    };
+    
+    [connection start:sse];
+    
+    //gets the response but has not completed intialize
+    [NetConnect openingResponse: @""];
+    [connection stop];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error); return;
+        }
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        XCTAssertEqual(strongConnection.state, disconnected, @"Connection was not disconnected");
+        XCTAssertEqual(strongConnection.transport, nil, @"Transport was not cleared after stop");
+    }];
 }
 
 - (void)testConnectionCanBeStoppedPriorToTransportStart {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
+    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
+    
+    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
+    
+    id pmock = [OCMockObject partialMockForObject: sse];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        //do not respond to negotiate!!
+        //we will stop the connection before its completion
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.closed = ^{
+        [initialized fulfill];
+    };
+    
+    connection.error = ^(NSError* err){
+        XCTAssert(NO, @"Error was triggered");
+    };
+    
+    connection.started = ^(){
+        XCTAssert(NO, @"start was triggered");
+    };
+    
+    [connection start:sse];
+    [connection stop];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error); return;
+        }
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        XCTAssertEqual(strongConnection.state, disconnected, @"Connection was not disconnected");
+        XCTAssertEqual(strongConnection.transport, nil, @"Transport was not cleared after stop");
+    }];
 }
 
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {
