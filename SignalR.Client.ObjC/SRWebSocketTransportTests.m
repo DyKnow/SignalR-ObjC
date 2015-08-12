@@ -14,6 +14,8 @@
 #import "SRConnectionInterface.h"
 
 @interface SRWebSocketTransport()
+@property (strong, nonatomic, readwrite) SRWebSocket *webSocket;
+
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket;
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
@@ -48,10 +50,7 @@
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
     
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
-    
-    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     [ws start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         [expectation fulfill];
@@ -105,8 +104,31 @@
    }
 
 - (void)testConnectionInitialFailureUsesCallback {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];    
+    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
+    // Here we stub the alloc class method **
+    [[[mock stub] andReturn:mock] alloc];
+    // And we stub initWithParam: passing the param we will pass to the method to test
+    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
+    [[mock stub] setDelegate: [OCMArg any]];
+    [[mock stub] open];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
+    [ws start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
+        if (error) {
+            [expectation fulfill];
+        }
+    }];
+    
+    [ws webSocketDidOpen: mock];
+    [ws webSocket:mock didFailWithError:[[NSError alloc] initWithDomain:@"Unit test" code:42 userInfo:nil]];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
 - (void)testConnectionErrorRetries_RetriesAfterADelay_CommunicatesLifeCycleViaConnection {
