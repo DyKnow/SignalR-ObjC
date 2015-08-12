@@ -25,12 +25,12 @@
     [super tearDown];
 }
 
-/*- (void)testThrowIfCreateProxyAfterConnectionStarts
+- (void)testThrowIfCreateProxyAfterConnectionStarts
 {
-    SRHubConnection *connection  = [SRHubConnection connectionWithURL:@"http://site/"];
+    SRHubConnection *connection  = [SRHubConnection connectionWithURLString:@"http://site/"];
     
     [connection start];
-    STAssertThrowsSpecificNamed([connection createProxy:@"demo"], NSException, NSInternalInconsistencyException, @"Create proxy after start connection succeeded when it was expected to throw an exception") ;
-}*/
+    XCTAssertThrowsSpecific([connection createHubProxy:@"demo"], NSException, @"Create proxy after start connection succeeded when it was expected to throw an exception") ;
+}
 
 @end
