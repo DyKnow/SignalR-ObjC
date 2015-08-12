@@ -208,6 +208,23 @@
 		E9DF4669057A778017D4BA5B /* libPods-SignalR.Samples.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6239E13DEE02640A8D5E2123 /* libPods-SignalR.Samples.OSX.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		3973877A1B7BBD6700AD4961 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 392077FE15AF13C3009B959E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3919636D15AF205300DDC946;
+			remoteInfo = SignalR.Client.OSX;
+		};
+		3973877C1B7BBD8100AD4961 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 392077FE15AF13C3009B959E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3920780615AF13C3009B959E;
+			remoteInfo = SignalR.Client.iOS;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		2E56E6F2498B3E781E5CC7C3 /* Pods-SignalR.Client.Tests.OSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.Tests.OSX.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.Tests.OSX/Pods-SignalR.Client.Tests.OSX.release.xcconfig"; sourceTree = "<group>"; };
 		3903084A173C660E00FE660E /* SRHeartbeatMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHeartbeatMonitor.h; sourceTree = "<group>"; };
@@ -957,6 +974,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3973877B1B7BBD6700AD4961 /* PBXTargetDependency */,
 			);
 			name = SignalR.Client.Tests.OSX;
 			productName = SignalR.Client.Tests.OSX;
@@ -977,6 +995,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3973877D1B7BBD8100AD4961 /* PBXTargetDependency */,
 			);
 			name = SignalR.Client.Tests.iOS;
 			productName = SignalR.Client.Tests.iOS;
@@ -1340,6 +1359,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3973877B1B7BBD6700AD4961 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3919636D15AF205300DDC946 /* SignalR.Client.OSX */;
+			targetProxy = 3973877A1B7BBD6700AD4961 /* PBXContainerItemProxy */;
+		};
+		3973877D1B7BBD8100AD4961 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3920780615AF13C3009B959E /* SignalR.Client.iOS */;
+			targetProxy = 3973877C1B7BBD8100AD4961 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3919634F15AF1EC200DDC946 /* InfoPlist.strings */ = {
