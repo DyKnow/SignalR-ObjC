@@ -85,6 +85,14 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     [_webSocket setDelegate:nil];
     [_webSocket close];
     _webSocket = nil;
+    
+    if ([self tryCompleteAbort]) {
+        return;
+    }
+    
+    if ([SRConnection ensureReconnecting:[_connectionInfo connection]]) {
+        [self performConnect:nil reconnecting:YES];
+    }
 }
 
 #pragma mark -
