@@ -355,26 +355,47 @@
     [connection setStarted:^{
         [initialized fulfill];
     }];
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
-    [connection setReconnecting:^{
-        [reconnecting fulfill];
-    }];
-    [connection setReconnected:^{
-        XCTAssert(NO, @"unexpected change!");
-    }];
-    XCTestExpectation *closed = [self expectationWithDescription:@"Retrying callback called"];
-    [connection setClosed:^{
-        [closed fulfill];
-    }];
     
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
     
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*self)weakSelf = self;
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error){
+            NSLog(@"Sub-Timeout Error: %@", error);
+        } else {
+            XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+            [connection setReconnecting:^{
+                [reconnecting fulfill];
+            }];
+            
+            NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
+            [ws webSocket:mock didFailWithError:cancelledError];
+            
+            [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+                if (error){
+                    NSLog(@"Sub-Timeout Error: %@", error);
+                } else {
+                    [connection setReconnected:^{
+                        XCTAssert(NO, @"unexpected change!");
+                    }];
+                    XCTestExpectation *closed = [self expectationWithDescription:@"Retrying callback called"];
+                    [connection setClosed:^{
+                        [closed fulfill];
+                    }];
+                    
+                    //TODO: Timeout Reconnect, wait 2 seconds.
+                    //BUG: WebsocketsTransport does not use the _reconnectDelay
+                    
+                    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+                        if (error){
+                            NSLog(@"Sub-Timeout Error: %@", error);
+                        }
+                    }];
+                }
+            }];
+        }
     }];
 
 }
@@ -390,18 +411,148 @@
 }
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
+    // Here we stub the alloc class method **
+    [[[mock stub] andReturn:mock] alloc];
+    // And we stub initWithParam: passing the param we will pass to the method to test
+    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
+    [[mock stub] setDelegate: [OCMArg any]];
+    [[mock stub] open];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
+    
+    id pmock = [OCMockObject partialMockForObject: ws];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0"
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    __block BOOL firstErrorFailedCalled = NO;
+    __block int startCount = 0;
+    
+    connection.started = ^{
+        startCount++;
+        [initialized fulfill];
+        XCTAssertTrue(firstErrorFailedCalled, @"only get started after the error fails first");
+    };
+    
+    connection.error = ^(NSError *error){
+        firstErrorFailedCalled = YES;
+    };
+    
+    [connection start:ws];
+    [connection stop];
+    [connection start:ws];
+    
+    [ws webSocketDidOpen: mock];
+    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+        XCTAssert(startCount == 1, @"expected exactly one started callback");
+    }];
 }
 
 - (void)testPingIntervalStopsTheConnectionOn401s {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
+    // Here we stub the alloc class method **
+    [[[mock stub] andReturn:mock] alloc];
+    // And we stub initWithParam: passing the param we will pass to the method to test
+    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
+    [[mock stub] setDelegate: [OCMArg any]];
+    [[mock stub] open];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
+    
+    id pmock = [OCMockObject partialMockForObject: ws];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.error = ^(NSError *error){
+        [initialized fulfill];
+        XCTAssert(NO, @"todo: verify it's a 401");
+    };
+    
+    [connection start:ws];
+    
+    [ws webSocketDidOpen: mock];
+    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
 - (void)testPingIntervalStopsTheConnectionOn403s {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
+    // Here we stub the alloc class method **
+    [[[mock stub] andReturn:mock] alloc];
+    // And we stub initWithParam: passing the param we will pass to the method to test
+    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
+    [[mock stub] setDelegate: [OCMArg any]];
+    [[mock stub] open];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
+    
+    id pmock = [OCMockObject partialMockForObject: ws];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.error = ^(NSError *error){
+        [initialized fulfill];
+        XCTAssert(NO, @"todo: verify it's a 403");
+    };
+    
+    [connection start:ws];
+    
+    [ws webSocketDidOpen: mock];
+    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
 }
 
 - (void)testPingIntervalBehavesAppropriately {
@@ -415,18 +566,110 @@
 }
 
 - (void)testReconnectExceedingTheReconnectWindowResultsInTheConnectionDisconnect {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    [self testDisconnectsOnReconnectTimeout];
 }
 
 - (void)testConnectionCanBeStoppedDuringTransportStart {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
+    // Here we stub the alloc class method **
+    [[[mock stub] andReturn:mock] alloc];
+    // And we stub initWithParam: passing the param we will pass to the method to test
+    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
+    [[mock stub] setDelegate: [OCMArg any]];
+    [[mock stub] open];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
+    
+    id pmock = [OCMockObject partialMockForObject: ws];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
+        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
+                                                                        @"ConnectionId": @"10101",
+                                                                        @"ConnectionToken": @"10101010101",
+                                                                        @"DisconnectTimeout": @30,
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        }], nil);
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.closed = ^{
+        [initialized fulfill];
+    };
+    
+    connection.error = ^(NSError* err){
+        XCTAssert(NO, @"Error was triggered");
+    };
+    
+    connection.started = ^(){
+        XCTAssert(NO, @"start was triggered");
+    };
+    
+    [connection start:ws];
+    
+    [ws webSocketDidOpen: mock];
+    //gets the response but has not completed intialize
+    [ws webSocket:mock didReceiveMessage:@""];
+    [connection stop];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error); return;
+        }
+        XCTAssertEqual(connection.state, disconnected, @"Connection was not disconnected");
+        XCTAssertEqual(connection.transport, nil, @"Transport was not cleared after stop");
+    }];
 }
 
 - (void)testConnectionCanBeStoppedPriorToTransportState {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
+    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
+    // Here we stub the alloc class method **
+    [[[mock stub] andReturn:mock] alloc];
+    // And we stub initWithParam: passing the param we will pass to the method to test
+    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
+    [[mock stub] setDelegate: [OCMArg any]];
+    [[mock stub] open];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
+    
+    id pmock = [OCMockObject partialMockForObject: ws];
+    [[[pmock stub] andDo:^(NSInvocation *invocation) {
+        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
+        [invocation getArgument: &successCallback atIndex: 4];
+        callbackOut = successCallback;
+        //do not respond to negotiate!!
+        //we will stop the connection before its completion
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.closed = ^{
+        [initialized fulfill];
+    };
+    
+    connection.error = ^(NSError* err){
+        XCTAssert(NO, @"Error was triggered");
+    };
+    
+    connection.started = ^(){
+        XCTAssert(NO, @"start was triggered");
+    };
+    
+    [connection start:ws];
+    [connection stop];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+        XCTAssertEqual(connection.state, disconnected, @"Connection was not disconnected");
+        XCTAssertEqual(connection.transport, nil, @"Transport was not cleared after stop");
+    }];
+
 }
 
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {

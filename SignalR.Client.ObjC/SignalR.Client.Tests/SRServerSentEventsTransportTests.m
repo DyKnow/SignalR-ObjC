@@ -1130,7 +1130,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     }];
 }
 
-- (void)xtestConnectionCanBeStoppedPriorToTransportStart {
+- (void)testConnectionCanBeStoppedPriorToTransportStart {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
     SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];

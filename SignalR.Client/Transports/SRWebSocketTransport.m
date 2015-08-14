@@ -79,6 +79,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     [_webSocket setDelegate:nil];
     [_webSocket close];
     _webSocket = nil;
+    [super abort:connection timeout:timeout connectionData:connectionData];
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
