@@ -160,10 +160,10 @@
 
 - (void)startTransport {
     __weak __typeof(&*self)weakSelf = self;
+    
     [self.transport start:self connectionData:_connectionData completionHandler:^(id response, NSError *error) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!error) {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            
             [strongSelf changeState:connecting toState:connected];
             
             if (_keepAliveData != nil && [_transport supportsKeepAlive]) {
@@ -175,6 +175,13 @@
             }
             if(strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]) {
                 [strongSelf.delegate SRConnectionDidOpen:strongSelf];
+            }
+        } else {
+            if (strongSelf.error){
+                strongSelf.error(error);
+            }
+            if (strongSelf.closed){
+                strongSelf.closed();
             }
         }
     }];

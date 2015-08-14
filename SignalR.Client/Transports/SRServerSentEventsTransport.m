@@ -70,6 +70,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 @property (assign) BOOL stop;
 @property (strong, nonatomic, readwrite) NSOperationQueue *serverSentEventsOperationQueue;
 @property (copy) SRCompletionHandler completionHandler;
+@property (strong, nonatomic, readwrite) NSBlockOperation * connectTimeoutOperation;
 @end
 
 @implementation SRServerSentEventsTransport
@@ -99,6 +100,22 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    
+//    __weak __typeof(&*self)weakSelf = self;
+//    __weak __typeof(&*connection)weakConnection = connection;
+//    self.connectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
+//        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+//        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+//        if (strongSelf.completionHandler){//have not completed, so we need to
+//            [strongSelf abort:connection timeout:@-1 connectionData:connectionData];
+//            NSDictionary* userInfo = @{
+//               NSLocalizedDescriptionKey: NSLocalizedString(@"Connection timed out.", nil),
+//               NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message before the timeout.", nil),
+//               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
+//               };
+//            strongSelf.completionHandler(nil, [[NSError alloc]initWithDomain:@"com.signalr.signalr-objc" code:NSURLErrorTimedOut userInfo:userInfo]);
+//    [self.connectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[connection.transportConnectTimeout integerValue]];
+    
     self.completionHandler = block;
     [self open:connection connectionData:connectionData isReconnecting:NO];
 }
