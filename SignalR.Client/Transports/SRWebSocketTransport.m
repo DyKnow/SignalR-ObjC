@@ -151,8 +151,9 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     
     [self processResponse:_connectionInfo.connection response:message shouldReconnect:&timedOut disconnected:&disconnected];
     if (self.startBlock) {
-        self.startBlock(nil,nil);
+        SRWebSocketStartBlock callback = [self.startBlock copy];
         self.startBlock = nil;
+        callback(nil,nil);
     }
     
     if (disconnected) {
@@ -165,8 +166,9 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     SRLogWebSockets(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
     
     if (self.startBlock) {
-        self.startBlock(nil,error);
+        SRWebSocketStartBlock callback = [self.startBlock copy];
         self.startBlock = nil;
+        callback(nil,error);
     } else if (!self.startedAbort) {
         //[[_connectionInfo connection] didReceiveError:error];
         SRLogServerSentEvents("reconnect from errors: %@", error);
