@@ -400,7 +400,7 @@
 
 }
 
-- (void)testHandlesAbortFromConnection {
+- (void)testHandlesDisconnectMessageFromConnection {
     // This is an example of a functional test case.
     XCTAssert(NO, @"not implemented");
 }
