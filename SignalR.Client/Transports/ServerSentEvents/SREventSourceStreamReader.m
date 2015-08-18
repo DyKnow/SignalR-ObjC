@@ -86,7 +86,14 @@ typedef enum {
                 [self onOpened];
             } case NSStreamEventHasSpaceAvailable: {
                 if (![self processing]) {
-                    return;
+                  if ([_stream streamStatus] == NSStreamStatusOpen) {
+                      SRLogServerSentEvents(@"Opened");
+
+                      _reading = processing;
+                      [self onOpened];
+                  }
+                  else
+                      return;
                 }
                 
                 NSData *buffer = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
