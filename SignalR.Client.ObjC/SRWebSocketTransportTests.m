@@ -160,7 +160,7 @@
     }];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
     __weak __typeof(&*connection)weakConnection = connection;
     __weak __typeof(&*self)weakSelf = self;
@@ -223,7 +223,7 @@
     }];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
     __weak __typeof(&*connection)weakConnection = connection;
     __weak __typeof(&*self)weakSelf = self;
@@ -287,7 +287,7 @@
     }];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
     __weak __typeof(&*connection)weakConnection = connection;
     __weak __typeof(&*self)weakSelf = self;
@@ -359,7 +359,7 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error){
@@ -499,7 +499,7 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -545,7 +545,7 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
 
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -590,7 +590,7 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -753,8 +753,8 @@
         __strong __typeof(&*weakWs)strongWs = weakWs;
         [strongConnection send:@"test" completionHandler:^(id response, NSError *error) {
             //after sending receive two more
-            [strongWs webSocket:mock didReceiveMessage:@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message3\", \"A\": \"12345\"}]}\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message4\", \"A\": \"12345\"}]}\n\n"];
-            
+            [strongWs webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message3\", \"A\": \"12345\"}]}"];
+            [strongWs webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message4\", \"A\": \"12345\"}]}"];
         }];
     };
     
@@ -773,8 +773,8 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message1\", \"A\": \"12345\"}]}\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message2\", \"A\": \"12345\"}]}\n\n"];
-    
+    [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message1\", \"A\": \"12345\"}, {\"H\":\"hubname\", \"M\":\"message2\", \"A\": \"12345\"}]}"];
+
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
