@@ -528,8 +528,12 @@
         XCTAssertTrue(firstErrorFailedCalled, @"only get started after the error fails first");
     };
     
-    connection.error = ^(NSError *error){
+    connection.closed = ^{
         firstErrorFailedCalled = YES;
+    };
+    
+    connection.error = ^(NSError *error){
+        XCTAssert(NO, @"errors might be expected in the promise but not for the callbacks");
     };
     
     [connection start:ws];
