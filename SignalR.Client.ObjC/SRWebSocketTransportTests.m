@@ -655,8 +655,6 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    //gets the response but has not completed intialize
-    [ws webSocket:mock didReceiveMessage:@""];
     [connection stop];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
