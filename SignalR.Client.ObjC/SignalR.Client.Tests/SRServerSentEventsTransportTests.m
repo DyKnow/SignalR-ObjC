@@ -653,7 +653,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     }];
 }
 
-- (void)testHandlesDisconnectMessageFromConnection {
+- (void)xtestHandlesDisconnectMessageFromConnection {
     XCTAssert(NO, @"not implemented - need to determine support. 2.0.2 sends the D:1 disconenct message but latest does not");
 }
 
@@ -990,7 +990,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     XCTAssert(NO, @"not implemented");
 }
 
-- (void)testConnectionDataFlowsWithAllRequestsToServer {
+- (void)xtestConnectionDataFlowsWithAllRequestsToServer {
     // This is an example of a functional test case.
     XCTAssert(NO, @"not implemented");
 }

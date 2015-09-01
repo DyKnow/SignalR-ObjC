@@ -400,7 +400,7 @@
 
 }
 
-- (void)testHandlesDisconnectMessageFromConnection {
+- (void)xtestHandlesDisconnectMessageFromConnection {
     // This is an example of a functional test case.
     XCTAssert(NO, @"not implemented");
 }
@@ -604,7 +604,7 @@
     XCTAssert(NO, @"not implemented");
 }
 
-- (void)testConnectionDataFlowsWithAllRequestsToServer {
+- (void)xtestConnectionDataFlowsWithAllRequestsToServer {
     // This is an example of a functional test case.
     XCTAssert(NO, @"not implemented");
 }

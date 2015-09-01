@@ -166,7 +166,7 @@
 }
 
 - (NSDictionary *)addClientProtocol:(NSDictionary *)parameters connection:(id <SRConnectionInterface>)connection {
-    if ([connection connectionToken]) {
+    if ([connection protocol]) {
         NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
         [_parameters addEntriesFromDictionary:@{
             @"clientProtocol" : [connection protocol]
