@@ -14,6 +14,10 @@
 #import "SRConnectionInterface.h"
 #import "SRNegotiationResponse.h"
 
+@interface SRConnection (UnitTest)
+@property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
+@end
+
 @interface SRWebSocketTransport()
 @property (strong, nonatomic, readwrite) SRWebSocket *webSocket;
 
@@ -21,6 +25,39 @@
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+@end
+
+@interface WS_WaitBlock: NSObject
+@property (readwrite, nonatomic, copy) void (^afterWait)();
+@property (readwrite, nonatomic, assign) double waitTime;
+@property (readwrite, nonatomic, strong) id mock;
+@end
+
+@implementation WS_WaitBlock
+- (id) init: (int)expectedWait{
+    self = [super init];
+    __weak __typeof(&*self)weakSelf = self;
+    _afterWait = nil;
+    _mock = [OCMockObject mockForClass:[NSBlockOperation class]];
+    [[[[_mock stub] andReturn: _mock ] andDo:^(NSInvocation *invocation) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __unsafe_unretained void (^successCallback)() = nil;
+        [invocation getArgument: &successCallback atIndex: 2];
+        strongSelf.afterWait = successCallback;
+    }] blockOperationWithBlock: [OCMArg any]];
+    [[[_mock stub] andDo:^(NSInvocation *invocation) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        double delay = 0;
+        [invocation getArgument: &delay atIndex:4];
+        strongSelf.waitTime = delay;
+    }] performSelector:@selector(start) withObject:nil afterDelay: expectedWait];
+    return self;
+}
+
+- (void)dealloc {
+    [_mock stopMocking];
+}
+
 @end
 
 @interface SRWebSocketTransportTests : XCTestCase
@@ -99,7 +136,11 @@
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
 
+    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[[ws reconnectDelay] doubleValue]];
     [ws webSocket:mock didFailWithError:[[NSError alloc] initWithDomain:@"Unit test" code:42 userInfo:nil ]];
+    [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
+    reconnectDelay.afterWait();
+    XCTAssertEqual(2, reconnectDelay.waitTime, "Unexpected reconnect delay");
     XCTAssertTrue([[[request URL] absoluteString] isEqualToString:@"http://localhost:0000/reconnect?connectionData=12345&connectionToken=10101010101&groupsToken=&messageId=&transport=webSockets"], "Did not reconnect");
    }
 
@@ -370,29 +411,27 @@
                 [reconnecting fulfill];
             }];
             
+            [connection setReconnected:^{
+                XCTAssert(NO, @"unexpected change!");
+            }];
+
+            XCTestExpectation *closed = [self expectationWithDescription:@"Retrying callback called"];
+            [connection setClosed:^{
+                [closed fulfill];
+            }];
+            
+            WS_WaitBlock *reconnectingDelay = [[WS_WaitBlock alloc] init:[[ws reconnectDelay] doubleValue]];
             NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
             [ws webSocket:mock didFailWithError:cancelledError];
+            [reconnectingDelay.mock stopMocking];
+            WS_WaitBlock *disconnectTimeout = [[WS_WaitBlock alloc] init:[[connection disconnectTimeout] doubleValue]];
+            reconnectingDelay.afterWait();
+            [disconnectTimeout.mock stopMocking];
+            disconnectTimeout.afterWait();
             
             [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
                 if (error){
                     NSLog(@"Sub-Timeout Error: %@", error);
-                } else {
-                    [connection setReconnected:^{
-                        XCTAssert(NO, @"unexpected change!");
-                    }];
-                    XCTestExpectation *closed = [self expectationWithDescription:@"Retrying callback called"];
-                    [connection setClosed:^{
-                        [closed fulfill];
-                    }];
-                    
-                    //TODO: Timeout Reconnect, wait 2 seconds.
-                    //BUG: WebsocketsTransport does not use the _reconnectDelay
-                    
-                    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                        if (error){
-                            NSLog(@"Sub-Timeout Error: %@", error);
-                        }
-                    }];
                 }
             }];
         }
@@ -444,7 +483,6 @@
     [connection start:ws];
     
     [ws webSocketDidOpen: mock];
-    [ws webSocket:mock didReceiveMessage:@""];
     
     //TODO: Wait for Disconnect...
     
