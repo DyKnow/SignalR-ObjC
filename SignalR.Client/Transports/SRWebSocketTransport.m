@@ -35,6 +35,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 @property (strong, nonatomic, readonly) SRWebSocket *webSocket;
 @property (strong, nonatomic, readonly) SRWebSocketConnectionInfo *connectionInfo;
 @property (copy) SRWebSocketStartBlock startBlock;
+@property (strong, nonatomic, readwrite) NSBlockOperation * connectTimeoutOperation;
 
 @end
 
@@ -123,7 +124,24 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     SRLogWebSockets(@"WS: %@",[request.URL absoluteString]);
     
     [self setStartBlock:block];
-    
+    if (self.startBlock) {
+        __weak __typeof(&*self)weakSelf = self;
+        self.connectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
+            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+            if (strongSelf.startBlock) {
+                NSDictionary* userInfo = @{
+                    NSLocalizedDescriptionKey: NSLocalizedString(@"Connection timed out.", nil),
+                    NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message before the timeout.", nil),
+                    NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
+                };
+                NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
+                SRWebSocketStartBlock callback = [strongSelf.startBlock copy];
+                strongSelf.startBlock = nil;
+                callback(nil,timeout);
+            }
+        }];
+        [self.connectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[[[_connectionInfo connection] transportConnectTimeout] integerValue]];
+    }
     _webSocket = [[SRWebSocket alloc] initWithURLRequest:request];
     [_webSocket setDelegate:self];
     [_webSocket open];
@@ -162,6 +180,11 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     
     [self processResponse:_connectionInfo.connection response:message shouldReconnect:&timedOut disconnected:&disconnected];
     if (self.startBlock) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                 selector:@selector(start)
+                                                   object:nil];
+        self.connectTimeoutOperation = nil;
+        
         SRWebSocketStartBlock callback = [self.startBlock copy];
         self.startBlock = nil;
         callback(nil,nil);
@@ -177,6 +200,11 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     SRLogWebSockets(@"Websocket Failed With Error %@, %@", [[_connectionInfo connection] connectionId], error);
     
     if (self.startBlock) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                 selector:@selector(start)
+                                                   object:nil];
+        self.connectTimeoutOperation = nil;
+        
         SRWebSocketStartBlock callback = [self.startBlock copy];
         self.startBlock = nil;
         callback(nil,error);

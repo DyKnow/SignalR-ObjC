@@ -252,6 +252,7 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
@@ -388,7 +389,8 @@
                                                                         @"ConnectionId": @"10101",
                                                                         @"ConnectionToken": @"10101010101",
                                                                         @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0"
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
                                                                         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
 
@@ -455,6 +457,7 @@
     [[mock stub] open];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
     id pmock = [OCMockObject partialMockForObject: ws];
@@ -471,7 +474,7 @@
                                                                         @"TransportConnectTimeout": @10
                                                                         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
+
     connection.started = ^{
         XCTAssert(NO, @"Connection started");
     };
@@ -480,17 +483,19 @@
         [initialized fulfill];
     };
     
+    WS_WaitBlock* transportConnectTimeout = [[WS_WaitBlock alloc]init: 10];
     [connection start:ws];
+    [transportConnectTimeout.mock stopMocking];
+    transportConnectTimeout.afterWait();
     
-    [ws webSocketDidOpen: mock];
-    
-    //TODO: Wait for Disconnect...
+    XCTAssertEqual([connection.transportConnectTimeout doubleValue], transportConnectTimeout.waitTime, @"not implemented");
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
         }
-    }];}
+    }];
+}
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
     XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
@@ -515,7 +520,8 @@
                                                                         @"ConnectionId": @"10101",
                                                                         @"ConnectionToken": @"10101010101",
                                                                         @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0"
+                                                                        @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
                                                                         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     
@@ -679,6 +685,7 @@
                                                                         @"ConnectionToken": @"10101010101",
                                                                         @"DisconnectTimeout": @30,
                                                                         @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
                                                                         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     
@@ -781,6 +788,7 @@
                                                                         @"ConnectionToken": @"10101010101",
                                                                         @"DisconnectTimeout": @30,
                                                                         @"ProtocolVersion": @"1.3.0.0",
+                                                                        @"TransportConnectTimeout": @10
                                                                         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
 
@@ -835,7 +843,8 @@
                                           @"ConnectionId": @"10101",
                                           @"ConnectionToken": @"10101010101",
                                           @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"2.0.0.0"
+                                          @"ProtocolVersion": @"2.0.0.0",
+                                          @"TransportConnectTimeout": @10
                                           }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     [[[pmock stub] andDo:^(NSInvocation * invocation) {

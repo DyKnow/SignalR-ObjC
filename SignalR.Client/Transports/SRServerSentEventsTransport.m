@@ -101,22 +101,24 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
     
-//    __weak __typeof(&*self)weakSelf = self;
-//    __weak __typeof(&*connection)weakConnection = connection;
-//    self.connectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
-//        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-//        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-//        if (strongSelf.completionHandler){//have not completed, so we need to
-//            [strongSelf abort:connection timeout:@-1 connectionData:connectionData];
-//            NSDictionary* userInfo = @{
-//               NSLocalizedDescriptionKey: NSLocalizedString(@"Connection timed out.", nil),
-//               NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message before the timeout.", nil),
-//               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
-//               };
-//            strongSelf.completionHandler(nil, [[NSError alloc]initWithDomain:@"com.signalr.signalr-objc" code:NSURLErrorTimedOut userInfo:userInfo]);
-//    [self.connectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[connection.transportConnectTimeout integerValue]];
-    
     self.completionHandler = block;
+    
+    __weak __typeof(&*self)weakSelf = self;
+    self.connectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        if (strongSelf.completionHandler) {
+            NSDictionary* userInfo = @{
+                NSLocalizedDescriptionKey: NSLocalizedString(@"Connection timed out.", nil),
+                NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message before the timeout.", nil),
+                NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
+                                       };
+            NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
+            strongSelf.completionHandler(nil, timeout);
+            strongSelf.completionHandler = nil;
+        }
+    }];
+    [self.connectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[[connection transportConnectTimeout] integerValue]];
+    
     [self open:connection connectionData:connectionData isReconnecting:NO];
 }
 
@@ -199,7 +201,12 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                 BOOL disconnect = NO;
                 [strongSelf processResponse:strongConnection response:data shouldReconnect:&shouldReconnect disconnected:&disconnect];
                 if (strongSelf.completionHandler) {
-                    strongSelf.completionHandler(nil,nil);
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                             selector:@selector(start)
+                                                               object:nil];
+                    self.connectTimeoutOperation = nil;
+                    
+                    strongSelf.completionHandler(nil, nil);
                     strongSelf.completionHandler = nil;
                 }
 
@@ -254,6 +261,11 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (strongSelf.completionHandler) {//this is equivalent to the !reconnecting onStartFailed from c#
             SRLogServerSentEvents("error while starting: %@", error);
+            [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                     selector:@selector(start)
+                                                       object:nil];
+            self.connectTimeoutOperation = nil;
+            
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
         } else if (!isReconnecting){//failure should first attempt to reconect

@@ -424,6 +424,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
+    connection.transportConnectTimeout =@10;
     [connection changeState:disconnected toState:connected];
  
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -501,6 +502,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
+    connection.transportConnectTimeout =@10;
     [connection changeState:disconnected toState:connected];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -567,6 +569,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     connection.connectionToken =
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
+    connection.transportConnectTimeout =@10;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
@@ -581,7 +584,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
             @"ConnectionId": @"10101",
             @"ConnectionToken": @"10101010101",
             @"DisconnectTimeout": @30,
-            @"ProtocolVersion": @"1.3.0.0"
+            @"ProtocolVersion": @"1.3.0.0",
+            @"TransportConnectTimeout": @10
         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
 
@@ -806,9 +810,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 
 - (void)testTransportCanTimeoutWhenItDoesNotReceiveInitializeMessage {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SSE_WaitBlock* disconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
@@ -837,17 +839,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         [initialized fulfill];
     };
     
+    SSE_WaitBlock* transportConnectTimeout = [[SSE_WaitBlock alloc]init: 10];
     [connection start:sse];
     
-    double totalTransportConnectTimeout = 10000;//connection.transportConnectTimeout + TransportConnectTimeout * 1000
+    [transportConnectTimeout.mock stopMocking];
+    transportConnectTimeout.afterWait();
     
-    //dont timeout the message but also dont receive initialized message
-    [NetConnect openingResponse: @""];
-    XCTAssertEqual(totalTransportConnectTimeout, disconnectTimeoutBlock.waitTime, @"not implemented");
-    XCTAssertNotNil(disconnectTimeoutBlock.afterWait, @"No timeout registered");
-    if (disconnectTimeoutBlock.afterWait) {
-        disconnectTimeoutBlock.afterWait();
-    }
+    XCTAssertEqual([connection.transportConnectTimeout doubleValue], transportConnectTimeout.waitTime, @"not implemented");
+
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -859,7 +858,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
     SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SSE_WaitBlock* disconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
+    connection.transportConnectTimeout =@10;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
@@ -1017,7 +1016,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
                         @"ConnectionId": @"10101",
                         @"ConnectionToken": @"10101010101",
                         @"DisconnectTimeout": @30,
-                        @"ProtocolVersion": @"1.3.0.0"
+                        @"ProtocolVersion": @"1.3.0.0",
+                        @"TransportConnectTimeout": @10
                         }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     
@@ -1100,7 +1100,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
                                           @"ConnectionId": @"10101",
                                           @"ConnectionToken": @"10101010101",
                                           @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"1.3.0.0"
+                                          @"ProtocolVersion": @"1.3.0.0",
+                                          @"TransportConnectTimeout": @10
                                           }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     
@@ -1197,7 +1198,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
                                           @"ConnectionId": @"10101",
                                           @"ConnectionToken": @"10101010101",
                                           @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"1.3.0.0"
+                                          @"ProtocolVersion": @"1.3.0.0",
+                                          @"TransportConnectTimeout": @10
                                           }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     [[[pmock stub] andDo:^(NSInvocation * invocation) {
@@ -1255,7 +1257,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
                                           @"ConnectionId": @"10101",
                                           @"ConnectionToken": @"10101010101",
                                           @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"2.0.0.0"
+                                          @"ProtocolVersion": @"2.0.0.0",
+                                          @"TransportConnectTimeout": @10
                                           }], nil);
     }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     [[[pmock stub] andDo:^(NSInvocation * invocation) {
