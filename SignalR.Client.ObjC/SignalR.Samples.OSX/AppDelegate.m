@@ -16,7 +16,7 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
-    _connection = [SRConnection connectionWithURL:[[Router sharedRouter].server_url stringByAppendingFormat:@"streaming-connection"]];
+    _connection = [SRConnection connectionWithURLString:[[Router sharedRouter].server_url stringByAppendingFormat:@"streaming-connection"]];
     _connection.started = ^{
         NSLog(@"Connection Opened");
     };

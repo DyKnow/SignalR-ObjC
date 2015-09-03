@@ -70,6 +70,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 @property (assign) BOOL stop;
 @property (strong, nonatomic, readwrite) NSOperationQueue *serverSentEventsOperationQueue;
 @property (copy) SRCompletionHandler completionHandler;
+@property (strong, nonatomic, readwrite) NSBlockOperation * connectTimeoutOperation;
 @end
 
 @implementation SRServerSentEventsTransport
@@ -99,7 +100,25 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    
     self.completionHandler = block;
+    
+    __weak __typeof(&*self)weakSelf = self;
+    self.connectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        if (strongSelf.completionHandler) {
+            NSDictionary* userInfo = @{
+                NSLocalizedDescriptionKey: NSLocalizedString(@"Connection timed out.", nil),
+                NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message before the timeout.", nil),
+                NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
+                                       };
+            NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
+            strongSelf.completionHandler(nil, timeout);
+            strongSelf.completionHandler = nil;
+        }
+    }];
+    [self.connectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[[connection transportConnectTimeout] integerValue]];
+    
     [self open:connection connectionData:connectionData isReconnecting:NO];
 }
 
@@ -108,7 +127,10 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 }
 
 - (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
-    [super abort:connection timeout:timeout connectionData:connectionData];
+    SRLogServerSentEvents(@"abort disconnecting");
+    _stop = YES;
+    [self.serverSentEventsOperationQueue cancelAllOperations];//this will enqueue a failure on run loop
+    [super abort:connection timeout:timeout connectionData:connectionData];//we expect this to set stop to YES
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
@@ -122,7 +144,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     __block SREventSourceStreamReader *eventSource;
     id parameters = @{
         @"transport" : [self name],
-        @"connectionToken" : [connection connectionToken],
+        @"connectionToken" : ([connection connectionToken]) ? [connection connectionToken] : @"",
         @"messageId" : ([connection messageId]) ? [connection messageId] : @"",
         @"groupsToken" : ([connection groupsToken]) ? [connection groupsToken] : @"",
         @"connectionData" : (connectionData) ? connectionData : @"",
@@ -179,7 +201,12 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                 BOOL disconnect = NO;
                 [strongSelf processResponse:strongConnection response:data shouldReconnect:&shouldReconnect disconnected:&disconnect];
                 if (strongSelf.completionHandler) {
-                    strongSelf.completionHandler(nil,nil);
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                             selector:@selector(start)
+                                                               object:nil];
+                    self.connectTimeoutOperation = nil;
+                    
+                    strongSelf.completionHandler(nil, nil);
                     strongSelf.completionHandler = nil;
                 }
 
@@ -224,7 +251,6 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     }];
     
     __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -233,9 +259,13 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         //http://cocoadocs.org/docsets/AFNetworking/2.5.4/Classes/AFHTTPRequestOperation.html
         //we however do close the eventSource below, which will lead us to the above code
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         if (strongSelf.completionHandler) {//this is equivalent to the !reconnecting onStartFailed from c#
             SRLogServerSentEvents("error while starting: %@", error);
+            [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                     selector:@selector(start)
+                                                       object:nil];
+            self.connectTimeoutOperation = nil;
+            
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
         } else if (!isReconnecting){//failure should first attempt to reconect
@@ -262,8 +292,9 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         
         if (connection.state != disconnected && [SRConnection ensureReconnecting:strongConnection]) {
             SRLogServerSentEvents(@"reconnecting");
-            [strongSelf open:strongConnection connectionData:data isReconnecting:YES];
             [strongSelf.serverSentEventsOperationQueue cancelAllOperations];
+            //now that all the current connections are tearing down, we have the queue to ourselves
+            [strongSelf open:strongConnection connectionData:data isReconnecting:YES];
         }
         
     }] performSelector:@selector(start) withObject:nil afterDelay:[self.reconnectDelay integerValue]];

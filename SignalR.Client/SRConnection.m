@@ -160,10 +160,10 @@
 
 - (void)startTransport {
     __weak __typeof(&*self)weakSelf = self;
+    
     [self.transport start:self connectionData:_connectionData completionHandler:^(id response, NSError *error) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!error) {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            
             [strongSelf changeState:connecting toState:connected];
             
             if (_keepAliveData != nil && [_transport supportsKeepAlive]) {
@@ -175,6 +175,13 @@
             }
             if(strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(SRConnectionDidOpen:)]) {
                 [strongSelf.delegate SRConnectionDidOpen:strongSelf];
+            }
+        } else {
+            if (strongSelf.error){
+                strongSelf.error(error);
+            }
+            if (strongSelf.closed){
+                strongSelf.closed();
             }
         }
     }];
@@ -210,19 +217,27 @@
     }
 }
 
-- (void)stop {
+- (void)stopAndCallServer{
     [self stop:self.defaultAbortTimeout];
 }
 
-- (void)stop:(NSNumber *)timeout {
-    
+- (void)stopButDoNotCallServer{
+    NSNumber* timeout = @-1;//immediately give up telling the server
+    [self stop:timeout];
+}
+
+- (void)stop {
+    [self stopAndCallServer];
+}
+
+//timeout <= 0 does not call server (immediate timeout)
+- (void)stop: (NSNumber *) timeout {
     // Do nothing if the connection is offline
     if (self.state != disconnected) {
         
         [_monitor stop];
         _monitor = nil;
         
-        //TODO: set connectiondata
         [_transport abort:self timeout:timeout connectionData:_connectionData];
         [self disconnect];
         
@@ -260,7 +275,7 @@
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
         userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"Start must be called before data can be sent",@"NSInternalInconsistencyException")];
-        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
                                              code:0 
                                          userInfo:userInfo];
         [self didReceiveError:error];
@@ -274,7 +289,7 @@
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
         userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
         userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:NSLocalizedString(@"The connection has not been established",@"NSInternalInconsistencyException")];
-        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
+        NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] 
                                              code:0 
                                          userInfo:userInfo];
         [self didReceiveError:error];
@@ -326,7 +341,7 @@
     __weak __typeof(&*self)weakSelf = self;
     self.disconnectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        [strongSelf disconnect];
+        [strongSelf stopButDoNotCallServer];
     }];
     [self.disconnectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[_disconnectTimeout integerValue]];
     

@@ -49,16 +49,7 @@
 
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
     
-    id parameters = @{
-        @"clientProtocol" : connection.protocol,
-        @"connectionData" : (connectionData) ? connectionData : @"",
-    };
-    
-    if ([connection queryString]) {
-        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
-        [_parameters addEntriesFromDictionary:[connection queryString]];
-        parameters = _parameters;
-    }
+    id parameters = [self connectionParameters:connection connectionData:connectionData];
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"negotiate"] parameters:parameters error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
@@ -84,17 +75,8 @@
 }
 
 - (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
-    id parameters = @{
-        @"transport" : [self name],
-        @"connectionData" : (connectionData) ? connectionData : @"",
-        @"connectionToken" : [connection connectionToken],
-    };
     
-    if ([connection queryString]) {
-        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
-        [_parameters addEntriesFromDictionary:[connection queryString]];
-        parameters = _parameters;
-    }
+    id parameters = [self connectionParameters:connection connectionData:connectionData];
     
     //TODO: this is a little strange but SignalR Expects the parameters in the queryString and fails if in the body.
     //So we let AFNetworking Generate our URL with proper encoding and then create the POST url which will encode the data in the body.
@@ -138,25 +120,21 @@
     //TODO: Throw, Subclass should implement this.
 }
 
+//@parameter: timeout, the amount of time we
 - (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
 
+    if (timeout <= 0) {
+        SRLogHTTPTransport(@"stopping transport without informing server");
+        return;
+    }
+    
     // Ensure that an abort request is only made once
     if (!_startedAbort)
     {
         SRLogHTTPTransport(@"will stop transport");
         _startedAbort = YES;
         
-        id parameters = @{
-            @"transport" : [self name],
-            @"connectionData" : (connectionData) ? connectionData : @"",
-            @"connectionToken" : [connection connectionToken],
-        };
-        
-        if ([connection queryString]) {
-            NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
-            [_parameters addEntriesFromDictionary:[connection queryString]];
-            parameters = _parameters;
-        }
+        id parameters = [self connectionParameters:connection connectionData:connectionData];
         
         NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"abort"] parameters:parameters error:nil];
         NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:nil error:nil];
@@ -174,6 +152,70 @@
         }];
         [operation start];
     }
+}
+
+- (NSDictionary *)connectionParameters:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData {
+    NSDictionary *parameters = @{};
+    parameters = [self addClientProtocol:parameters connection:connection];
+    parameters = [self addTransport:parameters transport:[self name]];
+    parameters = [self addConnectionData:parameters connectionData:connectionData];
+    parameters = [self addConnectionToken:parameters connection:connection];
+    parameters = [self addQueryString:parameters connection:connection];
+    
+    return parameters;
+}
+
+- (NSDictionary *)addClientProtocol:(NSDictionary *)parameters connection:(id <SRConnectionInterface>)connection {
+    if ([connection protocol]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:@{
+            @"clientProtocol" : [connection protocol]
+        }];
+        return _parameters;
+    }
+    return parameters;
+}
+
+- (NSDictionary *)addTransport:(NSDictionary *)parameters transport:(NSString *)transport {
+    if (transport) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:@{
+            @"transport" : transport
+        }];
+        return _parameters;
+    }
+    return parameters;
+}
+
+- (NSDictionary *)addConnectionData:(NSDictionary *)parameters connectionData:(NSString *)connectionData {
+    if (connectionData) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:@{
+            @"connectionData" : connectionData
+        }];
+        return _parameters;
+    }
+    return parameters;
+}
+
+- (NSDictionary *)addConnectionToken:(NSDictionary *)parameters connection:(id <SRConnectionInterface>)connection {
+    if ([connection connectionToken]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:@{
+            @"connectionToken" : [connection connectionToken]
+        }];
+        return _parameters;
+    }
+    return parameters;
+}
+
+- (NSDictionary *)addQueryString:(NSDictionary *)parameters connection:(id <SRConnectionInterface>)connection {
+    if ([connection queryString]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:[connection queryString]];
+        return _parameters;
+    }
+    return parameters;
 }
 
 - (void)processResponse:(id <SRConnectionInterface>)connection

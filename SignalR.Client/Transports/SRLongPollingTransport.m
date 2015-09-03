@@ -99,7 +99,7 @@
     
     id parameters = @{
         @"transport" : [self name],
-        @"connectionToken" : [connection connectionToken],
+        @"connectionToken" : ([connection connectionToken]) ? [connection connectionToken] : @"",
         @"messageId" : ([connection messageId]) ? [connection messageId] : @"",
         @"groupsToken" : ([connection groupsToken]) ? [connection groupsToken] : @"",
         @"connectionData" : (connectionData) ? connectionData : @"",
