@@ -152,8 +152,8 @@
             [strongSelf startTransport];
         } else {
             SRLogConnection(@"negotiation failed %@", error);
-            
             [strongSelf didReceiveError:error];
+            [strongSelf didClose];
         }
     }];
 }
@@ -177,12 +177,8 @@
                 [strongSelf.delegate SRConnectionDidOpen:strongSelf];
             }
         } else {
-            if (strongSelf.error){
-                strongSelf.error(error);
-            }
-            if (strongSelf.closed){
-                strongSelf.closed();
-            }
+            [strongSelf didReceiveError:error];
+            [strongSelf didClose];
         }
     }];
 }
