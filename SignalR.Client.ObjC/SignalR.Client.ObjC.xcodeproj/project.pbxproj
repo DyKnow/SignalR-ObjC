@@ -147,6 +147,8 @@
 		39533B8E173B376F003C138A /* SRKeepAliveData.h in Headers */ = {isa = PBXBuildFile; fileRef = 39533B8B173B376E003C138A /* SRKeepAliveData.h */; };
 		39533B8F173B376F003C138A /* SRKeepAliveData.m in Sources */ = {isa = PBXBuildFile; fileRef = 39533B8C173B376E003C138A /* SRKeepAliveData.m */; };
 		39533B90173B376F003C138A /* SRKeepAliveData.m in Sources */ = {isa = PBXBuildFile; fileRef = 39533B8C173B376E003C138A /* SRKeepAliveData.m */; };
+		3955D59E1B9794FC005AD0CF /* SRMockNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 3955D59D1B9794A8005AD0CF /* SRMockNetwork.m */; };
+		3955D59F1B9794FD005AD0CF /* SRMockNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 3955D59D1B9794A8005AD0CF /* SRMockNetwork.m */; };
 		396D2867165ABE4F0000D19E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2866165ABE4F0000D19E /* SystemConfiguration.framework */; };
 		396D286A165ABE6C0000D19E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 396D2869165ABE6C0000D19E /* MobileCoreServices.framework */; };
 		397387791B7A21B000AD4961 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
@@ -316,6 +318,8 @@
 		39423B5E16D139B0003E7516 /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		39533B8B173B376E003C138A /* SRKeepAliveData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKeepAliveData.h; sourceTree = "<group>"; };
 		39533B8C173B376E003C138A /* SRKeepAliveData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKeepAliveData.m; sourceTree = "<group>"; };
+		3955D59C1B9794A8005AD0CF /* SRMockNetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SRMockNetwork.h; path = SignalR.Client.Tests/SRMockNetwork.h; sourceTree = "<group>"; };
+		3955D59D1B9794A8005AD0CF /* SRMockNetwork.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SRMockNetwork.m; path = SignalR.Client.Tests/SRMockNetwork.m; sourceTree = "<group>"; };
 		396D2851165ABCD50000D19E /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		396D2866165ABE4F0000D19E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		396D2869165ABE6C0000D19E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -783,6 +787,8 @@
 				D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */,
 				D05649BA1B7058FF00020B31 /* SRWebSocketTransportTests.m */,
 				D05649BD1B71441000020B31 /* SRLongPollingTransportTests.m */,
+				3955D59C1B9794A8005AD0CF /* SRMockNetwork.h */,
+				3955D59D1B9794A8005AD0CF /* SRMockNetwork.m */,
 			);
 			name = SignalR.Client.Tests;
 			sourceTree = "<group>";
@@ -1336,6 +1342,7 @@
 				39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */,
 				D05649BC1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */,
 				D05649B91B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */,
+				3955D59F1B9794FD005AD0CF /* SRMockNetwork.m in Sources */,
 				39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				3940059515CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059A15CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
@@ -1352,6 +1359,7 @@
 				D05649BE1B71441000020B31 /* SRLongPollingTransportTests.m in Sources */,
 				D05649B81B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */,
 				D05649BB1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */,
+				3955D59E1B9794FC005AD0CF /* SRMockNetwork.m in Sources */,
 				39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				3940059415CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059915CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
