@@ -200,7 +200,6 @@
 		39FA642A1891655300C035DC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FA64281891654500C035DC /* XCTest.framework */; };
 		A9291598313CC816F1114BA7 /* libPods-SignalR.Client.Tests.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C493383CF341D38AA4D479F /* libPods-SignalR.Client.Tests.iOS.a */; };
 		B032892F3D1F25CA84B4DE26 /* libPods-SignalR.Client.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB242D5EF8E1786500EAE628 /* libPods-SignalR.Client.OSX.a */; };
-		CDCF6CC9A0ADDE795A006F02 /* libPods-SignalR.Samples.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A73F1B10E10A00242B5A414 /* libPods-SignalR.Samples.iOS.a */; };
 		D05649B81B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
 		D05649B91B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
 		D05649BB1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649BA1B7058FF00020B31 /* SRWebSocketTransportTests.m */; };
@@ -423,7 +422,6 @@
 				3994AAA81714D03B00E452F7 /* CFNetwork.framework in Frameworks */,
 				3994AAAC1714D06C00E452F7 /* Security.framework in Frameworks */,
 				3994AAB01714D09200E452F7 /* libicucore.dylib in Frameworks */,
-				CDCF6CC9A0ADDE795A006F02 /* libPods-SignalR.Samples.iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

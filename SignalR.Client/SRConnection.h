@@ -51,7 +51,7 @@ typedef void (^SRConnectionConnectionSlowBlock)();
 @property (copy) SRConnectionStateChangedBlock stateChanged;
 @property (copy) SRConnectionConnectionSlowBlock connectionSlow;
 
-@property (nonatomic, assign) id<SRConnectionDelegate> delegate;
+@property (nonatomic, weak) id<SRConnectionDelegate> delegate;
 
 ///-------------------------------
 /// @name Initializing an SRConnection Object
