@@ -70,10 +70,6 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
 - (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
     [_webSocket send:data];
-    
-    if(block) {
-        block(nil,nil);
-    }
 }
 
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
@@ -149,15 +145,21 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
 - (void)reconnect:(id <SRConnectionInterface>)connection {
     __weak __typeof(&*self)weakSelf = self;
+    
+    static BOOL waitingForReconnect;
+    
+    if (waitingForReconnect) return;
+    
     [[NSBlockOperation blockOperationWithBlock:^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        
+        waitingForReconnect = NO;
         if ([SRConnection ensureReconnecting:connection]) {
             SRLogWebSockets(@"reconnecting");
             [strongSelf performConnect:nil reconnecting:YES];
         }
         
     }] performSelector:@selector(start) withObject:nil afterDelay:[self.reconnectDelay integerValue]];
+    waitingForReconnect = YES;
 }
 
 #pragma mark -
@@ -208,8 +210,6 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
         SRWebSocketStartBlock callback = [self.startBlock copy];
         self.startBlock = nil;
         callback(nil,error);
-    } else if ([[_connectionInfo connection] state] == reconnecting) {
-        SRLogWebSockets(@"Websocket Already Reconnecting");
     }else if (!self.startedAbort) {
         //[[_connectionInfo connection] didReceiveError:error];
         SRLogWebSockets("reconnect from errors: %@", error);
