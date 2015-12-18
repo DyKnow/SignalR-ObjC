@@ -70,10 +70,6 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
 - (void)send:(id<SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
     [_webSocket send:data];
-    
-    if(block) {
-        block(nil,nil);
-    }
 }
 
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
