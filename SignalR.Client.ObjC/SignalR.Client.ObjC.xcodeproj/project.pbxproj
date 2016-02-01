@@ -163,6 +163,16 @@
 		3994AAAD1714D06E00E452F7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAA1714D06900E452F7 /* Security.framework */; };
 		3994AAB01714D09200E452F7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
 		3994AAB11714D09400E452F7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3994AAAE1714D08E00E452F7 /* libicucore.dylib */; };
+		39A27EFA1C5FD151009B7459 /* SREventSourceRequestSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A27EF81C5FD151009B7459 /* SREventSourceRequestSerializer.h */; };
+		39A27EFB1C5FD151009B7459 /* SREventSourceRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */; };
+		39A27EFE1C5FD242009B7459 /* SREventSourceResponseSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A27EFC1C5FD242009B7459 /* SREventSourceResponseSerializer.h */; };
+		39A27EFF1C5FD242009B7459 /* SREventSourceResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */; };
+		39A27F001C5FD42D009B7459 /* SREventSourceRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */; };
+		39A27F011C5FD42F009B7459 /* SREventSourceResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */; };
+		39A27F021C5FD76A009B7459 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
+		39A27F031C5FD76B009B7459 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
+		39A27F061C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */; };
+		39A27F071C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */; };
 		39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		39AF0D7F17138E3800E13E6E /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
 		39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -200,8 +210,6 @@
 		39FA642A1891655300C035DC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FA64281891654500C035DC /* XCTest.framework */; };
 		A9291598313CC816F1114BA7 /* libPods-SignalR.Client.Tests.iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C493383CF341D38AA4D479F /* libPods-SignalR.Client.Tests.iOS.a */; };
 		B032892F3D1F25CA84B4DE26 /* libPods-SignalR.Client.OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB242D5EF8E1786500EAE628 /* libPods-SignalR.Client.OSX.a */; };
-		D05649B81B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
-		D05649B91B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
 		D05649BB1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649BA1B7058FF00020B31 /* SRWebSocketTransportTests.m */; };
 		D05649BC1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649BA1B7058FF00020B31 /* SRWebSocketTransportTests.m */; };
 		D05649BE1B71441000020B31 /* SRLongPollingTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649BD1B71441000020B31 /* SRLongPollingTransportTests.m */; };
@@ -326,6 +334,12 @@
 		3994AAA51714D01900E452F7 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		3994AAAA1714D06900E452F7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		3994AAAE1714D08E00E452F7 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		39A27EF81C5FD151009B7459 /* SREventSourceRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SREventSourceRequestSerializer.h; sourceTree = "<group>"; };
+		39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SREventSourceRequestSerializer.m; sourceTree = "<group>"; };
+		39A27EFC1C5FD242009B7459 /* SREventSourceResponseSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SREventSourceResponseSerializer.h; sourceTree = "<group>"; };
+		39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SREventSourceResponseSerializer.m; sourceTree = "<group>"; };
+		39A27F041C5FF8F0009B7459 /* SRMockNegotiate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockNegotiate.h; path = SignalR.Client.Tests/SRMockNegotiate.h; sourceTree = "<group>"; };
+		39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockNegotiate.m; path = SignalR.Client.Tests/SRMockNegotiate.m; sourceTree = "<group>"; };
 		39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketTransport.h; sourceTree = "<group>"; };
 		39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketTransport.m; sourceTree = "<group>"; };
 		39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRWebSocketConnectionInfo.h; path = WebSockets/SRWebSocketConnectionInfo.h; sourceTree = "<group>"; };
@@ -665,6 +679,10 @@
 		3920785015AF13F6009B959E /* ServerSentEvents */ = {
 			isa = PBXGroup;
 			children = (
+				39A27EFC1C5FD242009B7459 /* SREventSourceResponseSerializer.h */,
+				39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */,
+				39A27EF81C5FD151009B7459 /* SREventSourceRequestSerializer.h */,
+				39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */,
 				3920785115AF13F6009B959E /* SRChunkBuffer.h */,
 				3920785215AF13F6009B959E /* SRChunkBuffer.m */,
 				3920785315AF13F6009B959E /* SREventSourceStreamReader.h */,
@@ -787,6 +805,8 @@
 				D05649BD1B71441000020B31 /* SRLongPollingTransportTests.m */,
 				3955D59C1B9794A8005AD0CF /* SRMockNetwork.h */,
 				3955D59D1B9794A8005AD0CF /* SRMockNetwork.m */,
+				39A27F041C5FF8F0009B7459 /* SRMockNegotiate.h */,
+				39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */,
 			);
 			name = SignalR.Client.Tests;
 			sourceTree = "<group>";
@@ -875,12 +895,14 @@
 				3920789315AF13F6009B959E /* SRNegotiationResponse.h in Headers */,
 				3920789515AF13F6009B959E /* SRLog.h in Headers */,
 				3920789615AF13F6009B959E /* SRChunkBuffer.h in Headers */,
+				39A27EFE1C5FD242009B7459 /* SREventSourceResponseSerializer.h in Headers */,
 				3920789815AF13F6009B959E /* SREventSourceStreamReader.h in Headers */,
 				3920789D15AF13F6009B959E /* SRAutoTransport.h in Headers */,
 				3920788115AF13F6009B959E /* NSObject+SRJSON.h in Headers */,
 				392078A015AF13F6009B959E /* SRClientTransportInterface.h in Headers */,
 				392078A115AF13F6009B959E /* SRHttpBasedTransport.h in Headers */,
 				392078A315AF13F6009B959E /* SRLongPollingTransport.h in Headers */,
+				39A27EFA1C5FD151009B7459 /* SREventSourceRequestSerializer.h in Headers */,
 				392078A515AF13F6009B959E /* SRServerSentEventsTransport.h in Headers */,
 				39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */,
 				39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */,
@@ -972,8 +994,8 @@
 				39E6FCD015C6BDC600434098 /* Sources */,
 				39E6FCD115C6BDC600434098 /* Frameworks */,
 				39E6FCD215C6BDC600434098 /* Resources */,
-				39E6FCD315C6BDC600434098 /* ShellScript */,
 				9DC2EB4DAEF87C59FF882FB5 /* Copy Pods Resources */,
+				E7CB64192A8E0E0DEC70EDBA /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -993,8 +1015,8 @@
 				39E6FD1215C6BF4000434098 /* Sources */,
 				39E6FD1315C6BF4000434098 /* Frameworks */,
 				39E6FD1415C6BF4000434098 /* Resources */,
-				39E6FD1515C6BF4000434098 /* ShellScript */,
 				6EC1074B81D5D81279870B7F /* Copy Pods Resources */,
+				6FB19AAEA87EE65EE4B1D8E8 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1012,7 +1034,7 @@
 		392077FE15AF13C3009B959E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "DyKnow LLC";
 			};
 			buildConfigurationList = 3920780115AF13C3009B959E /* Build configuration list for PBXProject "SignalR.Client.ObjC" */;
@@ -1111,32 +1133,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/appledoc \\\n--project-name \"SignalR-ObjC\" \\\n--project-company \"DyKnow\" \\\n--company-id \"com.dyknow\" \\\n--docset-atom-filename \"SignalR-ObjC.atom\" \\\n--docset-feed-url \"http://dyknow.github.com/SignalR-ObjC/%DOCSETATOMFILENAME\" \\\n--docset-package-url \"http://dyknow.github.com/SignalR-ObjC/%DOCSETPACKAGEFILENAME\" \\\n--docset-fallback-url \"http://dyknow.github.com/SignalR-ObjC/\" \\\n--output \"~/Documentation/SignalR-ObjC\" \\\n--publish-docset \\\n--logformat xcode \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--keep-intermediate-files \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n\"${PROJECT_DIR}/../SignalR.Client\"";
 		};
-		39E6FCD315C6BDC600434098 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-		39E6FD1515C6BF4000434098 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
 		5E58010E027C503BCB2DC2B1 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1165,6 +1161,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Client.Tests.iOS/Pods-SignalR.Client.Tests.iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6FB19AAEA87EE65EE4B1D8E8 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Client.Tests.iOS/Pods-SignalR.Client.Tests.iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		799AACE0F774B852C4BDD0D2 /* Check Pods Manifest.lock */ = {
@@ -1227,6 +1238,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		E7CB64192A8E0E0DEC70EDBA /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SignalR.Client.Tests.OSX/Pods-SignalR.Client.Tests.OSX-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E8B9469FB1BAE4CB8F6EC87B /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1263,8 +1289,10 @@
 				3919638115AF222E00DDC946 /* SRHubInvocation.m in Sources */,
 				3919638215AF222E00DDC946 /* SRHubProxy.m in Sources */,
 				39F7D7B31833FC99002590A6 /* SRServerSentEvent.m in Sources */,
+				39A27F001C5FD42D009B7459 /* SREventSourceRequestSerializer.m in Sources */,
 				3919638415AF222E00DDC946 /* SRHubRegistrationData.m in Sources */,
 				3919638515AF222E00DDC946 /* SRHubResult.m in Sources */,
+				39A27F011C5FD42F009B7459 /* SREventSourceResponseSerializer.m in Sources */,
 				3919638715AF222E00DDC946 /* SRSubscription.m in Sources */,
 				3919638915AF223A00DDC946 /* NSObject+SRJSON.m in Sources */,
 				3919638C15AF223A00DDC946 /* SRExceptionHelper.m in Sources */,
@@ -1296,7 +1324,9 @@
 				3920787715AF13F6009B959E /* SRHubRegistrationData.m in Sources */,
 				3920787915AF13F6009B959E /* SRHubResult.m in Sources */,
 				3920787E15AF13F6009B959E /* SRSubscription.m in Sources */,
+				39A27EFF1C5FD242009B7459 /* SREventSourceResponseSerializer.m in Sources */,
 				3920788215AF13F6009B959E /* NSObject+SRJSON.m in Sources */,
+				39A27EFB1C5FD151009B7459 /* SREventSourceRequestSerializer.m in Sources */,
 				3920788915AF13F6009B959E /* SRExceptionHelper.m in Sources */,
 				3920788E15AF13F6009B959E /* SRVersion.m in Sources */,
 				3920789115AF13F6009B959E /* SRConnection.m in Sources */,
@@ -1339,9 +1369,10 @@
 				39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */,
 				39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */,
 				D05649BC1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */,
-				D05649B91B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */,
+				39A27F071C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */,
 				3955D59F1B9794FD005AD0CF /* SRMockNetwork.m in Sources */,
 				39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
+				39A27F021C5FD76A009B7459 /* SRServerSentEventsTransportTests.m in Sources */,
 				3940059515CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059A15CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
 				39C97CF015D3DDD600F66B50 /* SRHubProxyTests.m in Sources */,
@@ -1354,13 +1385,14 @@
 			files = (
 				39E6FD2C15C6BFCE00434098 /* SRJSONTests.m in Sources */,
 				39E6FD6115C6EAFC00434098 /* NSObject+SRJSON.m in Sources */,
+				39A27F031C5FD76B009B7459 /* SRServerSentEventsTransportTests.m in Sources */,
 				D05649BE1B71441000020B31 /* SRLongPollingTransportTests.m in Sources */,
-				D05649B81B6EF87F00020B31 /* SRServerSentEventsTransportTests.m in Sources */,
 				D05649BB1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */,
 				3955D59E1B9794FC005AD0CF /* SRMockNetwork.m in Sources */,
 				39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				3940059415CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059915CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
+				39A27F061C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1462,6 +1494,7 @@
 				INFOPLIST_FILE = "SignalR.Samples.OSX/SignalR.Samples.OSX-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1484,6 +1517,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "SignalR.Samples.OSX/SignalR.Samples.OSX-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1588,6 +1622,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1604,8 +1639,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -1635,8 +1670,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = NO;
 			};
@@ -1710,6 +1745,7 @@
 				GCC_PREFIX_HEADER = "SignalR.Samples.iOS/SignalR.Samples.iOS-Prefix.pch";
 				INFOPLIST_FILE = "SignalR.Samples.iOS/SignalR.Samples.iOS-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1726,6 +1762,7 @@
 				INFOPLIST_FILE = "SignalR.Samples.iOS/SignalR.Samples.iOS-Info.plist";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
@@ -1740,18 +1777,13 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
-					"\\\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks\\\"",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1765,17 +1797,12 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
-					"\\\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks\\\"",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "SignalR.Client.Tests.OSX/SignalR.Client.Tests.OSX-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1796,6 +1823,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Prefix.pch";
 				INFOPLIST_FILE = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1815,6 +1843,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Prefix.pch";
 				INFOPLIST_FILE = "SignalR.Client.Tests.iOS/SignalR.Client.Tests.iOS-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SignalR.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
 			};

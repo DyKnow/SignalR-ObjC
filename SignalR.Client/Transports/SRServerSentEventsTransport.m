@@ -29,45 +29,15 @@
 #import "SRLog.h"
 #import "SRChunkBuffer.h"
 #import "SRServerSentEvent.h"
-
-@interface SRHTTPRequestOperation : AFHTTPRequestOperation
-
-typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-
-@property (readwrite, nonatomic, strong) NSHTTPURLResponse *response;
-@property (readwrite, nonatomic, copy) AFURLConnectionOperationDidReceiveURLResponseBlock urlResponseBlock;
-
-@end
-
-@implementation SRHTTPRequestOperation
-
-@dynamic response;
-
-- (void)setDidReceiveResponseBlock:(void (^)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response))block {
-    self.urlResponseBlock = block;
-}
-
-#pragma mark -
-#pragma mark NSURLConnection Delegate
-
-- (void)connection:(NSURLConnection *)__unused connection
-didReceiveResponse:(NSURLResponse *)response {
-    self.response = (NSHTTPURLResponse *)response;
-    if (self.urlResponseBlock) {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            self.urlResponseBlock(self, self.response);
-        });
-    }
-    [super connection:connection didReceiveResponse:response];
-}
-
-@end
+#import "SREventSourceRequestSerializer.h"
+#import "SREventSourceResponseSerializer.h"
 
 typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 @interface SRServerSentEventsTransport ()
 
 @property (assign) BOOL stop;
+@property (strong, nonatomic, readwrite) SREventSourceStreamReader *eventSource;
 @property (strong, nonatomic, readwrite) NSOperationQueue *serverSentEventsOperationQueue;
 @property (copy) SRCompletionHandler completionHandler;
 @property (strong, nonatomic, readwrite) NSBlockOperation * connectTimeoutOperation;
@@ -162,95 +132,89 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     
     SRLogServerSentEvents(@"SSE: GET %@", url);
     
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
+    NSMutableURLRequest *request = [[SREventSourceRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:240];
-    [request setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
     [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
     //TODO: prepareRequest
-    SRHTTPRequestOperation *operation = [[SRHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setResponseSerializer:[SREventSourceResponseSerializer serializer]];
     //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
     //operation.credential = self.credential;
     //operation.securityPolicy = self.securityPolicy;
-    [operation setDidReceiveResponseBlock:^(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response) {
-        eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
-        __weak __typeof(&*self)weakSelf = self;
-        __weak __typeof(&*connection)weakConnection = connection;
+    _eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
+    _eventSource.opened = ^() {
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         
-        eventSource.opened = ^() {
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-            
-            // This will noop if we're not in the reconnecting state
-            if([strongConnection changeState:reconnecting toState:connected]) {
-                // Raise the reconnect event if the connection comes back up
-                [strongConnection didReconnect];
+        // This will noop if we're not in the reconnecting state
+        if([strongConnection changeState:reconnecting toState:connected]) {
+            // Raise the reconnect event if the connection comes back up
+            [strongConnection didReconnect];
+        }
+    };
+    _eventSource.message = ^(SRServerSentEvent * sseEvent) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        
+        if([sseEvent.event isEqual:@"data"]) {
+            NSString *data = [[NSString alloc] initWithData:sseEvent.data encoding:NSUTF8StringEncoding];
+            if([data caseInsensitiveCompare:@"initialized"] == NSOrderedSame) {
+                return;
             }
-        };
-        eventSource.message = ^(SRServerSentEvent * sseEvent) {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
             
-            if([sseEvent.event isEqual:@"data"]) {
-                NSString *data = [[NSString alloc] initWithData:sseEvent.data encoding:NSUTF8StringEncoding];
-                if([data caseInsensitiveCompare:@"initialized"] == NSOrderedSame) {
-                    return;
-                }
+            BOOL shouldReconnect = NO;
+            BOOL disconnect = NO;
+            [strongSelf processResponse:strongConnection response:data shouldReconnect:&shouldReconnect disconnected:&disconnect];
+            if (strongSelf.completionHandler) {
+                [NSObject cancelPreviousPerformRequestsWithTarget:strongSelf.connectTimeoutOperation
+                                                         selector:@selector(start)
+                                                           object:nil];
+                strongSelf.connectTimeoutOperation = nil;
                 
-                BOOL shouldReconnect = NO;
-                BOOL disconnect = NO;
-                [strongSelf processResponse:strongConnection response:data shouldReconnect:&shouldReconnect disconnected:&disconnect];
-                if (strongSelf.completionHandler) {
-                    [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
-                                                             selector:@selector(start)
-                                                               object:nil];
-                    self.connectTimeoutOperation = nil;
-                    
-                    strongSelf.completionHandler(nil, nil);
-                    strongSelf.completionHandler = nil;
-                }
-
-                if(disconnect) {
-                    SRLogServerSentEvents(@"disconnect received should disconnect");
-                    _stop = YES;
-                    [strongConnection disconnect];
-                }
-            }
-        };
-        eventSource.closed = ^(NSError *exception) { //server ended without error
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-            
-            SRLogServerSentEvents(@"did close");
-            
-            if (exception != nil ){
-                // Check if the request is aborted
-                BOOL isRequestAborted = [SRExceptionHelper isRequestAborted:exception];
-
-                if (!isRequestAborted) {
-                    // Don't raise exceptions if the request was aborted (connection was stopped).
-                    [strongConnection didReceiveError:exception];
-                }
+                strongSelf.completionHandler(nil, nil);
+                strongSelf.completionHandler = nil;
             }
             
-            //release eventSource, no other scopes have access, would like to release before
-            //eventSource will be nil for this scope before reconnect can call open, even if
-            //it wasn't doing a timeout first
-            eventSource = nil;
+            if(disconnect) {
+                SRLogServerSentEvents(@"disconnect received should disconnect");
+                _stop = YES;
+                [strongConnection disconnect];
+            }
+        }
+    };
+    _eventSource.closed = ^(NSError *exception) { //server ended without error
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        
+        SRLogServerSentEvents(@"did close");
+        
+        if (exception != nil ){
+            // Check if the request is aborted
+            BOOL isRequestAborted = [SRExceptionHelper isRequestAborted:exception];
             
-            if (_stop) {
-                [strongSelf completeAbort];
+            if (!isRequestAborted) {
+                // Don't raise exceptions if the request was aborted (connection was stopped).
+                [strongConnection didReceiveError:exception];
             }
-            else if ([strongSelf tryCompleteAbort]) {
-            }
-            else {
-                [strongSelf reconnect:strongConnection data:connectionData];
-            }
-        };
-        [eventSource start];
-    }];
-    
-    __weak __typeof(&*self)weakSelf = self;
+        }
+        
+        //release eventSource, no other scopes have access, would like to release before
+        //eventSource will be nil for this scope before reconnect can call open, even if
+        //it wasn't doing a timeout first
+        _eventSource = nil;
+        
+        if (strongSelf.stop) {
+            [strongSelf completeAbort];
+        }
+        else if ([strongSelf tryCompleteAbort]) {
+        }
+        else {
+            [strongSelf reconnect:strongConnection data:connectionData];
+        }
+    };
+    [_eventSource start];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

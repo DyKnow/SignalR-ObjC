@@ -13,21 +13,8 @@
 #import "SRConnection.h"
 #import "SRConnectionDelegate.h"
 #import "SRNegotiationResponse.h"
-
-@interface SRHTTPRequestOperation : AFHTTPRequestOperation
-
-typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-
-- (void)setDidReceiveResponseBlock:(void (^)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response))block;
-- (void)setCompletionBlockWithSuccess:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-
-@property (readwrite, nonatomic, strong) NSHTTPURLResponse *response;
-@property (readwrite, nonatomic, copy) AFURLConnectionOperationDidReceiveURLResponseBlock urlResponseBlock;
-@property (nonatomic, strong) NSOutputStream *outputStream;
-
-
-@end
+#import "SRMockNetwork.h"
+#import "SRMockNegotiate.h"
 
 @interface SRConnection (UnitTest)
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
@@ -41,10 +28,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 @interface SSE_NetworkMock: NSObject
 @property (readwrite, nonatomic, strong) id mock;
 //only call this directly if you don't want to trigger the stream.opened callback
-@property (readwrite, nonatomic, copy) void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
 @property (readwrite, nonatomic, copy) void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
--(void) openingResponse: (NSString*) initialData;
--(void) message: (NSString*) messageStr;
+
 @property (readwrite, nonatomic, strong) NSData* lastData;
 @property (readwrite, nonatomic, strong) id dataDelegate;
 @end
@@ -55,14 +40,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     self = [super init];
     __weak __typeof(&*self)weakSelf = self;
     
-    _mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[_mock stub] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        void (^callbackOut)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-        [invocation getArgument: &callbackOut atIndex: 2];
-        strongSelf.onGotResponse = callbackOut;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-    
+    _mock = [OCMockObject niceMockForClass:[AFHTTPRequestOperation class]];
     [[[_mock stub] andDo:^(NSInvocation *invocation) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         void (^failureOut)(AFHTTPRequestOperation *operation, NSError *error);
@@ -77,33 +55,47 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     return self;
 }
 
--(void) openingResponse: (NSString*) initialData
-{
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[self.mock stub] andReturn: dataStream] outputStream];
-    self.onGotResponse(self.mock, nil);
-
-    if (!initialData) {
-        initialData = @"";
-    }
-    
-    NSData* data = [initialData dataUsingEncoding:NSUTF8StringEncoding];
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
-    _lastData = data;
-    _dataDelegate = dataStream.delegate;
+- (void)prepareForOpeningResponse:(void (^)())then {
+    return [self prepareForOpeningResponse:nil then:then];
 }
 
--(void) message: (NSString*) messageStr
-{
-    NSMutableData* data = [[NSMutableData alloc] initWithData: _lastData];
-    [data appendData:[messageStr dataUsingEncoding:NSUTF8StringEncoding]];
-
+- (void)prepareForOpeningResponse:(NSString *)response then:(void (^)())then {
+    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
+    [[[self.mock stub] andReturn: dataStream] outputStream];
+    
+    if (!response) {
+        response = @"";
+    }
+    NSData* data = [response dataUsingEncoding:NSUTF8StringEncoding];
+    
     id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
     [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    [_dataDelegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
+    
+    if (then) {
+        then();
+    }
+    _dataDelegate = dataStream.delegate;
     _lastData = data;
+    
+    if (self.dataDelegate) {
+        [self.dataDelegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
+    }
+}
+
+- (void)prepareForNextResponse:(NSString *)response then:(void (^)())then {
+    NSMutableData* prior = [[NSMutableData alloc] initWithData: _lastData];
+    NSData* data = [response dataUsingEncoding:NSUTF8StringEncoding];
+    [prior appendData:data];
+    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
+    [[[streamChanges stub] andReturn:prior] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+    
+    if (then) {
+        then();
+    }
+    
+    if (self.dataDelegate) {
+        [self.dataDelegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
+    }
 }
 
 - (void)dealloc {
@@ -162,60 +154,25 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 }
 
 - (void)testStartCallsTheCompletionHandlerAfterSuccess {
-     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-    __block void (^onFailure)(NSError*);
-   
-    id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        onGotResponse = successCallback;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
-        [invocation getArgument: &failureCallback atIndex: 3];
-        onFailure = failureCallback;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
+    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
     
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithRequest:[OCMArg any]];
-    
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
-
-    __weak __typeof(&*mock)weakMock = mock;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
-        [expectation fulfill];
+    [NetworkMock prepareForOpeningResponse:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
+            [expectation fulfill];
+        }];
     }];
-    
-    //Now we need to send it the data it expects
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[mock stub] andReturn: dataStream] outputStream];
-     
-    onGotResponse(mock, nil);
-    
-    [dataStream.delegate stream:dataStream handleEvent:NSStreamEventOpenCompleted];
-    
-    NSString* responseStr = @"data: {}\n";
-    NSData* data = [responseStr dataUsingEncoding:NSUTF8StringEncoding];
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
-
-    
+        
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -226,58 +183,21 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (void)testParsesInitialBuffer {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-    __block void (^onFailure)(NSError*);
+    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
     
-    id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        onGotResponse = successCallback;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-    
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
-        [invocation getArgument: &failureCallback atIndex: 3];
-        onFailure = failureCallback;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
-    
-    
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithRequest:[OCMArg any]];
-    
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
-
-    __weak __typeof(&*mock)weakMock = mock;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
-        [expectation fulfill];
+    [NetworkMock prepareForOpeningResponse:@"data: {}\n" then:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
+            [expectation fulfill];
+        }];
     }];
-    
-    //Now we need to send it the data it expects
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[mock stub] andReturn: dataStream] outputStream];
-    
-    onGotResponse(mock, nil);
-    
-    
-    NSString* responseStr = @"data: {}\n";
-    NSData* data = [responseStr dataUsingEncoding:NSUTF8StringEncoding];
-    
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-
-    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
-    
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -289,35 +209,12 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (void)testIgnoresInitializedAndEmptyLinesWhenParsingMessages {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-    __block void (^onFailure)(NSError*);
+    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
     
-    id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        onGotResponse = successCallback;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-    
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
-        [invocation getArgument: &failureCallback atIndex: 3];
-        onFailure = failureCallback;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
-    
-    
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithRequest:[OCMArg any]];
-    
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
-
-    __weak __typeof(&*mock)weakMock = mock;
     
     connection.received = ^(NSDictionary * data){
         if ([[data valueForKey:@"M"] isEqualToString:@"message"]
@@ -330,23 +227,9 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
-    
-    //Now we need to send it the data it expects
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[mock stub] andReturn: dataStream] outputStream];
-    
-    onGotResponse(mock, nil);
-    
-    
-    NSString* responseStr = @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n";
-    NSData* data = [responseStr dataUsingEncoding:NSUTF8StringEncoding];
-    
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    
-    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
-    
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
+    }];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -358,54 +241,23 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (void)testConnectionInitialFailureUsesCallback {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-    __block void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
-    
-    id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        onGotResponse = successCallback;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-    
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^failureCallback)(AFHTTPRequestOperation *, NSError *) = nil;
-        [invocation getArgument: &failureCallback atIndex: 3];
-        onFailure = failureCallback;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
-    
-    
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithRequest:[OCMArg any]];
-    
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
-
-    __weak __typeof(&*mock)weakMock = mock;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
+    [SRMockNetwork mockHttpRequestOperationForClass:[AFHTTPRequestOperation class]
+                                         statusCode:@400
+                                              error:[[NSError alloc] initWithDomain:@"EXPECTED" code:42 userInfo:nil]];
+
     [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
-        if (error) {
+        if(error) {
             [expectation fulfill];
         }
     }];
-    
-    //Now we need to send it the data it expects
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[mock stub] andReturn: dataStream] outputStream];
-    
-    //set up test to verify we do not retry connection after failure
-    id failmock = [OCMockObject mockForClass:[SRHTTPRequestOperation class]];
-    [[failmock reject] alloc];
-    
-    onFailure(mock, [[NSError alloc] initWithDomain:@"EXPECTED" code:42 userInfo:nil]);
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -416,11 +268,11 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 
 - (void)testConnectionErrorRetries__RetriesAfterADelay__CommunicatesLifeCycleViaConnection {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     __weak __typeof(&*connection)weakConnection = connection;
     __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
+    __weak __typeof(&*NetworkMock)weakNetConnect = NetworkMock;
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
@@ -430,14 +282,12 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
-        [initialized fulfill];
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
+            [initialized fulfill];
+        }];
     }];
     
-    //gets the response and pulls down data successfully at start
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
-    
-    //have to pump messages to continue
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -448,13 +298,13 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
             __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
             
             //spoiler: we expect this to reconnect and for connection to communicate that out
-            XCTestExpectation *expectation = [strongSelf expectationWithDescription:@"Retrying callback called"];
-            XCTestExpectation *expectation2 = [strongSelf expectationWithDescription:@"Retry callback called"];
+            XCTestExpectation *reconnecting = [strongSelf expectationWithDescription:@"reconnecting"];
+            XCTestExpectation *reconnected = [strongSelf expectationWithDescription:@"reconnected"];
             strongConnection.reconnecting = ^(){
-                [expectation fulfill];
+                [reconnecting fulfill];
             };
             strongConnection.reconnected = ^(){
-                [expectation2 fulfill];
+                [reconnected fulfill];
             };
 
             //do setup to simulate and verify the reconnect delay
@@ -480,7 +330,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
             SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
             
             reconnectAfterTimeoutCallback();//simulating retry timeout
-            [NetReconnect openingResponse:nil];
+            [NetReconnect prepareForOpeningResponse:nil];
             //todo: verify request url was reconnect not connect, but then you have to sovle ARC
             [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
                 if (error){
@@ -494,11 +344,11 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (void)testLostConnectionAbortsAllConnectionsAndReconnects {
     // happens when healthy connection misses too many heartbeats
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
+    __weak __typeof(&*NetworkMock)weakNetConnect = NetworkMock;
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
@@ -509,12 +359,13 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     id queueMock = [OCMockObject niceMockForClass:[NSOperationQueue class]];
     [[queueMock expect] cancelAllOperations];
     sse.serverSentEventsOperationQueue = queueMock;
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
-        [initialized fulfill];
+
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
+            [initialized fulfill];
+        }];
     }];
-    //gets the response and pulls down data successfully at start
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
-     
+
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
@@ -550,7 +401,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         reconnectDelay.afterWait();
         XCTAssertEqual(2, reconnectDelay.waitTime, "Unexpected reconnect delay");
         
-        [NetReconnect openingResponse:nil];
+        [NetReconnect prepareForOpeningResponse:nil];
         [strongSelf waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
             if (error){
                 NSLog(@"Sub-Timeout Error: %@", error);
@@ -574,30 +425,22 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-            @"ConnectionId": @"10101",
-            @"ConnectionToken": @"10101010101",
-            @"DisconnectTimeout": @30,
-            @"ProtocolVersion": @"1.3.0.0",
-            @"TransportConnectTimeout": @10
-        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
     
     connection.started = ^{
         [initialized fulfill];
     };
     
-    [connection start:sse];
-    
-    //gets the response and pulls down data successfully at start
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [NetConnect prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+    }];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -664,36 +507,12 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (void)testHandlesExtraEmptyLinesWhenParsingMessages {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-    __block void (^onFailure)(NSError*);
-    
-    id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        onGotResponse = successCallback;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-    
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
-        [invocation getArgument: &failureCallback atIndex: 3];
-        onFailure = failureCallback;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
-    
-    
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithRequest:[OCMArg any]];
-    
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
+    SSE_NetworkMock * NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
 
-    __weak __typeof(&*mock)weakMock = mock;
-    
     connection.received = ^(NSString * data){
         if (data) {
             [expectation fulfill];
@@ -703,23 +522,9 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
-    
-    //Now we need to send it the data it expects
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[mock stub] andReturn: dataStream] outputStream];
-    
-    onGotResponse(mock, nil);
-    
-    
-    NSString* responseStr = @"data: initialized\n\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n";
-    NSData* data = [responseStr dataUsingEncoding:NSUTF8StringEncoding];
-    
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    
-    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
-    
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
+    }];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
@@ -731,35 +536,11 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 - (void)testHandlesNewLinesSpreadOutOverReads {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    __block void (^onGotResponse)(AFHTTPRequestOperation *operation, NSHTTPURLResponse *response);
-    __block void (^onFailure)(NSError*);
-    
-    id mock = [OCMockObject niceMockForClass:[SRHTTPRequestOperation class]];
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        onGotResponse = successCallback;
-    }] setDidReceiveResponseBlock: [OCMArg any]];
-    
-    [[[mock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^failureCallback)(NSError *) = nil;
-        [invocation getArgument: &failureCallback atIndex: 3];
-        onFailure = failureCallback;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
-    
-    
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithRequest:[OCMArg any]];
-    
-    SRConnection* connection = [SRConnection alloc];
-    [connection initWithURLString:@"http://localhost:0000"];
+    SSE_NetworkMock * NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRConnection* connection = [[SRConnection alloc]initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
-
-    __weak __typeof(&*mock)weakMock = mock;
     
     connection.received = ^(NSDictionary * data){
         if ([[data valueForKey:@"M"] isEqualToString:@"message"]
@@ -769,38 +550,15 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         }
     };
 
-    
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}" then:^{
+        [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){}];
+    }];
     
-    //Now we need to send it the data it expects
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[mock stub] andReturn: dataStream] outputStream];
-    
-    onGotResponse(mock, nil);
-    
-    
-    NSString* responseStr = @"data: initialized\n\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}";
-    NSMutableData* data1 = [ responseStr dataUsingEncoding:NSUTF8StringEncoding];
-    
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data1] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    
-    [dataStream.delegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
-    
-    //currently, SSE uses the same stream over and over and expects that same stream
-    //to have all previous bytes in it. That said bc this is async, to actually test
-    //the differences, we will create a separate stream
-    NSMutableData* data2 = [[NSMutableData alloc] initWithData: data1];
-    NSString* responseStrEnd = @"\n";
-    [data2 appendData:[responseStrEnd dataUsingEncoding:NSUTF8StringEncoding]];
-    id moreStreamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[moreStreamChanges stub] andReturn:data2] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    
-    [dataStream.delegate stream:moreStreamChanges handleEvent:NSStreamEventHasSpaceAvailable];
-    
+    [NetworkMock prepareForNextResponse:@"\n" then:nil];
+
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -815,21 +573,14 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-            @"ConnectionId": @"10101",
-            @"ConnectionToken": @"10101010101",
-            @"DisconnectTimeout": @30,
-            @"ProtocolVersion": @"1.3.0.0",
-            @"TransportConnectTimeout": @10
-            }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
     
     connection.started = ^{
         XCTAssert(NO, @"Connection started");
@@ -856,28 +607,22 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.transportConnectTimeout =@10;
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    
     __block BOOL firstClosedCalled = NO;
     __block int startCount = 0;
     
@@ -897,9 +642,11 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     
     [connection start:sse];
     [connection stop];
-    [connection start:sse];
     
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+    }];
+    
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -916,29 +663,25 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-            @"ConnectionId": @"10101",
-            @"ConnectionToken": @"10101010101",
-            @"DisconnectTimeout": @30,
-            @"ProtocolVersion": @"1.3.0.0",
-            @"TransportConnectTimeout": @10
-            }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
         XCTAssert(NO, @"todo: verify it's a 401");
     };
     
-    [connection start:sse];
     
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [NetConnect prepareForOpeningResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+    }];
+    
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -954,29 +697,25 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
         XCTAssert(NO, @"todo: verify it's a 403");
     };
     
-    [connection start:sse];
     
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
+    [NetConnect prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+    }];
+    
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -996,48 +735,37 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 
 - (void)testReconnectExceedingTheReconnectWindowResultsInTheConnectionDisconnect {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]
-                     initWithDictionary:@{
-                        @"ConnectionId": @"10101",
-                        @"ConnectionToken": @"10101010101",
-                        @"DisconnectTimeout": @30,
-                        @"ProtocolVersion": @"1.3.0.0",
-                        @"TransportConnectTimeout": @10
-                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
     
     connection.started = ^{
         [initialized fulfill];
     };
     
-    [connection start:sse];
-    
-    //gets the response and pulls down data successfully at start
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n"];
-    
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+    }];
+
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
         }
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
         
         //trigger an error to see
         //spoiler: we expect this to fail
@@ -1054,7 +782,7 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         //do setup to simulate and verify the reconnect delay
         SSE_WaitBlock* reconnectBlock = [[SSE_WaitBlock alloc]init:[[sse reconnectDelay] doubleValue]];
         NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
-        strongNetConnect.onFailure(strongNetConnect.mock, cancelledError);
+        NetworkMock.onFailure(NetworkMock.mock, cancelledError);
         [reconnectBlock.mock stopMocking];//dont want to accidentally get other blocks
         
         //we will be calling open again, so lets recapture the data to verify
@@ -1080,31 +808,20 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
 
 - (void)testConnectionCanBeStoppedDuringTransportStart {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     
-    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *, NSError *) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]
-                     initWithDictionary:@{
-                                          @"ConnectionId": @"10101",
-                                          @"ConnectionToken": @"10101010101",
-                                          @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"1.3.0.0",
-                                          @"TransportConnectTimeout": @10
-                                          }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
     
     connection.closed = ^{
         [initialized fulfill];
@@ -1118,31 +835,25 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         XCTAssert(NO, @"start was triggered");
     };
     
-    [connection start:sse];
-    
-    //gets the response but has not completed intialize
-    [NetConnect openingResponse: @""];
+    [NetworkMock prepareForOpeningResponse:^{
+        [connection start:sse];
+    }];
     [connection stop];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
         }
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        XCTAssertEqual(strongConnection.state, disconnected, @"Connection was not disconnected");
-        XCTAssertEqual(strongConnection.transport, nil, @"Transport was not cleared after stop");
+        XCTAssertEqual(connection.state, disconnected, @"Connection was not disconnected");
+        XCTAssertEqual(connection.transport, nil, @"Transport was not cleared after stop");
     }];
 }
 
 - (void)testConnectionCanBeStoppedPriorToTransportStart {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     
-    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id pmock = [OCMockObject partialMockForObject: sse];
@@ -1172,19 +883,17 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
         }
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        XCTAssertEqual(strongConnection.state, disconnected, @"Connection was not disconnected");
-        XCTAssertEqual(strongConnection.transport, nil, @"Transport was not cleared after stop");
+        XCTAssertEqual(connection.state, disconnected, @"Connection was not disconnected");
+        XCTAssertEqual(connection.transport, nil, @"Transport was not cleared after stop");
     }];
 }
 
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
+    __weak __typeof(&*NetworkMock)weakNetworkMock = NetworkMock;
     
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
@@ -1214,8 +923,8 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         [strongConnection send:@"test" completionHandler:^(id response, NSError *error) {
             //after sending receive two more
-            __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
-            [strongNetConnect message:@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message3\", \"A\": \"12345\"}]}\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message4\", \"A\": \"12345\"}]}\n\n"];
+            __strong __typeof(&*weakNetworkMock)strongNetworkMock = weakNetworkMock;
+            [strongNetworkMock prepareForNextResponse:@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message3\", \"A\": \"12345\"}]}\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message4\", \"A\": \"12345\"}]}\n\n" then:nil];
         }];
     };
     
@@ -1231,9 +940,10 @@ typedef void (^AFURLConnectionOperationDidReceiveURLResponseBlock)(AFHTTPRequest
         }
     };
     
-    [connection start:sse];
-    
-    [NetConnect openingResponse: @"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message1\", \"A\": \"12345\"}]}\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message2\", \"A\": \"12345\"}]}\n\n"];
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message1\", \"A\": \"12345\"}]}\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message2\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+
+    }];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
