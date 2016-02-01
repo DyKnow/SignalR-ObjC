@@ -191,6 +191,16 @@
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
     
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
+    
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     [ws start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         if (error) {
@@ -203,39 +213,16 @@
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*self)weakSelf = self;
+    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[ws.reconnectDelay intValue]];
+    [ws webSocket:mock didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
+    [[reconnectDelay mock] stopMocking];
+    reconnectDelay.afterWait();
+    [ws webSocketDidOpen:mock];
+
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
-        } else {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-            XCTestExpectation *reconnecting = [strongSelf expectationWithDescription:@"Retrying callback called"];
-            strongConnection.reconnecting = ^(){
-                [reconnecting fulfill];
-            };
-            [ws webSocket:mock didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
-
-            [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                if (error){
-                    NSLog(@"Sub-Timeout Error: %@", error);
-                } else {
-                    XCTestExpectation *reconnected = [strongSelf expectationWithDescription:@"Retry callback called"];
-                    strongConnection.reconnected = ^(){
-                        [reconnected fulfill];
-                    };
-                    [ws webSocketDidOpen:mock];
-                    
-                    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                        if (error){
-                            NSLog(@"Sub-Timeout Error: %@", error);
-                        }
-                    }];
-                }
-            }];
         }
-        
     }];
 }
 
@@ -255,6 +242,16 @@
     connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
+    
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     [ws start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         if (error) {
@@ -267,39 +264,16 @@
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*self)weakSelf = self;
+    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[ws.reconnectDelay intValue]];
+    [ws webSocket:mock didCloseWithCode:1001 reason:@"Somevalid reason" wasClean:YES];
+    [[reconnectDelay mock] stopMocking];
+    reconnectDelay.afterWait();
+    [ws webSocketDidOpen:mock];
+    
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
-        } else {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-            XCTestExpectation *reconnecting = [strongSelf expectationWithDescription:@"Retrying callback called"];
-            strongConnection.reconnecting = ^(){
-                [reconnecting fulfill];
-            };
-            [ws webSocket:mock didCloseWithCode:1001 reason:@"Somevalid reason" wasClean:YES];
-            
-            [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                if (error){
-                    NSLog(@"Sub-Timeout Error: %@", error);
-                } else {
-                    XCTestExpectation *reconnected = [strongSelf expectationWithDescription:@"Retry callback called"];
-                    strongConnection.reconnected = ^(){
-                        [reconnected fulfill];
-                    };
-                    [ws webSocketDidOpen:mock];
-                    
-                    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                        if (error){
-                            NSLog(@"Sub-Timeout Error: %@", error);
-                        }
-                    }];
-                }
-            }];
-        }
-        
+        }        
     }];
     
 }
@@ -319,6 +293,16 @@
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
     
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
+    
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     [ws start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
         if (error) {
@@ -331,37 +315,15 @@
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*self)weakSelf = self;
+    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[ws.reconnectDelay intValue]];
+    [ws lostConnection:connection];
+    [[reconnectDelay mock] stopMocking];
+    reconnectDelay.afterWait();
+    [ws webSocketDidOpen:mock];
+    
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
-        } else {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-            XCTestExpectation *reconnecting = [strongSelf expectationWithDescription:@"Retrying callback called"];
-            strongConnection.reconnecting = ^(){
-                [reconnecting fulfill];
-            };
-            [ws lostConnection:strongConnection];
-            
-            [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                if (error){
-                    NSLog(@"Sub-Timeout Error: %@", error);
-                } else {
-                    XCTestExpectation *reconnected = [strongSelf expectationWithDescription:@"Retry callback called"];
-                    strongConnection.reconnected = ^(){
-                        [reconnected fulfill];
-                    };
-                    [ws webSocketDidOpen:mock];
-                    
-                    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                        if (error){
-                            NSLog(@"Sub-Timeout Error: %@", error);
-                        }
-                    }];
-                }
-            }];
         }
     }];
 }
