@@ -14,7 +14,7 @@
 #import "SRConnectionDelegate.h"
 #import "SRNegotiationResponse.h"
 #import "SRMockNetwork.h"
-#import "SRMockNegotiate.h"
+#import "SRMockClientTransport.h"
 
 @interface SRConnection (UnitTest)
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
@@ -270,9 +270,6 @@
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
     SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*NetworkMock)weakNetConnect = NetworkMock;
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
@@ -291,52 +288,31 @@
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
-        } else {
-            //and then something horrible happens
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-            __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
-            
-            //spoiler: we expect this to reconnect and for connection to communicate that out
-            XCTestExpectation *reconnecting = [strongSelf expectationWithDescription:@"reconnecting"];
-            XCTestExpectation *reconnected = [strongSelf expectationWithDescription:@"reconnected"];
-            strongConnection.reconnecting = ^(){
-                [reconnecting fulfill];
-            };
-            strongConnection.reconnected = ^(){
-                [reconnected fulfill];
-            };
+        }
+    }];
+    
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
+    
+    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    NetworkMock.onFailure(NetworkMock.mock, [[NSError alloc]initWithDomain:@"EXPECTED" code:42 userInfo:nil]);
+    [[NetworkMock mock] stopMocking];
+    SSE_NetworkMock* NetworkReconnectMock = [[SSE_NetworkMock alloc]init];
+    [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
+    [NetworkReconnectMock prepareForOpeningResponse:^{
+        reconnectDelay.afterWait();
+    }];
 
-            //do setup to simulate and verify the reconnect delay
-            __block void (^reconnectAfterTimeoutCallback)();
-            __block double reconnectDelay;
-            id mock = [OCMockObject mockForClass:[NSBlockOperation class]];
-            [[[[mock stub] andReturn: mock ] andDo:^(NSInvocation *invocation) {
-                __unsafe_unretained void (^successCallback)() = nil;
-                [invocation getArgument: &successCallback atIndex: 2];
-                reconnectAfterTimeoutCallback = successCallback;
-            }] blockOperationWithBlock: [OCMArg any]];
-            [[[mock stub] andDo:^(NSInvocation *invocation) {
-                double reconnectDelayOut = 0;
-                [invocation getArgument: &reconnectDelayOut atIndex:4];
-                reconnectDelay = reconnectDelayOut;
-            }] performSelector:@selector(start) withObject:nil afterDelay: [[sse reconnectDelay] integerValue]];
-            
-            strongNetConnect.onFailure(strongNetConnect.mock, [[NSError alloc]initWithDomain:@"EXPECTED" code:42 userInfo:nil]);
-            [mock stopMocking];//dont want to accidentally get other blocks
-            XCTAssertEqual(2, reconnectDelay, "Unexpected reconnect delay");
-            
-            //we will be calling open again, so lets recapture the data to verify
-            SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
-            
-            reconnectAfterTimeoutCallback();//simulating retry timeout
-            [NetReconnect prepareForOpeningResponse:nil];
-            //todo: verify request url was reconnect not connect, but then you have to sovle ARC
-            [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-                if (error){
-                    NSLog(@"Sub-Timeout Error: %@", error);
-                }
-            }];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error){
+            NSLog(@"Sub-Timeout Error: %@", error);
         }
     }];
 }
@@ -346,9 +322,6 @@
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
     SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetworkMock)weakNetConnect = NetworkMock;
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
@@ -365,58 +338,49 @@
             [initialized fulfill];
         }];
     }];
-
+    
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
         }
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
+    }];
+    
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
 
-        //and then we lose connection with the server
-        //spoiler: we expect this to reconnect and for connection to communicate that out
-        XCTestExpectation *expectation = [strongSelf expectationWithDescription:@"Retrying callback called"];
-        XCTestExpectation *expectation2 = [strongSelf expectationWithDescription:@"Retry callback called"];
-        strongConnection.reconnecting = ^(){
-            [expectation fulfill];
-        };
-        strongConnection.reconnected = ^(){
-            [expectation2 fulfill];
-        };
-        
-        //do setup to simulate and verify the reconnect delay
-        SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
-        
-        //loses connection immediately, everything gets cleared out, but we
-        //do not reconnect till later
-        [sse lostConnection:connection];
-        [queueMock verify];//clears out the queue after the timeout
-
-        //we will be calling open again, so lets recapture the data to verify
-        SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
-        NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];//when the operation is cancelled, it yields the NSURLErrorCancelled error. From https://github.com/AFNetworking/AFNetworking/blob/c9bbbeb9cae6aeceef5353fd273fc48329009c3f/AFNetworking/AFURLConnectionOperation.m#L502
-        strongNetConnect.onFailure(strongNetConnect.mock, cancelledError);
-        [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
+    //loses connection immediately, everything gets cleared out, but we
+    //do not reconnect till later
+    [sse lostConnection:connection];
+    [queueMock verify];//clears out the queue after the timeout
+    
+    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];//when the operation is cancelled, it yields the NSURLErrorCancelled error. From https://github.com/AFNetworking/AFNetworking/blob/c9bbbeb9cae6aeceef5353fd273fc48329009c3f/AFNetworking/AFURLConnectionOperation.m#L502
+    NetworkMock.onFailure(NetworkMock.mock, cancelledError);
+    [[NetworkMock mock] stopMocking];
+    SSE_NetworkMock* NetworkReconnectMock = [[SSE_NetworkMock alloc]init];
+    [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
+    [NetworkReconnectMock prepareForOpeningResponse:^{
         reconnectDelay.afterWait();
-        XCTAssertEqual(2, reconnectDelay.waitTime, "Unexpected reconnect delay");
-        
-        [NetReconnect prepareForOpeningResponse:nil];
-        [strongSelf waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-            if (error){
-                NSLog(@"Sub-Timeout Error: %@", error);
-            }
-        }];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error); return;
+        }
     }];
 }
 
 - (void)testDisconnectsOnReconnectTimeout {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    __weak __typeof(&*NetConnect)weakNetConnect = NetConnect;
     connection.connectionToken =
     connection.connectionId = @"10101";
     connection.disconnectTimeout = @30;
@@ -432,13 +396,13 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     connection.started = ^{
         [initialized fulfill];
     };
     
-    [NetConnect prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
         [connection start:sse];
     }];
     
@@ -446,57 +410,46 @@
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
         }
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        __strong __typeof(&*weakNetConnect)strongNetConnect = weakNetConnect;
-        
-        //trigger an error to see 
-        //spoiler: we expect this to reconnect and for connection to communicate that out
-        XCTestExpectation *expectation = [strongSelf expectationWithDescription:@"Retrying callback called"];
-        XCTestExpectation *expectation2 = [strongSelf expectationWithDescription:@"disconnected callback called"];
-        strongConnection.reconnecting = ^(){
-            [expectation fulfill];
-        };
-        strongConnection.reconnected = ^(){
-            XCTAssert(NO, @"unexpected change!");
-        };
-        
-        strongConnection.closed = ^(){
-            [expectation2 fulfill];
-        };
-        
-        //do setup to simulate and verify the reconnect delay
-        SSE_WaitBlock* reconnectBlock = [[SSE_WaitBlock alloc]init:[[sse reconnectDelay] doubleValue]];
-        NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
-        strongNetConnect.onFailure(strongNetConnect.mock, cancelledError);
-        [reconnectBlock.mock stopMocking];//dont want to accidentally get other blocks
-        
-        //we will be calling open again, so lets recapture the data to verify
-        SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
-        //prep to catch the reconnect timeout
-        SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc] init:[connection.disconnectTimeout doubleValue]];
-
-        //retry has waited now,
-        reconnectBlock.afterWait();
-        XCTAssertEqual([connection.disconnectTimeout doubleValue], reconnectTimeoutBlock.waitTime, @"got timeout value from an unexpected place - check to be sure we are pulling from the connection");
-        
-        //lets track that we clear out the queue when we timeout
-        id queueMock = [OCMockObject niceMockForClass:[NSOperationQueue class]];
-        [[queueMock expect] cancelAllOperations];
-        sse.serverSentEventsOperationQueue = queueMock;
-        
-        //connection timed out without succeeding
-        reconnectTimeoutBlock.afterWait();
-        
-        [queueMock verify];
-        XCTAssertTrue([sse stop], @"did not stop the transport. this makes the transport unpredictable");
-
-        [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-            if (error){
-                NSLog(@"Sub-Timeout Error: %@", error);
-            }
-            sse = nil;
-        }];
+    }];
+    
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    connection.reconnected = ^(){
+        XCTAssert(NO, @"unexpected change!");
+    };
+    
+    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    connection.closed = ^(){
+        [closed fulfill];
+    };
+    
+    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
+    NetworkMock.onFailure(NetworkMock.mock, cancelledError);
+    [[NetworkMock mock] stopMocking];
+    [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
+    SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc] init:[connection.disconnectTimeout doubleValue]];
+    reconnectDelay.afterWait();
+    
+    //lets track that we clear out the queue when we timeout
+    id queueMock = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    [[queueMock expect] cancelAllOperations];
+    sse.serverSentEventsOperationQueue = queueMock;
+    
+    //connection timed out without succeeding
+    reconnectTimeoutBlock.afterWait();
+    
+    [queueMock verify];
+    XCTAssertTrue([sse stop], @"did not stop the transport. this makes the transport unpredictable");
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error){
+            NSLog(@"Sub-Timeout Error: %@", error);
+        }
+        sse = nil;
     }];
 }
 
@@ -580,7 +533,7 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     connection.started = ^{
         XCTAssert(NO, @"Connection started");
@@ -621,7 +574,7 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     __block BOOL firstClosedCalled = NO;
     __block int startCount = 0;
@@ -670,7 +623,7 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
@@ -704,7 +657,7 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
@@ -737,10 +690,8 @@
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
     SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    
-    __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
     
     id json = @{
@@ -750,7 +701,7 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     connection.started = ^{
         [initialized fulfill];
@@ -764,45 +715,33 @@
         if (error) {
             NSLog(@"Timeout Error: %@", error); return;
         }
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        
-        //trigger an error to see
-        //spoiler: we expect this to fail
-        XCTestExpectation *expectation2 = [strongSelf expectationWithDescription:@"disconnected callback called"];
+    }];
+    
+    XCTestExpectation *disconnected = [self expectationWithDescription:@"disconnected"];
+    connection.reconnected = ^(){
+        XCTAssert(NO, @"unexpected change!");
+    };
+    connection.closed = ^(){
+        [disconnected fulfill];
+    };
+    
+    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
+    NetworkMock.onFailure(NetworkMock.mock, cancelledError);
+    [[NetworkMock mock] stopMocking];
+    [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
+    SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc] init:[connection.disconnectTimeout doubleValue]];
+    //retry has waited now,
+    reconnectDelay.afterWait();
+    XCTAssertEqual([connection.disconnectTimeout doubleValue], reconnectTimeoutBlock.waitTime, @"got timeout value from an unexpected place - check to be sure we are pulling from the connection");
 
-        strongConnection.reconnected = ^(){
-            XCTAssert(NO, @"unexpected change!");
-        };
-        
-        strongConnection.closed = ^(){
-            [expectation2 fulfill];
-        };
-        
-        //do setup to simulate and verify the reconnect delay
-        SSE_WaitBlock* reconnectBlock = [[SSE_WaitBlock alloc]init:[[sse reconnectDelay] doubleValue]];
-        NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
-        NetworkMock.onFailure(NetworkMock.mock, cancelledError);
-        [reconnectBlock.mock stopMocking];//dont want to accidentally get other blocks
-        
-        //we will be calling open again, so lets recapture the data to verify
-        SSE_NetworkMock* NetReconnect = [[SSE_NetworkMock alloc]init];
-        //prep to catch the reconnect timeout
-        SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc]init: [connection.disconnectTimeout doubleValue]];
-        
-        //retry has waited now,
-        reconnectBlock.afterWait();
-        XCTAssertEqual([connection.disconnectTimeout doubleValue], reconnectTimeoutBlock.waitTime, @"got timeout value from an unexpected place - check to be sure we are pulling from the connection");
-     
-        //connection timed out without succeeding
-        reconnectTimeoutBlock.afterWait();
-        
-        [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-            if (error){
-                NSLog(@"Sub-Timeout Error: %@", error);
-            }
-            sse = nil;
-        }];
+    //connection timed out without succeeding
+    reconnectTimeoutBlock.afterWait();
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error){
+            NSLog(@"Sub-Timeout Error: %@", error);
+        }
     }];
 }
 
@@ -821,7 +760,7 @@
         @"ProtocolVersion": @"1.3.0.0",
         @"TransportConnectTimeout": @10
     };
-    [SRMockNegotiate mockNegotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
     
     connection.closed = ^{
         [initialized fulfill];
@@ -898,25 +837,16 @@
     __block SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
-        callbackOut([[SRNegotiationResponse alloc ]
-                     initWithDictionary:@{
-                                          @"ConnectionId": @"10101",
-                                          @"ConnectionToken": @"10101010101",
-                                          @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"1.3.0.0",
-                                          @"TransportConnectTimeout": @10
-                                          }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    [[[pmock stub] andDo:^(NSInvocation * invocation) {
-        __unsafe_unretained void (^ callbackOut)(id * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 5];
-        callbackOut(nil, nil);//SSE just falls back to httpbase, just verify we are allowed through
-    }] send:[OCMArg any]  data:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    id transportMock = [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
+    [SRMockClientTransport sendForMockTransport:transportMock statusCode:@200 json:nil];
+
     __block NSMutableArray* values = [[NSMutableArray alloc] init];
     
     connection.started = ^(){
@@ -958,25 +888,15 @@
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to avoid ARC error
     
-    id pmock = [OCMockObject partialMockForObject: sse];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
-        callbackOut([[SRNegotiationResponse alloc ]
-                     initWithDictionary:@{
-                                          @"ConnectionId": @"10101",
-                                          @"ConnectionToken": @"10101010101",
-                                          @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"2.0.0.0",
-                                          @"TransportConnectTimeout": @10
-                                          }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    [[[pmock stub] andDo:^(NSInvocation * invocation) {
-        __unsafe_unretained void (^ callbackOut)(id * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 5];
-        callbackOut(nil, nil);//SSE just falls back to httpbase, just verify we are allowed through
-    }] send:[OCMArg any]  data:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"2.0.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
+
     BOOL failed = NO;
     @try
     {

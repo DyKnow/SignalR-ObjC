@@ -14,6 +14,7 @@
 #import "SRConnectionInterface.h"
 #import "SRNegotiationResponse.h"
 #import "SRMockNetwork.h"
+#import "SRMockClientTransport.h"
 
 @interface SRLongPollingTransport ()
 @property (strong, nonatomic, readwrite) NSOperationQueue *pollingOperationQueue;
@@ -108,20 +109,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRLongPollingTransport* lp = [[ SRLongPollingTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: lp];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:lp statusCode:@200 json:json];
     
     id connect1 = [SRMockNetwork mockHttpRequestOperationForClass:[AFHTTPRequestOperation class]
                                                        statusCode:@500
@@ -149,20 +144,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRLongPollingTransport* lp = [[ SRLongPollingTransport alloc] init];
     
-    id mockTransport = [OCMockObject partialMockForObject: lp];
-    [[[mockTransport stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    id mockTransport = [SRMockClientTransport negotiateForTransport:lp statusCode:@200 json:json];
     
     [[[mockTransport stub] andForwardToRealObject] poll:[OCMArg any] connectionData:[OCMArg isNil] completionHandler:[OCMArg isNotNil]];
     [[[mockTransport stub] andDo:^(NSInvocation * invocation) {

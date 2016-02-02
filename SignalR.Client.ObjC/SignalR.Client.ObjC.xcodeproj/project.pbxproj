@@ -171,8 +171,8 @@
 		39A27F011C5FD42F009B7459 /* SREventSourceResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */; };
 		39A27F021C5FD76A009B7459 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
 		39A27F031C5FD76B009B7459 /* SRServerSentEventsTransportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D05649B71B6EF87F00020B31 /* SRServerSentEventsTransportTests.m */; };
-		39A27F061C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */; };
-		39A27F071C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */; };
+		39A27F061C5FF8F0009B7459 /* SRMockClientTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27F051C5FF8F0009B7459 /* SRMockClientTransport.m */; };
+		39A27F071C5FF8F0009B7459 /* SRMockClientTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27F051C5FF8F0009B7459 /* SRMockClientTransport.m */; };
 		39AF0D7E17138E3800E13E6E /* SRWebSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		39AF0D7F17138E3800E13E6E /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
 		39AF0D821713935A00E13E6E /* SRWebSocketConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -338,8 +338,8 @@
 		39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SREventSourceRequestSerializer.m; sourceTree = "<group>"; };
 		39A27EFC1C5FD242009B7459 /* SREventSourceResponseSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SREventSourceResponseSerializer.h; sourceTree = "<group>"; };
 		39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SREventSourceResponseSerializer.m; sourceTree = "<group>"; };
-		39A27F041C5FF8F0009B7459 /* SRMockNegotiate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockNegotiate.h; path = SignalR.Client.Tests/SRMockNegotiate.h; sourceTree = "<group>"; };
-		39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockNegotiate.m; path = SignalR.Client.Tests/SRMockNegotiate.m; sourceTree = "<group>"; };
+		39A27F041C5FF8F0009B7459 /* SRMockClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockClientTransport.h; path = SignalR.Client.Tests/SRMockClientTransport.h; sourceTree = "<group>"; };
+		39A27F051C5FF8F0009B7459 /* SRMockClientTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockClientTransport.m; path = SignalR.Client.Tests/SRMockClientTransport.m; sourceTree = "<group>"; };
 		39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketTransport.h; sourceTree = "<group>"; };
 		39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketTransport.m; sourceTree = "<group>"; };
 		39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRWebSocketConnectionInfo.h; path = WebSockets/SRWebSocketConnectionInfo.h; sourceTree = "<group>"; };
@@ -805,8 +805,8 @@
 				D05649BD1B71441000020B31 /* SRLongPollingTransportTests.m */,
 				3955D59C1B9794A8005AD0CF /* SRMockNetwork.h */,
 				3955D59D1B9794A8005AD0CF /* SRMockNetwork.m */,
-				39A27F041C5FF8F0009B7459 /* SRMockNegotiate.h */,
-				39A27F051C5FF8F0009B7459 /* SRMockNegotiate.m */,
+				39A27F041C5FF8F0009B7459 /* SRMockClientTransport.h */,
+				39A27F051C5FF8F0009B7459 /* SRMockClientTransport.m */,
 			);
 			name = SignalR.Client.Tests;
 			sourceTree = "<group>";
@@ -1369,7 +1369,7 @@
 				39E6FD2D15C6BFCE00434098 /* SRJSONTests.m in Sources */,
 				39E6FD5F15C6EAFB00434098 /* NSObject+SRJSON.m in Sources */,
 				D05649BC1B7058FF00020B31 /* SRWebSocketTransportTests.m in Sources */,
-				39A27F071C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */,
+				39A27F071C5FF8F0009B7459 /* SRMockClientTransport.m in Sources */,
 				3955D59F1B9794FD005AD0CF /* SRMockNetwork.m in Sources */,
 				39BB8D7715CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				39A27F021C5FD76A009B7459 /* SRServerSentEventsTransportTests.m in Sources */,
@@ -1392,7 +1392,7 @@
 				39BB8D7615CAA576007B7245 /* SRHubConnectionTests.m in Sources */,
 				3940059415CC6A2C006673E2 /* SRChunkBufferTests.m in Sources */,
 				3940059915CC6DD6006673E2 /* SRConnectionTests.m in Sources */,
-				39A27F061C5FF8F0009B7459 /* SRMockNegotiate.m in Sources */,
+				39A27F061C5FF8F0009B7459 /* SRMockClientTransport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

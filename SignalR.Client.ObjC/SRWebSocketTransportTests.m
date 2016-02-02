@@ -13,6 +13,7 @@
 #import "SRConnection.h"
 #import "SRConnectionInterface.h"
 #import "SRNegotiationResponse.h"
+#import "SRMockClientTransport.h"
 
 @interface SRConnection (UnitTest)
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
@@ -341,21 +342,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
     
     [connection setStarted:^{
         [initialized fulfill];
@@ -422,21 +416,15 @@
 
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    
     connection.started = ^{
         XCTAssert(NO, @"Connection started");
     };
@@ -472,20 +460,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
     
     __block BOOL firstErrorFailedCalled = NO;
     __block int startCount = 0;
@@ -532,20 +514,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
@@ -577,20 +553,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
@@ -636,20 +606,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
     
     connection.closed = ^{
         [initialized fulfill];
@@ -739,21 +703,15 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        callbackOut([[SRNegotiationResponse alloc ]initWithDictionary:@{
-                                                                        @"ConnectionId": @"10101",
-                                                                        @"ConnectionToken": @"10101010101",
-                                                                        @"DisconnectTimeout": @30,
-                                                                        @"ProtocolVersion": @"1.3.0.0",
-                                                                        @"TransportConnectTimeout": @10
-                                                                        }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    
     __block NSMutableArray* values = [[NSMutableArray alloc] init];
     
     __weak __typeof(&*connection)weakConnection = connection;
@@ -796,24 +754,14 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
     
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 4];
-        callbackOut([[SRNegotiationResponse alloc ]
-                     initWithDictionary:@{
-                                          @"ConnectionId": @"10101",
-                                          @"ConnectionToken": @"10101010101",
-                                          @"DisconnectTimeout": @30,
-                                          @"ProtocolVersion": @"2.0.0.0",
-                                          @"TransportConnectTimeout": @10
-                                          }], nil);
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    [[[pmock stub] andDo:^(NSInvocation * invocation) {
-        __unsafe_unretained void (^ callbackOut)(id * response, NSError *error);
-        [invocation getArgument: &callbackOut atIndex: 5];
-        callbackOut(nil, nil);//SSE just falls back to httpbase, just verify we are allowed through
-    }] send:[OCMArg any]  data:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"2.0.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
     
     BOOL failed = NO;
     @try

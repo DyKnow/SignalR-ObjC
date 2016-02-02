@@ -111,7 +111,6 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 #pragma mark SSE Transport
 
 - (void)open:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData isReconnecting: (BOOL) isReconnecting {
-    __block SREventSourceStreamReader *eventSource;
     id parameters = @{
         @"transport" : [self name],
         @"connectionToken" : ([connection connectionToken]) ? [connection connectionToken] : @"",
@@ -238,11 +237,11 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             //special case differs from above
             SRLogServerSentEvents("error: %@", error);
             [operation cancel];//clean up to avoid duplicates
-            [eventSource close: error];//clean up -> this should end up in eventSource.closed above
+            [strongSelf.eventSource close: error];//clean up -> this should end up in eventSource.closed above
             return;//bail out early as we've taken care of the below
         }
         [operation cancel];//clean up to avoid duplicates
-        [eventSource close];//clean up -> this should end up in eventSource.closed above
+        [strongSelf.eventSource close];//clean up -> this should end up in eventSource.closed above
     }];
     [self.serverSentEventsOperationQueue addOperation:operation];
 }
