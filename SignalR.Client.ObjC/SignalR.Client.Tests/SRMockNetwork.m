@@ -20,7 +20,7 @@ statusCode:(NSNumber *)statusCode
     [[[mock stub] andDo:^(NSInvocation *invocation) {
         if ([statusCode  isEqual: @200]) {
             void (^successBlock)(AFHTTPRequestOperation *operation, id responseObject) = nil;
-            [invocation getArgument:&successBlock atIndex:2];
+            [invocation getArgument:&successBlock atIndex:successIndex];
             if (successBlock) {
                 if ([json isKindOfClass:[NSString class]]) {
                     [[[mock stub] andReturn:[json dataUsingEncoding:NSUTF8StringEncoding]] responseData];
@@ -38,7 +38,7 @@ statusCode:(NSNumber *)statusCode
             }
         } else {
             void (^errorBlock)(AFHTTPRequestOperation *operation, NSError *error) = nil;
-            [invocation getArgument:&errorBlock atIndex:3];
+            [invocation getArgument:&errorBlock atIndex:errorIndex];
             if (errorBlock) {
                 errorBlock(mock, json);
             }

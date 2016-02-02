@@ -27,7 +27,7 @@
 
 + (id)mockHttpRequestOperationForClass:(Class)aClass
                             statusCode:(NSNumber *)statusCode
-                                 error:(NSError *)error
+                        responseString:(NSString *)responseString
                                success:(NSInteger)successIndex
                                  error:(NSInteger)errorIndex;
 

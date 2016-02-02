@@ -65,5 +65,5 @@
  */
 + (instancetype)eventWithFields:(NSDictionary *)fields;
 
-+ (BOOL)tryParseEvent:(NSString *)line sseEvent:(SRServerSentEvent **)sseEvent __attribute__((deprecated));
++ (BOOL)tryParseEvent:(NSString *)line sseEvent:(SRServerSentEvent **)sseEvent;
 @end
