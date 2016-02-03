@@ -28,6 +28,8 @@
 #import "SRServerSentEventsTransport.h"
 #import "SRWebSocketTransport.h"
 
+static NSString *const kBestTransportIndex = @"kBestTransportIndex";
+
 @interface SRAutoTransport ()
 
 @property (strong, nonatomic, readwrite) id <SRClientTransportInterface> transport;
@@ -84,7 +86,8 @@
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
-    [self start:connection connectionData:connectionData transportIndex:0 completionHandler:block];
+    int transportIndex = [self bestTransportIndex];
+    [self start:connection connectionData:connectionData transportIndex:transportIndex completionHandler:block];
 }
 
 - (void)start:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData transportIndex:(int)index completionHandler:(void (^)(id response, NSError *error))block  {
@@ -100,8 +103,13 @@
             SRLogAutoTransport(@"will switch to next transport");
             
             // If that transport fails to initialize then fallback
-            int next = index + 1;
-            if (next < [strongSelf.transports count]) {
+            /*
+             First try the best transport index to get minimum connection time, if it fails then try other
+             transport layers untill you have tried every transport or get a success.
+             */
+            int next = (index + 1)%[strongSelf.transports count];
+            // If next equals bestTransportIndex it means we have tried all
+            if (next != [strongSelf bestTransportIndex]) {
                 // Try the next transport
                 [strongSelf start:strongConnection connectionData:connectionData transportIndex:next completionHandler:block];
             } else {
@@ -118,6 +126,12 @@
                 }
             }
         } else {
+            /*
+             Once you get your best transport index, save it so that
+             next time you directly use this particular transport instead
+             try others every time.
+             */
+            [strongSelf setBestTransportIndex:index];
             SRLogAutoTransport(@"did set active transport");
             
             //Set the active transport
@@ -144,6 +158,28 @@
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
     SRLogAutoTransport(@"will stop transport");
     [self.transport abort:connection timeout:timeout connectionData:connectionData];
+}
+
+#pragma mark - Best Transport index
+/**
+ Saves the best transport layer index User Defaults so that you can
+ use it later on
+ @param index Best transport index in array 'transports'
+ */
+-(void)setBestTransportIndex:(int)index{
+    NSNumber *number = [NSNumber numberWithInt:index];
+    [[NSUserDefaults standardUserDefaults] setValue:number forKey:kBestTransportIndex];
+}
+/**
+ Retrieve the best transport index from User Defaults
+ @return index Best transport index in array 'transports'
+ */
+-(int)bestTransportIndex{
+    NSNumber *number = [[NSUserDefaults standardUserDefaults] valueForKey:kBestTransportIndex];
+    if (number && number.intValue < self.transports.count) {
+        return number.intValue;
+    }
+    return 0;
 }
 
 @end
