@@ -152,6 +152,7 @@
             [strongSelf startTransport];
         } else {
             SRLogConnection(@"negotiation failed %@", error);
+            [strongSelf changeState:connecting toState:disconnected];
             [strongSelf didReceiveError:error];
             [strongSelf didClose];
         }
@@ -177,6 +178,7 @@
                 [strongSelf.delegate SRConnectionDidOpen:strongSelf];
             }
         } else {
+            [strongSelf changeState:connecting toState:disconnected];
             [strongSelf didReceiveError:error];
             [strongSelf didClose];
         }
