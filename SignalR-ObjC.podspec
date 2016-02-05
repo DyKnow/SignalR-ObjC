@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'CocoaLumberjack' do |sp|
-    sp.dependency 'CocoaLumberjack', '~1.0'
+    sp.dependency 'CocoaLumberjack', '~>1.0'
     sp.dependency 'SignalR-ObjC/Core'
   end
 end
