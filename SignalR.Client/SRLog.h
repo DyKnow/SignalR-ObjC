@@ -20,120 +20,70 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#define LOG_FLAG_HTTP               (1 << 0)  // 0...000001
-#define LOG_FLAG_CONNECTION         (1 << 1)  // 0...000010
-#define LOG_FLAG_LONGPOLLING        (1 << 2)  // 0...000100
-#define LOG_FLAG_SERVERSENTEVENTS   (1 << 3)  // 0...001000
-#define LOG_FLAG_HTTPTRANSPORT      (1 << 4)  // 0...010000
-#define LOG_FLAG_WEBSOCKETS         (1 << 5)  // 0...100000
-#define LOG_FLAG_AUTOTRANSPORT      (1 << 6)  // 0..1000000
+#if __has_include("DDLog.h")
+#import <CocoaLumberjack/DDLog.h>
 
-#define LOG_LEVEL_OFF     0
-#define LOG_LEVEL_HTTP              (LOG_FLAG_HTTP)                     // 0...000001
-#define LOG_LEVEL_CONNECTION        (LOG_FLAG_CONNECTION  | LOG_FLAG_HTTP) // 0...000011
-#define LOG_LEVEL_LONGPOLLING       (LOG_FLAG_LONGPOLLING   | LOG_FLAG_CONNECTION | LOG_FLAG_HTTP) // 0...000111
-#define LOG_LEVEL_SERVERSENTEVENTS  (LOG_FLAG_SERVERSENTEVENTS | LOG_FLAG_CONNECTION | LOG_FLAG_HTTP) // 0...001011
-#define LOG_LEVEL_HTTPTRANSPORT     (LOG_FLAG_HTTPTRANSPORT | LOG_FLAG_SERVERSENTEVENTS | LOG_FLAG_LONGPOLLING | LOG_FLAG_CONNECTION  | LOG_FLAG_HTTP ) // 0...011111
-#define LOG_LEVEL_WEBSOCKETS     (LOG_FLAG_WEBSOCKETS | LOG_FLAG_CONNECTION  | LOG_FLAG_HTTP ) // 0...011111
-#define LOG_LEVEL_AUTOTRANSPORT     (LOG_FLAG_AUTOTRANSPORT | LOG_FLAG_HTTPTRANSPORT | LOG_FLAG_SERVERSENTEVENTS | LOG_FLAG_LONGPOLLING | LOG_FLAG_CONNECTION  | LOG_FLAG_HTTP ) // 0...111111
+static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
-#define LOG_HTTP                (ddLogLevel & LOG_FLAG_HTTP )
-#define LOG_CONNECTION          (ddLogLevel & LOG_FLAG_CONNECTION )
-#define LOG_LONGPOLLING         (ddLogLevel & LOG_FLAG_LONGPOLLING  )
-#define LOG_SERVERSENTEVENTS    (ddLogLevel & LOG_FLAG_SERVERSENTEVENTS)
-#define LOG_HTTPTRANSPORT       (ddLogLevel & LOG_FLAG_HTTPTRANSPORT  )
-#define LOG_WEBSOCKETS          (ddLogLevel & LOG_LEVEL_WEBSOCKETS  )
-#define LOG_AUTOTRANSPORT       (ddLogLevel & LOG_FLAG_AUTOTRANSPORT )
+#if defined( LOG_ASYNC_ENABLED )
+    #undef LOG_ASYNC_ENABLED
+    #define LOG_ASYNC_ENABLED NO
+#endif
 
-static int ddLogLevel = LOG_LEVEL_AUTOTRANSPORT;
-
-#define COCOA_LUMBER_JACK 0
-#if COCOA_LUMBER_JACK
-
-#import "DDLog.h"
-
-#undef LOG_FLAG_ERROR
-#undef LOG_FLAG_WARN
-#undef LOG_FLAG_INFO
-#undef LOG_FLAG_VERBOSE
-
-#undef LOG_LEVEL_ERROR
-#undef LOG_LEVEL_WARN
-#undef LOG_LEVEL_INFO
-#undef LOG_LEVEL_VERBOSE
-
-#undef LOG_ERROR
-#undef LOG_WARN
-#undef LOG_INFO
-#undef LOG_VERBOSE
-
-#undef DDLogError
-#undef DDLogWarn
-#undef DDLogInfo
-#undef DDLogVerbose
-
-#undef DDLogCError
-#undef DDLogCWarn
-#undef DDLogCInfo
-#undef DDLogCVerbose
-
-#define SRLogHTTP(frmt, ...)                SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_HTTP,              0, frmt, ##__VA_ARGS__)
-#define SRLogConnection(frmt, ...)          SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_CONNECTION,        0, frmt, ##__VA_ARGS__)
-#define SRLogLongPolling(frmt, ...)         SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_LONGPOLLING,       0, frmt, ##__VA_ARGS__)
-#define SRLogServerSentEvents(frmt, ...)    SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_SERVERSENTEVENTS,  0, frmt, ##__VA_ARGS__)
-#define SRLogHTTPTransport(frmt, ...)       SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_HTTPTRANSPORT,     0, frmt, ##__VA_ARGS__)
-#define SRLogWebSockets(frmt, ...)          SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_WEBSOCKETS,     0, frmt, ##__VA_ARGS__)
-#define SRLogAutoTransport(frmt, ...)       SYNC_LOG_OBJC_MAYBE(ddLogLevel, LOG_FLAG_AUTOTRANSPORT,     0, frmt, ##__VA_ARGS__)
-
-#define SRLogCHTTP(frmt, ...)               SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_HTTP,             0, frmt, ##__VA_ARGS__)
-#define SRLogCConnection(frmt, ...)         SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_CONNECTION,       0, frmt, ##__VA_ARGS__)
-#define SRLogCLongPolling(frmt, ...)        SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_LONGPOLLING,      0, frmt, ##__VA_ARGS__)
-#define SRLogCServerSentEvents(frmt, ...)   SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_SERVERSENTEVENTS, 0, frmt, ##__VA_ARGS__)
-#define SRLogCHTTPTransport(frmt, ...)      SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_HTTPTRANSPORT,    0, frmt, ##__VA_ARGS__)
-#define SRLogCWebSockets(frmt, ...)      SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_WEBSOCKETS,    0, frmt, ##__VA_ARGS__)
-#define SRLogCAutoTransport(frmt, ...)      SYNC_LOG_C_MAYBE(ddLogLevel, LOG_FLAG_AUTOTRANSPORT,    0, frmt, ##__VA_ARGS__)
+#define SRLogError(frmt, ...)   LOG_OBJC_MAYBE(LOG_ASYNC_ERROR,   LOG_LEVEL_DEF, LOG_FLAG_ERROR,   0, frmt, ##__VA_ARGS__)
+#define SRLogWarn(frmt, ...)    LOG_OBJC_MAYBE(LOG_ASYNC_WARN,    LOG_LEVEL_DEF, LOG_FLAG_WARN,    0, frmt, ##__VA_ARGS__)
+#define SRLogInfo(frmt, ...)    LOG_OBJC_MAYBE(LOG_ASYNC_INFO,    LOG_LEVEL_DEF, LOG_FLAG_INFO,    0, frmt, ##__VA_ARGS__)
+#define SRLogDebug(frmt, ...)   LOG_OBJC_MAYBE(LOG_ASYNC_DEBUG,   LOG_LEVEL_DEF, LOG_FLAG_DEBUG,   0, frmt, ##__VA_ARGS__)
+#define SRLogVerbose(frmt, ...) LOG_OBJC_MAYBE(LOG_ASYNC_VERBOSE, LOG_LEVEL_DEF, LOG_FLAG_VERBOSE, 0, frmt, ##__VA_ARGS__)
 
 #else
 
-#define SRLogHTTP(fmt, ...) \
-do{ \
-    if(ddLogLevel & LOG_HTTP) \
-        NSLog((@"Thread %@:%s [Line %d]\n[HTTP]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
-
-#define SRLogConnection(fmt, ...) \
-do{ \
-    if(ddLogLevel & LOG_CONNECTION) \
-        NSLog((@"Thread %@:%s [Line %d]\n[CONNECTION]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
-
-#define SRLogLongPolling(fmt, ...) \
-do{ \
-    if(ddLogLevel & LOG_LONGPOLLING) \
-        NSLog((@"Thread %@:%s [Line %d]\n[LONG_POLLING]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
-
-#define SRLogServerSentEvents(fmt, ...) \
-do{ \
-    if(ddLogLevel & LOG_SERVERSENTEVENTS) \
-        NSLog((@"Thread %@:%s [Line %d]\n[SERVER_SENT_EVENTS]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
-
-#define SRLogHTTPTransport(fmt, ...) \
-do{ \
-    if(ddLogLevel & LOG_HTTPTRANSPORT) \
-        NSLog((@"Thread %@:%s [Line %d]\n[HTTP_BASED_TRANSPORT]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
-
-#define SRLogWebSockets(fmt, ...) \
-do{ \
-if(ddLogLevel & LOG_WEBSOCKETS) \
-NSLog((@"Thread %@:%s [Line %d]\n[WEB_SOCKETS]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
-
-#define SRLogAutoTransport(fmt, ...) \
-    do{ if(ddLogLevel & LOG_AUTOTRANSPORT) \
-        NSLog((@"Thread %@:%s [Line %d]\n[AUTO_TRANSPORT]    " fmt), [NSThread currentThread], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} while(0)
+#define SRLogError(frmt, ...)      do{ NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define SRLogWarn(frmt, ...)       do{ NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define SRLogInfo(frmt, ...)       do{ NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define SRLogDebug(frmt, ...)      do{ NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define SRLogVerbose(frmt, ...)    do{ NSLog((frmt), ##__VA_ARGS__); } while(0)
 
 #endif
+
+#define SRLogPrefixedError(type, frmt, ...) SRLogError(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
+#define SRLogPrefixedWarn(type, frmt, ...) SRLogWarn(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
+#define SRLogPrefixedInfo(type, frmt, ...) SRLogInfo(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
+#define SRLogPrefixedDebug(type, frmt, ...) SRLogDebug(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
+#define SRLogPrefixedVerbose(type, frmt, ...) SRLogVerboase(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
+
+#define SRLogConnectionError(frmt, ...)   SRLogPrefixedError(@"CONNECTION", frmt, ##__VA_ARGS__);
+#define SRLogConnectionWarn(frmt, ...)    SRLogPrefixedWarn(@"CONNECTION", frmt, ##__VA_ARGS__);
+#define SRLogConnectionInfo(frmt, ...)    SRLogPrefixedInfo(@"CONNECTION", frmt, ##__VA_ARGS__);
+#define SRLogConnectionDebug(frmt, ...)   SRLogPrefixedDebug(@"CONNECTION", frmt, ##__VA_ARGS__);
+#define SRLogConnectionVerbose(frmt, ...) SRLogPrefixedVerbose(@"CONNECTION", frmt, ##__VA_ARGS__);
+
+#define SRLogAutoError(frmt, ...)   SRLogPrefixedError(@"AUTO", frmt, ##__VA_ARGS__);
+#define SRLogAutoWarn(frmt, ...)    SRLogPrefixedWarn(@"AUTO", frmt, ##__VA_ARGS__);
+#define SRLogAutoInfo(frmt, ...)    SRLogPrefixedInfo(@"AUTO", frmt, ##__VA_ARGS__);
+#define SRLogAutoDebug(frmt, ...)   SRLogPrefixedDebug(@"AUTO", frmt, ##__VA_ARGS__);
+#define SRLogAutoVerbose(frmt, ...) SRLogPrefixedVerbose(@"AUTO", frmt, ##__VA_ARGS__);
+
+#define SRLogTransportError(frmt, ...)   SRLogPrefixedError(@"TRANSPORT", frmt, ##__VA_ARGS__);
+#define SRLogTransportWarn(frmt, ...)    SRLogPrefixedWarn(@"TRANSPORT", frmt, ##__VA_ARGS__);
+#define SRLogTransportInfo(frmt, ...)    SRLogPrefixedInfo(@"TRANSPORT", frmt, ##__VA_ARGS__);
+#define SRLogTransportDebug(frmt, ...)   SRLogPrefixedDebug(@"TRANSPORT", frmt, ##__VA_ARGS__);
+#define SRLogTransportVerbose(frmt, ...) SRLogPrefixedVerbose(@"TRANSPORT", frmt, ##__VA_ARGS__);
+
+#define SRLogWSError(frmt, ...)   SRLogPrefixedError(@"WS", frmt, ##__VA_ARGS__);
+#define SRLogWSWarn(frmt, ...)    SRLogPrefixedWarn(@"WS", frmt, ##__VA_ARGS__);
+#define SRLogWSInfo(frmt, ...)    SRLogPrefixedInfo(@"WS", frmt, ##__VA_ARGS__);
+#define SRLogWSDebug(frmt, ...)   SRLogPrefixedDebug(@"WS", frmt, ##__VA_ARGS__);
+#define SRLogWSVerbose(frmt, ...) SRLogPrefixedVerbose(@"WS", frmt, ##__VA_ARGS__);
+
+#define SRLogSSEError(frmt, ...)   SRLogPrefixedError(@"SSE", frmt, ##__VA_ARGS__);
+#define SRLogSSEWarn(frmt, ...)    SRLogPrefixedWarn(@"SSE", frmt, ##__VA_ARGS__);
+#define SRLogSSEInfo(frmt, ...)    SRLogPrefixedInfo(@"SSE", frmt, ##__VA_ARGS__);
+#define SRLogSSEDebug(frmt, ...)   SRLogPrefixedDebug(@"SSE", frmt, ##__VA_ARGS__);
+#define SRLogSSEVerbose(frmt, ...) SRLogPrefixedVerbose(@"SSE", frmt, ##__VA_ARGS__);
+
+#define SRLogLPError(frmt, ...)   SRLogPrefixedError(@"LP", frmt, ##__VA_ARGS__);
+#define SRLogLPWarn(frmt, ...)    SRLogPrefixedWarn(@"LP", frmt, ##__VA_ARGS__);
+#define SRLogLPInfo(frmt, ...)    SRLogPrefixedInfo(@"LP", frmt, ##__VA_ARGS__);
+#define SRLogLPDebug(frmt, ...)   SRLogPrefixedDebug(@"LP", frmt, ##__VA_ARGS__);
+#define SRLogLPVerbose(frmt, ...) SRLogPrefixedVerbose(@"LP", frmt, ##__VA_ARGS__);

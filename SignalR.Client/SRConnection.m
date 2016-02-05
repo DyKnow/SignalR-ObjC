@@ -127,7 +127,7 @@
 }
 
 - (void)negotiate:(id<SRClientTransportInterface>)transport {
-    SRLogConnection(@"will negotiate");
+    SRLogConnectionDebug(@"will negotiate");
     
     _connectionData = [self onSending];
     
@@ -135,7 +135,7 @@
     [transport negotiate:self connectionData:_connectionData completionHandler:^(SRNegotiationResponse *negotiationResponse, NSError *error) {
          __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!error) {
-            SRLogConnection(@"negotiation was successful %@",negotiationResponse);
+            SRLogConnectionInfo(@"negotiation was successful %@",negotiationResponse);
             
             [strongSelf verifyProtocolVersion:negotiationResponse.protocolVersion];
             
@@ -151,7 +151,7 @@
             
             [strongSelf startTransport];
         } else {
-            SRLogConnection(@"negotiation failed %@", error);
+            SRLogConnectionError(@"negotiation failed %@", error);
             [strongSelf didReceiveError:error];
             [strongSelf didClose];
         }
@@ -161,12 +161,15 @@
 - (void)startTransport {
     __weak __typeof(&*self)weakSelf = self;
     
+    SRLogConnectionDebug(@"will start transport");
     [self.transport start:self connectionData:_connectionData completionHandler:^(id response, NSError *error) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!error) {
+            SRLogConnectionInfo(@"start transport was successful");
             [strongSelf changeState:connecting toState:connected];
             
             if (_keepAliveData != nil && [_transport supportsKeepAlive]) {
+                SRLogConnectionDebug(@"connection starting keepalive monitor");
                 [_monitor start];
             }
             
@@ -177,6 +180,7 @@
                 [strongSelf.delegate SRConnectionDidOpen:strongSelf];
             }
         } else {
+            SRLogConnectionError(@"start transport failed %@",error);
             [strongSelf didReceiveError:error];
             [strongSelf didClose];
         }
@@ -188,6 +192,8 @@
         // If we're in the expected old state then change state and return true
         if (self.state == oldState) {
             self.state = newState;
+            
+            SRLogConnectionDebug(@"connection state did change from %u to %u", oldState, newState);
             
             if (self.stateChanged){
                 self.stateChanged(self.state);
@@ -231,9 +237,11 @@
     // Do nothing if the connection is offline
     if (self.state != disconnected) {
         
+        SRLogConnectionDebug(@"connection will stop monitoring keepalive");
         [_monitor stop];
         _monitor = nil;
         
+        SRLogConnectionDebug(@"connection will abort transport");
         [_transport abort:self timeout:timeout connectionData:_connectionData];
         [self disconnect];
         
@@ -302,6 +310,7 @@
         message = [object SRJSONRepresentation];
     }
 
+    SRLogConnectionDebug(@"connection transport will send %@", message);
     [self.transport send:self data:message connectionData:_connectionData completionHandler:block];
 }
 
@@ -309,6 +318,7 @@
 #pragma mark Received Data
 
 - (void)didReceiveData:(id)message {
+    SRLogConnectionInfo(@"connection did receive data %@",message);
     if(self.received != nil) {
         self.received(message);
     }
@@ -319,6 +329,7 @@
 }
 
 - (void)didReceiveError:(NSError *)ex {
+    SRLogConnectionError(@"connection did receive error %@",ex);
     if(self.error != nil) {
         self.error(ex);
     }
@@ -329,7 +340,7 @@
 }
 
 - (void)willReconnect {
-    
+    SRLogConnectionDebug(@"connection will reconnect");
     // Only allow the client to attempt to reconnect for a _disconnectTimout TimeSpan which is set by
     // the server during negotiation.
     // If the client tries to reconnect for longer the server will likely have deleted its ConnectionId
@@ -337,8 +348,10 @@
     __weak __typeof(&*self)weakSelf = self;
     self.disconnectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        SRLogConnectionWarn(@"connection failed to reconnect");
         [strongSelf stopButDoNotCallServer];
     }];
+    SRLogConnectionDebug(@"connection will disconnect if reconnect is not performed in %@",_disconnectTimeout);
     [self.disconnectTimeoutOperation performSelector:@selector(start) withObject:nil afterDelay:[_disconnectTimeout integerValue]];
     
     if (self.reconnecting != nil) {
@@ -351,6 +364,7 @@
 }
 
 - (void)didReconnect {
+    SRLogConnectionDebug(@"connection did reconnect");
     [NSObject cancelPreviousPerformRequestsWithTarget:self.disconnectTimeoutOperation
                                              selector:@selector(start)
                                                object:nil];
@@ -368,6 +382,7 @@
 }
 
 - (void)connectionDidSlow {
+    SRLogConnectionDebug(@"connection did slow");
     if (self.connectionSlow != nil) {
         self.connectionSlow();
     }
@@ -378,6 +393,7 @@
 }
 
 - (void)didClose {
+    SRLogConnectionDebug(@"connection did close");
     if (self.closed != nil) {
         self.closed();
     }
