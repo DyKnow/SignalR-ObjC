@@ -54,16 +54,20 @@
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"negotiate"] parameters:parameters error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:30];
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
     //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
     //operation.credential = self.credential;
     //operation.securityPolicy = self.securityPolicy;
+    SRLogTransportDebug(@"will negotiate at url: %@", [[request URL] absoluteString]);
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        SRLogTransportInfo(@"negotiate was successful %@", responseObject);
         if(block) {
             block([[SRNegotiationResponse alloc] initWithDictionary:responseObject], nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        SRLogTransportError(@"negotiate failed %@", error);
         if(block) {
             block(nil, error);
         }
@@ -88,12 +92,15 @@
     //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
     //operation.credential = self.credential;
     //operation.securityPolicy = self.securityPolicy;
+    SRLogTransportDebug(@"will send at url: %@", [[request URL] absoluteString]);
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        SRLogTransportInfo(@"send was successful %@", responseObject);
         [connection didReceiveData:responseObject];
         if(block) {
             block(responseObject, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        SRLogTransportError(@"send failed %@", error);
         [connection didReceiveError:error];
         if (block) {
             block(nil, error);
@@ -124,14 +131,13 @@
 - (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
 
     if (timeout <= 0) {
-        SRLogHTTPTransport(@"stopping transport without informing server");
+        SRLogTransportWarn(@"stopping transport without informing server");
         return;
     }
     
     // Ensure that an abort request is only made once
     if (!_startedAbort)
     {
-        SRLogHTTPTransport(@"will stop transport");
         _startedAbort = YES;
         
         id parameters = [self connectionParameters:connection connectionData:connectionData];
@@ -145,9 +151,11 @@
         //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
         //operation.credential = self.credential;
         //operation.securityPolicy = self.securityPolicy;
+        SRLogTransportDebug(@"will abort at url: %@", [[request URL] absoluteString]);
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            SRLogTransportInfo(@"abort was successful %@", responseObject);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            SRLogHTTPTransport(@"Clean disconnect failed. %@",error);
+            SRLogTransportError(@"abort failed %@",error);
             [self completeAbort];
         }];
         [operation start];

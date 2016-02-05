@@ -67,10 +67,12 @@
 
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse *, NSError *))block {
     __weak __typeof(&*self)weakSelf = self;
+    SRLogAutoDebug(@"autoTransport will negotiate");
     [super negotiate:connection connectionData:connectionData completionHandler:^(SRNegotiationResponse *response, NSError *error) {
         if(!error) {
             __strong __typeof(&*weakSelf)strongSelf = weakSelf;
             if (![response tryWebSockets]) {
+                SRLogAutoWarn(@"server does not support websockets");
                 NSIndexSet *invalidTransports = [strongSelf.transports indexesOfObjectsPassingTest:^BOOL(id <SRClientTransportInterface> transport, NSUInteger idx, BOOL *stop) {
                     return [transport.name isEqualToString:@"webSockets"];
                 }];
@@ -84,6 +86,7 @@
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
+    SRLogAutoDebug(@"autoTransport will connect with connectionData %@", connectionData);
     [self start:connection connectionData:connectionData transportIndex:0 completionHandler:block];
 }
 
@@ -91,13 +94,14 @@
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
     __weak id <SRClientTransportInterface> transport = self.transports[index];
+    SRLogAutoDebug(@"autoTransport will attempt to start %@", [transport name]);
     [transport start:connection connectionData:connectionData completionHandler:^(id response, NSError *error) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         __strong __typeof(&*transport)strongTransport = transport;
 
         if (error) {
-            SRLogAutoTransport(@"will switch to next transport");
+            SRLogAutoWarn(@"will switch to next transport");
             
             // If that transport fails to initialize then fallback
             int next = index + 1;
@@ -112,13 +116,13 @@
                 NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([strongSelf class])]
                                                      code:0
                                                  userInfo:userInfo];
-                
+                SRLogAutoError(@"autoTransport failed to initialize a transport");
                 if(block) {
                     block(nil, error);
                 }
             }
         } else {
-            SRLogAutoTransport(@"did set active transport");
+            SRLogAutoInfo(@"did set active transport to %@", [strongTransport name]);
             
             //Set the active transport
             strongSelf.transport = strongTransport;
@@ -132,17 +136,17 @@
 
 
 - (void)send:(id <SRConnectionInterface>)connection data:(NSString *)data connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
-    SRLogAutoTransport(@"will send data from active transport");
+    SRLogAutoDebug(@"autoTransport will send data from active transport");
     [self.transport send:connection data:data connectionData:connectionData completionHandler:block];
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
-    SRLogAutoTransport(@"lost connection");
+    SRLogAutoWarn(@"autoTransport lost connection");
     [self.transport lostConnection:connection];
 }
 
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
-    SRLogAutoTransport(@"will stop transport");
+    SRLogAutoDebug(@"autoTransport will abortå");
     [self.transport abort:connection timeout:timeout connectionData:connectionData];
 }
 
