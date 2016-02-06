@@ -167,6 +167,59 @@ SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
     NSLog(message);
 }
 ```
+
+### Customizing Query Params
+
+#### Persistent Connections
+```objectivec
+id qs = @{
+   @"param1": @1,
+   @"param2": @"another"
+};
+SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite" queryString:qs];
+```
+
+#### Hub Connections
+```objectivec
+id qs = @{
+   @"param1": @1,
+   @"param2": @"another"
+};
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite" queryString:qs];
+```
+
+### Customizing Request Headers
+
+#### Persistent Connections
+```objectivec
+id headers = @{
+   @"param1": @1,
+   @"param2": @"another"
+};
+SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite"];
+[connection setHeaders:headers];
+
+//Alternative Usage
+SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite"];
+[connection addValue:@"1" forHTTPHeaderField:@"param1"];
+[connection addValue:@"another" forHTTPHeaderField:@"param2"];
+```
+
+#### Hub Connections
+```objectivec
+id headers = @{
+   @"param1": @1,
+   @"param2": @"another"
+};
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+[hubConnection setHeaders:headers];
+
+//Alternative Usage
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+[hubConnection addValue:@"1" forHTTPHeaderField:@"param1"];
+[hubConnection addValue:@"another" forHTTPHeaderField:@"param2"];
+```
+
 ## Requirements
 
 SignalR-ObjC requires either iOS 7.0 and above, or Mac OS 10.9 (64-bit with modern Cocoa runtime) and above.
