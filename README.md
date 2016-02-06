@@ -17,40 +17,32 @@ connection.started =  ^{
 [connection start];
 ```
 
-## How To Get Started
+## Installation
 
-- Download SignalR-ObjC and try out the included Mac and iPhone example apps
-    1. Install [CocoaPods](http://cocoapods.org/)
-        * $ [sudo] gem install cocoapods
-        * $ pod setup
-    1. cd SignalR-ObjC project directory
-    1. $ pod install
-- Check out the [documentation](http://dyknow.github.com/SignalR-ObjC/Documentation/index.html) for a comprehensive look at the APIs available in SignalR-ObjC. **NOTE:** this is a work in progress and is currently outdated.
-- Questions? [JabbR](https://jabbr.net/#/rooms/signalr-objc) is the best place to find answers
+### Installation with CocoaPods
 
-### Installation
-1. Install [CocoaPods](http://cocoapods.org/)
-    * $ [sudo] gem install cocoapods
-    * $ pod setup
-2. Create or Add SignalR to your "Podfile"
-<table>
-  <tr>
-    <th>Sample iOS Podfile</th>
-    <th>Sample OSX Podfile</th>
-  </tr>
-  <tr>
-    <td>
-platform :ios, '5.0'<br/>
-pod 'SignalR-ObjC'
-    </td>
-    <td>
-platform :osx, '10.7'<br/>
-pod 'SignalR-ObjC'
-    </td>
-  </tr>
-</table>
-3. Install SignalR-ObjC into your project
-    * $ pod install
+[CocoaPods](https://cocoapods.org/) is a dependency manager for Objective-C, which automates and simplifies the process of using 3rd-party libraries like SignalR-ObjC in your projects. See the ["Getting Started" guide for more information](https://guides.cocoapods.org/using/getting-started.html). You can install it with the following command:
+
+```
+$ gem install cocoapods
+```
+
+#### Podfile
+
+To integrate SignalR-ObjC into your Xcode project using CocoaPods, specify it in your Podfile:
+
+```
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.0'
+
+pod 'SignalR-ObjC', '~> 2.0'
+```
+
+Then, run the following command:
+
+```
+$ pod install
+```
 
 ## Overview
 
@@ -68,7 +60,7 @@ pod 'SignalR-ObjC'
   <tr><th colspan="2" style="text-align:center;">Transports</th></tr>
   <tr>
     <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRAutoTransport.h" >SRAutoTransport</a></td>
-    <td>SRAutoTransport chooses the best supported transport for both client and server.  This achieved by falling back to less performant transports.<br/>The default transport fallback is:<br/> 1. SRWebSocketTransport <br/> 2. SRServerSentEventsTransport <br/> 3. SRLongPollingTransport</td>
+    <td>SRAutoTransport chooses the best supported transport for both client and server.  This achieved by falling back to less performant transports.<br/>The default transport fallback is:<br/> 1. SRWebSocketTransport (if supported by the server) <br/> 2. SRServerSentEventsTransport <br/> 3. SRLongPollingTransport</td>
   </tr>
   <tr>
     <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRWebSocketsTransport.h" >SRWebSocketsTransport</a></td>
@@ -106,12 +98,31 @@ public class MyConnection : PersistentConnection
 
 //Client
 SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite/echo"];
-connection.received = ^(NSString * data) {
-    NSLog(data);
-};
-connection.started =  ^{
+
+// Register for connection lifecycle events
+[connection setStarted:^{
+    NSLog(@"Connection Started");
     [connection send:@"hello world"];
-};
+}];
+[connection setReceived:^(NSString *message) {
+    NSLog(@"Connection Recieved Data: %@",message);
+}];
+[connection setConnectionSlow:^{
+    NSLog(@"Connection Slow");
+}];
+[connection setReconnecting:^{
+    NSLog(@"Connection Reconnecting");
+}];
+[connection setReconnected:^{
+    NSLog(@"Connection Reconnected");
+}];
+[connection setClosed:^{
+    NSLog(@"Connection Closed");
+}];
+[connection setError:^(NSError *error) {
+    NSLog(@"Connection Error %@",error);
+}];
+
 [connection start];
 ```
 ### Hubs
@@ -136,6 +147,30 @@ SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://loc
 // Create a proxy to the chat service
 SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
 [chat on:@"addMessage" perform:self selector:@selector(addMessage:)];
+
+// Register for connection lifecycle events
+[hubConnection setStarted:^{
+    NSLog(@"Connection Started");
+    [connection send:@"hello world"];
+}];
+[hubConnection setReceived:^(NSString *message) {
+    NSLog(@"Connection Recieved Data: %@",message);
+}];
+[hubConnection setConnectionSlow:^{
+    NSLog(@"Connection Slow");
+}];
+[hubConnection setReconnecting:^{
+    NSLog(@"Connection Reconnecting");
+}];
+[hubConnection setReconnected:^{
+    NSLog(@"Connection Reconnected");
+}];
+[hubConnection setClosed:^{
+    NSLog(@"Connection Closed");
+}];
+[hubConnection setError:^(NSError *error) {
+    NSLog(@"Connection Error %@",error);
+}];
 // Start the connection
 [hubConnection start];
 
@@ -146,7 +181,7 @@ SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
 ```
 ## Requirements
 
-SignalR-ObjC requires either [iOS 6.0](http://developer.apple.com/library/ios/#releasenotes/General/WhatsNewIniPhoneOS/Articles/iPhoneOS4.html) and above, or [Mac OS 10.8](http://developer.apple.com/library/mac/#releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_6.html#//apple_ref/doc/uid/TP40008898-SW7) ([64-bit with modern Cocoa runtime](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtVersionsPlatforms.html)) and above.
+SignalR-ObjC requires either iOS 7.0 and above, or Mac OS 10.9 (64-bit with modern Cocoa runtime) and above.
 
 ### ARC
 
@@ -154,8 +189,8 @@ SignalR-ObjC requires either [iOS 6.0](http://developer.apple.com/library/ios/#r
 
 ### Networking
 
-- SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 2.0.0
-- SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.2.0
+- SignalR-ObjC uses [AFNetworking](https://github.com/AFNetworking/AFNetworking).  The minimum supported version of AFNetworking is 2.x
+- SignalR-ObjC uses  [SocketRocket](https://github.com/square/SocketRocket).  The minimum supported version of SocketRocket is 0.4.x
 
 
 ## LICENSE
