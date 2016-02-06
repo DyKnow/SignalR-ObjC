@@ -51,7 +51,7 @@ $ pod install
     <td>SRAutoTransport chooses the best supported transport for both client and server.  This achieved by falling back to less performant transports.<br/>The default transport fallback is:<br/> 1. SRWebSocketTransport (if supported by the server) <br/> 2. SRServerSentEventsTransport <br/> 3. SRLongPollingTransport</td>
   </tr>
   <tr>
-    <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRWebSocketsTransport.h" >SRWebSocketsTransport</a></td>
+    <td><a href="https://github.com/DyKnow/SignalR-ObjC/blob/master/SignalR.Client/Transports/SRWebSocketTransport.m" >SRWebSocketTransport</a></td>
     <td>WebSockets is the only transport that establishes a true persistent, two-way connection between the client and server.</td>
   </tr>
   <tr>
