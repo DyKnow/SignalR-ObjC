@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "39302A2D1C6978AB0061C6B5"
-               BuildableName = "SignalRiOS.framework"
+               BuildableName = "SignalR.framework"
                BlueprintName = "SignalR.Client.iOS"
                ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "39302A2D1C6978AB0061C6B5"
-            BuildableName = "SignalRiOS.framework"
+            BuildableName = "SignalR.framework"
             BlueprintName = "SignalR.Client.iOS"
             ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "39302A2D1C6978AB0061C6B5"
-            BuildableName = "SignalRiOS.framework"
+            BuildableName = "SignalR.framework"
             BlueprintName = "SignalR.Client.iOS"
             ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "39302A2D1C6978AB0061C6B5"
-            BuildableName = "SignalRiOS.framework"
+            BuildableName = "SignalR.framework"
             BlueprintName = "SignalR.Client.iOS"
             ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
          </BuildableReference>
