@@ -117,11 +117,12 @@ typedef enum {
                     }
                 }
                 break;
-            } case NSStreamEventErrorOccurred: {
+            }
+            case NSStreamEventErrorOccurred:
+            case NSStreamEventEndEncountered: {
                 [self onClosed:[stream streamError]];
                 break;
             }
-            case NSStreamEventEndEncountered:
             case NSStreamEventNone:
             case NSStreamEventHasBytesAvailable:
             default:

@@ -81,6 +81,8 @@
 		39302A5B1C6979E10061C6B5 /* SRLongPollingTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785F15AF13F6009B959E /* SRLongPollingTransport.m */; };
 		39302A5C1C6979E10061C6B5 /* SRServerSentEventsTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920786115AF13F6009B959E /* SRServerSentEventsTransport.m */; };
 		39302A5D1C6979E10061C6B5 /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
+		39B355011C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */; };
+		39B355021C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */; };
 		67F08F302448FB904F57EA11 /* Pods_SignalR_Client_iOS_SignalR_Client_iOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD05576397746170EB20A0D9 /* Pods_SignalR_Client_iOS_SignalR_Client_iOSTests.framework */; };
 		77DDD23056DDF5601554BBC1 /* Pods_SignalR_Client_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31B651E0317CA0F4E26E1338 /* Pods_SignalR_Client_iOS.framework */; };
 		C9D717AA1579C0EBB9DB7991 /* Pods_SignalR_Client_OSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E42E16292B5ADF0F39E2488 /* Pods_SignalR_Client_OSX.framework */; };
@@ -213,6 +215,7 @@
 		39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocketTransport.m; sourceTree = "<group>"; };
 		39AF0D801713935A00E13E6E /* SRWebSocketConnectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRWebSocketConnectionInfo.h; path = WebSockets/SRWebSocketConnectionInfo.h; sourceTree = "<group>"; };
 		39AF0D811713935A00E13E6E /* SRWebSocketConnectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRWebSocketConnectionInfo.m; path = WebSockets/SRWebSocketConnectionInfo.m; sourceTree = "<group>"; };
+		39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SREventSourceStreamReaderTests.m; path = ../Tests/Tests/SREventSourceStreamReaderTests.m; sourceTree = "<group>"; };
 		39EBAC2816D03F1000C6F359 /* SRConnectionInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionInterface.h; sourceTree = "<group>"; };
 		39EBAC2916D03F5800C6F359 /* SRConnectionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionDelegate.h; sourceTree = "<group>"; };
 		39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubProxyInterface.h; sourceTree = "<group>"; };
@@ -350,6 +353,7 @@
 			children = (
 				391F97941C71132B007AA844 /* SRChunkBufferTests.m */,
 				391F97951C71132B007AA844 /* SRLongPollingTransportTests.m */,
+				39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */,
 				391F97961C71132B007AA844 /* SRServerSentEventsTransportTests.m */,
 				391F97971C71132B007AA844 /* SRWebSocketTransportTests.m */,
 			);
@@ -958,6 +962,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				391F97A91C71136A007AA844 /* SRLongPollingTransportTests.m in Sources */,
+				39B355011C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */,
 				391F97A71C71136A007AA844 /* SRHubConnectionTests.m in Sources */,
 				391F97AA1C71136A007AA844 /* SRServerSentEventsTransportTests.m in Sources */,
 				391F97A61C71136A007AA844 /* SRConnectionTests.m in Sources */,
@@ -1007,6 +1012,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				391F97B11C71136B007AA844 /* SRLongPollingTransportTests.m in Sources */,
+				39B355021C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */,
 				391F97AF1C71136B007AA844 /* SRHubConnectionTests.m in Sources */,
 				391F97B21C71136B007AA844 /* SRServerSentEventsTransportTests.m in Sources */,
 				391F97AE1C71136B007AA844 /* SRConnectionTests.m in Sources */,

@@ -222,6 +222,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     };
     [_eventSource start];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        SRLogSSEWarn(@"serverSentEvents did complete");
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         SRLogSSEError(@"serverSentEvents did fail with error %@", error);
