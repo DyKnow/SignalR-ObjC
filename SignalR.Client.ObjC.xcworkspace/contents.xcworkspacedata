@@ -5,6 +5,12 @@
       location = "group:SignalR.Client.ObjC/SignalR.Client.ObjC.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Example/SignalR.Client.ObjC Example.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Example/Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

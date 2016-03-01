@@ -112,16 +112,7 @@
 		31B651E0317CA0F4E26E1338 /* Pods_SignalR_Client_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalR_Client_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3903084A173C660E00FE660E /* SRHeartbeatMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHeartbeatMonitor.h; sourceTree = "<group>"; };
 		3903084B173C660E00FE660E /* SRHeartbeatMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHeartbeatMonitor.m; sourceTree = "<group>"; };
-		3919634E15AF1EC200DDC946 /* SignalR.Samples.OSX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.OSX-Info.plist"; sourceTree = "<group>"; };
-		3919635015AF1EC200DDC946 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		3919635215AF1EC200DDC946 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3919635415AF1EC200DDC946 /* SignalR.Samples.OSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Samples.OSX-Prefix.pch"; sourceTree = "<group>"; };
-		3919635615AF1EC200DDC946 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		3919635815AF1EC200DDC946 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		3919635915AF1EC200DDC946 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		3919635C15AF1EC200DDC946 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3919643015AF373E00DDC946 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
-		3919643215AF374900DDC946 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = ../icon.icns; sourceTree = "<group>"; };
 		391F978B1C711309007AA844 /* SRMockClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockClientTransport.h; path = ../Tests/Mocks/SRMockClientTransport.h; sourceTree = "<group>"; };
 		391F978C1C711309007AA844 /* SRMockClientTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockClientTransport.m; path = ../Tests/Mocks/SRMockClientTransport.m; sourceTree = "<group>"; };
 		391F978D1C711309007AA844 /* SRMockNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockNetwork.h; path = ../Tests/Mocks/SRMockNetwork.h; sourceTree = "<group>"; };
@@ -293,30 +284,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		3919634C15AF1EC200DDC946 /* SignalR.Samples.OSX */ = {
-			isa = PBXGroup;
-			children = (
-				3919643215AF374900DDC946 /* icon.icns */,
-				3919635815AF1EC200DDC946 /* AppDelegate.h */,
-				3919635915AF1EC200DDC946 /* AppDelegate.m */,
-				3919635B15AF1EC200DDC946 /* MainMenu.xib */,
-				3919634D15AF1EC200DDC946 /* Supporting Files */,
-			);
-			path = SignalR.Samples.OSX;
-			sourceTree = "<group>";
-		};
-		3919634D15AF1EC200DDC946 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3919634E15AF1EC200DDC946 /* SignalR.Samples.OSX-Info.plist */,
-				3919634F15AF1EC200DDC946 /* InfoPlist.strings */,
-				3919635215AF1EC200DDC946 /* main.m */,
-				3919635415AF1EC200DDC946 /* SignalR.Samples.OSX-Prefix.pch */,
-				3919635515AF1EC200DDC946 /* Credits.rtf */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		3919636115AF1FBC00DDC946 /* SignalR.Samples */ = {
 			isa = PBXGroup;
 			children = (
@@ -391,7 +358,6 @@
 				391F97891C7112DC007AA844 /* Tests */,
 				3919636115AF1FBC00DDC946 /* SignalR.Samples */,
 				3920792515AF1853009B959E /* SignalR.Samples.iOS */,
-				3919634C15AF1EC200DDC946 /* SignalR.Samples.OSX */,
 				3920780915AF13C3009B959E /* Frameworks */,
 				3920780815AF13C3009B959E /* Products */,
 				38078F44ACF7B5D83E574BE7 /* Pods */,
@@ -1041,30 +1007,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		3919634F15AF1EC200DDC946 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3919635015AF1EC200DDC946 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		3919635515AF1EC200DDC946 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3919635615AF1EC200DDC946 /* en */,
-			);
-			name = Credits.rtf;
-			sourceTree = "<group>";
-		};
-		3919635B15AF1EC200DDC946 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3919635C15AF1EC200DDC946 /* en */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
 		3920792815AF1854009B959E /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
