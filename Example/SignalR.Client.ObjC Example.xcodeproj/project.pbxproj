@@ -7,15 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		390E4CE71C8524F7001A14A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 390E4CE61C8524F7001A14A2 /* Assets.xcassets */; };
 		397B377C1C851B7600BC5E36 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 397B377B1C851B7600BC5E36 /* AppDelegate.m */; };
 		397B377F1C851B7600BC5E36 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 397B377E1C851B7600BC5E36 /* main.m */; };
 		397B37821C851B7600BC5E36 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 397B37811C851B7600BC5E36 /* ViewController.m */; };
 		397B37871C851B7600BC5E36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 397B37851C851B7600BC5E36 /* Main.storyboard */; };
-		397B378E1C851E4B00BC5E36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 397B378D1C851E4B00BC5E36 /* Assets.xcassets */; };
 		E559DDE611A5B689B3BC0D00 /* Pods_OS_X_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E325A97A02BC27ED400E17C /* Pods_OS_X_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		390E4CE61C8524F7001A14A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		397B37771C851B7600BC5E36 /* OS X Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OS X Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		397B377A1C851B7600BC5E36 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		397B377B1C851B7600BC5E36 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -25,7 +26,6 @@
 		397B37861C851B7600BC5E36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		397B37881C851B7600BC5E36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		397B378C1C851BDC00BC5E36 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		397B378D1C851E4B00BC5E36 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E325A97A02BC27ED400E17C /* Pods_OS_X_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OS_X_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEF9A811D7FC720FD6FD931E /* Pods-OS X Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OS X Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OS X Example/Pods-OS X Example.debug.xcconfig"; sourceTree = "<group>"; };
 		E3A0A8AB55C503A140E0D367 /* Pods-OS X Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OS X Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-OS X Example/Pods-OS X Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -47,7 +47,6 @@
 			isa = PBXGroup;
 			children = (
 				397B378C1C851BDC00BC5E36 /* Podfile */,
-				397B378D1C851E4B00BC5E36 /* Assets.xcassets */,
 				397B37791C851B7600BC5E36 /* OS X Example */,
 				397B37781C851B7600BC5E36 /* Products */,
 				45EFDEE793A918C8077B6250 /* Pods */,
@@ -66,6 +65,7 @@
 		397B37791C851B7600BC5E36 /* OS X Example */ = {
 			isa = PBXGroup;
 			children = (
+				390E4CE61C8524F7001A14A2 /* Assets.xcassets */,
 				397B377A1C851B7600BC5E36 /* AppDelegate.h */,
 				397B377B1C851B7600BC5E36 /* AppDelegate.m */,
 				397B37801C851B7600BC5E36 /* ViewController.h */,
@@ -161,7 +161,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				397B378E1C851E4B00BC5E36 /* Assets.xcassets in Resources */,
+				390E4CE71C8524F7001A14A2 /* Assets.xcassets in Resources */,
 				397B37871C851B7600BC5E36 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
