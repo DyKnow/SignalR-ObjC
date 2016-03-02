@@ -17,6 +17,9 @@ PODS:
   - AFNetworking/Reachability (2.6.3)
   - AFNetworking/Security (2.6.3)
   - AFNetworking/Serialization (2.6.3)
+  - AFNetworking/UIKit (2.6.3):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
   - SignalR-ObjC (2.0.1):
     - SignalR-ObjC/Core (= 2.0.1)
   - SignalR-ObjC/Core (2.0.1):

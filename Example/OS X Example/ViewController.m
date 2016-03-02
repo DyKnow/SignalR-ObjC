@@ -7,11 +7,9 @@
 //
 
 #import "ViewController.h"
-#import "SignalR.h"
+#import "StreamingConnection.h"
 
 @interface ViewController ()
-
-@property (strong, nonatomic, readwrite) SRConnection *connection;
 
 @end
 
@@ -20,29 +18,28 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _connection = [SRConnection connectionWithURLString:[@"http://myserver.com" stringByAppendingFormat:@"streaming-connection"]];
-    [self.connection setStarted:^{
+    [[StreamingConnection sharedConnection] setStarted:^{
         NSLog(@"Connection Opened");
     }];
-    [self.connection setReconnecting:^{
+    [[StreamingConnection sharedConnection] setReconnecting:^{
         NSLog(@"Connection Reconnecting");
     }];
-    [self.connection setReconnected:^{
+    [[StreamingConnection sharedConnection] setReconnected:^{
         NSLog(@"Connection Reconnected");
     }];
-    [self.connection setConnectionSlow:^{
+    [[StreamingConnection sharedConnection] setConnectionSlow:^{
         NSLog(@"Connection Slow");
     }];
-    [self.connection setReceived:^(NSString * data){
+    [[StreamingConnection sharedConnection] setReceived:^(NSString * data){
         NSLog(@"%@",data);
     }];
-    [self.connection setError:^(NSError *error){
+    [[StreamingConnection sharedConnection] setError:^(NSError *error){
         NSLog(@"%@",[NSString stringWithFormat:@"Connection Error: %@",error.localizedDescription]);
     }];
-    [self.connection setClosed:^(){
+    [[StreamingConnection sharedConnection] setClosed:^(){
         NSLog(@"Connection Closed");
     }];
-    [self.connection start];
+    [[StreamingConnection sharedConnection] start];
 }
 
 - (void)setRepresentedObject:(id)representedObject {
