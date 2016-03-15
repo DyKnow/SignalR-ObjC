@@ -42,12 +42,12 @@
     NSArray *transports = @[[[SRWebSocketTransport alloc] init],
                             [[SRServerSentEventsTransport alloc] init],
                             [[SRLongPollingTransport alloc] init]];
-    return [self initWithTransports:[NSMutableArray arrayWithArray:transports]];
+    return [self initWithTransports:transports];
 }
 
-- (instancetype)initWithTransports:(NSMutableArray *)transports {
+- (instancetype)initWithTransports:(NSArray *)transports {
     if(self = [super init]) {
-        _transports = transports;
+        _transports = [NSMutableArray arrayWithArray:transports];
     }
     return self;
 }

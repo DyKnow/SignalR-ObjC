@@ -15,6 +15,8 @@
 #import "SRNegotiationResponse.h"
 #import "SRMockNetwork.h"
 #import "SRMockClientTransport.h"
+#import "SRMockSSENetworkStream.h"
+#import "SRMockWaitBlockOperation.h"
 
 @interface SRConnection (UnitTest)
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
@@ -23,118 +25,6 @@
 @interface SRServerSentEventsTransport ()
 @property (strong, nonatomic, readwrite) NSOperationQueue *serverSentEventsOperationQueue;
 @property (assign) BOOL stop;
-@end
-
-@interface SSE_NetworkMock: NSObject
-@property (readwrite, nonatomic, strong) id mock;
-//only call this directly if you don't want to trigger the stream.opened callback
-@property (readwrite, nonatomic, copy) void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
-
-@property (readwrite, nonatomic, strong) NSData* lastData;
-@property (readwrite, nonatomic, strong) id dataDelegate;
-@end
-
-@implementation SSE_NetworkMock
-- (id) init
-{
-    self = [super init];
-    __weak __typeof(&*self)weakSelf = self;
-    
-    _mock = [OCMockObject niceMockForClass:[AFHTTPRequestOperation class]];
-    [[[_mock stub] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        void (^failureOut)(AFHTTPRequestOperation *operation, NSError *error);
-        [invocation getArgument: &failureOut atIndex: 3];
-        strongSelf.onFailure = failureOut;
-    }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
-    // Here we stub the alloc class method **
-    [[[_mock stub] andReturn:_mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[_mock stub] andReturn:_mock] initWithRequest:[OCMArg any]];
-    
-    return self;
-}
-
-- (void)prepareForOpeningResponse:(void (^)())then {
-    return [self prepareForOpeningResponse:nil then:then];
-}
-
-- (void)prepareForOpeningResponse:(NSString *)response then:(void (^)())then {
-    NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
-    [[[self.mock stub] andReturn: dataStream] outputStream];
-    
-    if (!response) {
-        response = @"";
-    }
-    NSData* data = [response dataUsingEncoding:NSUTF8StringEncoding];
-    
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:data] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    
-    if (then) {
-        then();
-    }
-    _dataDelegate = dataStream.delegate;
-    _lastData = data;
-    
-    if (self.dataDelegate) {
-        [self.dataDelegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
-    }
-}
-
-- (void)prepareForNextResponse:(NSString *)response then:(void (^)())then {
-    NSMutableData* prior = [[NSMutableData alloc] initWithData: _lastData];
-    NSData* data = [response dataUsingEncoding:NSUTF8StringEncoding];
-    [prior appendData:data];
-    id streamChanges = [OCMockObject niceMockForClass: [NSStream class]];
-    [[[streamChanges stub] andReturn:prior] propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    
-    if (then) {
-        then();
-    }
-    
-    if (self.dataDelegate) {
-        [self.dataDelegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
-    }
-}
-
-- (void)dealloc {
-    [_mock stopMocking];
-}
-
-@end
-
-@interface SSE_WaitBlock: NSObject
-@property (readwrite, nonatomic, copy) void (^afterWait)();
-@property (readwrite, nonatomic, assign) double waitTime;
-@property (readwrite, nonatomic, strong) id mock;
-@end
-
-@implementation SSE_WaitBlock
-- (id) init: (int)expectedWait{
-    self = [super init];
-    __weak __typeof(&*self)weakSelf = self;
-    _afterWait = nil;
-    _mock = [OCMockObject mockForClass:[NSBlockOperation class]];
-    [[[[_mock stub] andReturn: _mock ] andDo:^(NSInvocation *invocation) {
-         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __unsafe_unretained void (^successCallback)(AFHTTPRequestOperation *, NSHTTPURLResponse *) = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        strongSelf.afterWait = successCallback;
-    }] blockOperationWithBlock: [OCMArg any]];
-    [[[_mock stub] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        double delay = 0;
-        [invocation getArgument: &delay atIndex:4];
-        strongSelf.waitTime = delay;
-    }] performSelector:@selector(start) withObject:nil afterDelay: expectedWait];
-    return self;
-}
-
-- (void)dealloc {
-    [_mock stopMocking];
-}
-
 @end
 
 @interface SRServerSentEventsTransportTests : XCTestCase
@@ -157,7 +47,7 @@
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream *NetworkMock = [[SRMockSSENetworkStream alloc] init];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
@@ -183,7 +73,7 @@
 - (void)testParsesInitialBuffer {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream *NetworkMock = [[SRMockSSENetworkStream alloc] init];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
@@ -209,7 +99,7 @@
 - (void)testIgnoresInitializedAndEmptyLinesWhenParsingMessages {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream *NetworkMock = [[SRMockSSENetworkStream alloc] init];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
@@ -268,7 +158,7 @@
 
 - (void)testConnectionErrorRetries__RetriesAfterADelay__CommunicatesLifeCycleViaConnection {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock *NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream *NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
@@ -301,10 +191,10 @@
         [reconnected fulfill];
     };
     
-    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
-    NetworkMock.onFailure(NetworkMock.mock, [[NSError alloc]initWithDomain:@"EXPECTED" code:42 userInfo:nil]);
-    [[NetworkMock mock] stopMocking];
-    SSE_NetworkMock* NetworkReconnectMock = [[SSE_NetworkMock alloc]init];
+    SRMockWaitBlockOperation* reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[sse reconnectDelay] doubleValue]];
+    [NetworkMock prepareForError:[[NSError alloc]initWithDomain:@"EXPECTED" code:42 userInfo:nil]];
+    [NetworkMock stopMocking];
+    SRMockSSENetworkStream* NetworkReconnectMock = [[SRMockSSENetworkStream alloc]init];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
     [NetworkReconnectMock prepareForOpeningResponse:^{
         reconnectDelay.afterWait();
@@ -320,7 +210,7 @@
 - (void)testLostConnectionAbortsAllConnectionsAndReconnects {
     // happens when healthy connection misses too many heartbeats
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
@@ -360,11 +250,11 @@
     [sse lostConnection:connection];
     [queueMock verify];//clears out the queue after the timeout
     
-    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    SRMockWaitBlockOperation* reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[sse reconnectDelay] doubleValue]];
     NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];//when the operation is cancelled, it yields the NSURLErrorCancelled error. From https://github.com/AFNetworking/AFNetworking/blob/c9bbbeb9cae6aeceef5353fd273fc48329009c3f/AFNetworking/AFURLConnectionOperation.m#L502
-    NetworkMock.onFailure(NetworkMock.mock, cancelledError);
-    [[NetworkMock mock] stopMocking];
-    SSE_NetworkMock* NetworkReconnectMock = [[SSE_NetworkMock alloc]init];
+    [NetworkMock prepareForError:cancelledError];
+    [NetworkMock stopMocking];
+    SRMockSSENetworkStream* NetworkReconnectMock = [[SRMockSSENetworkStream alloc]init];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
     [NetworkReconnectMock prepareForOpeningResponse:^{
         reconnectDelay.afterWait();
@@ -379,7 +269,7 @@
 
 - (void)testDisconnectsOnReconnectTimeout {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken =
     connection.connectionId = @"10101";
@@ -426,12 +316,12 @@
         [closed fulfill];
     };
     
-    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    SRMockWaitBlockOperation* reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[sse reconnectDelay] doubleValue]];
     NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
-    NetworkMock.onFailure(NetworkMock.mock, cancelledError);
-    [[NetworkMock mock] stopMocking];
+    [NetworkMock prepareForError:cancelledError];
+    [NetworkMock stopMocking];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
-    SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc] init:[connection.disconnectTimeout doubleValue]];
+    SRMockWaitBlockOperation* reconnectTimeoutBlock = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[connection.disconnectTimeout doubleValue]];
     reconnectDelay.afterWait();
     
     //lets track that we clear out the queue when we timeout
@@ -460,7 +350,7 @@
 - (void)testHandlesExtraEmptyLinesWhenParsingMessages {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    SSE_NetworkMock * NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream * NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
@@ -489,7 +379,7 @@
 - (void)testHandlesNewLinesSpreadOutOverReads {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
-    SSE_NetworkMock * NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream * NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc]initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
@@ -543,7 +433,7 @@
         [initialized fulfill];
     };
     
-    SSE_WaitBlock* transportConnectTimeout = [[SSE_WaitBlock alloc]init: 10];
+    SRMockWaitBlockOperation* transportConnectTimeout = [[SRMockWaitBlockOperation alloc] initWithWaitTime: 10];
     [connection start:sse];
     
     [transportConnectTimeout.mock stopMocking];
@@ -560,7 +450,7 @@
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.transportConnectTimeout =@10;
     
@@ -610,7 +500,7 @@
 
 - (void)xtestPingIntervalStopsTheConnectionOn401s {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetConnect = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -644,7 +534,7 @@
 
 - (void)xtestPingIntervalStopsTheConnectionOn403s {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetConnect = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetConnect = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -688,7 +578,7 @@
 
 - (void)testReconnectExceedingTheReconnectWindowResultsInTheConnectionDisconnect {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
 
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -725,12 +615,12 @@
         [disconnected fulfill];
     };
     
-    SSE_WaitBlock* reconnectDelay = [[SSE_WaitBlock alloc] init:[[sse reconnectDelay] doubleValue]];
+    SRMockWaitBlockOperation* reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[sse reconnectDelay] doubleValue]];
     NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
-    NetworkMock.onFailure(NetworkMock.mock, cancelledError);
-    [[NetworkMock mock] stopMocking];
+    [NetworkMock prepareForError:cancelledError];
+    [NetworkMock stopMocking];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
-    SSE_WaitBlock* reconnectTimeoutBlock = [[SSE_WaitBlock alloc] init:[connection.disconnectTimeout doubleValue]];
+    SRMockWaitBlockOperation* reconnectTimeoutBlock = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[connection.disconnectTimeout doubleValue]];
     //retry has waited now,
     reconnectDelay.afterWait();
     XCTAssertEqual([connection.disconnectTimeout doubleValue], reconnectTimeoutBlock.waitTime, @"got timeout value from an unexpected place - check to be sure we are pulling from the connection");
@@ -747,7 +637,7 @@
 
 - (void)testConnectionCanBeStoppedDuringTransportStart {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -829,7 +719,7 @@
 
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {
     XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
-    SSE_NetworkMock* NetworkMock = [[SSE_NetworkMock alloc] init];
+    SRMockSSENetworkStream* NetworkMock = [[SRMockSSENetworkStream alloc] init];
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     __weak __typeof(&*connection)weakConnection = connection;
     __weak __typeof(&*NetworkMock)weakNetworkMock = NetworkMock;

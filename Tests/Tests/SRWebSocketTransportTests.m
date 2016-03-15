@@ -14,6 +14,7 @@
 #import "SRConnectionInterface.h"
 #import "SRNegotiationResponse.h"
 #import "SRMockClientTransport.h"
+#import "SRMockWaitBlockOperation.h"
 
 @interface SRConnection (UnitTest)
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
@@ -26,39 +27,6 @@
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
-@end
-
-@interface WS_WaitBlock: NSObject
-@property (readwrite, nonatomic, copy) void (^afterWait)();
-@property (readwrite, nonatomic, assign) double waitTime;
-@property (readwrite, nonatomic, strong) id mock;
-@end
-
-@implementation WS_WaitBlock
-- (id) init: (int)expectedWait{
-    self = [super init];
-    __weak __typeof(&*self)weakSelf = self;
-    _afterWait = nil;
-    _mock = [OCMockObject mockForClass:[NSBlockOperation class]];
-    [[[[_mock stub] andReturn: _mock ] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __unsafe_unretained void (^successCallback)() = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        strongSelf.afterWait = successCallback;
-    }] blockOperationWithBlock: [OCMArg any]];
-    [[[_mock stub] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        double delay = 0;
-        [invocation getArgument: &delay atIndex:4];
-        strongSelf.waitTime = delay;
-    }] performSelector:@selector(start) withObject:nil afterDelay: expectedWait];
-    return self;
-}
-
-- (void)dealloc {
-    [_mock stopMocking];
-}
-
 @end
 
 @interface SRWebSocketTransportTests : XCTestCase
@@ -137,7 +105,7 @@
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
 
-    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[[ws reconnectDelay] doubleValue]];
+    SRMockWaitBlockOperation *reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[ws reconnectDelay] doubleValue]];
     [ws webSocket:mock didFailWithError:[[NSError alloc] initWithDomain:@"Unit test" code:42 userInfo:nil ]];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
     reconnectDelay.afterWait();
@@ -154,6 +122,7 @@
     [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
+    [[mock expect] close];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
@@ -175,6 +144,7 @@
             NSLog(@"Timeout Error: %@", error);
         }
     }];
+    [mock verify];
 }
 
 - (void)testConnectionErrorRetries_RetriesAfterADelay_CommunicatesLifeCycleViaConnection_StreamClosesUncleanly {
@@ -214,7 +184,7 @@
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
-    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[ws.reconnectDelay intValue]];
+    SRMockWaitBlockOperation *reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[ws.reconnectDelay intValue]];
     [ws webSocket:mock didCloseWithCode:0 reason:@"Stream end encountered" wasClean:NO];
     [[reconnectDelay mock] stopMocking];
     reconnectDelay.afterWait();
@@ -265,7 +235,7 @@
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
-    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[ws.reconnectDelay intValue]];
+    SRMockWaitBlockOperation *reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[ws.reconnectDelay intValue]];
     [ws webSocket:mock didCloseWithCode:1001 reason:@"Somevalid reason" wasClean:YES];
     [[reconnectDelay mock] stopMocking];
     reconnectDelay.afterWait();
@@ -316,7 +286,7 @@
     [ws webSocketDidOpen: mock];
     [ws webSocket:mock didReceiveMessage:@"{\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}"];
     
-    WS_WaitBlock *reconnectDelay = [[WS_WaitBlock alloc] init:[ws.reconnectDelay intValue]];
+    SRMockWaitBlockOperation *reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[ws.reconnectDelay intValue]];
     [ws lostConnection:connection];
     [[reconnectDelay mock] stopMocking];
     reconnectDelay.afterWait();
@@ -378,11 +348,11 @@
                 [closed fulfill];
             }];
             
-            WS_WaitBlock *reconnectingDelay = [[WS_WaitBlock alloc] init:[[ws reconnectDelay] doubleValue]];
+            SRMockWaitBlockOperation *reconnectingDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[ws reconnectDelay] doubleValue]];
             NSError *cancelledError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:nil];
             [ws webSocket:mock didFailWithError:cancelledError];
             [reconnectingDelay.mock stopMocking];
-            WS_WaitBlock *disconnectTimeout = [[WS_WaitBlock alloc] init:[[connection disconnectTimeout] doubleValue]];
+            SRMockWaitBlockOperation *disconnectTimeout = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[connection disconnectTimeout] doubleValue]];
             reconnectingDelay.afterWait();
             [disconnectTimeout.mock stopMocking];
             disconnectTimeout.afterWait();
@@ -411,6 +381,7 @@
     [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
     [[mock stub] setDelegate: [OCMArg any]];
     [[mock stub] open];
+    [[mock expect] close];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
 
@@ -433,7 +404,7 @@
         [initialized fulfill];
     };
     
-    WS_WaitBlock* transportConnectTimeout = [[WS_WaitBlock alloc]init: 10];
+    SRMockWaitBlockOperation* transportConnectTimeout = [[SRMockWaitBlockOperation alloc]initWithWaitTime:10];
     [connection start:ws];
     [transportConnectTimeout.mock stopMocking];
     transportConnectTimeout.afterWait();
@@ -445,6 +416,7 @@
             NSLog(@"Timeout Error: %@", error);
         }
     }];
+    [mock verify];
 }
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {

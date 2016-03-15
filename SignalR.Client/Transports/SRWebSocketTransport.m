@@ -81,23 +81,25 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
 - (void)abort:(id <SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
     SRLogWSDebug(@"abort, will close websocket");
-    [_webSocket setDelegate:nil];
-    [_webSocket close];
-    _webSocket = nil;
+    [self stopWebsocket];
     [super abort:connection timeout:timeout connectionData:connectionData];
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
     SRLogWSWarn(@"lost connection, closing websocket");
-    [_webSocket setDelegate:nil];
-    [_webSocket close];
-    _webSocket = nil;
+    [self stopWebsocket];
     
     if ([self tryCompleteAbort]) {
         return;
     }
     
     [self reconnect:[_connectionInfo connection]];
+}
+
+- (void)stopWebsocket {
+    [_webSocket setDelegate:nil];
+    [_webSocket close];
+    _webSocket = nil;
 }
 
 #pragma mark -
@@ -141,6 +143,8 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
                 };
                 NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
                 SRLogWSError(@"websocket failed to receive initialized message before timeout");
+                [strongSelf stopWebsocket];
+                
                 SRWebSocketStartBlock callback = [strongSelf.startBlock copy];
                 strongSelf.startBlock = nil;
                 callback(nil,timeout);
@@ -200,7 +204,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
     if (disconnected) {
         SRLogWSDebug(@"websocket did receive disconnect command from server, will close");
         [[_connectionInfo connection] disconnect];
-        [_webSocket close];
+        [self stopWebsocket];
     }
 }
 
@@ -213,6 +217,7 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
                                                  selector:@selector(start)
                                                    object:nil];
         self.connectTimeoutOperation = nil;
+        [self stopWebsocket];
         
         SRWebSocketStartBlock callback = [self.startBlock copy];
         self.startBlock = nil;

@@ -15,44 +15,12 @@
 #import "SRNegotiationResponse.h"
 #import "SRMockNetwork.h"
 #import "SRMockClientTransport.h"
+#import "SRMockWaitBlockOperation.h"
 
 @interface SRLongPollingTransport ()
 @property (strong, nonatomic, readwrite) NSOperationQueue *pollingOperationQueue;
 
 - (void)poll:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block;
-
-@end
-
-@interface LP_WaitBlock: NSObject
-@property (readwrite, nonatomic, copy) void (^afterWait)();
-@property (readwrite, nonatomic, assign) double waitTime;
-@property (readwrite, nonatomic, strong) id mock;
-@end
-
-@implementation LP_WaitBlock
-- (id) init: (int)expectedWait{
-    self = [super init];
-    __weak __typeof(&*self)weakSelf = self;
-    _afterWait = nil;
-    _mock = [OCMockObject mockForClass:[NSBlockOperation class]];
-    [[[[_mock stub] andReturn: _mock ] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __unsafe_unretained void (^successCallback)() = nil;
-        [invocation getArgument: &successCallback atIndex: 2];
-        strongSelf.afterWait = successCallback;
-    }] blockOperationWithBlock: [OCMArg any]];
-    [[[_mock stub] andDo:^(NSInvocation *invocation) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        double delay = 0;
-        [invocation getArgument: &delay atIndex:4];
-        strongSelf.waitTime = delay;
-    }] performSelector:@selector(start) withObject:nil afterDelay: expectedWait];
-    return self;
-}
-
-- (void)dealloc {
-    [_mock stopMocking];
-}
 
 @end
 
@@ -122,7 +90,7 @@
                                                        statusCode:@500
                                                             error:[[NSError alloc] initWithDomain:@"Unit test" code:42 userInfo:nil]];
     lp.pollingOperationQueue = nil; //set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
-    LP_WaitBlock *errorDelay = [[LP_WaitBlock alloc] init:[lp.errorDelay doubleValue]];
+    SRMockWaitBlockOperation *errorDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[lp.errorDelay doubleValue]];
     [connection start:lp];
     [connect1 stopMocking];
     [errorDelay.mock stopMocking];
@@ -162,7 +130,7 @@
                                                       statusCode:@500
                                                            error:[[NSError alloc] initWithDomain:@"EXPECTED" code:NSURLErrorTimedOut userInfo:nil]];
     lp.pollingOperationQueue = nil; //set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
-    LP_WaitBlock *errorDelay = [[LP_WaitBlock alloc] init:[lp.errorDelay doubleValue]];
+    SRMockWaitBlockOperation *errorDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[lp.errorDelay doubleValue]];
     [connection start:lp];
     [connect stopMocking];
     [errorDelay.mock stopMocking];
