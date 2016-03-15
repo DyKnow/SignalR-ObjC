@@ -12,7 +12,6 @@
 		390E4CF01C8651BE001A14A2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4CEF1C8651BE001A14A2 /* main.m */; };
 		390E4CF31C8651BE001A14A2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4CF21C8651BE001A14A2 /* AppDelegate.m */; };
 		390E4CF61C8651BE001A14A2 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4CF51C8651BE001A14A2 /* MasterViewController.m */; };
-		390E4CF91C8651BE001A14A2 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4CF81C8651BE001A14A2 /* DetailViewController.m */; };
 		390E4CFC1C8651BE001A14A2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 390E4CFA1C8651BE001A14A2 /* Main.storyboard */; };
 		390E4CFE1C8651BE001A14A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 390E4CFD1C8651BE001A14A2 /* Assets.xcassets */; };
 		390E4D011C8651BE001A14A2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 390E4CFF1C8651BE001A14A2 /* LaunchScreen.storyboard */; };
@@ -24,6 +23,12 @@
 		390E4D161C8682A1001A14A2 /* RawConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4D141C8682A1001A14A2 /* RawConnection.m */; };
 		390E4D191C87A490001A14A2 /* MouseTrackingConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4D181C87A48F001A14A2 /* MouseTrackingConnection.m */; };
 		390E4D1A1C87A490001A14A2 /* MouseTrackingConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 390E4D181C87A48F001A14A2 /* MouseTrackingConnection.m */; };
+		3917FFE01C87BDB9003BFB5B /* RawConnectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3917FFDF1C87BDB9003BFB5B /* RawConnectionViewController.m */; };
+		3917FFE61C87BF39003BFB5B /* ConnectionStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3917FFE51C87BF39003BFB5B /* ConnectionStatusViewController.m */; };
+		3917FFE91C87C343003BFB5B /* StreamingConnectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3917FFE81C87C343003BFB5B /* StreamingConnectionViewController.m */; };
+		3935C5B11C8926FC00E3E54F /* MouseTrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3935C5B01C8926FC00E3E54F /* MouseTrackingViewController.m */; };
+		3935C5B41C89294B00E3E54F /* DrawingPadConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3935C5B31C89294B00E3E54F /* DrawingPadConnection.m */; };
+		3935C5B71C892AD900E3E54F /* DrawingPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3935C5B61C892AD900E3E54F /* DrawingPadViewController.m */; };
 		397B377C1C851B7600BC5E36 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 397B377B1C851B7600BC5E36 /* AppDelegate.m */; };
 		397B377F1C851B7600BC5E36 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 397B377E1C851B7600BC5E36 /* main.m */; };
 		397B37821C851B7600BC5E36 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 397B37811C851B7600BC5E36 /* ViewController.m */; };
@@ -40,8 +45,6 @@
 		390E4CF21C8651BE001A14A2 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		390E4CF41C8651BE001A14A2 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
 		390E4CF51C8651BE001A14A2 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
-		390E4CF71C8651BE001A14A2 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
-		390E4CF81C8651BE001A14A2 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		390E4CFB1C8651BE001A14A2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		390E4CFD1C8651BE001A14A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		390E4D001C8651BE001A14A2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -54,6 +57,18 @@
 		390E4D141C8682A1001A14A2 /* RawConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RawConnection.m; path = Networking/RawConnection.m; sourceTree = "<group>"; };
 		390E4D171C87A48F001A14A2 /* MouseTrackingConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseTrackingConnection.h; path = Networking/MouseTrackingConnection.h; sourceTree = "<group>"; };
 		390E4D181C87A48F001A14A2 /* MouseTrackingConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MouseTrackingConnection.m; path = Networking/MouseTrackingConnection.m; sourceTree = "<group>"; };
+		3917FFDE1C87BDB9003BFB5B /* RawConnectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawConnectionViewController.h; sourceTree = "<group>"; };
+		3917FFDF1C87BDB9003BFB5B /* RawConnectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawConnectionViewController.m; sourceTree = "<group>"; };
+		3917FFE41C87BF39003BFB5B /* ConnectionStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStatusViewController.h; sourceTree = "<group>"; };
+		3917FFE51C87BF39003BFB5B /* ConnectionStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionStatusViewController.m; sourceTree = "<group>"; };
+		3917FFE71C87C343003BFB5B /* StreamingConnectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingConnectionViewController.h; sourceTree = "<group>"; };
+		3917FFE81C87C343003BFB5B /* StreamingConnectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingConnectionViewController.m; sourceTree = "<group>"; };
+		3935C5AF1C8926FC00E3E54F /* MouseTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseTrackingViewController.h; sourceTree = "<group>"; };
+		3935C5B01C8926FC00E3E54F /* MouseTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MouseTrackingViewController.m; sourceTree = "<group>"; };
+		3935C5B21C89294B00E3E54F /* DrawingPadConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingPadConnection.h; path = Networking/DrawingPadConnection.h; sourceTree = "<group>"; };
+		3935C5B31C89294B00E3E54F /* DrawingPadConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DrawingPadConnection.m; path = Networking/DrawingPadConnection.m; sourceTree = "<group>"; };
+		3935C5B51C892AD900E3E54F /* DrawingPadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingPadViewController.h; sourceTree = "<group>"; };
+		3935C5B61C892AD900E3E54F /* DrawingPadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawingPadViewController.m; sourceTree = "<group>"; };
 		397B37771C851B7600BC5E36 /* OS X Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OS X Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		397B377A1C851B7600BC5E36 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		397B377B1C851B7600BC5E36 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -97,8 +112,16 @@
 				390E4CF21C8651BE001A14A2 /* AppDelegate.m */,
 				390E4CF41C8651BE001A14A2 /* MasterViewController.h */,
 				390E4CF51C8651BE001A14A2 /* MasterViewController.m */,
-				390E4CF71C8651BE001A14A2 /* DetailViewController.h */,
-				390E4CF81C8651BE001A14A2 /* DetailViewController.m */,
+				3917FFDE1C87BDB9003BFB5B /* RawConnectionViewController.h */,
+				3917FFDF1C87BDB9003BFB5B /* RawConnectionViewController.m */,
+				3917FFE71C87C343003BFB5B /* StreamingConnectionViewController.h */,
+				3917FFE81C87C343003BFB5B /* StreamingConnectionViewController.m */,
+				3917FFE41C87BF39003BFB5B /* ConnectionStatusViewController.h */,
+				3917FFE51C87BF39003BFB5B /* ConnectionStatusViewController.m */,
+				3935C5AF1C8926FC00E3E54F /* MouseTrackingViewController.h */,
+				3935C5B01C8926FC00E3E54F /* MouseTrackingViewController.m */,
+				3935C5B51C892AD900E3E54F /* DrawingPadViewController.h */,
+				3935C5B61C892AD900E3E54F /* DrawingPadViewController.m */,
 				390E4CFA1C8651BE001A14A2 /* Main.storyboard */,
 				390E4CFD1C8651BE001A14A2 /* Assets.xcassets */,
 				390E4CFF1C8651BE001A14A2 /* LaunchScreen.storyboard */,
@@ -127,6 +150,8 @@
 				390E4D101C868080001A14A2 /* ConnectionStatusConnection.m */,
 				390E4D171C87A48F001A14A2 /* MouseTrackingConnection.h */,
 				390E4D181C87A48F001A14A2 /* MouseTrackingConnection.m */,
+				3935C5B21C89294B00E3E54F /* DrawingPadConnection.h */,
+				3935C5B31C89294B00E3E54F /* DrawingPadConnection.m */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -396,11 +421,16 @@
 			files = (
 				390E4D1A1C87A490001A14A2 /* MouseTrackingConnection.m in Sources */,
 				390E4CF31C8651BE001A14A2 /* AppDelegate.m in Sources */,
+				3917FFE61C87BF39003BFB5B /* ConnectionStatusViewController.m in Sources */,
+				3935C5B71C892AD900E3E54F /* DrawingPadViewController.m in Sources */,
 				390E4CF61C8651BE001A14A2 /* MasterViewController.m in Sources */,
+				3935C5B11C8926FC00E3E54F /* MouseTrackingViewController.m in Sources */,
 				390E4D161C8682A1001A14A2 /* RawConnection.m in Sources */,
 				390E4CF01C8651BE001A14A2 /* main.m in Sources */,
-				390E4CF91C8651BE001A14A2 /* DetailViewController.m in Sources */,
+				3917FFE91C87C343003BFB5B /* StreamingConnectionViewController.m in Sources */,
+				3917FFE01C87BDB9003BFB5B /* RawConnectionViewController.m in Sources */,
 				390E4D0E1C867277001A14A2 /* StreamingConnection.m in Sources */,
+				3935C5B41C89294B00E3E54F /* DrawingPadConnection.m in Sources */,
 				390E4D121C868080001A14A2 /* ConnectionStatusConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

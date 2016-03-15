@@ -112,7 +112,6 @@
 		31B651E0317CA0F4E26E1338 /* Pods_SignalR_Client_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalR_Client_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3903084A173C660E00FE660E /* SRHeartbeatMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHeartbeatMonitor.h; sourceTree = "<group>"; };
 		3903084B173C660E00FE660E /* SRHeartbeatMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRHeartbeatMonitor.m; sourceTree = "<group>"; };
-		3919643015AF373E00DDC946 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
 		391F978B1C711309007AA844 /* SRMockClientTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockClientTransport.h; path = ../Tests/Mocks/SRMockClientTransport.h; sourceTree = "<group>"; };
 		391F978C1C711309007AA844 /* SRMockClientTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockClientTransport.m; path = ../Tests/Mocks/SRMockClientTransport.m; sourceTree = "<group>"; };
 		391F978D1C711309007AA844 /* SRMockNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockNetwork.h; path = ../Tests/Mocks/SRMockNetwork.h; sourceTree = "<group>"; };
@@ -165,26 +164,6 @@
 		3920785F15AF13F6009B959E /* SRLongPollingTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRLongPollingTransport.m; sourceTree = "<group>"; };
 		3920786015AF13F6009B959E /* SRServerSentEventsTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRServerSentEventsTransport.h; sourceTree = "<group>"; };
 		3920786115AF13F6009B959E /* SRServerSentEventsTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEventsTransport.m; sourceTree = "<group>"; };
-		3920792715AF1853009B959E /* SignalR.Samples.iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SignalR.Samples.iOS-Info.plist"; sourceTree = "<group>"; };
-		3920792915AF1854009B959E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		3920792B15AF1854009B959E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3920792D15AF1854009B959E /* SignalR.Samples.iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SignalR.Samples.iOS-Prefix.pch"; sourceTree = "<group>"; };
-		3920793215AF1854009B959E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
-		3920793515AF1854009B959E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		3920794715AF1BEA009B959E /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		3920794815AF1BEA009B959E /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		3920794915AF1BEA009B959E /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
-		3920794A15AF1BEA009B959E /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
-		3920794B15AF1BEA009B959E /* ConnectionStatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStatusViewController.h; sourceTree = "<group>"; };
-		3920794C15AF1BEA009B959E /* ConnectionStatusViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionStatusViewController.m; sourceTree = "<group>"; };
-		3920794D15AF1BEA009B959E /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
-		3920794E15AF1BEA009B959E /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
-		3920794F15AF1BEA009B959E /* MouseTrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseTrackingViewController.h; sourceTree = "<group>"; };
-		3920795015AF1BEA009B959E /* MouseTrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MouseTrackingViewController.m; sourceTree = "<group>"; };
-		3920795115AF1BEA009B959E /* RawViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawViewController.h; sourceTree = "<group>"; };
-		3920795215AF1BEA009B959E /* RawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawViewController.m; sourceTree = "<group>"; };
-		3920795315AF1BEA009B959E /* StreamingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingViewController.h; sourceTree = "<group>"; };
-		3920795415AF1BEA009B959E /* StreamingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamingViewController.m; sourceTree = "<group>"; };
 		393029F41C6974C10061C6B5 /* SignalR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SignalR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		393029FD1C6974C20061C6B5 /* SignalR.Client.OSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalR.Client.OSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39302A251C6977800061C6B5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Framework/Info.plist; sourceTree = "<group>"; };
@@ -193,8 +172,6 @@
 		39302A371C6978AC0061C6B5 /* SignalR.Client.iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalR.Client.iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39423B5516D13515003E7516 /* SRConnectionExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConnectionExtensions.h; sourceTree = "<group>"; };
 		39423B5616D13515003E7516 /* SRConnectionExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConnectionExtensions.m; sourceTree = "<group>"; };
-		39423B5D16D139B0003E7516 /* Router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Router.h; sourceTree = "<group>"; };
-		39423B5E16D139B0003E7516 /* Router.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Router.m; sourceTree = "<group>"; };
 		39533B8B173B376E003C138A /* SRKeepAliveData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKeepAliveData.h; sourceTree = "<group>"; };
 		39533B8C173B376E003C138A /* SRKeepAliveData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKeepAliveData.m; sourceTree = "<group>"; };
 		396D2851165ABCD50000D19E /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -211,9 +188,6 @@
 		39EBAC2916D03F5800C6F359 /* SRConnectionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRConnectionDelegate.h; sourceTree = "<group>"; };
 		39EBAC2E16D067CB00C6F359 /* SRHubProxyInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubProxyInterface.h; sourceTree = "<group>"; };
 		39EBAC3616D07A0B00C6F359 /* SignalR-ObjC.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = "SignalR-ObjC.podspec"; path = "../SignalR-ObjC.podspec"; sourceTree = "<group>"; };
-		39EBAC3716D07CF300C6F359 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
-		39EBAC3816D07CF300C6F359 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = SOURCE_ROOT; };
-		39EBAC3916D07CF300C6F359 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = SOURCE_ROOT; };
 		39EBAC3D16D07D5000C6F359 /* ACKNOWLEDGEMENTS.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = ACKNOWLEDGEMENTS.md; path = ../ACKNOWLEDGEMENTS.md; sourceTree = "<group>"; };
 		39EBAC3F16D07D5100C6F359 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.md; path = ../LICENSE.md; sourceTree = "<group>"; };
 		39EBAC4016D07D5100C6F359 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -284,15 +258,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		3919636115AF1FBC00DDC946 /* SignalR.Samples */ = {
-			isa = PBXGroup;
-			children = (
-				39423B5D16D139B0003E7516 /* Router.h */,
-				39423B5E16D139B0003E7516 /* Router.m */,
-			);
-			path = SignalR.Samples;
-			sourceTree = "<group>";
-		};
 		391F97891C7112DC007AA844 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -356,8 +321,6 @@
 				3920781715AF13F6009B959E /* SignalR.Client */,
 				39302A241C6977660061C6B5 /* Supporting Files */,
 				391F97891C7112DC007AA844 /* Tests */,
-				3919636115AF1FBC00DDC946 /* SignalR.Samples */,
-				3920792515AF1853009B959E /* SignalR.Samples.iOS */,
 				3920780915AF13C3009B959E /* Frameworks */,
 				3920780815AF13C3009B959E /* Products */,
 				38078F44ACF7B5D83E574BE7 /* Pods */,
@@ -484,53 +447,6 @@
 				39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */,
 			);
 			path = ServerSentEvents;
-			sourceTree = "<group>";
-		};
-		3920792515AF1853009B959E /* SignalR.Samples.iOS */ = {
-			isa = PBXGroup;
-			children = (
-				39EBAC3716D07CF300C6F359 /* Default-568h@2x.png */,
-				39EBAC3816D07CF300C6F359 /* Default.png */,
-				39EBAC3916D07CF300C6F359 /* Default@2x.png */,
-				3919643015AF373E00DDC946 /* icon.png */,
-				3920794615AF1BEA009B959E /* Controllers */,
-				3920793115AF1854009B959E /* MainStoryboard_iPhone.storyboard */,
-				3920793415AF1854009B959E /* MainStoryboard_iPad.storyboard */,
-				3920792615AF1853009B959E /* Supporting Files */,
-			);
-			path = SignalR.Samples.iOS;
-			sourceTree = "<group>";
-		};
-		3920792615AF1853009B959E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3920792715AF1853009B959E /* SignalR.Samples.iOS-Info.plist */,
-				3920792815AF1854009B959E /* InfoPlist.strings */,
-				3920792B15AF1854009B959E /* main.m */,
-				3920792D15AF1854009B959E /* SignalR.Samples.iOS-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		3920794615AF1BEA009B959E /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				3920794715AF1BEA009B959E /* AppDelegate.h */,
-				3920794815AF1BEA009B959E /* AppDelegate.m */,
-				3920794D15AF1BEA009B959E /* MasterViewController.h */,
-				3920794E15AF1BEA009B959E /* MasterViewController.m */,
-				3920795115AF1BEA009B959E /* RawViewController.h */,
-				3920795215AF1BEA009B959E /* RawViewController.m */,
-				3920795315AF1BEA009B959E /* StreamingViewController.h */,
-				3920795415AF1BEA009B959E /* StreamingViewController.m */,
-				3920794B15AF1BEA009B959E /* ConnectionStatusViewController.h */,
-				3920794C15AF1BEA009B959E /* ConnectionStatusViewController.m */,
-				3920794915AF1BEA009B959E /* ChatViewController.h */,
-				3920794A15AF1BEA009B959E /* ChatViewController.m */,
-				3920794F15AF1BEA009B959E /* MouseTrackingViewController.h */,
-				3920795015AF1BEA009B959E /* MouseTrackingViewController.m */,
-			);
-			path = Controllers;
 			sourceTree = "<group>";
 		};
 		39302A241C6977660061C6B5 /* Supporting Files */ = {
@@ -1005,33 +921,6 @@
 			targetProxy = 39302A391C6978AC0061C6B5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		3920792815AF1854009B959E /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3920792915AF1854009B959E /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		3920793115AF1854009B959E /* MainStoryboard_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3920793215AF1854009B959E /* en */,
-			);
-			name = MainStoryboard_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		3920793415AF1854009B959E /* MainStoryboard_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3920793515AF1854009B959E /* en */,
-			);
-			name = MainStoryboard_iPad.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3920781215AF13C3009B959E /* Debug */ = {

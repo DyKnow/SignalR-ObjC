@@ -7,7 +7,6 @@
 //
 
 #import "MasterViewController.h"
-#import "DetailViewController.h"
 
 @interface MasterViewController ()
 
@@ -30,12 +29,12 @@
         @{
             @"title": @"Hub Connections",
             @"samples": @[
-                @"Chat",
+                //@"Chat",
                 @"Connect Disconnect",
                 //@"Counting",
                 //@"Demo Hub",
-                //@"Drawing Pad",
-                //@"HubConnectionAPI",
+                @"Drawing Pad",
+                //@"Hub Connection API",
                 //@"Message Loops",
                 @"Mouse Tracking",
                 //@"Realtime Broadcast",
@@ -43,7 +42,7 @@
             ]
         }
     ];
-    self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    self.detailViewController = [[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -59,14 +58,13 @@
 #pragma mark - Segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSString *object = self.objects[indexPath.section][@"samples"][indexPath.row];
-        DetailViewController *controller = (DetailViewController *)[[segue destinationViewController] topViewController];
-        [controller setDetailItem:object];
-        controller.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
-        controller.navigationItem.leftItemsSupplementBackButton = YES;
-    }
+    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+    NSString *object = self.objects[indexPath.section][@"samples"][indexPath.row];
+    
+    UIViewController *controller = [[segue destinationViewController] topViewController];
+    [controller setTitle:object];
+    controller.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    controller.navigationItem.leftItemsSupplementBackButton = YES;
 }
 
 #pragma mark - Table View
@@ -89,6 +87,21 @@
     NSString *object = self.objects[indexPath.section][@"samples"][indexPath.row];
     cell.textLabel.text = [object description];
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *object = self.objects[indexPath.section][@"samples"][indexPath.row];
+    if ([object isEqualToString:@"Raw Connection"]) {
+        [self performSegueWithIdentifier:@"RawConnection" sender:self];
+    } else if ([object isEqualToString:@"Streaming Connection"]) {
+        [self performSegueWithIdentifier:@"StreamingConnection" sender:self];
+    } else if ([object isEqualToString:@"Connect Disconnect"]) {
+        [self performSegueWithIdentifier:@"ConnectDisconnect" sender:self];
+    } else if ([object isEqualToString:@"Drawing Pad"]) {
+        [self performSegueWithIdentifier:@"DrawingPad" sender:self];
+    } else if ([object isEqualToString:@"Mouse Tracking"]) {
+        [self performSegueWithIdentifier:@"MouseTracking" sender:self];
+    }
 }
 
 @end

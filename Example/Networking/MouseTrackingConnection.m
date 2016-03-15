@@ -38,7 +38,7 @@ typedef void (^SRConnectionMouseMoveBlock)(NSString *connectionId, NSNumber *x, 
         return nil;
     }
     
-    _hub = [self createHubProxy:@"statushub"];
+    _hub = [self createHubProxy:@"MouseTracking"];
     [_hub on:@"move" perform:self selector:@selector(handleMove:x:y:)];
     
     return self;

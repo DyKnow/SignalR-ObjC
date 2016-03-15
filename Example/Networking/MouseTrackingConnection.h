@@ -10,6 +10,8 @@
 
 @interface MouseTrackingConnection : SRHubConnection
 
++ (instancetype)sharedConnection;
+
 - (void)join;
 - (void)move:(CGPoint)point completionHandler:(void (^)(id response, NSError *error))block;
 
