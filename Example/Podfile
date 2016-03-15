@@ -1,0 +1,16 @@
+xcodeproj 'SignalR.Client.ObjC Example'
+workspace '../SignalR.Client.ObjC'
+
+target "OS X Example" do
+    use_frameworks!
+    platform :osx, '10.9'
+
+    pod 'SignalR-ObjC', :path => '..'
+end
+
+target "iOS Example" do
+    use_frameworks!
+    platform :ios, '9.0'
+    
+    pod 'SignalR-ObjC', :path => '..'
+end
