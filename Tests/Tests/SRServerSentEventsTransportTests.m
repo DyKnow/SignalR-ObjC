@@ -805,4 +805,61 @@
     XCTAssert(NO, @"not implemented");
 }
 
+- (void)testStreamClosesCleanlyShouldReconnect {
+    XCTestExpectation *initialized = [self expectationWithDescription:@"initialized"];
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    
+    SRMockSSENetworkStream *NetworkMock = [[SRMockSSENetworkStream alloc] init];
+    SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
+    [sse setServerSentEventsOperationQueue:nil];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForTransport:sse statusCode:@200 json:json];
+    
+    connection.started = ^{
+        [initialized fulfill];
+    };
+    
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" then:^{
+        [connection start:sse];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
+    
+    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
+    
+    SRMockWaitBlockOperation* reconnectDelay = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[[sse reconnectDelay] doubleValue]];
+    [NetworkMock prepareForClose];
+    [NetworkMock stopMocking];
+    SRMockSSENetworkStream* NetworkReconnectMock = [[SRMockSSENetworkStream alloc]init];
+    [reconnectDelay stopMocking];
+    [NetworkReconnectMock prepareForOpeningResponse:^{
+        reconnectDelay.afterWait();
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if (error){
+            NSLog(@"Sub-Timeout Error: %@", error);
+        }
+    }];
+    
+    
+}
 @end

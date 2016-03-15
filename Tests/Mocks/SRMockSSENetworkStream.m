@@ -15,6 +15,7 @@
 @property (readwrite, nonatomic, strong) id dataDelegate;
 @property (readwrite, nonatomic, strong) id mock;
 //only call this directly if you don't want to trigger the stream.opened callback
+@property (readwrite, nonatomic, copy) void (^onSuccess)(AFHTTPRequestOperation *operation, id responseObject);
 @property (readwrite, nonatomic, copy) void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
 
 @end
@@ -31,9 +32,12 @@
     _mock = [OCMockObject niceMockForClass:[AFHTTPRequestOperation class]];
     [[[_mock stub] andDo:^(NSInvocation *invocation) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        void (^successOut)(AFHTTPRequestOperation *operation, id responseObject);
         void (^failureOut)(AFHTTPRequestOperation *operation, NSError *error);
-        [invocation getArgument: &failureOut atIndex: 3];
-        strongSelf.onFailure = failureOut;
+        [invocation getArgument:&successOut atIndex:2];
+        [invocation getArgument:&failureOut atIndex:3];
+        [strongSelf setOnSuccess:successOut];
+        [strongSelf setOnFailure:failureOut];
     }] setCompletionBlockWithSuccess: [OCMArg any] failure: [OCMArg any]];
     // Here we stub the alloc class method **
     [[[_mock stub] andReturn:_mock] alloc];
@@ -83,6 +87,12 @@
     
     if (self.dataDelegate) {
         [self.dataDelegate stream:streamChanges handleEvent:NSStreamEventHasSpaceAvailable];
+    }
+}
+
+- (void)prepareForClose {
+    if (self.onSuccess) {
+        self.onSuccess(self.mock, nil);
     }
 }
 

@@ -14,6 +14,7 @@
 - (void)prepareForOpeningResponse:(void (^)())then;
 - (void)prepareForOpeningResponse:(NSString *)response then:(void (^)())then;
 - (void)prepareForNextResponse:(NSString *)response then:(void (^)())then;
+- (void)prepareForClose;
 - (void)prepareForError:(NSError *)error;
 
 - (void)stopMocking;
