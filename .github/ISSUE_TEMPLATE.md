@@ -3,6 +3,11 @@
 ### Replication Steps
 1. 
 
+### Server Version
+> Which version of SignalR Server are you using
+
+* 2.x.x
+
 ### Client Version
 > Which version(s) of SignalR-ObjC does the behavior occur on (you can see this in the Podfile.lock if using Cocoapods)
 
