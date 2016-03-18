@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3919636D15AF205300DDC946"
-               BuildableName = "libSignalR.Client.OSX.a"
+               BlueprintIdentifier = "393029F31C6974C10061C6B5"
+               BuildableName = "SignalR.framework"
                BlueprintName = "SignalR.Client.OSX"
                ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
             </BuildableReference>
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "39E6FCD415C6BDC600434098"
-               BuildableName = "SignalR.Client.Tests.OSX.xctest"
-               BlueprintName = "SignalR.Client.Tests.OSX"
+               BlueprintIdentifier = "393029FC1C6974C20061C6B5"
+               BuildableName = "SignalR.Client.OSXTests.xctest"
+               BlueprintName = "SignalR.Client.OSXTests"
                ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -42,8 +42,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3919636D15AF205300DDC946"
-            BuildableName = "libSignalR.Client.OSX.a"
+            BlueprintIdentifier = "393029F31C6974C10061C6B5"
+            BuildableName = "SignalR.framework"
             BlueprintName = "SignalR.Client.OSX"
             ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
          </BuildableReference>
@@ -64,8 +64,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3919636D15AF205300DDC946"
-            BuildableName = "libSignalR.Client.OSX.a"
+            BlueprintIdentifier = "393029F31C6974C10061C6B5"
+            BuildableName = "SignalR.framework"
             BlueprintName = "SignalR.Client.OSX"
             ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
          </BuildableReference>
@@ -82,8 +82,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3919636D15AF205300DDC946"
-            BuildableName = "libSignalR.Client.OSX.a"
+            BlueprintIdentifier = "393029F31C6974C10061C6B5"
+            BuildableName = "SignalR.framework"
             BlueprintName = "SignalR.Client.OSX"
             ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
          </BuildableReference>

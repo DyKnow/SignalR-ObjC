@@ -34,6 +34,6 @@
  */
 @interface SRAutoTransport : SRHttpBasedTransport <SRClientTransportInterface>
 
-- (instancetype)initWithTransports:(NSMutableArray *)transports;
+- (instancetype)initWithTransports:(NSArray *)transports;
 
 @end

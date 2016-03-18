@@ -222,7 +222,15 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     };
     [_eventSource start];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        SRLogSSEWarn(@"serverSentEvents did complete");
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        if (strongSelf.stop) {
+            [strongSelf completeAbort];
+        } else if ([strongSelf tryCompleteAbort]) {
+        } else {
+            [strongSelf reconnect:strongConnection data:connectionData];
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         SRLogSSEError(@"serverSentEvents did fail with error %@", error);
         
