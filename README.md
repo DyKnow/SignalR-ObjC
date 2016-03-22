@@ -131,7 +131,7 @@ public class Chat : Hub
 #import "SignalR.h"
 
 // Connect to the service
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite"];
 // Create a proxy to the chat service
 SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
 [chat on:@"addMessage" perform:self selector:@selector(addMessage:)];
@@ -139,7 +139,7 @@ SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
 // Register for connection lifecycle events
 [hubConnection setStarted:^{
     NSLog(@"Connection Started");
-    [connection send:@"hello world"];
+    [hubConnection send:@"hello world" completionHandler:nil];
 }];
 [hubConnection setReceived:^(NSString *message) {
     NSLog(@"Connection Recieved Data: %@",message);
@@ -185,7 +185,7 @@ id qs = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite" queryString:qs];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite" queryString:qs];
 ```
 
 ### Customizing Request Headers
@@ -211,11 +211,11 @@ id headers = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite"];
 [hubConnection setHeaders:headers];
 
 //Alternative Usage
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite"];
 [hubConnection addValue:@"1" forHTTPHeaderField:@"param1"];
 [hubConnection addValue:@"another" forHTTPHeaderField:@"param2"];
 ```
