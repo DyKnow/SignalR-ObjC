@@ -153,7 +153,7 @@
         } else {
             SRLogConnectionError(@"negotiation failed %@", error);
             [strongSelf didReceiveError:error];
-            [strongSelf didClose];
+            [strongSelf stopButDoNotCallServer];
         }
     }];
 }
@@ -182,7 +182,7 @@
         } else {
             SRLogConnectionError(@"start transport failed %@",error);
             [strongSelf didReceiveError:error];
-            [strongSelf didClose];
+            [strongSelf stopButDoNotCallServer];
         }
     }];
 }
