@@ -196,7 +196,7 @@
             SRLogConnectionDebug(@"connection state did change from %u to %u", oldState, newState);
             
             if (self.stateChanged){
-                self.stateChanged(self.state);
+                self.stateChanged(oldState, newState);
             }
             
             if (self.delegate && [self.delegate respondsToSelector:@selector(SRConnection:didChangeState:newState:)]) {
