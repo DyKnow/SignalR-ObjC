@@ -85,7 +85,7 @@ public class MyConnection : PersistentConnection
 #import "SignalR.h"
 
 //Client
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite/echo"];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite/echo"];
 
 // Register for connection lifecycle events
 [connection setStarted:^{
@@ -131,7 +131,7 @@ public class Chat : Hub
 #import "SignalR.h"
 
 // Connect to the service
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite"];
 // Create a proxy to the chat service
 SRHubProxy *chat = [hubConnection createHubProxy:@"chat"];
 [chat on:@"addMessage" perform:self selector:@selector(addMessage:)];
@@ -176,7 +176,7 @@ id qs = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite" queryString:qs];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite" queryString:qs];
 ```
 
 #### Hub Connections
@@ -185,7 +185,7 @@ id qs = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite" queryString:qs];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite" queryString:qs];
 ```
 
 ### Customizing Request Headers
@@ -196,11 +196,11 @@ id headers = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite"];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite"];
 [connection setHeaders:headers];
 
 //Alternative Usage
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite"];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite"];
 [connection addValue:@"1" forHTTPHeaderField:@"param1"];
 [connection addValue:@"another" forHTTPHeaderField:@"param2"];
 ```
@@ -211,11 +211,11 @@ id headers = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite"];
 [hubConnection setHeaders:headers];
 
 //Alternative Usage
-SRHubConnection *hubConnection = [SRHubConnection connectionWithURL:@"http://localhost/mysite"];
+SRHubConnection *hubConnection = [SRHubConnection connectionWithURLString:@"http://localhost/mysite"];
 [hubConnection addValue:@"1" forHTTPHeaderField:@"param1"];
 [hubConnection addValue:@"another" forHTTPHeaderField:@"param2"];
 ```
