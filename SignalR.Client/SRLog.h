@@ -50,7 +50,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #define SRLogPrefixedWarn(type, frmt, ...) SRLogWarn(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
 #define SRLogPrefixedInfo(type, frmt, ...) SRLogInfo(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
 #define SRLogPrefixedDebug(type, frmt, ...) SRLogDebug(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
-#define SRLogPrefixedVerbose(type, frmt, ...) SRLogVerboase(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
+#define SRLogPrefixedVerbose(type, frmt, ...) SRLogVerbose(@"%@:\t%@", type, [NSString stringWithFormat:frmt, ##__VA_ARGS__]);
 
 #define SRLogConnectionError(frmt, ...)   SRLogPrefixedError(@"CONNECTION", frmt, ##__VA_ARGS__);
 #define SRLogConnectionWarn(frmt, ...)    SRLogPrefixedWarn(@"CONNECTION", frmt, ##__VA_ARGS__);
