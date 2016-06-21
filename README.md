@@ -85,7 +85,7 @@ public class MyConnection : PersistentConnection
 #import "SignalR.h"
 
 //Client
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite/echo"];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite/echo"];
 
 // Register for connection lifecycle events
 [connection setStarted:^{
@@ -176,7 +176,7 @@ id qs = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite" queryString:qs];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite" queryString:qs];
 ```
 
 #### Hub Connections
@@ -196,11 +196,11 @@ id headers = @{
    @"param1": @1,
    @"param2": @"another"
 };
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite"];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite"];
 [connection setHeaders:headers];
 
 //Alternative Usage
-SRConnection *connection = [SRConnection connectionWithURL:@"http://localhost/mysite"];
+SRConnection *connection = [SRConnection connectionWithURLString:@"http://localhost/mysite"];
 [connection addValue:@"1" forHTTPHeaderField:@"param1"];
 [connection addValue:@"another" forHTTPHeaderField:@"param2"];
 ```

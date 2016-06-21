@@ -116,4 +116,44 @@
     }];
 }
 
+- (void)testConnectionCanRestartAfterNegotiateError {
+    id failingTransport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [SRMockClientTransport negotiateForMockTransport:failingTransport statusCode:@400 error:[NSError errorWithDomain:@"UNIT TEST" code:NSURLErrorTimedOut userInfo:nil]];
+    
+    id successTransport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [[successTransport expect] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    [connection start: failingTransport];
+    XCTAssertEqual(connection.state, disconnected);
+    [connection start: successTransport];
+    XCTAssertEqual(connection.state, connecting);
+    [successTransport verify];
+    
+}
+
+- (void)testConnectionCanRestartAfterStartError {
+    id failingTransport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [SRMockClientTransport startForMockTransport:failingTransport statusCode:@400 error:[[NSError alloc]initWithDomain:@"Expected" code:42 userInfo:nil]];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"1.3.0.0"
+    };
+    [SRMockClientTransport negotiateForMockTransport:failingTransport statusCode:@200 json:json];
+    
+    id successTransport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [SRMockClientTransport negotiateForMockTransport:successTransport statusCode:@200 json:json];
+    [[successTransport expect] start:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    [connection start: failingTransport];
+    XCTAssertEqual(connection.state, disconnected);
+    [connection start: successTransport];
+    XCTAssertEqual(connection.state, connecting);
+    [successTransport verify];
+    
+}
+
 @end
