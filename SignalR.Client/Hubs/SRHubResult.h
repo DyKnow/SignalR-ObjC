@@ -42,7 +42,7 @@
 @property (assign, nonatomic, readwrite, getter = isHubException) BOOL hubException;
 
 /**
- * An `NSString` represnting an error received from the server
+ * An `NSString` representing an error received from the server
  */
 @property (strong, nonatomic, readwrite) NSString *error;
 
@@ -52,7 +52,7 @@
 @property (strong, nonatomic, readwrite) id errorData;
 
 /**
- * An `NSDictionary` represnting a server state object
+ * An `NSDictionary` representing a server state object
  */
 @property (strong, nonatomic, readwrite) NSDictionary *state;
 
