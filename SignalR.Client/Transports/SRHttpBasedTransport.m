@@ -36,6 +36,15 @@
 
 @implementation SRHttpBasedTransport
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.requestManager = [AFHTTPRequestOperationManager manager];
+        self.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    }
+    return self;
+}
+
 #pragma mark
 #pragma mark SRClientTransportInterface
 
@@ -48,30 +57,30 @@
 }
 
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
-    
+
+
     id parameters = [self connectionParameters:connection connectionData:connectionData];
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"negotiate"] parameters:parameters error:nil];
+
+    SRLogTransportDebug(@"will negotiate at url: %@", [[request URL] absoluteString]);
+
     [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:30];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
-    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-    //operation.credential = self.credential;
-    //operation.securityPolicy = self.securityPolicy;
-    SRLogTransportDebug(@"will negotiate at url: %@", [[request URL] absoluteString]);
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        SRLogTransportInfo(@"negotiate was successful %@", responseObject);
-        if(block) {
-            block([[SRNegotiationResponse alloc] initWithDictionary:responseObject], nil);
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        SRLogTransportError(@"negotiate failed %@", error);
-        if(block) {
-            block(nil, error);
-        }
+
+    AFHTTPRequestOperation *operation = [self.requestManager HTTPRequestOperationWithRequest:request
+        success:^(AFHTTPRequestOperation* operation, id responseObject) {
+            SRLogTransportInfo(@"negotiate was successful %@", responseObject);
+            if(block) {
+                block([[SRNegotiationResponse alloc] initWithDictionary:responseObject], nil);
+            }
+        } failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+            SRLogTransportError(@"negotiate failed %@", error);
+            if(block) {
+                block(nil, error);
+            }
     }];
+
     [operation start];
 }
 
@@ -87,25 +96,23 @@
     NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"send"] parameters:parameters error:nil];
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:@{ @"data" : data } error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
-    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-    //operation.credential = self.credential;
-    //operation.securityPolicy = self.securityPolicy;
+
     SRLogTransportDebug(@"will send at url: %@", [[request URL] absoluteString]);
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        SRLogTransportInfo(@"send was successful %@", responseObject);
-        [connection didReceiveData:responseObject];
-        if(block) {
-            block(responseObject, nil);
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        SRLogTransportError(@"send failed %@", error);
-        [connection didReceiveError:error];
-        if (block) {
-            block(nil, error);
-        }
+    AFHTTPRequestOperation *operation = [self.requestManager HTTPRequestOperationWithRequest:request
+        success:^(AFHTTPRequestOperation* operation, id responseObject) {
+            SRLogTransportInfo(@"send was successful %@", responseObject);
+            [connection didReceiveData:responseObject];
+            if(block) {
+                block(responseObject, nil);
+            }
+        } failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+            SRLogTransportError(@"send failed %@", error);
+            [connection didReceiveError:error];
+            if (block) {
+                block(nil, error);
+            }
     }];
+
     [operation start];
 }
 
@@ -146,17 +153,14 @@
         NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:nil error:nil];
         [connection prepareRequest:request]; //TODO: prepareRequest
         [request setTimeoutInterval:2];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
-        //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-        //operation.credential = self.credential;
-        //operation.securityPolicy = self.securityPolicy;
+
         SRLogTransportDebug(@"will abort at url: %@", [[request URL] absoluteString]);
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            SRLogTransportInfo(@"abort was successful %@", responseObject);
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            SRLogTransportError(@"abort failed %@",error);
-            [self completeAbort];
+        AFHTTPRequestOperation *operation = [self.requestManager HTTPRequestOperationWithRequest:request
+            success:^(AFHTTPRequestOperation* operation, id responseObject) {
+                SRLogTransportInfo(@"abort was successful %@", responseObject);
+            } failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+                SRLogTransportError(@"abort failed %@",error);
+                [self completeAbort];
         }];
         [operation start];
     }

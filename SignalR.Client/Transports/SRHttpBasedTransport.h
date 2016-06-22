@@ -21,9 +21,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AFNetworking/AFNetworking.h>
 #import "SRClientTransportInterface.h"
 
 @interface SRHttpBasedTransport : NSObject <SRClientTransportInterface>
+
+@property (nonatomic, strong) AFHTTPRequestOperationManager* requestManager;
 
 - (void)completeAbort;
 - (BOOL)tryCompleteAbort;
