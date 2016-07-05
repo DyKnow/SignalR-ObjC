@@ -1,4 +1,4 @@
-xcodeproj 'SignalR.Client.ObjC Example'
+project 'SignalR.Client.ObjC Example.xcodeproj'
 workspace '../SignalR.Client.ObjC'
 
 target "OS X Example" do
