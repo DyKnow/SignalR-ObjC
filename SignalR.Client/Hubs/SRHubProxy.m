@@ -28,6 +28,8 @@
 #import "SRHubConnectionInterface.h"
 #import "SRConnectionInterface.h"
 
+NSString * const kErrorData = @"SRErrorData";
+
 @interface SRHubProxy ()
 
 @property (assign, nonatomic, readonly) id <SRHubConnectionInterface> connection;
@@ -125,6 +127,9 @@
                 NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
                                                      code:0
                                                  userInfo:userInfo];
+                if (result.errorData) {
+                    userInfo[kErrorData] = result.errorData;
+                }
                 [_connection didReceiveError:error];
                 if (block != nil) {
                     block(nil, error);

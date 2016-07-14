@@ -23,7 +23,8 @@
 #import <Foundation/Foundation.h>
 #import "SRHubConnectionInterface.h"
 #import "SRHubProxyInterface.h"
-    
+
+extern NSString * const kErrorData;
 /**
  * An `SRHubProxy` object provides support for SignalR Hubs
  */
