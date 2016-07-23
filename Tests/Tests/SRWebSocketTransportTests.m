@@ -13,8 +13,9 @@
 #import "SRConnection.h"
 #import "SRConnectionInterface.h"
 #import "SRNegotiationResponse.h"
-#import "SRMockClientTransport.h"
+#import "SRMockClientTransport+OCMock.h"
 #import "SRMockWaitBlockOperation.h"
+#import "SRBlockOperation.h"
 
 @interface SRConnection (UnitTest)
 @property (strong, nonatomic, readwrite) NSNumber * disconnectTimeout;
@@ -110,7 +111,7 @@
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
     reconnectDelay.afterWait();
     XCTAssertEqual(2, reconnectDelay.waitTime, "Unexpected reconnect delay");
-    XCTAssertTrue([[[request URL] absoluteString] isEqualToString:@"http://localhost:0000/reconnect?connectionData=12345&connectionToken=10101010101&groupsToken=&messageId=&transport=webSockets"], "Did not reconnect");
+    XCTAssertTrue([[[request URL] absoluteString] isEqualToString:@"http://localhost:0000/reconnect?connectionData=12345&connectionToken=10101010101&transport=webSockets"], "Did not reconnect");
    }
 
 - (void)testConnectionInitialFailureUsesCallback {
@@ -311,15 +312,8 @@
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     [connection setStarted:^{
         [initialized fulfill];
@@ -386,15 +380,8 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
 
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     connection.started = ^{
         XCTAssert(NO, @"Connection started");
@@ -404,13 +391,11 @@
         [initialized fulfill];
     };
     
-    SRMockWaitBlockOperation* transportConnectTimeout = [[SRMockWaitBlockOperation alloc]initWithWaitTime:10];
+    SRMockWaitBlockOperation* transportConnectTimeout = [[SRMockWaitBlockOperation alloc]initWithBlockOperationClass:[SRTransportConnectTimeoutBlockOperation class]];
     [connection start:ws];
     [transportConnectTimeout.mock stopMocking];
     transportConnectTimeout.afterWait();
-    
-    XCTAssertEqual([connection.transportConnectTimeout doubleValue], transportConnectTimeout.waitTime, @"not implemented");
-    
+        
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -431,15 +416,8 @@
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     __block BOOL firstErrorFailedCalled = NO;
     __block int startCount = 0;
@@ -485,15 +463,8 @@
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
@@ -524,15 +495,8 @@
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     connection.error = ^(NSError *error){
         [initialized fulfill];
@@ -556,15 +520,6 @@
     XCTAssert(NO, @"not implemented");
 }
 
-- (void)xtestConnectionDataFlowsWithAllRequestsToServer {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
-}
-
-- (void)testReconnectExceedingTheReconnectWindowResultsInTheConnectionDisconnect {
-    [self testDisconnectsOnReconnectTimeout];
-}
-
 - (void)testConnectionCanBeStoppedDuringTransportStart {
     XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
@@ -577,15 +532,8 @@
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     connection.closed = ^{
         [initialized fulfill];
@@ -613,54 +561,6 @@
     }];
 }
 
-- (void)testConnectionCanBeStoppedPriorToTransportState {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
-    id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
-    // Here we stub the alloc class method **
-    [[[mock stub] andReturn:mock] alloc];
-    // And we stub initWithParam: passing the param we will pass to the method to test
-    [[[mock stub] andReturn:mock] initWithURLRequest:[OCMArg any]];
-    [[mock stub] setDelegate: [OCMArg any]];
-    [[mock stub] open];
-    
-    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id pmock = [OCMockObject partialMockForObject: ws];
-    [[[pmock stub] andDo:^(NSInvocation *invocation) {
-        void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
-        __unsafe_unretained void (^successCallback)(SRNegotiationResponse *response, NSError *error) = nil;
-        [invocation getArgument: &successCallback atIndex: 4];
-        callbackOut = successCallback;
-        //do not respond to negotiate!!
-        //we will stop the connection before its completion
-    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
-    
-    connection.closed = ^{
-        [initialized fulfill];
-    };
-    
-    connection.error = ^(NSError* err){
-        XCTAssert(NO, @"Error was triggered");
-    };
-    
-    connection.started = ^(){
-        XCTAssert(NO, @"start was triggered");
-    };
-    
-    [connection start:ws];
-    [connection stop];
-    
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-        if (error) {
-            NSLog(@"Timeout Error: %@", error);
-        }
-        XCTAssertEqual(connection.state, disconnected, @"Connection was not disconnected");
-        XCTAssertEqual(connection.transport, nil, @"Transport was not cleared after stop");
-    }];
-
-}
-
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {
     XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
@@ -674,15 +574,8 @@
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
+    id mockTransport = [OCMockObject partialMockForObject:ws];
+    [SRMockClientTransport negotiateForMockTransport:mockTransport];
     
     __block NSMutableArray* values = [[NSMutableArray alloc] init];
     
@@ -720,37 +613,6 @@
             NSLog(@"Timeout Error: %@", error); return;
         }
     }];
-}
-
-- (void)testTransportThrowsAnErrorIfProtocolVersionIsIncorrect{
-    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRWebSocketTransport* ws = [[ SRWebSocketTransport alloc] init];
-    
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"2.0.0.0",
-        @"TransportConnectTimeout": @10
-    };
-    [SRMockClientTransport negotiateForTransport:ws statusCode:@200 json:json];
-    
-    BOOL failed = NO;
-    @try
-    {
-        [connection start:ws];
-        XCTAssert(NO, @"Should have thrown");
-    }
-    @catch(NSException* e)
-    {
-        failed = YES;
-    }
-    XCTAssertEqual(YES, failed, @"We are supposed to have failed");
-}
-
-- (void)xtestTransportAutoJSONEncodesMessagesCorrectlyWhenSending {
-    // This is an example of a functional test case.
-    XCTAssert(NO, @"not implemented");
 }
 
 @end

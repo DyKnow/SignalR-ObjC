@@ -28,7 +28,7 @@
 #import "SRVersion.h"
 #import "SRKeepAliveData.h"
 #import "SRHeartbeatMonitor.h"
-
+#import "SRExceptionHelper.h"
 #import "NSObject+SRJSON.h"
 
 @interface SRConnection ()
@@ -181,7 +181,9 @@
             }
         } else {
             SRLogConnectionError(@"start transport failed %@",error);
-            [strongSelf didReceiveError:error];
+            if (![SRExceptionHelper isRequestAborted:error]) {
+                [strongSelf didReceiveError:error];
+            }
             [strongSelf stopButDoNotCallServer];
         }
     }];
@@ -244,8 +246,6 @@
         SRLogConnectionDebug(@"connection will abort transport");
         [_transport abort:self timeout:timeout connectionData:_connectionData];
         [self disconnect];
-        
-        _transport = nil;
     }
 }
 
@@ -258,6 +258,7 @@
         _monitor = nil;
         
         // Clear the state for this connection
+        _transport = nil;
         _connectionId = nil;
         _connectionToken = nil;
         _groupsToken = nil;

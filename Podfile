@@ -10,6 +10,7 @@ target "SignalR.Client.iOS" do
     
     target "SignalR.Client.iOSTests" do
         pod 'OCMock'
+        pod 'URLMock', '1.3.2'
     end
 end
 
@@ -22,5 +23,6 @@ target :"SignalR.Client.OSX" do
     
     target :"SignalR.Client.OSXTests" do
         pod 'OCMock'
+        pod 'URLMock', '1.3.2'
     end
 end

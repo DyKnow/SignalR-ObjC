@@ -31,7 +31,9 @@
 {
     NSMutableURLRequest *mutableRequest = [[super requestBySerializingRequest:request withParameters:parameters error:error] mutableCopy];
     [mutableRequest setValue:@"text/event-stream" forHTTPHeaderField:@"Accept"];
-
+    [mutableRequest setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
+    [mutableRequest setTimeoutInterval:240];
+    
     return mutableRequest;
 }
 

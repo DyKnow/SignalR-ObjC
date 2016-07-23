@@ -12,7 +12,7 @@
 #import "SRVersion.h"
 #import "SRClientTransportInterface.h"
 #import "SRNegotiationResponse.h"
-#import "SRMockClientTransport.h"
+#import "SRMockClientTransport+OCMock.h"
 
 @interface SRConnectionTests : XCTestCase
 
@@ -33,14 +33,8 @@
 - (void) testTransportErrorCausesError
 {
     id transport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [SRMockClientTransport negotiateForMockTransport:transport];
     [SRMockClientTransport startForMockTransport:transport statusCode:@400 error:[[NSError alloc]initWithDomain:@"Expected" code:42 userInfo:nil]];
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0"
-    };
-    [SRMockClientTransport negotiateForMockTransport:transport statusCode:@200 json:json];
 
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     id willErrorOnError = [self expectationWithDescription:@"gets closed when transport errors out"];
@@ -58,14 +52,8 @@
 - (void) testTransportErrorCausesClosed
 {
     id transport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [SRMockClientTransport negotiateForMockTransport:transport];
     [SRMockClientTransport startForMockTransport:transport statusCode:@400 error:[[NSError alloc]initWithDomain:@"Expected" code:42 userInfo:nil]];
-    id json = @{
-                @"ConnectionId": @"10101",
-                @"ConnectionToken": @"10101010101",
-                @"DisconnectTimeout": @30,
-                @"ProtocolVersion": @"1.3.0.0"
-                };
-    [SRMockClientTransport negotiateForMockTransport:transport statusCode:@200 json:json];
 
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     id willCloseOnError = [self expectationWithDescription:@"gets closed when transport errors out"];
@@ -134,17 +122,11 @@
 
 - (void)testConnectionCanRestartAfterStartError {
     id failingTransport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [SRMockClientTransport negotiateForMockTransport:failingTransport];
     [SRMockClientTransport startForMockTransport:failingTransport statusCode:@400 error:[[NSError alloc]initWithDomain:@"Expected" code:42 userInfo:nil]];
-    id json = @{
-        @"ConnectionId": @"10101",
-        @"ConnectionToken": @"10101010101",
-        @"DisconnectTimeout": @30,
-        @"ProtocolVersion": @"1.3.0.0"
-    };
-    [SRMockClientTransport negotiateForMockTransport:failingTransport statusCode:@200 json:json];
-    
+
     id successTransport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
-    [SRMockClientTransport negotiateForMockTransport:successTransport statusCode:@200 json:json];
+    [SRMockClientTransport negotiateForMockTransport:successTransport];
     [[successTransport expect] start:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
@@ -154,6 +136,53 @@
     XCTAssertEqual(connection.state, connecting);
     [successTransport verify];
     
+}
+
+- (void)testTransportThrowsAnErrorIfProtocolVersionIsIncorrect{
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    id transport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    id json = @{
+        @"ConnectionId": @"10101",
+        @"ConnectionToken": @"10101010101",
+        @"DisconnectTimeout": @30,
+        @"ProtocolVersion": @"2.0.0.0",
+        @"TransportConnectTimeout": @10
+    };
+    [SRMockClientTransport negotiateForMockTransport:transport statusCode:@200 json:json];
+    XCTAssertThrows([connection start:transport]);
+}
+
+- (void)testConnectionCanBeStoppedPriorToTransportStart {
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    id transport = [OCMockObject niceMockForProtocol:@protocol(SRClientTransportInterface)];
+    [[[transport stub] andDo:^(NSInvocation *invocation) {
+        __unsafe_unretained void (^ callbackOut)(SRNegotiationResponse * response, NSError *error);
+        [invocation getArgument: &callbackOut atIndex: 4];
+        //do not respond to negotiate!!
+        //we will stop the connection before its completion
+    }] negotiate:[OCMArg any] connectionData:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    connection.started = ^(){
+        XCTAssert(NO, @"start was triggered");
+    };
+    
+    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    connection.closed = ^{
+        [closed fulfill];
+    };
+    
+    connection.error = ^(NSError* err){
+        XCTAssert(NO, @"Error was triggered");
+    };
+    
+    [connection start:transport];
+    [connection stop];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+}
+
+- (void)xtestTransportAutoJSONEncodesMessagesCorrectlyWhenSending {
+    // This is an example of a functional test case.
+    XCTAssert(NO, @"not implemented");
 }
 
 @end

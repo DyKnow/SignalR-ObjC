@@ -23,7 +23,6 @@
 #import <AFNetworking/AFNetworking.h>
 #import "SRServerSentEventsTransport.h"
 #import "SRConnectionInterface.h"
-#import "SREventSourceStreamReader.h"
 #import "SRExceptionHelper.h"
 #import "SRConnectionExtensions.h"
 #import "SRLog.h"
@@ -31,26 +30,30 @@
 #import "SRServerSentEvent.h"
 #import "SREventSourceRequestSerializer.h"
 #import "SREventSourceResponseSerializer.h"
+#import "SRBlockOperation.h"
 
 typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 @interface SRServerSentEventsTransport ()
 
 @property (assign) BOOL stop;
-@property (strong, nonatomic, readwrite) SREventSourceStreamReader *eventSource;
-@property (strong, nonatomic, readwrite) NSOperationQueue *serverSentEventsOperationQueue;
 @property (copy) SRCompletionHandler completionHandler;
 @property (strong, nonatomic, readwrite) NSBlockOperation * connectTimeoutOperation;
+@property (strong, nonatomic, readonly)  SRChunkBuffer *buffer;
+@property (strong, nonatomic, readwrite) NSURLSessionDataTask *eventSource;
+
 @end
 
 @implementation SRServerSentEventsTransport
 
-- (instancetype)init {
-    if (self = [super init]) {
-        _serverSentEventsOperationQueue = [[NSOperationQueue alloc] init];
-        [_serverSentEventsOperationQueue setMaxConcurrentOperationCount:1];
-        _reconnectDelay = @2;
+- (instancetype)initWithSessionConfiguration:(nullable NSURLSessionConfiguration *)configuration {
+    self = [super initWithSessionConfiguration:configuration];
+    if (!self) {
+        return nil;
     }
+    _reconnectDelay = @2;
+    _buffer = [[SRChunkBuffer alloc] init];
+    
     return self;
 }
 
@@ -67,7 +70,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
     SRLogSSEDebug(@"serverSentEvents will negotiate");
-    [super negotiate:connection connectionData:connectionData completionHandler:nil];
+    [super negotiate:connection connectionData:connectionData completionHandler:block];
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
@@ -76,14 +79,14 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     self.completionHandler = block;
     
     __weak __typeof(&*self)weakSelf = self;
-    self.connectTimeoutOperation = [NSBlockOperation blockOperationWithBlock:^{
+    self.connectTimeoutOperation = [SRTransportConnectTimeoutBlockOperation blockOperationWithBlock:^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (strongSelf.completionHandler) {
             NSDictionary* userInfo = @{
                 NSLocalizedDescriptionKey: NSLocalizedString(@"Connection timed out.", nil),
                 NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message before the timeout.", nil),
                 NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
-                                       };
+            };
             NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
             SRLogSSEError(@"serverSentEvents failed to receive initialized message before timeout");
             strongSelf.completionHandler(nil, timeout);
@@ -102,178 +105,138 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)abort:(id<SRConnectionInterface>)connection timeout:(NSNumber *)timeout connectionData:(NSString *)connectionData {
     SRLogSSEDebug(@"serverSentEvents will abort");
-    _stop = YES;
-    [self.serverSentEventsOperationQueue cancelAllOperations];//this will enqueue a failure on run loop
+    _stop = YES; //TODO: I think this should only be set by the server D:1 message.  abort has its own internal state tracking...
+    [self.eventSource cancel];
     [super abort:connection timeout:timeout connectionData:connectionData];//we expect this to set stop to YES
 }
 
 - (void)lostConnection:(id<SRConnectionInterface>)connection {
     SRLogSSEWarn(@"serverSentEvents lost connection, cancelling connection");
-    [self.serverSentEventsOperationQueue cancelAllOperations];
+    [self.eventSource cancel];
 }
 
 #pragma mark -
 #pragma mark SSE Transport
 
 - (void)open:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData isReconnecting: (BOOL) isReconnecting {
-    id parameters = @{
-        @"transport" : [self name],
-        @"connectionToken" : ([connection connectionToken]) ? [connection connectionToken] : @"",
-        @"messageId" : ([connection messageId]) ? [connection messageId] : @"",
-        @"groupsToken" : ([connection groupsToken]) ? [connection groupsToken] : @"",
-        @"connectionData" : (connectionData) ? connectionData : @"",
-    };
     
-    if ([connection queryString]) {
-        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
-        [_parameters addEntriesFromDictionary:[connection queryString]];
-        parameters = _parameters;
-    }
-    
-    NSString *url = isReconnecting ?
-        [connection.url stringByAppendingString:@"reconnect"] :
-        [connection.url stringByAppendingString:@"connect"];
+    //TODO: Move to Request Serializer
+    //TODO: connection.prepareRequest as part of Request Serializer
+    NSDictionary *parameters = @{};
+    parameters = [self addTransport:parameters transport:[self name]];
+    parameters = [self addConnectionData:parameters connectionData:connectionData];
+    parameters = [self addConnectionToken:parameters connection:connection];
+    parameters = [self addMessageId:parameters connection:connection];
+    parameters = [self addGroupsToken:parameters connection:connection];
+    parameters = [self addQueryString:parameters connection:connection];
     
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
-    NSMutableURLRequest *request = [[SREventSourceRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
-    [connection prepareRequest:request]; //TODO: prepareRequest
-    [request setTimeoutInterval:240];
-    [request setValue:@"Keep-Alive" forHTTPHeaderField:@"Connection"];
-    //TODO: prepareRequest
-    
-    SRLogSSEDebug(@"serverSentEvents will connect at url: %@", [[request URL] absoluteString]);
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setResponseSerializer:[SREventSourceResponseSerializer serializer]];
-    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-    //operation.credential = self.credential;
-    //operation.securityPolicy = self.securityPolicy;
-    _eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
-    _eventSource.opened = ^() {
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        SRLogSSEInfo(@"serverSentEvents did open eventSource");
-        
-        // This will noop if we're not in the reconnecting state
-        if([strongConnection changeState:reconnecting toState:connected]) {
-            // Raise the reconnect event if the connection comes back up
-            [strongConnection didReconnect];
-        }
-    };
-    _eventSource.message = ^(SRServerSentEvent * sseEvent) {
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        
-        if([sseEvent.event isEqual:@"data"]) {
-            NSString *data = [[NSString alloc] initWithData:sseEvent.data encoding:NSUTF8StringEncoding];
-            SRLogSSEInfo(@"serverSentEvents did receive: %@", data);
-            if([data caseInsensitiveCompare:@"initialized"] == NSOrderedSame) {
-                return;
-            }
-            
-            BOOL shouldReconnect = NO;
-            BOOL disconnect = NO;
-            [strongSelf processResponse:strongConnection response:data shouldReconnect:&shouldReconnect disconnected:&disconnect];
-            if (strongSelf.completionHandler) {
-                [NSObject cancelPreviousPerformRequestsWithTarget:strongSelf.connectTimeoutOperation
-                                                         selector:@selector(start)
-                                                           object:nil];
-                strongSelf.connectTimeoutOperation = nil;
-                
-                strongSelf.completionHandler(nil, nil);
-                strongSelf.completionHandler = nil;
-            }
-            
-            if(disconnect) {
-                SRLogSSEDebug(@"serverSentEvents did receive disconnect command from server");
-                _stop = YES;
-                [strongConnection disconnect];
-            }
-        }
-    };
-    _eventSource.closed = ^(NSError *exception) { //server ended without error
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        
-        SRLogSSEWarn(@"serverSentEvents eventSource did close with error %@", exception);
-        
-        if (exception != nil ){
-            // Check if the request is aborted
-            BOOL isRequestAborted = [SRExceptionHelper isRequestAborted:exception];
-            
-            if (!isRequestAborted) {
-                // Don't raise exceptions if the request was aborted (connection was stopped).
-                [strongConnection didReceiveError:exception];
-            }
-        }
-        
-        //release eventSource, no other scopes have access, would like to release before
-        //eventSource will be nil for this scope before reconnect can call open, even if
-        //it wasn't doing a timeout first
-        _eventSource = nil;
-        
-        if (strongSelf.stop) {
-            [strongSelf completeAbort];
-        }
-        else if ([strongSelf tryCompleteAbort]) {
-        }
-        else {
-            [strongSelf reconnect:strongConnection data:connectionData];
-        }
-    };
-    [_eventSource start];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    SRLogSSEDebug(@"serverSentEvents will connect at url: %@%@%@", connection.url, (isReconnecting) ? @"reconnect": @"connect", parameters);
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:connection.url] sessionConfiguration:self.sessionConfiguration];
+    [manager setRequestSerializer:[SREventSourceRequestSerializer serializer]];
+    [manager setResponseSerializer:[SREventSourceResponseSerializer serializer]];
+    //manager = self.securityPolicy;
+    self.eventSource = [manager GET:(isReconnecting) ? @"reconnect": @"connect" parameters:parameters success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
         SRLogSSEWarn(@"serverSentEvents did complete");
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
-        if (strongSelf.stop) {
-            [strongSelf completeAbort];
-        } else if ([strongSelf tryCompleteAbort]) {
+        
+        if (strongSelf.completionHandler) {
+            SRLogSSEDebug(@"serverSentEvents did fail while connecting");
+            [strongSelf didInitializeWithError:[[NSError alloc]initWithDomain:
+              [NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
+                                                                                 code:NSURLErrorZeroByteResource
+                                                                             userInfo:@{
+                NSLocalizedDescriptionKey: NSLocalizedString(@"Connection failed to initialize.", nil),
+                NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"Connection did not receive initialized message.", nil),
+                NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Retry or switch transports.", nil)
+            }]];
         } else {
-            [strongSelf reconnect:strongConnection data:connectionData];
+            [strongSelf tryReconnect:strongConnection data:connectionData];
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+
         SRLogSSEError(@"serverSentEvents did fail with error %@", error);
         
-        //a little tough to read, but failure is mutually exclusive to open, message, or closed above
-        //also, you may start in the received above and end up in the failure case
-        //http://cocoadocs.org/docsets/AFNetworking/2.5.4/Classes/AFHTTPRequestOperation.html
-        //we however do close the eventSource below, which will lead us to the above code
-        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-        if (strongSelf.completionHandler) {//this is equivalent to the !reconnecting onStartFailed from c#
+        if (strongSelf.completionHandler) {
             SRLogSSEDebug(@"serverSentEvents did fail while connecting");
-            [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
-                                                     selector:@selector(start)
-                                                       object:nil];
-            self.connectTimeoutOperation = nil;
-            
-            strongSelf.completionHandler(nil, error);
-            strongSelf.completionHandler = nil;
-        } else if (!isReconnecting){//failure should first attempt to reconect
-            SRLogSSEWarn(@"will reconnect from errors: %@", error);
-        } else {//failure while reconnecting should error
-            //special case differs from above
-            SRLogSSEError(@"error: %@", error);
-            [operation cancel];//clean up to avoid duplicates
-            [strongSelf.eventSource close: error];//clean up -> this should end up in eventSource.closed above
-            return;//bail out early as we've taken care of the below
+            [strongSelf didInitializeWithError:error];
+        } else {
+            // Check if the request is cancelled
+            if (![SRExceptionHelper isRequestAborted:error]) {
+                [strongConnection didReceiveError:error];
+            }
+            [strongSelf tryReconnect:strongConnection data:connectionData];
         }
-        [operation cancel];//clean up to avoid duplicates
-        [strongSelf.eventSource close];//clean up -> this should end up in eventSource.closed above
     }];
-    [self.serverSentEventsOperationQueue addOperation:operation];
+    [manager setDataTaskDidReceiveDataBlock:^(NSURLSession * _Nonnull session, NSURLSessionDataTask * _Nonnull dataTask, NSData * _Nonnull data) {
+        __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
+        
+        [strongSelf.buffer add:data];
+        while ([strongSelf.buffer hasChunks]) {
+            NSString *line = [strongSelf.buffer readLine];
+            
+            // No new lines in the buffer so stop processing
+            if (line == nil) {
+                break;
+            }
+            
+            SRServerSentEvent *sseEvent = nil;
+            if(![SRServerSentEvent tryParseEvent:line sseEvent:&sseEvent]) {
+                continue;
+            }
+            
+            if([sseEvent.event isEqual:@"data"]) {
+                NSString *data = [[NSString alloc] initWithData:sseEvent.data encoding:NSUTF8StringEncoding];
+                SRLogSSEInfo(@"serverSentEvents did receive: %@", data);
+                if([data caseInsensitiveCompare:@"initialized"] == NSOrderedSame) {
+                    [strongSelf didInitializeWithError:nil];
+                    // This will noop if we're not in the reconnecting state
+                    if([strongConnection changeState:reconnecting toState:connected]) {
+                        // Raise the reconnect event if the connection comes back up
+                        [strongConnection didReconnect];
+                    }
+                    
+                    continue;
+                }
+                
+                BOOL shouldReconnect = NO;
+                BOOL disconnect = NO;
+                [strongSelf processResponse:strongConnection response:data shouldReconnect:&shouldReconnect disconnected:&disconnect];
+                if(disconnect) {
+                    SRLogSSEDebug(@"serverSentEvents did receive disconnect command from server");
+                    _stop = YES;
+                    [strongConnection disconnect];
+                }
+            }
+        }
+    }];
+}
+
+//Reconnect if the transport is not aborting or instructed to close by server
+- (void)tryReconnect:(id <SRConnectionInterface>)connection data:(NSString *)data{
+    if (self.stop /*server disconnect*/) {
+        [self completeAbort];
+    } else if (![self tryCompleteAbort] /*client side abort in progress*/) {
+        [self reconnect:connection data:data];
+    }
 }
 
 - (void)reconnect:(id <SRConnectionInterface>)connection data:(NSString *)data {
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
     SRLogSSEDebug(@"will reconnect in %@", self.reconnectDelay);
-    [[NSBlockOperation blockOperationWithBlock:^{
+    [[SRServerSentEventsReconnectBlockOperation blockOperationWithBlock:^{
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         
         if (connection.state != disconnected && [SRConnection ensureReconnecting:strongConnection]) {
             SRLogSSEWarn(@"reconnecting");
-            [strongSelf.serverSentEventsOperationQueue cancelAllOperations];
+            [strongSelf.eventSource cancel];
             //now that all the current connections are tearing down, we have the queue to ourselves
             [strongSelf open:strongConnection connectionData:data isReconnecting:YES];
         }
@@ -281,8 +244,16 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     }] performSelector:@selector(start) withObject:nil afterDelay:[self.reconnectDelay integerValue]];
 }
 
-- (BOOL)isConnectionReconnecting:(id<SRConnectionInterface>)connection {
-    return connection.state == reconnecting;
+- (void)didInitializeWithError:(NSError *)error {
+    if (self.completionHandler) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self.connectTimeoutOperation
+                                                 selector:@selector(start)
+                                                   object:nil];
+        self.connectTimeoutOperation = nil;
+        
+        self.completionHandler(nil, error);
+        self.completionHandler = nil;
+    }
 }
 
 @end

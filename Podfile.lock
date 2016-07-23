@@ -22,17 +22,30 @@ PODS:
     - AFNetworking/NSURLSession
   - OCMock (3.2.2)
   - SocketRocket (0.4.2)
+  - SOCKit (1.1)
+  - URLMock (1.3.2):
+    - URLMock/Core (= 1.3.2)
+    - URLMock/SubclassResponsibility (= 1.3.2)
+    - URLMock/TestHelpers (= 1.3.2)
+  - URLMock/Core (1.3.2):
+    - SOCKit (~> 1.1)
+  - URLMock/SubclassResponsibility (1.3.2):
+    - URLMock/TestHelpers
+  - URLMock/TestHelpers (1.3.2)
 
 DEPENDENCIES:
   - AFNetworking (= 2.6.3)
   - OCMock
   - SocketRocket (= 0.4.2)
+  - URLMock (= 1.3.2)
 
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   OCMock: 18c9b7e67d4c2770e95bb77a9cc1ae0c91fe3835
   SocketRocket: ffe08119b00ef982f6c37052a4705a057c8494ad
+  SOCKit: c7376ac262bea9115b8f749358f762522a47d392
+  URLMock: b30768166d971bfc696e890951663f69201c3cf7
 
-PODFILE CHECKSUM: 7a757c1199561322898e086876957f9ea32e80d0
+PODFILE CHECKSUM: 6ca7590530350d74d76dd68b5ecce5dd97b7b899
 
 COCOAPODS: 1.0.1

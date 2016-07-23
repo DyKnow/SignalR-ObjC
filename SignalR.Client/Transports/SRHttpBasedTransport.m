@@ -31,11 +31,26 @@
 @interface SRHttpBasedTransport()
 
 @property (assign, nonatomic, readwrite) BOOL startedAbort;
+@property (strong, nonatomic, readwrite) NSURLSessionConfiguration *sessionConfiguration;
 
 @end
 
 @implementation SRHttpBasedTransport
 
+- (instancetype)init {
+    return [self initWithSessionConfiguration:nil];
+}
+
+- (instancetype)initWithSessionConfiguration:(nullable NSURLSessionConfiguration *)configuration {
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
+    self.sessionConfiguration = configuration;
+    
+    return self;
+}
 #pragma mark
 #pragma mark SRClientTransportInterface
 
@@ -87,26 +102,26 @@
     NSMutableURLRequest *url = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"send"] parameters:parameters error:nil];
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:@{ @"data" : data } error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
-    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-    //operation.credential = self.credential;
-    //operation.securityPolicy = self.securityPolicy;
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:connection.url] sessionConfiguration:self.sessionConfiguration];
+    [manager setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    //manager = self.securityPolicy;
     SRLogTransportDebug(@"will send at url: %@", [[request URL] absoluteString]);
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        SRLogTransportInfo(@"send was successful %@", responseObject);
-        [connection didReceiveData:responseObject];
-        if(block) {
-            block(responseObject, nil);
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        SRLogTransportError(@"send failed %@", error);
-        [connection didReceiveError:error];
-        if (block) {
-            block(nil, error);
+    NSURLSessionDataTask *dataTask = [manager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (error) {
+            SRLogTransportError(@"send failed %@", error);
+            [connection didReceiveError:error];
+            if (block) {
+                block(nil, error);
+            }
+        } else {
+            SRLogTransportInfo(@"send was successful %@", responseObject);
+            [connection didReceiveData:responseObject];
+            if(block) {
+                block(responseObject, nil);
+            }
         }
     }];
-    [operation start];
+    [dataTask resume];
 }
 
 - (void)completeAbort {
@@ -146,19 +161,21 @@
         NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:[[url URL] absoluteString] parameters:nil error:nil];
         [connection prepareRequest:request]; //TODO: prepareRequest
         [request setTimeoutInterval:2];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
-        //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-        //operation.credential = self.credential;
-        //operation.securityPolicy = self.securityPolicy;
+        AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:connection.url] sessionConfiguration:self.sessionConfiguration];
+        [manager setResponseSerializer:[AFJSONResponseSerializer serializer]];
+        //manager = self.securityPolicy;
         SRLogTransportDebug(@"will abort at url: %@", [[request URL] absoluteString]);
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            SRLogTransportInfo(@"abort was successful %@", responseObject);
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            SRLogTransportError(@"abort failed %@",error);
-            [self completeAbort];
+        __weak __typeof(&*self)weakSelf = self;
+        NSURLSessionDataTask *dataTask = [manager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
+            if (error) {
+                SRLogTransportError(@"abort failed %@",error);
+                [strongSelf completeAbort];
+            } else {
+                SRLogTransportInfo(@"abort was successful %@", responseObject);
+            }
         }];
-        [operation start];
+        [dataTask resume];
     }
 }
 
@@ -189,6 +206,28 @@
         NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
         [_parameters addEntriesFromDictionary:@{
             @"transport" : transport
+        }];
+        return _parameters;
+    }
+    return parameters;
+}
+
+- (NSDictionary *)addMessageId:(NSDictionary *)parameters connection:(id <SRConnectionInterface>)connection {
+    if ([connection messageId]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:@{
+            @"messageId" : [connection messageId]
+        }];
+        return _parameters;
+    }
+    return parameters;
+}
+
+- (NSDictionary *)addGroupsToken:(NSDictionary *)parameters connection:(id <SRConnectionInterface>)connection {
+    if ([connection groupsToken]) {
+        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+        [_parameters addEntriesFromDictionary:@{
+            @"groupsToken" : [connection groupsToken]
         }];
         return _parameters;
     }

@@ -91,6 +91,20 @@
 		3989F3421C98555A005A100A /* SRMockWSNetworkStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989F3401C98555A005A100A /* SRMockWSNetworkStream.m */; };
 		39B355011C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */; };
 		39B355021C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */; };
+		66279CE51D2E843C008A430A /* SRMockSSEResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 66279CE31D2E843C008A430A /* SRMockSSEResponder.h */; };
+		66279CE61D2E843C008A430A /* SRMockSSEResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 66279CE31D2E843C008A430A /* SRMockSSEResponder.h */; };
+		66279CE91D2E8441008A430A /* SRMockSSEResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66279CE41D2E843C008A430A /* SRMockSSEResponder.m */; };
+		66279CEA1D2E8441008A430A /* SRMockSSEResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66279CE41D2E843C008A430A /* SRMockSSEResponder.m */; };
+		666153F51D3FE202004F17D2 /* SRMockTransportRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 666153F41D3FE202004F17D2 /* SRMockTransportRequest.m */; };
+		666153F61D3FE202004F17D2 /* SRMockTransportRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 666153F41D3FE202004F17D2 /* SRMockTransportRequest.m */; };
+		666154011D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */ = {isa = PBXBuildFile; fileRef = 666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */; };
+		666154021D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */ = {isa = PBXBuildFile; fileRef = 666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */; };
+		667805531D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */; };
+		667805541D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */; };
+		66E19FB11D440692002823ED /* SRBlockOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E19FAF1D440692002823ED /* SRBlockOperation.h */; };
+		66E19FB21D440692002823ED /* SRBlockOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E19FAF1D440692002823ED /* SRBlockOperation.h */; };
+		66E19FB31D440692002823ED /* SRBlockOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E19FB01D440692002823ED /* SRBlockOperation.m */; };
+		66E19FB41D440692002823ED /* SRBlockOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E19FB01D440692002823ED /* SRBlockOperation.m */; };
 		67F08F302448FB904F57EA11 /* Pods_SignalR_Client_iOS_SignalR_Client_iOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD05576397746170EB20A0D9 /* Pods_SignalR_Client_iOS_SignalR_Client_iOSTests.framework */; };
 		77DDD23056DDF5601554BBC1 /* Pods_SignalR_Client_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31B651E0317CA0F4E26E1338 /* Pods_SignalR_Client_iOS.framework */; };
 		C9D717AA1579C0EBB9DB7991 /* Pods_SignalR_Client_OSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E42E16292B5ADF0F39E2488 /* Pods_SignalR_Client_OSX.framework */; };
@@ -210,6 +224,16 @@
 		39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRServerSentEvent.m; sourceTree = "<group>"; };
 		4D0C2CFA185482E53BF2E516 /* Pods-SignalR.Client.iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.iOS/Pods-SignalR.Client.iOS.release.xcconfig"; sourceTree = "<group>"; };
 		5CB58D8B0E8F95535744392B /* Pods-SignalR.Client.iOS-SignalR.Client.iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS-SignalR.Client.iOSTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.iOS-SignalR.Client.iOSTests/Pods-SignalR.Client.iOS-SignalR.Client.iOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		66279CE31D2E843C008A430A /* SRMockSSEResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockSSEResponder.h; path = ../Tests/Mocks/SRMockSSEResponder.h; sourceTree = "<group>"; };
+		66279CE41D2E843C008A430A /* SRMockSSEResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockSSEResponder.m; path = ../Tests/Mocks/SRMockSSEResponder.m; sourceTree = "<group>"; };
+		666153F31D3FE202004F17D2 /* SRMockTransportRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockTransportRequest.h; path = ../Tests/Mocks/SRMockTransportRequest.h; sourceTree = "<group>"; };
+		666153F41D3FE202004F17D2 /* SRMockTransportRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockTransportRequest.m; path = ../Tests/Mocks/SRMockTransportRequest.m; sourceTree = "<group>"; };
+		666153FF1D40F8B6004F17D2 /* SRMockClientTransport+SSE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SRMockClientTransport+SSE.h"; path = "../Tests/Mocks/SRMockClientTransport+SSE.h"; sourceTree = "<group>"; };
+		666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "SRMockClientTransport+SSE.m"; path = "../Tests/Mocks/SRMockClientTransport+SSE.m"; sourceTree = "<group>"; };
+		667805511D419857004ADE7A /* SRMockClientTransport+OCMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SRMockClientTransport+OCMock.h"; path = "../Tests/Mocks/SRMockClientTransport+OCMock.h"; sourceTree = "<group>"; };
+		667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "SRMockClientTransport+OCMock.m"; path = "../Tests/Mocks/SRMockClientTransport+OCMock.m"; sourceTree = "<group>"; };
+		66E19FAF1D440692002823ED /* SRBlockOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRBlockOperation.h; sourceTree = "<group>"; };
+		66E19FB01D440692002823ED /* SRBlockOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRBlockOperation.m; sourceTree = "<group>"; };
 		6E42E16292B5ADF0F39E2488 /* Pods_SignalR_Client_OSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalR_Client_OSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CFF876916E13FF500B67FCA /* SRHubConnectionInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRHubConnectionInterface.h; sourceTree = "<group>"; };
 		A06755FFA3D124F078D03209 /* Pods-SignalR.Client.iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalR.Client.iOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SignalR.Client.iOS/Pods-SignalR.Client.iOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -289,6 +313,10 @@
 			children = (
 				391F978B1C711309007AA844 /* SRMockClientTransport.h */,
 				391F978C1C711309007AA844 /* SRMockClientTransport.m */,
+				667805511D419857004ADE7A /* SRMockClientTransport+OCMock.h */,
+				667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */,
+				666153FF1D40F8B6004F17D2 /* SRMockClientTransport+SSE.h */,
+				666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */,
 				391F978D1C711309007AA844 /* SRMockNetwork.h */,
 				391F978E1C711309007AA844 /* SRMockNetwork.m */,
 				3989F33B1C985122005A100A /* SRMockSSENetworkStream.h */,
@@ -297,6 +325,10 @@
 				3989F3401C98555A005A100A /* SRMockWSNetworkStream.m */,
 				3989F3371C984F2E005A100A /* SRMockWaitBlockOperation.h */,
 				3989F3381C984F2E005A100A /* SRMockWaitBlockOperation.m */,
+				666153F31D3FE202004F17D2 /* SRMockTransportRequest.h */,
+				666153F41D3FE202004F17D2 /* SRMockTransportRequest.m */,
+				66279CE31D2E843C008A430A /* SRMockSSEResponder.h */,
+				66279CE41D2E843C008A430A /* SRMockSSEResponder.m */,
 			);
 			name = Mocks;
 			sourceTree = "<group>";
@@ -429,6 +461,8 @@
 				3920784315AF13F6009B959E /* SRSerializable.h */,
 				3920784615AF13F6009B959E /* SRVersion.h */,
 				3920784715AF13F6009B959E /* SRVersion.m */,
+				66E19FAF1D440692002823ED /* SRBlockOperation.h */,
+				66E19FB01D440692002823ED /* SRBlockOperation.m */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -504,6 +538,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66279CE51D2E843C008A430A /* SRMockSSEResponder.h in Headers */,
+				66E19FB11D440692002823ED /* SRBlockOperation.h in Headers */,
 				39302A281C6977800061C6B5 /* SignalR.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -512,6 +548,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66279CE61D2E843C008A430A /* SRMockSSEResponder.h in Headers */,
+				66E19FB21D440692002823ED /* SRBlockOperation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +644,7 @@
 		392077FE15AF13C3009B959E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "DyKnow LLC";
 				TargetAttributes = {
@@ -857,6 +896,7 @@
 				39302A161C69768D0061C6B5 /* SRKeepAliveData.m in Sources */,
 				39302A171C69768D0061C6B5 /* SRNegotiationResponse.m in Sources */,
 				39302A101C69768D0061C6B5 /* NSObject+SRJSON.m in Sources */,
+				66E19FB31D440692002823ED /* SRBlockOperation.m in Sources */,
 				39302A0E1C69768D0061C6B5 /* SRHubRegistrationData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -865,9 +905,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				666153F51D3FE202004F17D2 /* SRMockTransportRequest.m in Sources */,
 				391F97A91C71136A007AA844 /* SRLongPollingTransportTests.m in Sources */,
+				667805531D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */,
 				39B355011C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */,
 				391F97A71C71136A007AA844 /* SRHubConnectionTests.m in Sources */,
+				666154011D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */,
 				3989F3351C984A36005A100A /* SRAutoTransportTests.m in Sources */,
 				391F97AA1C71136A007AA844 /* SRServerSentEventsTransportTests.m in Sources */,
 				391F97A61C71136A007AA844 /* SRConnectionTests.m in Sources */,
@@ -876,6 +919,7 @@
 				391F97AD1C71136A007AA844 /* SRMockNetwork.m in Sources */,
 				391F97BA1C7113A5007AA844 /* SRJSONTests.m in Sources */,
 				391F97AC1C71136A007AA844 /* SRMockClientTransport.m in Sources */,
+				66279CEA1D2E8441008A430A /* SRMockSSEResponder.m in Sources */,
 				391F97A81C71136A007AA844 /* SRChunkBufferTests.m in Sources */,
 				391F97A51C711363007AA844 /* SRHubProxyTests.m in Sources */,
 				3989F3411C98555A005A100A /* SRMockWSNetworkStream.m in Sources */,
@@ -911,6 +955,7 @@
 				39302A4A1C6979E10061C6B5 /* SRSubscription.m in Sources */,
 				39302A4F1C6979E10061C6B5 /* SRConnectionExtensions.m in Sources */,
 				39302A5D1C6979E10061C6B5 /* SRWebSocketTransport.m in Sources */,
+				66E19FB41D440692002823ED /* SRBlockOperation.m in Sources */,
 				39302A5B1C6979E10061C6B5 /* SRLongPollingTransport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -919,9 +964,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				666153F61D3FE202004F17D2 /* SRMockTransportRequest.m in Sources */,
 				391F97B11C71136B007AA844 /* SRLongPollingTransportTests.m in Sources */,
+				667805541D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */,
 				39B355021C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */,
 				391F97AF1C71136B007AA844 /* SRHubConnectionTests.m in Sources */,
+				666154021D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */,
 				3989F3361C984A36005A100A /* SRAutoTransportTests.m in Sources */,
 				391F97B21C71136B007AA844 /* SRServerSentEventsTransportTests.m in Sources */,
 				391F97AE1C71136B007AA844 /* SRConnectionTests.m in Sources */,
@@ -930,6 +978,7 @@
 				391F97B51C71136B007AA844 /* SRMockNetwork.m in Sources */,
 				391F97B91C7113A5007AA844 /* SRJSONTests.m in Sources */,
 				391F97B41C71136B007AA844 /* SRMockClientTransport.m in Sources */,
+				66279CE91D2E8441008A430A /* SRMockSSEResponder.m in Sources */,
 				391F97B01C71136B007AA844 /* SRChunkBufferTests.m in Sources */,
 				391F97A41C711362007AA844 /* SRHubProxyTests.m in Sources */,
 				3989F3421C98555A005A100A /* SRMockWSNetworkStream.m in Sources */,
@@ -1048,6 +1097,7 @@
 			baseConfigurationReference = A186B2D8C7AADAB56339675B /* Pods-SignalR.Client.OSX.debug.xcconfig */;
 			buildSettings = {
 				BITCODE_GENERATION_MODE = marker;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -1063,6 +1113,7 @@
 				PRODUCT_NAME = SignalR;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -1071,6 +1122,7 @@
 			baseConfigurationReference = DFFC3148AAF3EA599328B719 /* Pods-SignalR.Client.OSX.release.xcconfig */;
 			buildSettings = {
 				BITCODE_GENERATION_MODE = bitcode;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -1126,6 +1178,7 @@
 			baseConfigurationReference = A06755FFA3D124F078D03209 /* Pods-SignalR.Client.iOS.debug.xcconfig */;
 			buildSettings = {
 				BITCODE_GENERATION_MODE = marker;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1140,6 +1193,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dyknow.SignalR-ObjC";
 				PRODUCT_NAME = SignalR;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -1148,6 +1202,7 @@
 			baseConfigurationReference = 4D0C2CFA185482E53BF2E516 /* Pods-SignalR.Client.iOS.release.xcconfig */;
 			buildSettings = {
 				BITCODE_GENERATION_MODE = bitcode;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;

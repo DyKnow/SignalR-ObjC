@@ -15,6 +15,7 @@
 @property (readwrite, nonatomic, strong) id mock;
 
 - (instancetype)initWithWaitTime:(int)expectedWait;
+- (instancetype)initWithBlockOperationClass:(Class)operationClass;
 - (void)stopMocking;
 
 @end

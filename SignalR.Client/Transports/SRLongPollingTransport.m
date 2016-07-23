@@ -97,28 +97,23 @@
     }
     
     [self delayConnectionReconnect:connection canReconnect:canReconnect];
-    
-    __weak __typeof(&*self)weakSelf = self;
-    __weak __typeof(&*connection)weakConnection = connection;
-    
-    id parameters = @{
-        @"transport" : [self name],
-        @"connectionToken" : ([connection connectionToken]) ? [connection connectionToken] : @"",
-        @"messageId" : ([connection messageId]) ? [connection messageId] : @"",
-        @"groupsToken" : ([connection groupsToken]) ? [connection groupsToken] : @"",
-        @"connectionData" : (connectionData) ? connectionData : @"",
-    };
-    
-    if ([connection queryString]) {
-        NSMutableDictionary *_parameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
-        [_parameters addEntriesFromDictionary:[connection queryString]];
-        parameters = _parameters;
-    }
+
+    //TODO: Move to Request Serializer
+    //TODO: connection.prepareRequest as part of Request Serializer
+    NSDictionary *parameters = @{};
+    parameters = [self addTransport:parameters transport:[self name]];
+    parameters = [self addConnectionData:parameters connectionData:connectionData];
+    parameters = [self addConnectionToken:parameters connection:connection];
+    parameters = [self addMessageId:parameters connection:connection];
+    parameters = [self addGroupsToken:parameters connection:connection];
+    parameters = [self addQueryString:parameters connection:connection];
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:url parameters:parameters error:nil];
     [connection prepareRequest:request]; //TODO: prepareRequest
     [request setTimeoutInterval:240];
     
+    __weak __typeof(&*self)weakSelf = self;
+    __weak __typeof(&*connection)weakConnection = connection;
     SRLogLPDebug(@"longPolling will connect at url: %@", [[request URL] absoluteString]);
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
