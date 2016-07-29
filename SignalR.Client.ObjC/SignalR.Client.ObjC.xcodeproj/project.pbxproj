@@ -42,7 +42,6 @@
 		39302A161C69768D0061C6B5 /* SRKeepAliveData.m in Sources */ = {isa = PBXBuildFile; fileRef = 39533B8C173B376E003C138A /* SRKeepAliveData.m */; };
 		39302A171C69768D0061C6B5 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784D15AF13F6009B959E /* SRNegotiationResponse.m */; };
 		39302A181C69768D0061C6B5 /* SREventSourceResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */; };
-		39302A191C69768D0061C6B5 /* SREventSourceRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */; };
 		39302A1A1C69768D0061C6B5 /* SRChunkBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785215AF13F6009B959E /* SRChunkBuffer.m */; };
 		39302A1B1C69768D0061C6B5 /* SREventSourceStreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785415AF13F6009B959E /* SREventSourceStreamReader.m */; };
 		39302A1C1C69768D0061C6B5 /* SRServerSentEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */; };
@@ -54,7 +53,6 @@
 		39302A221C69768D0061C6B5 /* SRWebSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 39AF0D7D17138E3800E13E6E /* SRWebSocketTransport.m */; };
 		39302A231C6976A30061C6B5 /* SRSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920783615AF13F6009B959E /* SRSubscription.m */; };
 		39302A271C6977800061C6B5 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39302A251C6977800061C6B5 /* Info.plist */; };
-		39302A281C6977800061C6B5 /* SignalR.h in Headers */ = {isa = PBXBuildFile; fileRef = 39302A261C6977800061C6B5 /* SignalR.h */; };
 		39302A381C6978AC0061C6B5 /* SignalR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39302A2E1C6978AB0061C6B5 /* SignalR.framework */; };
 		39302A451C6979E10061C6B5 /* SRHubConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782715AF13F6009B959E /* SRHubConnection.m */; };
 		39302A461C6979E10061C6B5 /* SRHubProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920782B15AF13F6009B959E /* SRHubProxy.m */; };
@@ -71,7 +69,6 @@
 		39302A511C6979E10061C6B5 /* SRKeepAliveData.m in Sources */ = {isa = PBXBuildFile; fileRef = 39533B8C173B376E003C138A /* SRKeepAliveData.m */; };
 		39302A521C6979E10061C6B5 /* SRNegotiationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920784D15AF13F6009B959E /* SRNegotiationResponse.m */; };
 		39302A531C6979E10061C6B5 /* SREventSourceResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */; };
-		39302A541C6979E10061C6B5 /* SREventSourceRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */; };
 		39302A551C6979E10061C6B5 /* SRChunkBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785215AF13F6009B959E /* SRChunkBuffer.m */; };
 		39302A561C6979E10061C6B5 /* SREventSourceStreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3920785415AF13F6009B959E /* SREventSourceStreamReader.m */; };
 		39302A571C6979E10061C6B5 /* SRServerSentEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F7D7AF1833FC99002590A6 /* SRServerSentEvent.m */; };
@@ -91,8 +88,6 @@
 		3989F3421C98555A005A100A /* SRMockWSNetworkStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 3989F3401C98555A005A100A /* SRMockWSNetworkStream.m */; };
 		39B355011C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */; };
 		39B355021C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B355001C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m */; };
-		66279CE51D2E843C008A430A /* SRMockSSEResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 66279CE31D2E843C008A430A /* SRMockSSEResponder.h */; };
-		66279CE61D2E843C008A430A /* SRMockSSEResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 66279CE31D2E843C008A430A /* SRMockSSEResponder.h */; };
 		66279CE91D2E8441008A430A /* SRMockSSEResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66279CE41D2E843C008A430A /* SRMockSSEResponder.m */; };
 		66279CEA1D2E8441008A430A /* SRMockSSEResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66279CE41D2E843C008A430A /* SRMockSSEResponder.m */; };
 		666153F51D3FE202004F17D2 /* SRMockTransportRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 666153F41D3FE202004F17D2 /* SRMockTransportRequest.m */; };
@@ -101,8 +96,12 @@
 		666154021D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */ = {isa = PBXBuildFile; fileRef = 666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */; };
 		667805531D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */; };
 		667805541D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */; };
-		66E19FB11D440692002823ED /* SRBlockOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E19FAF1D440692002823ED /* SRBlockOperation.h */; };
-		66E19FB21D440692002823ED /* SRBlockOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E19FAF1D440692002823ED /* SRBlockOperation.h */; };
+		66C0F5B31D46DD66006D236A /* SRMockClientTransport+LP.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F5B21D46DD66006D236A /* SRMockClientTransport+LP.m */; };
+		66C0F5B41D46DD66006D236A /* SRMockClientTransport+LP.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F5B21D46DD66006D236A /* SRMockClientTransport+LP.m */; };
+		66C0F5C21D47F543006D236A /* SRTransportRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F5BF1D47F543006D236A /* SRTransportRequestSerialization.m */; };
+		66C0F5C31D47F543006D236A /* SRTransportRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F5BF1D47F543006D236A /* SRTransportRequestSerialization.m */; };
+		66C0F5CC1D498FCC006D236A /* SRMockLPResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F5CB1D498FCC006D236A /* SRMockLPResponder.m */; };
+		66C0F5CD1D498FCC006D236A /* SRMockLPResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F5CB1D498FCC006D236A /* SRMockLPResponder.m */; };
 		66E19FB31D440692002823ED /* SRBlockOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E19FB01D440692002823ED /* SRBlockOperation.m */; };
 		66E19FB41D440692002823ED /* SRBlockOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E19FB01D440692002823ED /* SRBlockOperation.m */; };
 		67F08F302448FB904F57EA11 /* Pods_SignalR_Client_iOS_SignalR_Client_iOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD05576397746170EB20A0D9 /* Pods_SignalR_Client_iOS_SignalR_Client_iOSTests.framework */; };
@@ -204,8 +203,6 @@
 		3989F33C1C985122005A100A /* SRMockSSENetworkStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockSSENetworkStream.m; path = ../Tests/Mocks/SRMockSSENetworkStream.m; sourceTree = "<group>"; };
 		3989F33F1C98555A005A100A /* SRMockWSNetworkStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockWSNetworkStream.h; path = ../Tests/Mocks/SRMockWSNetworkStream.h; sourceTree = "<group>"; };
 		3989F3401C98555A005A100A /* SRMockWSNetworkStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockWSNetworkStream.m; path = ../Tests/Mocks/SRMockWSNetworkStream.m; sourceTree = "<group>"; };
-		39A27EF81C5FD151009B7459 /* SREventSourceRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SREventSourceRequestSerializer.h; sourceTree = "<group>"; };
-		39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SREventSourceRequestSerializer.m; sourceTree = "<group>"; };
 		39A27EFC1C5FD242009B7459 /* SREventSourceResponseSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SREventSourceResponseSerializer.h; sourceTree = "<group>"; };
 		39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SREventSourceResponseSerializer.m; sourceTree = "<group>"; };
 		39AF0D7C17138E3800E13E6E /* SRWebSocketTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocketTransport.h; sourceTree = "<group>"; };
@@ -232,6 +229,12 @@
 		666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "SRMockClientTransport+SSE.m"; path = "../Tests/Mocks/SRMockClientTransport+SSE.m"; sourceTree = "<group>"; };
 		667805511D419857004ADE7A /* SRMockClientTransport+OCMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SRMockClientTransport+OCMock.h"; path = "../Tests/Mocks/SRMockClientTransport+OCMock.h"; sourceTree = "<group>"; };
 		667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "SRMockClientTransport+OCMock.m"; path = "../Tests/Mocks/SRMockClientTransport+OCMock.m"; sourceTree = "<group>"; };
+		66C0F5B11D46DD66006D236A /* SRMockClientTransport+LP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "SRMockClientTransport+LP.h"; path = "../Tests/Mocks/SRMockClientTransport+LP.h"; sourceTree = "<group>"; };
+		66C0F5B21D46DD66006D236A /* SRMockClientTransport+LP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "SRMockClientTransport+LP.m"; path = "../Tests/Mocks/SRMockClientTransport+LP.m"; sourceTree = "<group>"; };
+		66C0F5BE1D47F543006D236A /* SRTransportRequestSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRTransportRequestSerialization.h; path = Serialization/SRTransportRequestSerialization.h; sourceTree = "<group>"; };
+		66C0F5BF1D47F543006D236A /* SRTransportRequestSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRTransportRequestSerialization.m; path = Serialization/SRTransportRequestSerialization.m; sourceTree = "<group>"; };
+		66C0F5CA1D498FCC006D236A /* SRMockLPResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRMockLPResponder.h; path = ../Tests/Mocks/SRMockLPResponder.h; sourceTree = "<group>"; };
+		66C0F5CB1D498FCC006D236A /* SRMockLPResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRMockLPResponder.m; path = ../Tests/Mocks/SRMockLPResponder.m; sourceTree = "<group>"; };
 		66E19FAF1D440692002823ED /* SRBlockOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRBlockOperation.h; sourceTree = "<group>"; };
 		66E19FB01D440692002823ED /* SRBlockOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRBlockOperation.m; sourceTree = "<group>"; };
 		6E42E16292B5ADF0F39E2488 /* Pods_SignalR_Client_OSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalR_Client_OSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,6 +318,8 @@
 				391F978C1C711309007AA844 /* SRMockClientTransport.m */,
 				667805511D419857004ADE7A /* SRMockClientTransport+OCMock.h */,
 				667805521D419857004ADE7A /* SRMockClientTransport+OCMock.m */,
+				66C0F5B11D46DD66006D236A /* SRMockClientTransport+LP.h */,
+				66C0F5B21D46DD66006D236A /* SRMockClientTransport+LP.m */,
 				666153FF1D40F8B6004F17D2 /* SRMockClientTransport+SSE.h */,
 				666154001D40F8B6004F17D2 /* SRMockClientTransport+SSE.m */,
 				391F978D1C711309007AA844 /* SRMockNetwork.h */,
@@ -327,6 +332,8 @@
 				3989F3381C984F2E005A100A /* SRMockWaitBlockOperation.m */,
 				666153F31D3FE202004F17D2 /* SRMockTransportRequest.h */,
 				666153F41D3FE202004F17D2 /* SRMockTransportRequest.m */,
+				66C0F5CA1D498FCC006D236A /* SRMockLPResponder.h */,
+				66C0F5CB1D498FCC006D236A /* SRMockLPResponder.m */,
 				66279CE31D2E843C008A430A /* SRMockSSEResponder.h */,
 				66279CE41D2E843C008A430A /* SRMockSSEResponder.m */,
 			);
@@ -470,6 +477,7 @@
 		3920784F15AF13F6009B959E /* Transports */ = {
 			isa = PBXGroup;
 			children = (
+				66C0F5BD1D47F4F2006D236A /* Serialization */,
 				3985D48B171F4D1B00F89FD0 /* LongPolling */,
 				3920785015AF13F6009B959E /* ServerSentEvents */,
 				39AF0D7B17138E1600E13E6E /* WebSockets */,
@@ -493,8 +501,6 @@
 			children = (
 				39A27EFC1C5FD242009B7459 /* SREventSourceResponseSerializer.h */,
 				39A27EFD1C5FD242009B7459 /* SREventSourceResponseSerializer.m */,
-				39A27EF81C5FD151009B7459 /* SREventSourceRequestSerializer.h */,
-				39A27EF91C5FD151009B7459 /* SREventSourceRequestSerializer.m */,
 				3920785115AF13F6009B959E /* SRChunkBuffer.h */,
 				3920785215AF13F6009B959E /* SRChunkBuffer.m */,
 				3920785315AF13F6009B959E /* SREventSourceStreamReader.h */,
@@ -531,6 +537,15 @@
 			name = WebSockets;
 			sourceTree = "<group>";
 		};
+		66C0F5BD1D47F4F2006D236A /* Serialization */ = {
+			isa = PBXGroup;
+			children = (
+				66C0F5BE1D47F543006D236A /* SRTransportRequestSerialization.h */,
+				66C0F5BF1D47F543006D236A /* SRTransportRequestSerialization.m */,
+			);
+			name = Serialization;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -538,9 +553,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66279CE51D2E843C008A430A /* SRMockSSEResponder.h in Headers */,
-				66E19FB11D440692002823ED /* SRBlockOperation.h in Headers */,
-				39302A281C6977800061C6B5 /* SignalR.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,8 +560,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66279CE61D2E843C008A430A /* SRMockSSEResponder.h in Headers */,
-				66E19FB21D440692002823ED /* SRBlockOperation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -881,7 +891,6 @@
 				39302A121C69768D0061C6B5 /* SRVersion.m in Sources */,
 				39302A1C1C69768D0061C6B5 /* SRServerSentEvent.m in Sources */,
 				39302A0D1C69768D0061C6B5 /* SRHubInvocation.m in Sources */,
-				39302A191C69768D0061C6B5 /* SREventSourceRequestSerializer.m in Sources */,
 				39302A111C69768D0061C6B5 /* SRExceptionHelper.m in Sources */,
 				39302A221C69768D0061C6B5 /* SRWebSocketTransport.m in Sources */,
 				39302A0C1C69768D0061C6B5 /* SRHubProxy.m in Sources */,
@@ -895,6 +904,7 @@
 				39302A181C69768D0061C6B5 /* SREventSourceResponseSerializer.m in Sources */,
 				39302A161C69768D0061C6B5 /* SRKeepAliveData.m in Sources */,
 				39302A171C69768D0061C6B5 /* SRNegotiationResponse.m in Sources */,
+				66C0F5C21D47F543006D236A /* SRTransportRequestSerialization.m in Sources */,
 				39302A101C69768D0061C6B5 /* NSObject+SRJSON.m in Sources */,
 				66E19FB31D440692002823ED /* SRBlockOperation.m in Sources */,
 				39302A0E1C69768D0061C6B5 /* SRHubRegistrationData.m in Sources */,
@@ -909,6 +919,7 @@
 				391F97A91C71136A007AA844 /* SRLongPollingTransportTests.m in Sources */,
 				667805531D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */,
 				39B355011C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */,
+				66C0F5CC1D498FCC006D236A /* SRMockLPResponder.m in Sources */,
 				391F97A71C71136A007AA844 /* SRHubConnectionTests.m in Sources */,
 				666154011D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */,
 				3989F3351C984A36005A100A /* SRAutoTransportTests.m in Sources */,
@@ -916,6 +927,7 @@
 				391F97A61C71136A007AA844 /* SRConnectionTests.m in Sources */,
 				391F97AB1C71136A007AA844 /* SRWebSocketTransportTests.m in Sources */,
 				3989F3391C984F2E005A100A /* SRMockWaitBlockOperation.m in Sources */,
+				66C0F5B31D46DD66006D236A /* SRMockClientTransport+LP.m in Sources */,
 				391F97AD1C71136A007AA844 /* SRMockNetwork.m in Sources */,
 				391F97BA1C7113A5007AA844 /* SRJSONTests.m in Sources */,
 				391F97AC1C71136A007AA844 /* SRMockClientTransport.m in Sources */,
@@ -948,12 +960,12 @@
 				39302A581C6979E10061C6B5 /* SRWebSocketConnectionInfo.m in Sources */,
 				39302A561C6979E10061C6B5 /* SREventSourceStreamReader.m in Sources */,
 				39302A5C1C6979E10061C6B5 /* SRServerSentEventsTransport.m in Sources */,
-				39302A541C6979E10061C6B5 /* SREventSourceRequestSerializer.m in Sources */,
 				39302A591C6979E10061C6B5 /* SRHttpBasedTransport.m in Sources */,
 				39302A531C6979E10061C6B5 /* SREventSourceResponseSerializer.m in Sources */,
 				39302A5A1C6979E10061C6B5 /* SRAutoTransport.m in Sources */,
 				39302A4A1C6979E10061C6B5 /* SRSubscription.m in Sources */,
 				39302A4F1C6979E10061C6B5 /* SRConnectionExtensions.m in Sources */,
+				66C0F5C31D47F543006D236A /* SRTransportRequestSerialization.m in Sources */,
 				39302A5D1C6979E10061C6B5 /* SRWebSocketTransport.m in Sources */,
 				66E19FB41D440692002823ED /* SRBlockOperation.m in Sources */,
 				39302A5B1C6979E10061C6B5 /* SRLongPollingTransport.m in Sources */,
@@ -968,6 +980,7 @@
 				391F97B11C71136B007AA844 /* SRLongPollingTransportTests.m in Sources */,
 				667805541D419857004ADE7A /* SRMockClientTransport+OCMock.m in Sources */,
 				39B355021C7CE27B0076E8E0 /* SREventSourceStreamReaderTests.m in Sources */,
+				66C0F5CD1D498FCC006D236A /* SRMockLPResponder.m in Sources */,
 				391F97AF1C71136B007AA844 /* SRHubConnectionTests.m in Sources */,
 				666154021D40F8B6004F17D2 /* SRMockClientTransport+SSE.m in Sources */,
 				3989F3361C984A36005A100A /* SRAutoTransportTests.m in Sources */,
@@ -975,6 +988,7 @@
 				391F97AE1C71136B007AA844 /* SRConnectionTests.m in Sources */,
 				391F97B31C71136B007AA844 /* SRWebSocketTransportTests.m in Sources */,
 				3989F33A1C984F2E005A100A /* SRMockWaitBlockOperation.m in Sources */,
+				66C0F5B41D46DD66006D236A /* SRMockClientTransport+LP.m in Sources */,
 				391F97B51C71136B007AA844 /* SRMockNetwork.m in Sources */,
 				391F97B91C7113A5007AA844 /* SRJSONTests.m in Sources */,
 				391F97B41C71136B007AA844 /* SRMockClientTransport.m in Sources */,

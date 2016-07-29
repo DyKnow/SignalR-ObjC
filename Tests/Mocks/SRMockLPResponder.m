@@ -1,22 +1,22 @@
 //
-//  SRMockSSEResponder.m
+//  SRMockLPResponder.m
 //  SignalR.Client.ObjC
 //
-//  Created by Alex Billingsley on 7/7/16.
+//  Created by Alex Billingsley on 7/27/16.
 //  Copyright © 2016 DyKnow LLC. All rights reserved.
 //
 
-#import "SRMockSSEResponder.h"
+#import "SRMockLPResponder.h"
 
-typedef void (^SRMockSSEResponderBeforeStartBlock)(void);
-typedef void (^SRMockSSEResponderAfterStartBlock)(void);
-typedef void (^SRMockSSEResponderBeforeDataBlock)(NSData * _Nonnull data);
-typedef void (^SRMockSSEResponderAfterDataBlock)(NSData * _Nonnull data);
-typedef void (^SRMockSSEResponderBeforeEndBlock)(NSError * _Nullable error);
-typedef NSError * (^SRMockSSEResponderFailWithErrorBlock)(void);
-typedef void (^SRMockSSEResponderAfterEndBlock)(NSError * _Nullable error);
+typedef void (^SRMockLPResponderBeforeStartBlock)(void);
+typedef void (^SRMockLPResponderAfterStartBlock)(void);
+typedef void (^SRMockLPResponderBeforeDataBlock)(NSData * _Nonnull data);
+typedef void (^SRMockLPResponderAfterDataBlock)(NSData * _Nonnull data);
+typedef void (^SRMockLPResponderBeforeEndBlock)(NSError * _Nullable error);
+typedef NSError * (^SRMockLPResponderFailWithErrorBlock)(void);
+typedef void (^SRMockLPResponderAfterEndBlock)(NSError * _Nullable error);
 
-@interface SRMockSSEResponder ()
+@interface SRMockLPResponder ()
 
 @property (readwrite, nonatomic) NSArray<NSData *> * bodyChunks;
 
@@ -28,46 +28,43 @@ typedef void (^SRMockSSEResponderAfterEndBlock)(NSError * _Nullable error);
 /*! Whether the responder is currently responding to a request. */
 @property (nonatomic, getter = isResponding) BOOL responding;
 
-@property (readwrite, nonatomic, copy) SRMockSSEResponderBeforeStartBlock beforeStart;
-@property (readwrite, nonatomic, copy) SRMockSSEResponderAfterStartBlock afterStart;
-@property (readwrite, nonatomic, copy) SRMockSSEResponderBeforeDataBlock beforeData;
-@property (readwrite, nonatomic, copy) SRMockSSEResponderAfterDataBlock afterData;
-@property (readwrite, nonatomic, copy) SRMockSSEResponderBeforeEndBlock beforeEnd;
-@property (readwrite, nonatomic, copy) SRMockSSEResponderFailWithErrorBlock failWithError;
-@property (readwrite, nonatomic, copy) SRMockSSEResponderAfterEndBlock afterEnd;
-
-@property id<NSURLProtocolClient> client;
-@property NSURLProtocol * protocol;
+@property (readwrite, nonatomic, copy) SRMockLPResponderBeforeStartBlock beforeStart;
+@property (readwrite, nonatomic, copy) SRMockLPResponderAfterStartBlock afterStart;
+@property (readwrite, nonatomic, copy) SRMockLPResponderBeforeDataBlock beforeData;
+@property (readwrite, nonatomic, copy) SRMockLPResponderAfterDataBlock afterData;
+@property (readwrite, nonatomic, copy) SRMockLPResponderBeforeEndBlock beforeEnd;
+@property (readwrite, nonatomic, copy) SRMockLPResponderFailWithErrorBlock failWithError;
+@property (readwrite, nonatomic, copy) SRMockLPResponderAfterEndBlock afterEnd;
 
 @end
 
-@implementation SRMockSSEResponder
+@implementation SRMockLPResponder
+
++ (instancetype)mockHTTPResponderWithStatusCode:(NSInteger)statusCode
+{
+    return [[self alloc] initWithStatusCode:statusCode headers:nil body:nil];
+}
 
 - (instancetype)initWithStatusCode:(NSInteger)statusCode
-                       eventStream:(NSArray<NSData *> * _Nullable)eventStream {
+                           headers:(NSDictionary<NSString *, NSString *> * _Nullable)headers
+                              body:(NSData *)body {
     self = [super init];
-    if (!self) {
-        return nil;
+    if (self) {
+        self.body = body;
+        self.headers = headers;
+        _statusCode = statusCode;
     }
-    
-    
-    self.bodyChunks = eventStream;
-    _statusCode = statusCode;
     
     return self;
 }
 
-- (void)respondToMockRequest:(id<UMKMockURLRequest>)request client:(id<NSURLProtocolClient>)client protocol:(NSURLProtocol *)protocol; {
-    self.client = client;
-    self.protocol = protocol;
+- (void)respondToMockRequest:(id<UMKMockURLRequest>)request client:(id<NSURLProtocolClient>)client protocol:(NSURLProtocol *)protocol {
     self.responding = YES;
     
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:protocol.request.URL
                                                               statusCode:self.statusCode
                                                              HTTPVersion:@"HTTP/1.1"
-                                                            headerFields:@{
-                                                                @"Content-Type":@"text/event-stream"
-                                                            }];
+                                                            headerFields:self.headers];
     
     // Stop if we were canceled in another thread.
     if (!self.responding) {
@@ -83,14 +80,23 @@ typedef void (^SRMockSSEResponderAfterEndBlock)(NSError * _Nullable error);
         self.afterStart();
     }
     
-    [self eventStream:self.bodyChunks];
+    if (self.body) {
+        if (self.beforeData) {
+            self.beforeData(self.body);
+        }
+        [client URLProtocol:protocol didLoadData:self.body];
+        [NSThread sleepForTimeInterval:.1];
+        if (self.afterData) {
+            self.afterData(self.body);
+        }
+    }
     
     if (!self.responding) {
         return;
     }
     
     if (self.statusCode != 0) {
-        [NSThread sleepForTimeInterval:1];
+        [NSThread sleepForTimeInterval:.1];
         
         if (self.statusCode == 200) {
             if (self.beforeEnd) {
@@ -114,6 +120,10 @@ typedef void (^SRMockSSEResponderAfterEndBlock)(NSError * _Nullable error);
         }
         self.responding = NO;
     }
+}
+
+- (void)cancelResponse {
+    self.responding = NO;
 }
 
 - (instancetype)beforeStart:(nullable void (^)(void))block; {
@@ -148,27 +158,6 @@ typedef void (^SRMockSSEResponderAfterEndBlock)(NSError * _Nullable error);
 - (instancetype)afterEnd:(nullable void (^)(NSError * _Nullable error))block; {
     self.afterEnd = block;
     return self;
-}
-
-- (void)eventStream:(NSArray<NSData *> * _Nullable)bodyChunks {
-    if (bodyChunks) {
-        __weak __typeof(&*self)weakSelf = self;
-        [bodyChunks enumerateObjectsUsingBlock:^(NSData * _Nonnull data, NSUInteger idx, BOOL * _Nonnull stop) {
-            __strong __typeof(&*weakSelf)strongSelf = weakSelf;
-            if (strongSelf.beforeData) {
-                strongSelf.beforeData(data);
-            }
-            [strongSelf.client URLProtocol:strongSelf.protocol didLoadData:data];
-            [NSThread sleepForTimeInterval:.1];
-            if (strongSelf.afterData) {
-                strongSelf.afterData(data);
-            }
-        }];
-    }
-}
-
-- (void)cancelResponse {
-    self.responding = NO;
 }
 
 @end

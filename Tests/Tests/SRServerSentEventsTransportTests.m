@@ -37,12 +37,12 @@
 }
 
 - (void)testHasCorrectTransportName {
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
     XCTAssert([[sse name] isEqualToString:@"serverSentEvents"]);
 }
 
 - (void)testSupportsKeepAlive {
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
     XCTAssertTrue([sse supportsKeepAlive]);
 }
 
@@ -52,17 +52,15 @@
 
 - (void)testIgnoresInitializedAndEmptyLinesWhenParsingMessages {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@0 json:@{
-        @"M":@[ @{
-            @"H":@"hubname",
-            @"M":@"message",
-            @"A":@"12345"
-        } ]
-    }];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    SRMockSSEResponder *responder = [[SRMockSSEResponder alloc] initWithStatusCode:0 eventStream:@[
+        [@"data: initialized\n\n" dataUsingEncoding:NSUTF8StringEncoding],
+        [@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" dataUsingEncoding:NSUTF8StringEncoding]
+    ]];
+    [SRMockSSETransport connectTransport:sse responder:responder];
     
-    XCTestExpectation *received = [self expectationWithDescription:@"received"];
+    __weak XCTestExpectation *received = [self expectationWithDescription:@"received"];
     connection.received = ^(NSDictionary * data){
         if ([[data valueForKey:@"M"] isEqualToString:@"message"]
             && [[data valueForKey:@"H"] isEqualToString:@"hubname"]
@@ -77,15 +75,15 @@
 
 - (void)testHandlesExtraEmptyLinesWhenParsingMessages {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     SRMockSSEResponder *responder = [[SRMockSSEResponder alloc] initWithStatusCode:0 eventStream:@[
         [@"data: initialized\n\n\n" dataUsingEncoding:NSUTF8StringEncoding],
         [@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}\n\n" dataUsingEncoding:NSUTF8StringEncoding]
     ]];
-    [SRMockClientTransport connectTransport:sse responder:responder];
+    [SRMockSSETransport connectTransport:sse responder:responder];
     
-    XCTestExpectation *received = [self expectationWithDescription:@"received"];
+    __weak XCTestExpectation *received = [self expectationWithDescription:@"received"];
     connection.received = ^(NSString * data){
         if (data) {
             [received fulfill];
@@ -98,16 +96,16 @@
 
 - (void)testHandlesNewLinesSpreadOutOverReads {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     SRMockSSEResponder *responder = [[SRMockSSEResponder alloc] initWithStatusCode:0 eventStream:@[
         [@"data: initialized\n\n" dataUsingEncoding:NSUTF8StringEncoding],
         [@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message\", \"A\": \"12345\"}]}" dataUsingEncoding:NSUTF8StringEncoding],
         [@"\n" dataUsingEncoding:NSUTF8StringEncoding]
     ]];
-    [SRMockClientTransport connectTransport:sse responder:responder];
+    [SRMockSSETransport connectTransport:sse responder:responder];
     
-    XCTestExpectation *received = [self expectationWithDescription:@"received"];
+    __weak XCTestExpectation *received = [self expectationWithDescription:@"received"];
     connection.received = ^(NSString * data){
         if ([[data valueForKey:@"M"] isEqualToString:@"message"]
             && [[data valueForKey:@"H"] isEqualToString:@"hubname"]
@@ -122,13 +120,13 @@
 
 - (void)testConnectionDisconnectsWhenServerDisconnectReceived {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@0 json:@{
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@0 json:@{
         @"D": @YES
     }];
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^(){
         [closed fulfill];
     };
@@ -139,9 +137,9 @@
 
 - (void)xtestConnectionReconnectsWhenServerReconnectReceived {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@0 json:@{
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@0 json:@{
         @"T": @YES
     }];
     
@@ -159,11 +157,11 @@
 
 - (void)testEventStreamInitializesSuccessfully {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@0 json:@{}];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@0 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^{
         [started fulfill];
     };
@@ -190,10 +188,10 @@
 
 - (void)testEventStreamClosesCleanlyBeforeInitializing {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse responder:[[SRMockSSEResponder alloc] initWithStatusCode:200 eventStream:@[]]];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse responder:[[SRMockSSEResponder alloc] initWithStatusCode:200 eventStream:@[]]];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
     
     connection.started = ^{
         XCTFail(@"connection started");
@@ -207,14 +205,14 @@
         XCTFail(@"connection reconnected");
     };
     
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError *error){
         [errored fulfill];
         //This is an error of our own design
         XCTAssertEqual([error code], NSURLErrorZeroByteResource);
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -225,10 +223,10 @@
 
 - (void)testEventStreamClosesWithErrorBeforeInitializing {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@400 error:[[NSError alloc] initWithDomain:@"EXPECTED" code:NSURLErrorUnknown userInfo:nil]];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@400 error:[[NSError alloc] initWithDomain:@"EXPECTED" code:NSURLErrorUnknown userInfo:nil]];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
     
     connection.started = ^{
         XCTFail(@"connection started");
@@ -242,13 +240,12 @@
         XCTFail(@"connection reconnected");
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError *error){
         [errored fulfill];
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -259,10 +256,10 @@
 
 - (void)testEventStreamClosesWithCancelBeforeInitializing {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@400 error:[[NSError alloc] initWithDomain:@"EXPECTED" code:NSURLErrorCancelled userInfo:nil]];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@400 error:[[NSError alloc] initWithDomain:@"EXPECTED" code:NSURLErrorCancelled userInfo:nil]];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
     
     connection.started = ^{
         XCTFail(@"connection started");
@@ -280,7 +277,7 @@
         XCTFail(@"connection errored");
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -291,16 +288,16 @@
 
 - (void)testTransportCanTimeoutWhenItDoesNotReceiveInitializeMessage {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     SRMockWaitBlockOperation* transportConnectTimeout = [[SRMockWaitBlockOperation alloc] initWithBlockOperationClass:[SRTransportConnectTimeoutBlockOperation class]];
-    [[SRMockClientTransport connectTransport:sse statusCode:@0 json:@{}] beforeData:^(NSData * _Nonnull data) {
+    [[SRMockSSETransport connectTransport:sse statusCode:@0 json:@{}] beforeData:^(NSData * _Nonnull data) {
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
             transportConnectTimeout.afterWait();
         }
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
     
     connection.started = ^{
         XCTFail(@"connection started");
@@ -314,12 +311,12 @@
         XCTFail(@"connection reconnected");
     };
     
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError *error){
         [errored fulfill];
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -330,12 +327,14 @@
 
 - (void)testConnectionStoppedBeforeEventStreamInitializes {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [[SRMockClientTransport connectTransport:sse statusCode:@0 json:@{}] beforeData:^(NSData * _Nonnull data) {
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport connectTransport:sse statusCode:@0 json:@{}] beforeData:^(NSData * _Nonnull data) {
+         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
     
@@ -355,7 +354,7 @@
         XCTFail(@"connection error");
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -366,17 +365,19 @@
 
 - (void)testConnectionStoppedAfterEventStreamInitializes {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [[SRMockClientTransport connectTransport:sse statusCode:@0 json:@{}] afterData:^(NSData * _Nonnull data) {
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport connectTransport:sse statusCode:@0 json:@{}] afterData:^(NSData * _Nonnull data) {
+         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^(){
         [started fulfill];
     };
@@ -393,7 +394,7 @@
         XCTFail(@"connection errored");
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -404,17 +405,19 @@
 
 - (void)testConnectionStoppedAndRestartedBeforeEventStreamInitializes {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse1 = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse1];
-    [[SRMockClientTransport connectTransport:sse1 statusCode:@0 json:@{}] beforeData:^(NSData * _Nonnull data) {
+    SRServerSentEventsTransport* sse1 = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse1];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport connectTransport:sse1 statusCode:@0 json:@{}] beforeData:^(NSData * _Nonnull data) {
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
-    [SRMockClientTransport abortForTransport:sse1 statusCode:@200 json:@{}];
+    [SRMockSSETransport abortForTransport:sse1 statusCode:@200 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^{
         [started fulfill];
     };
@@ -431,15 +434,14 @@
         XCTFail(@"connection errored");
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
-    __weak __typeof(&*connection)weakConnection = connection;
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         [closed fulfill];
         [UMKMockURLProtocol reset];
-        SRServerSentEventsTransport* sse2 = [SRMockClientTransport sse];
-        [SRMockClientTransport negotiateForTransport:sse2];
-        [SRMockClientTransport connectTransport:sse2 statusCode:@0 json:@{}];
+        SRServerSentEventsTransport* sse2 = [SRMockSSETransport transport];
+        [SRMockSSETransport negotiateForTransport:sse2];
+        [SRMockSSETransport connectTransport:sse2 statusCode:@0 json:@{}];
         [strongConnection start:sse2];
     };
     
@@ -450,18 +452,20 @@
 - (void)testConnectionStoppedAndRestartedAfterEventStreamInitializes {
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse1 = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse1];
-    [[SRMockClientTransport connectTransport:sse1 statusCode:@0 json:@{}] afterData:^(NSData * data){
+    SRServerSentEventsTransport* sse1 = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse1];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport connectTransport:sse1 statusCode:@0 json:@{}] afterData:^(NSData * data){
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
-    [SRMockClientTransport abortForTransport:sse1 statusCode:@200 json:@{}];
+    [SRMockSSETransport abortForTransport:sse1 statusCode:@200 json:@{}];
     
     __block NSInteger startCount = 0;
-    XCTestExpectation *started = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"closed"];
     connection.started = ^{
         startCount++;
         if (startCount == 2) {
@@ -481,15 +485,14 @@
         XCTFail(@"connection errored");
     };
     
-    __weak __typeof(&*connection)weakConnection = connection;
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         [closed fulfill];
         [UMKMockURLProtocol reset];
-        SRServerSentEventsTransport* sse2 = [SRMockClientTransport sse];
-        [SRMockClientTransport negotiateForTransport:sse2];
-        [SRMockClientTransport connectTransport:sse2 statusCode:@0 json:@{}];
+        SRServerSentEventsTransport* sse2 = [SRMockSSETransport transport];
+        [SRMockSSETransport negotiateForTransport:sse2];
+        [SRMockSSETransport connectTransport:sse2 statusCode:@0 json:@{}];
         [strongConnection start:sse2];
     };
     
@@ -503,10 +506,10 @@
 
 - (void)testEventStreamClosesCleanlyAfterInitializingShouldReconnect {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse statusCode:@200 json:@{
+    [[[SRMockSSETransport connectTransport:sse statusCode:@200 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -517,20 +520,20 @@
     }] afterEnd:^(NSError * _Nullable error) {
         reconnectDelayBlock.afterWait();
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
-    [SRMockClientTransport reconnectTransport:sse statusCode:@0 json:@{}];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^{
         [started fulfill];
     };
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
@@ -549,10 +552,10 @@
 
 - (void)testEventStreamClosesWithErrorAfterInitializingShouldReconnect {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse statusCode:@500 json:@{
+    [[[SRMockSSETransport connectTransport:sse statusCode:@500 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -563,26 +566,25 @@
     }] afterEnd:^(NSError * _Nullable error) {
         reconnectDelayBlock.afterWait();
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
-    [SRMockClientTransport reconnectTransport:sse statusCode:@0 json:@{}];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^{
         [started fulfill];
     };
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError* err){
         [errored fulfill];
     };
@@ -595,12 +597,62 @@
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
+//TODO: should SSE really reconnect if the request is canceled?
+- (void)testEventStreamClosesWithCancelAfterInitializingShouldReconnect {
+    SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
+    [[[[SRMockSSETransport connectTransport:sse statusCode:@500 json:@{
+        @"M":@[ @{
+            @"H":@"hubname",
+            @"M":@"message",
+            @"A":@"12345"
+        } ]
+    }] failWithError:^NSError * _Nonnull{
+        return [NSError errorWithDomain:@"UnitTesting" code:NSURLErrorCancelled userInfo:nil];
+    }] beforeEnd:^(NSError * _Nullable error) {
+        reconnectDelayBlock = [[SRMockWaitBlockOperation alloc] initWithBlockOperationClass:[SRServerSentEventsReconnectBlockOperation class]];
+    }] afterEnd:^(NSError * _Nullable error) {
+        reconnectDelayBlock.afterWait();
+    }];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}];
+    
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    connection.started = ^{
+        [started fulfill];
+    };
+    
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    connection.reconnecting = ^(){
+        [reconnecting fulfill];
+    };
+    
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
+    connection.reconnected = ^(){
+        [reconnected fulfill];
+    };
+    
+    connection.error = ^(NSError* err){
+        XCTFail(@"connection errored");
+    };
+    
+    connection.closed = ^(){
+        XCTFail(@"connection closed");
+    };
+    
+    [connection start:sse];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+}
+
+
 - (void)testConnectionDisconnectsEventStreamAfterReconnectTimeout {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
      __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse statusCode:@500 json:@{
+    [[[SRMockSSETransport connectTransport:sse statusCode:@500 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -618,17 +670,17 @@
             reconnectTimeoutBlock = [[SRMockWaitBlockOperation alloc] initWithWaitTime:[connection.disconnectTimeout doubleValue]];
         }
     };
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
-    [[SRMockClientTransport reconnectTransport:sse statusCode:@0 json:@{}] beforeStart:^{
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    [[SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}] beforeStart:^{
         reconnectTimeoutBlock.afterWait();
     }];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^{
         [started fulfill];
     };
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
@@ -637,13 +689,12 @@
         XCTFail(@"connecting reconnecting");
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError* err){
         [errored fulfill];
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^(){
         [closed fulfill];
     };
@@ -654,10 +705,10 @@
 
 - (void)testConnectionStoppedBeforeReconnectInitializes {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse statusCode:@500 json:@{
+    [[[SRMockSSETransport connectTransport:sse statusCode:@500 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -668,20 +719,22 @@
     }] afterEnd:^(NSError * _Nullable error) {
         reconnectDelayBlock.afterWait();
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
-    [[SRMockClientTransport reconnectTransport:sse statusCode:@0 json:@{}] beforeData:^(NSData * data){
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}] beforeData:^(NSData * data){
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^(){
         [started fulfill];
     };
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
@@ -690,13 +743,12 @@
         XCTFail(@"connection reconnected");
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError* err){
         [errored fulfill];
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -707,10 +759,10 @@
 
 - (void)testConnectionStoppedAfterReconnectInitializes {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse statusCode:@500 json:@{
+    [[[SRMockSSETransport connectTransport:sse statusCode:@500 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -721,36 +773,37 @@
     }] afterEnd:^(NSError * _Nullable error) {
         reconnectDelayBlock.afterWait();
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
-    [[SRMockClientTransport reconnectTransport:sse statusCode:@0 json:@{}] afterData:^(NSData * data){
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}] afterData:^(NSData * data){
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^(){
         [started fulfill];
     };
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError* err){
         [errored fulfill];
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         [closed fulfill];
     };
@@ -759,14 +812,14 @@
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
-- (void)xtestConnectionStoppedAndRestartedBeforeReconnectInitializes {
+- (void)testConnectionStoppedAndRestartedBeforeReconnectInitializes {
     __block BOOL firstClosedCalled = NO;
     
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse1 = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse1];
+    SRServerSentEventsTransport* sse1 = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse1];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse1 statusCode:@500 json:@{
+    [[[SRMockSSETransport connectTransport:sse1 statusCode:@500 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -777,15 +830,17 @@
     }] afterEnd:^(NSError * _Nullable error) {
         reconnectDelayBlock.afterWait();
     }];
-    [SRMockClientTransport abortForTransport:sse1 statusCode:@200 json:@{}];
-    [[SRMockClientTransport reconnectTransport:sse1 statusCode:@0 json:@{}] beforeData:^(NSData * data){
+    [SRMockSSETransport abortForTransport:sse1 statusCode:@200 json:@{}];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport reconnectTransport:sse1 statusCode:@0 json:@{}] beforeData:^(NSData * data){
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
@@ -794,23 +849,21 @@
         XCTFail(@"connection reconnected");
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError* err){
         [errored fulfill];
     };
     
     //TODO: closed should really only be called once
-    //XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
-    __weak __typeof(&*connection)weakConnection = connection;
+    //__weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         //[closed fulfill];
         if (!firstClosedCalled) {
             [UMKMockURLProtocol reset];
-            SRServerSentEventsTransport* sse2 = [SRMockClientTransport sse];
-            [SRMockClientTransport negotiateForTransport:sse2];
-            [SRMockClientTransport connectTransport:sse2 statusCode:@0 json:@{}];
+            SRServerSentEventsTransport* sse2 = [SRMockSSETransport transport];
+            [SRMockSSETransport negotiateForTransport:sse2];
+            [SRMockSSETransport connectTransport:sse2 statusCode:@0 json:@{}];
             [strongConnection start:sse2];
         }
         firstClosedCalled = YES;
@@ -820,12 +873,12 @@
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
-- (void)xtestConnectionStoppedAndRestartedAfterReconnectInitializes {
+- (void)testConnectionStoppedAndRestartedAfterReconnectInitializes {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse1 = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse1];
+    SRServerSentEventsTransport* sse1 = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse1];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[[SRMockClientTransport connectTransport:sse1 statusCode:@500 json:@{
+    [[[SRMockSSETransport connectTransport:sse1 statusCode:@500 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -836,39 +889,39 @@
     }] afterEnd:^(NSError * _Nullable error) {
         reconnectDelayBlock.afterWait();
     }];
-    [SRMockClientTransport abortForTransport:sse1 statusCode:@200 json:@{}];
-    [[SRMockClientTransport reconnectTransport:sse1 statusCode:@0 json:@{}] afterData:^(NSData * data){
+    [SRMockSSETransport abortForTransport:sse1 statusCode:@200 json:@{}];
+    __weak __typeof(&*connection)weakConnection = connection;
+    [[SRMockSSETransport reconnectTransport:sse1 statusCode:@0 json:@{}] afterData:^(NSData * data){
+        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         NSString *eventStream = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if ([eventStream rangeOfString:@"initialized" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-            [connection stop];
+            [strongConnection stop];
         }
     }];
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
     
-    //If the error is not NSURLErrorCancelled is should be reported on the callback
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError* err){
         [errored fulfill];
     };
     
-    XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
-    __weak __typeof(&*connection)weakConnection = connection;
+    __weak XCTestExpectation *closed = [self expectationWithDescription:@"closed"];
     connection.closed = ^{
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         [closed fulfill];
         [UMKMockURLProtocol reset];
-        SRServerSentEventsTransport* sse2 = [SRMockClientTransport sse];
-        [SRMockClientTransport negotiateForTransport:sse2];
-        [SRMockClientTransport connectTransport:sse2 statusCode:@0 json:@{}];
+        SRServerSentEventsTransport* sse2 = [SRMockSSETransport transport];
+        [SRMockSSETransport negotiateForTransport:sse2];
+        [SRMockSSETransport connectTransport:sse2 statusCode:@0 json:@{}];
         [strongConnection start:sse2];
     };
     
@@ -882,18 +935,18 @@
 
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     
     SRMockSSEResponder *responder = [[SRMockSSEResponder alloc] initWithStatusCode:0 eventStream:@[
         [@"data: initialized\n\n" dataUsingEncoding:NSUTF8StringEncoding],
         [@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message1\", \"A\": \"12345\"}]}\n\n" dataUsingEncoding:NSUTF8StringEncoding],
         [@"data: {\"M\":[{\"H\":\"hubname\", \"M\":\"message2\", \"A\": \"12345\"}]}\n\n" dataUsingEncoding:NSUTF8StringEncoding]
     ]];
-    [SRMockClientTransport connectTransport:sse responder:responder];
-    [SRMockClientTransport sendForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport connectTransport:sse responder:responder];
+    [SRMockSSETransport sendForTransport:sse statusCode:@200 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     __weak __typeof(&*connection)weakConnection = connection;
     connection.started = ^(){
         __strong __typeof(&*weakConnection)strongConnection = weakConnection;
@@ -907,7 +960,7 @@
         [started fulfill];
     };
     
-    XCTestExpectation *received = [self expectationWithDescription:@"received"];
+    __weak XCTestExpectation *received = [self expectationWithDescription:@"received"];
     __block NSMutableArray* values = [[NSMutableArray alloc] init];
     connection.received = ^(id data) {
         [values addObject: data];
@@ -950,10 +1003,10 @@
 
 - (void)testLostConnectionCancelsEventStreamAndReconnects {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
     __block SRMockWaitBlockOperation* reconnectDelayBlock = nil;
-    [[SRMockClientTransport connectTransport:sse statusCode:@0 json:@{
+    [[SRMockSSETransport connectTransport:sse statusCode:@0 json:@{
        @"M":@[ @{
            @"H":@"hubname",
            @"M":@"message",
@@ -969,20 +1022,20 @@
             reconnectDelayBlock.afterWait();
         }
     }];
-    [SRMockClientTransport abortForTransport:sse statusCode:@200 json:@{}];
-    [SRMockClientTransport reconnectTransport:sse statusCode:@0 json:@{}];
+    [SRMockSSETransport abortForTransport:sse statusCode:@200 json:@{}];
+    [SRMockSSETransport reconnectTransport:sse statusCode:@0 json:@{}];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^(){
         [started fulfill];
     };
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"reconnecting"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"reconnected"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
@@ -1005,9 +1058,9 @@
 
 - (void)xtestPingIntervalStopsTheConnectionOn401s {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@0 json:@{
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@0 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -1015,7 +1068,7 @@
         } ]
     }];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^(){
         [started fulfill];
     };
@@ -1028,7 +1081,7 @@
         XCTFail(@"connection reconencted");
     };
     
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError *error){
         [errored fulfill];
         XCTAssert(NO, @"todo: verify it's a 401");
@@ -1044,9 +1097,9 @@
 
 - (void)xtestPingIntervalStopsTheConnectionOn403s {
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
-    SRServerSentEventsTransport* sse = [SRMockClientTransport sse];
-    [SRMockClientTransport negotiateForTransport:sse];
-    [SRMockClientTransport connectTransport:sse statusCode:@0 json:@{
+    SRServerSentEventsTransport* sse = [SRMockSSETransport transport];
+    [SRMockSSETransport negotiateForTransport:sse];
+    [SRMockSSETransport connectTransport:sse statusCode:@0 json:@{
         @"M":@[ @{
             @"H":@"hubname",
             @"M":@"message",
@@ -1054,7 +1107,7 @@
         } ]
     }];
     
-    XCTestExpectation *started = [self expectationWithDescription:@"started"];
+    __weak XCTestExpectation *started = [self expectationWithDescription:@"started"];
     connection.started = ^(){
         [started fulfill];
     };
@@ -1067,7 +1120,7 @@
         XCTFail(@"connection reconencted");
     };
     
-    XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
+    __weak XCTestExpectation *errored = [self expectationWithDescription:@"errored"];
     connection.error = ^(NSError *error){
         [errored fulfill];
         XCTAssert(NO, @"todo: verify it's a 403");
@@ -1086,5 +1139,3 @@
 }
 
 @end
-
-//TODO: connection.error should only be fullfilled if not cancelled

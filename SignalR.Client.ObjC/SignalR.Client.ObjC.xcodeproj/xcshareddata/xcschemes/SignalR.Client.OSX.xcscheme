@@ -38,6 +38,29 @@
                BlueprintName = "SignalR.Client.OSXTests"
                ReferencedContainer = "container:SignalR.Client.ObjC.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "SRLongPollingTransportTests/testConnectionStoppedAndRestartedAfterReconnectCompletes">
+               </Test>
+               <Test
+                  Identifier = "SRLongPollingTransportTests/testConnectionStoppedAndRestartedBeforeReconnectCompletes">
+               </Test>
+               <Test
+                  Identifier = "SRLongPollingTransportTests/testLostConnectionCancelsEventStreamAndReconnects">
+               </Test>
+               <Test
+                  Identifier = "SRLongPollingTransportTests/testPollingClosesWithErrorDuringPoll">
+               </Test>
+               <Test
+                  Identifier = "SRServerSentEventsTransportTests/testConnectionStoppedAfterReconnectInitializes">
+               </Test>
+               <Test
+                  Identifier = "SRServerSentEventsTransportTests/testConnectionStoppedAndRestartedAfterReconnectInitializes">
+               </Test>
+               <Test
+                  Identifier = "SRServerSentEventsTransportTests/testConnectionStoppedAndRestartedBeforeReconnectInitializes">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

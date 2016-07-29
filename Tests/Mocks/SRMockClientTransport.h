@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "SRClientTransportInterface.h"
 #import <URLMock/UMKMockURLProtocol.h>
+#import "SRMockTransportRequest.h"
 
 @interface SRMockClientTransport : NSObject
 
@@ -25,6 +26,20 @@
 + (id <UMKMockURLResponder>)negotiateForTransport:(id <SRClientTransportInterface>)transport
                  statusCode:(NSNumber *)statusCode
                       error:(NSError *)error;
+
++ (id <UMKMockURLResponder>)connectTransport:(id <SRClientTransportInterface>)transport
+                                   responder:(id <UMKMockURLResponder>)responder;
+
++ (id <UMKMockURLResponder>)connectTransport:(id <SRClientTransportInterface>)transport
+                                  statusCode:(NSNumber *)statusCode
+                                       error:(NSError *)error;
+
++ (id <UMKMockURLResponder>)reconnectTransport:(id <SRClientTransportInterface>)transport
+                                     responder:(id <UMKMockURLResponder>)responder;
+
++ (id <UMKMockURLResponder>)reconnectTransport:(id <SRClientTransportInterface>)transport
+                                    statusCode:(NSNumber *)statusCode
+                                         error:(NSError *)error;
 
 + (id <UMKMockURLResponder>)sendForTransport:(id <SRClientTransportInterface>)transport
                                   statusCode:(NSNumber *)statusCode

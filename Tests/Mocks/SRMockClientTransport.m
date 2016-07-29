@@ -24,13 +24,21 @@
     return responder;
 }
 
+#pragma mark -
+#pragma mark negotiate
+
 + (id)negotiateForTransport:(id <SRClientTransportInterface>)transport {
     return [[self class] negotiateForTransport:transport statusCode:@200 json:@{
-       @"ConnectionId": @"10101",
-       @"ConnectionToken": @"10101010101",
+       @"ConnectionId": @"c5baaf89-05a3-4e67-b308-9c11a79c1dbe",
+       @"ConnectionTimeout": @110,
+       @"ConnectionToken": @"CfDJ8BiCiEytZ/1KidtIZ+dO2+IR7kk2s+vJTdUKLbGZhBd+wHHLrhCT67pQh0MOKw6VKzZb960CYpRc9e2bMQj/FLfxI83EkKl8+IJLPD/c3NA+JFe0RsTXni2Fyjrj8l5MDODnETC2iMPm5+1H08QnX31p8BEckrv86ilQrVrOQEMN",
        @"DisconnectTimeout": @30,
+       @"KeepAliveTimeout": @20,
+       @"LongPollDelay": @0,
        @"ProtocolVersion": @"1.3.0.0",
-       @"TransportConnectTimeout": @10
+       @"TransportConnectTimeout": @5,
+       @"TryWebSockets": @YES,
+       @"Url": @"/signalr"
    }];
 }
 
@@ -54,6 +62,33 @@
                                             error:(NSError *)error {
     UMKMockHTTPResponder * responder = [UMKMockHTTPResponder mockHTTPResponderWithError:error];
     return [self negotiateForTransport:transport responder:responder];
+}
+
+#pragma mark -
+#pragma mark Start
+
++ (id <UMKMockURLResponder>)connectTransport:(id <SRClientTransportInterface>)transport
+                                   responder:(id <UMKMockURLResponder>)responder; {
+    return [self expectMockRequestWithHTTPMethod:@"GET" path:@"connect" responder:responder];
+}
+
++ (id <UMKMockURLResponder>)connectTransport:(id <SRClientTransportInterface>)transport
+                                  statusCode:(NSNumber *)statusCode
+                                       error:(NSError *)error; {
+    UMKMockHTTPResponder * responder = [UMKMockHTTPResponder mockHTTPResponderWithError:error];
+    return [self connectTransport:transport responder:responder];
+}
+
++ (id <UMKMockURLResponder>)reconnectTransport:(id <SRClientTransportInterface>)transport
+                                     responder:(id <UMKMockURLResponder>)responder; {
+    return [self expectMockRequestWithHTTPMethod:@"GET" path:@"reconnect" responder:responder];
+}
+
++ (id <UMKMockURLResponder>)reconnectTransport:(id <SRClientTransportInterface>)transport
+                                    statusCode:(NSNumber *)statusCode
+                                         error:(NSError *)error; {
+    UMKMockHTTPResponder * responder = [UMKMockHTTPResponder mockHTTPResponderWithError:error];
+    return [self reconnectTransport:transport responder:responder];
 }
 
 #pragma mark -

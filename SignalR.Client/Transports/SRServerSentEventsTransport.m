@@ -28,7 +28,7 @@
 #import "SRLog.h"
 #import "SRChunkBuffer.h"
 #import "SRServerSentEvent.h"
-#import "SREventSourceRequestSerializer.h"
+#import "SRTransportRequestSerialization.h"
 #import "SREventSourceResponseSerializer.h"
 #import "SRBlockOperation.h"
 
@@ -120,21 +120,15 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)open:(id <SRConnectionInterface>)connection connectionData:(NSString *)connectionData isReconnecting: (BOOL) isReconnecting {
     
-    //TODO: Move to Request Serializer
-    //TODO: connection.prepareRequest as part of Request Serializer
     NSDictionary *parameters = @{};
     parameters = [self addTransport:parameters transport:[self name]];
     parameters = [self addConnectionData:parameters connectionData:connectionData];
-    parameters = [self addConnectionToken:parameters connection:connection];
-    parameters = [self addMessageId:parameters connection:connection];
-    parameters = [self addGroupsToken:parameters connection:connection];
-    parameters = [self addQueryString:parameters connection:connection];
     
     __weak __typeof(&*self)weakSelf = self;
     __weak __typeof(&*connection)weakConnection = connection;
     SRLogSSEDebug(@"serverSentEvents will connect at url: %@%@%@", connection.url, (isReconnecting) ? @"reconnect": @"connect", parameters);
     AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:connection.url] sessionConfiguration:self.sessionConfiguration];
-    [manager setRequestSerializer:[SREventSourceRequestSerializer serializer]];
+    [manager setRequestSerializer:[SREventSourceRequestSerializer serializerWithConnection:connection]];
     [manager setResponseSerializer:[SREventSourceResponseSerializer serializer]];
     //manager = self.securityPolicy;
     self.eventSource = [manager GET:(isReconnecting) ? @"reconnect": @"connect" parameters:parameters success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
@@ -169,6 +163,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             if (![SRExceptionHelper isRequestAborted:error]) {
                 [strongConnection didReceiveError:error];
             }
+            //TODO: should this really reconnect on cancel?
             [strongSelf tryReconnect:strongConnection data:connectionData];
         }
     }];

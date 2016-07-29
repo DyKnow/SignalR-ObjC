@@ -66,28 +66,25 @@
     
     id parameters = [self connectionParameters:connection connectionData:connectionData];
     
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[connection.url stringByAppendingString:@"negotiate"] parameters:parameters error:nil];
-    [connection prepareRequest:request]; //TODO: prepareRequest
-    [request setTimeoutInterval:30];
+    //TODO: prepareRequest
+    //[connection prepareRequest:request];
+    //[request setTimeoutInterval:30];
     
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setResponseSerializer:[AFJSONResponseSerializer serializer]];
-    //operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
-    //operation.credential = self.credential;
-    //operation.securityPolicy = self.securityPolicy;
-    SRLogTransportDebug(@"will negotiate at url: %@", [[request URL] absoluteString]);
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:connection.url] sessionConfiguration:self.sessionConfiguration];
+    [manager setResponseSerializer:[AFJSONResponseSerializer serializer]];
+    //manager = self.securityPolicy;
+    SRLogTransportDebug(@"will negotiate at url: %@negotiate%@", connection.url, parameters);
+    [manager GET:@"negotiate" parameters:parameters success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
         SRLogTransportInfo(@"negotiate was successful %@", responseObject);
         if(block) {
             block([[SRNegotiationResponse alloc] initWithDictionary:responseObject], nil);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         SRLogTransportError(@"negotiate failed %@", error);
         if(block) {
             block(nil, error);
         }
     }];
-    [operation start];
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {

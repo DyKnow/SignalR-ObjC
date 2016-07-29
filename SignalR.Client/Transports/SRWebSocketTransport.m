@@ -28,6 +28,7 @@
 #import "SRConnectionInterface.h"
 #import "SRConnectionExtensions.h"
 #import "SRBlockOperation.h"
+#import "SRTransportRequestSerialization.h"
 
 typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 
@@ -111,19 +112,12 @@ typedef void (^SRWebSocketStartBlock)(id response, NSError *error);
 }
 
 - (void)performConnect:(void (^)(id response, NSError *error))block reconnecting:(BOOL)reconnecting {
-    //TODO: Move to Request Serializer
-    //TODO: connection.prepareRequest as part of Request Serializer
+
     NSDictionary *parameters = @{};
     parameters = [self addTransport:parameters transport:[self name]];
     parameters = [self addConnectionData:parameters connectionData:[_connectionInfo data]];
-    parameters = [self addConnectionToken:parameters connection:[_connectionInfo connection]];
-    parameters = [self addMessageId:parameters connection:[_connectionInfo connection]];
-    parameters = [self addGroupsToken:parameters connection:[_connectionInfo connection]];
-    parameters = [self addQueryString:parameters connection:[_connectionInfo connection]];
     
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:[_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"] parameters:parameters error:nil];
-    [_connectionInfo.connection prepareRequest:request]; //TODO: prepareRequest
-    
+    NSMutableURLRequest *request = [[SRWebsocketRequestSerializer serializerWithConnection:_connectionInfo.connection] requestWithMethod:@"GET" URLString:[_connectionInfo.connection.url stringByAppendingString:reconnecting ? @"reconnect" : @"connect"] parameters:parameters error:nil];
     SRLogWSDebug(@"websocket will connect at url: %@",[request.URL absoluteString]);
     
     [self setStartBlock:block];

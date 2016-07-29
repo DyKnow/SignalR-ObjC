@@ -48,7 +48,7 @@
 
 
 - (void) testStartCallsTheCompletionHandlerAfterSuccess {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
@@ -115,7 +115,7 @@
    }
 
 - (void)testConnectionInitialFailureUsesCallback {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -149,7 +149,7 @@
 }
 
 - (void)testConnectionErrorRetries_RetriesAfterADelay_CommunicatesLifeCycleViaConnection_StreamClosesUncleanly {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -163,12 +163,12 @@
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
@@ -199,7 +199,7 @@
 }
 
 - (void)testConnectionErrorRetries_RetriesAfterADelay_CommunicatesLifeCycleViaConnection_StreamClosesCleanly {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -214,12 +214,12 @@
     connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
@@ -251,7 +251,7 @@
 }
 
 - (void)testLostConnectionAbortsAllConnectionsAndReconnects {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -265,12 +265,12 @@
     connection.connectionId = @"10101";
     [connection changeState:disconnected toState:connected];
     
-    XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+    __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
     connection.reconnecting = ^(){
         [reconnecting fulfill];
     };
     
-    XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
+    __weak XCTestExpectation *reconnected = [self expectationWithDescription:@"Retry callback called"];
     connection.reconnected = ^(){
         [reconnected fulfill];
     };
@@ -301,7 +301,7 @@
 }
 
 - (void)testDisconnectsOnReconnectTimeout {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -328,7 +328,7 @@
         if (error){
             NSLog(@"Sub-Timeout Error: %@", error);
         } else {
-            XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
+            __weak XCTestExpectation *reconnecting = [self expectationWithDescription:@"Retrying callback called"];
             [connection setReconnecting:^{
                 [reconnecting fulfill];
             }];
@@ -337,7 +337,7 @@
                 XCTAssert(NO, @"unexpected change!");
             }];
 
-            XCTestExpectation *closed = [self expectationWithDescription:@"Retrying callback called"];
+            __weak XCTestExpectation *closed = [self expectationWithDescription:@"Retrying callback called"];
             [connection setClosed:^{
                 [closed fulfill];
             }];
@@ -367,7 +367,7 @@
 }
 
 - (void)testTransportCanTimeoutWhenItDoesNotReceiveInitializeMessage {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -405,7 +405,7 @@
 }
 
 - (void)testStart_Stop_StartTriggersTheCorrectCallbacks {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -452,7 +452,7 @@
 }
 
 - (void)xtestPingIntervalStopsTheConnectionOn401s {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -484,7 +484,7 @@
 }
 
 - (void)xtestPingIntervalStopsTheConnectionOn403s {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -521,7 +521,7 @@
 }
 
 - (void)testConnectionCanBeStoppedDuringTransportStart {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
@@ -562,7 +562,7 @@
 }
 
 - (void)testTransportCanSendAndReceiveMessagesOnConnect {
-    XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
+    __weak XCTestExpectation *initialized = [self expectationWithDescription:@"Handler called"];
     id mock = [OCMockObject niceMockForClass:[SRWebSocket class]];
     // Here we stub the alloc class method **
     [[[mock stub] andReturn:mock] alloc];
