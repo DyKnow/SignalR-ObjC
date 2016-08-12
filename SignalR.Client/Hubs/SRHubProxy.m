@@ -124,12 +124,12 @@ NSString * const kErrorData = @"SRErrorData";
                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                 userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
                 userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:@"%@", result.error];
-                NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
-                                                     code:0
-                                                 userInfo:userInfo];
                 if (result.errorData) {
                     userInfo[kErrorData] = result.errorData;
                 }
+                NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
+                                                     code:0
+                                                 userInfo:userInfo];
                 [_connection didReceiveError:error];
                 if (block != nil) {
                     block(nil, error);
