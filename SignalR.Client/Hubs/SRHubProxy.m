@@ -28,6 +28,8 @@
 #import "SRHubConnectionInterface.h"
 #import "SRConnectionInterface.h"
 
+NSString * const kErrorData = @"SRErrorData";
+
 @interface SRHubProxy ()
 
 @property (assign, nonatomic, readonly) id <SRHubConnectionInterface> connection;
@@ -122,6 +124,9 @@
                 NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                 userInfo[NSLocalizedFailureReasonErrorKey] = NSInternalInconsistencyException;
                 userInfo[NSLocalizedDescriptionKey] = [NSString stringWithFormat:@"%@", result.error];
+                if (result.errorData) {
+                    userInfo[kErrorData] = result.errorData;
+                }
                 NSError *error = [NSError errorWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])]
                                                      code:0
                                                  userInfo:userInfo];
