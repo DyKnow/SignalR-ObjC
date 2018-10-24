@@ -67,7 +67,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
     SRLogSSEDebug(@"serverSentEvents will negotiate");
-    [super negotiate:connection connectionData:connectionData completionHandler:nil];
+    [super negotiate:connection connectionData:connectionData completionHandler:block];
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
@@ -86,6 +86,11 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                                        };
             NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
             SRLogSSEError(@"serverSentEvents failed to receive initialized message before timeout");
+            _stop = YES;
+            strongSelf.eventSource.opened = nil;
+            strongSelf.eventSource.message = nil;
+            strongSelf.eventSource.closed = nil;
+            [strongSelf.eventSource close];
             strongSelf.completionHandler(nil, timeout);
             strongSelf.completionHandler = nil;
         }

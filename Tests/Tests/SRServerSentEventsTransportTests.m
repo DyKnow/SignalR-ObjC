@@ -52,17 +52,17 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
     sse.serverSentEventsOperationQueue = nil;//set to nil to get around weird ARC OCMock bugs http://stackoverflow.com/questions/18121902/using-ocmock-on-nsoperation-gives-bad-access
-    
-    [NetworkMock prepareForOpeningResponse:^{
+    //note: SSE sends down initialized but it gets ignored in all clients
+    [NetworkMock prepareForOpeningResponse:@"data: initialized\n\ndata: {}\n" then:^{
         [sse start: connection connectionData:@"12345" completionHandler:^(id response, NSError *error){
             [expectation fulfill];
         }];
     }];
-        
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         if (error) {
             NSLog(@"Timeout Error: %@", error);
@@ -78,6 +78,7 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -104,6 +105,7 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
     connection.received = ^(NSDictionary * data){
@@ -134,6 +136,7 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
     SRServerSentEventsTransport* sse = [[SRServerSentEventsTransport alloc] init];
@@ -354,6 +357,7 @@
     SRConnection* connection = [[SRConnection alloc] initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
 
     connection.received = ^(NSString * data){
@@ -383,6 +387,7 @@
     SRConnection* connection = [[SRConnection alloc]initWithURLString:@"http://localhost:0000"];
     connection.connectionToken = @"10101010101";
     connection.connectionId = @"10101";
+    connection.transportConnectTimeout = @10;
     [connection changeState:disconnected toState:connected];
     
     connection.received = ^(NSDictionary * data){
