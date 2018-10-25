@@ -28,9 +28,17 @@ DEPENDENCIES:
   - OCMock
   - SocketRocket (= 0.4.2)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - OCMock
+    - SocketRocket
+
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   OCMock: 18c9b7e67d4c2770e95bb77a9cc1ae0c91fe3835
   SocketRocket: ffe08119b00ef982f6c37052a4705a057c8494ad
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: b3a3a58c75f13f9a520b6c950906fdd364953a26
+
+COCOAPODS: 1.5.3
