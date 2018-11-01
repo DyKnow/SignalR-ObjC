@@ -86,7 +86,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                                        };
             NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
             SRLogSSEError(@"serverSentEvents failed to receive initialized message before timeout");
-            strongSelf._stop = YES;
+            strongSelf.stop = YES;
             strongSelf.eventSource.opened = nil;
             strongSelf.eventSource.message = nil;
             strongSelf.eventSource.closed = nil;
