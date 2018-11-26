@@ -44,7 +44,10 @@
 }
 
 - (void)start {
-    [_connection updateLastKeepAlive];
+    _monitorKeepAlive = [_connection keepAliveData] && [_connection.transport supportsKeepAlive];
+    if (_monitorKeepAlive){
+        [_connection updateLastKeepAlive];
+    }
     _beenWarned = NO;
     _timedOut = NO;
     _timer = [NSTimer scheduledTimerWithTimeInterval:[[[_connection keepAliveData] checkInterval] integerValue]
@@ -60,26 +63,29 @@
 }
 
 - (void)beat:(NSInteger)timeElapsed {
-    if (_connection.state == connected) {
-        if (timeElapsed >= [[[_connection keepAliveData] timeout] integerValue]) {
-            if (!self.timedOut) {
-                // Connection has been lost
-                SRLogConnectionWarn(@"Connection Timed-out : Transport Lost Connection");
-                _timedOut = true;
-                [[_connection transport] lostConnection:_connection];
+    if (_monitorKeepAlive){
+        if (_connection.state == connected) {
+            if (timeElapsed >= [[[_connection keepAliveData] timeout] integerValue]) {
+                if (!self.timedOut) {
+                    // Connection has been lost
+                    SRLogConnectionWarn(@"Connection Timed-out : Transport Lost Connection");
+                    _timedOut = true;
+                    [[_connection transport] lostConnection:_connection];
+                }
+            } else if (timeElapsed >= [[[_connection keepAliveData] timeoutWarning] integerValue]) {
+                if (!self.hasBeenWarned) {
+                    // Inform user and set HasBeenWarned to true
+                    SRLogConnectionWarn(@"Connection Timeout Warning : Notifying user");
+                    _beenWarned = true;
+                    [_connection connectionDidSlow];
+                }
+            } else {
+                _beenWarned = false;
+                _timedOut = false;
             }
-        } else if (timeElapsed >= [[[_connection keepAliveData] timeoutWarning] integerValue]) {
-            if (!self.hasBeenWarned) {
-                // Inform user and set HasBeenWarned to true
-                SRLogConnectionWarn(@"Connection Timeout Warning : Notifying user");
-                _beenWarned = true;
-                [_connection connectionDidSlow];
-            }
-        } else {
-            _beenWarned = false;
-            _timedOut = false;
         }
     }
+    [_connection markActive];
 }
 
 - (void)stop {

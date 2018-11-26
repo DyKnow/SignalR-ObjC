@@ -28,6 +28,7 @@
 
 @property (assign, nonatomic, readonly, getter = hasBeenWarned) BOOL beenWarned;
 @property (assign, nonatomic, readonly) BOOL timedOut;
+@property (assign, nonatomic, readonly) BOOL monitorKeepAlive;
 
 - (instancetype)initWithConnection:(id <SRConnectionInterface>)connection;
 - (void)start;

@@ -172,6 +172,10 @@
         
         canReconnect = @(NO);
         
+        if (![strongConnection verifyLastActive]){
+            return;//connection will have aborted above
+        }
+        
         // Transition into reconnecting state
         [SRConnection ensureReconnecting:strongConnection];
         

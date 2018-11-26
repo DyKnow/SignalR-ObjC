@@ -46,6 +46,8 @@
 @property (strong, nonatomic, readwrite) SRHeartbeatMonitor *monitor;
 
 @property (strong, nonatomic, readwrite) id <SRClientTransportInterface> transport;
+@property (strong, nonatomic, readwrite) NSDate* lastActive;
+@property (strong, nonatomic, readwrite) NSNumber* reconnectWindow;
 
 - (void)negotiate:(id <SRClientTransportInterface>)transport;
 - (void)verifyProtocolVersion:(NSString *)versionString;
@@ -69,6 +71,9 @@
 @synthesize transport = _transport;
 @synthesize credentials = _credentials;
 @synthesize headers = _headers;
+@synthesize lastActive = _lastActive;
+@synthesize reconnectWindow = _reconnectWindow;
+
 
 #pragma mark - 
 #pragma mark Initialization
@@ -148,7 +153,10 @@
             
             // If we have a keep alive
             if (negotiationResponse.keepAliveTimeout != nil) {
-                _keepAliveData = [[SRKeepAliveData alloc] initWithTimeout:negotiationResponse.keepAliveTimeout];
+                strongSelf.keepAliveData = [[SRKeepAliveData alloc] initWithTimeout:negotiationResponse.keepAliveTimeout];
+                strongSelf.reconnectWindow = @([strongSelf.disconnectTimeout floatValue] + [strongSelf.keepAliveData.timeout floatValue]);
+            } else {
+                strongSelf.reconnectWindow = strongSelf.disconnectTimeout;
             }
             
             [strongSelf startTransport];
@@ -417,6 +425,28 @@
         _keepAliveData.lastKeepAlive = [NSDate date];
     }
 }
+
+-(void)markActive{
+    if([self verifyLastActive]){
+        _lastActive = [NSDate date];
+    }
+}
+
+- (BOOL) verifyLastActive {
+    if (_lastActive == nil || _reconnectWindow == nil){
+        //todo figure out what really should go here
+        _lastActive = [NSDate date];
+        return YES;
+    }
+    NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate: _lastActive];//number of seconds
+    if (timeElapsed > [_reconnectWindow floatValue]){
+        SRLogConnectionDebug(@"There has not been an active server connection for an extended period of time. Stopping connection.");
+        [self stop:_defaultAbortTimeout];
+        return NO;
+    }
+    return YES;
+}
+
 
 - (void)prepareRequest:(NSMutableURLRequest *)request {
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
