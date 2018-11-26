@@ -250,9 +250,14 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                                                      selector:@selector(start)
                                                        object:nil];
             self.connectTimeoutOperation = nil;
-            
+            strongSelf.stop = YES;
+            strongSelf.eventSource.opened = nil;
+            strongSelf.eventSource.message = nil;
+            strongSelf.eventSource.closed = nil;
+            [strongSelf.eventSource close];
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
+            strongSelf.eventSource = nil;
         } else if (!isReconnecting){//failure should first attempt to reconect
             SRLogSSEWarn(@"will reconnect from errors: %@", error);
         } else {//failure while reconnecting should error
