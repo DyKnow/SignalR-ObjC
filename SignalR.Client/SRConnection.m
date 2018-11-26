@@ -45,6 +45,8 @@
 @property (strong, nonatomic, readwrite) NSString *connectionData;
 @property (strong, nonatomic, readwrite) SRHeartbeatMonitor *monitor;
 
+@property (strong, nonatomic, readwrite) id <SRClientTransportInterface> transport;
+
 - (void)negotiate:(id <SRClientTransportInterface>)transport;
 - (void)verifyProtocolVersion:(NSString *)versionString;
 - (NSString *)createUserAgentString:(NSString *)client;
