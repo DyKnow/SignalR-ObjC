@@ -172,6 +172,15 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             NSString *data = [[NSString alloc] initWithData:sseEvent.data encoding:NSUTF8StringEncoding];
             SRLogSSEInfo(@"serverSentEvents did receive: %@", data);
             if([data caseInsensitiveCompare:@"initialized"] == NSOrderedSame) {
+                // SSE can get a 503 error, terminated connection, etc
+                // which should not trigger reconnect, so instead the server sends
+                // down initialized. This is sufficient for knowing we have
+                // reconnected. 
+                // This will noop if we're not in the reconnecting state
+                if([strongConnection changeState:reconnecting toState:connected]) {
+                    // Raise the reconnect event if the connection comes back up
+                    [strongConnection didReconnect];
+                }
                 return;
             }
             
@@ -220,8 +229,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             [strongSelf completeAbort];
         }
         else if ([strongSelf tryCompleteAbort]) {
-        }
-        else {
+        } else if ([strongConnection verifyLastActive]){//check in if we should abandon
             [strongSelf reconnect:strongConnection data:connectionData];
         }
     };
@@ -233,7 +241,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         if (strongSelf.stop) {
             [strongSelf completeAbort];
         } else if ([strongSelf tryCompleteAbort]) {
-        } else {
+        } else if ([strongConnection verifyLastActive]){//check in if we should abandon
             [strongSelf reconnect:strongConnection data:connectionData];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
