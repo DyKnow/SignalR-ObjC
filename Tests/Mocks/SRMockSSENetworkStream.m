@@ -7,6 +7,7 @@
 //
 
 #import "SRMockSSENetworkStream.h"
+#import "SRMockWaitBlockOperation.h"
 #import <OCMock/OCMock.h>
 
 @interface SRMockSSENetworkStream ()
@@ -14,6 +15,7 @@
 @property (readwrite, nonatomic, strong) NSData* lastData;
 @property (readwrite, nonatomic, strong) id dataDelegate;
 @property (readwrite, nonatomic, strong) id mock;
+@property (readwrite, nonatomic, strong) NSOutputStream* outputStream;
 //only call this directly if you don't want to trigger the stream.opened callback
 @property (readwrite, nonatomic, copy) void (^onSuccess)(AFHTTPRequestOperation *operation, id responseObject);
 @property (readwrite, nonatomic, copy) void (^onFailure)(AFHTTPRequestOperation *operation, NSError *error);
@@ -47,6 +49,10 @@
     return self;
 }
 
+- (NSOutputStream *)stream {
+    return self.outputStream;
+}
+
 - (void)prepareForOpeningResponse:(void (^)())then {
     return [self prepareForOpeningResponse:nil then:then];
 }
@@ -54,7 +60,8 @@
 - (void)prepareForOpeningResponse:(NSString *)response then:(void (^)())then {
     NSOutputStream* dataStream = [[NSOutputStream alloc] initToMemory];
     [[[self.mock stub] andReturn: dataStream] outputStream];
-    
+    _outputStream = dataStream;
+
     if (!response) {
         response = @"";
     }
@@ -71,6 +78,24 @@
     
     if (self.dataDelegate) {
         [self.dataDelegate stream:streamChanges handleEvent:NSStreamEventOpenCompleted];
+    }
+}
+
+
+- (void)prepareForConnectTimeout:(NSInteger)timeout beforeCaptureTimeout:(void (^)(SRMockWaitBlockOperation *))beforeCaptureTimeout afterCaptureTimeout:(void (^)(SRMockWaitBlockOperation *))afterCaptureTimeout{
+    //note: even though it's a connect timeout, we want an outputstream
+    //so that we can verify it closes
+    _outputStream = [[NSOutputStream alloc] initToMemory];
+    [_outputStream open];
+    [[[self.mock stub] andReturn: _outputStream] outputStream];
+
+    SRMockWaitBlockOperation* transportConnectTimeout = [[SRMockWaitBlockOperation alloc] initWithWaitTime:10];
+    if (beforeCaptureTimeout) {
+        beforeCaptureTimeout(transportConnectTimeout);
+    }
+    [transportConnectTimeout stopMocking];
+    if (afterCaptureTimeout) {
+        afterCaptureTimeout(transportConnectTimeout);
     }
 }
 

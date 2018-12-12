@@ -53,6 +53,8 @@
 ///-------------------------------
 
 - (NSString *)onSending;//TODO: this just encapsulates connectionData. can we pull this into a getUrl like js client does?
+- (BOOL) verifyLastActive;
+- (void) markActive;
 
 ///-------------------------------
 /// @name Connection Management

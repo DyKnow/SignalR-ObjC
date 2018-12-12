@@ -67,7 +67,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
 
 - (void)negotiate:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(SRNegotiationResponse * response, NSError *error))block {
     SRLogSSEDebug(@"serverSentEvents will negotiate");
-    [super negotiate:connection connectionData:connectionData completionHandler:nil];
+    [super negotiate:connection connectionData:connectionData completionHandler:block];
 }
 
 - (void)start:(id<SRConnectionInterface>)connection connectionData:(NSString *)connectionData completionHandler:(void (^)(id response, NSError *error))block {
@@ -86,6 +86,11 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                                        };
             NSError *timeout = [[NSError alloc]initWithDomain:[NSString stringWithFormat:NSLocalizedString(@"com.SignalR.SignalR-ObjC.%@",@""),NSStringFromClass([self class])] code:NSURLErrorTimedOut userInfo:userInfo];
             SRLogSSEError(@"serverSentEvents failed to receive initialized message before timeout");
+            strongSelf.stop = YES;
+            strongSelf.eventSource.opened = nil;
+            strongSelf.eventSource.message = nil;
+            strongSelf.eventSource.closed = nil;
+            [strongSelf.eventSource close];
             strongSelf.completionHandler(nil, timeout);
             strongSelf.completionHandler = nil;
         }
@@ -150,14 +155,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     //operation.securityPolicy = self.securityPolicy;
     _eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
     _eventSource.opened = ^() {
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         SRLogSSEInfo(@"serverSentEvents did open eventSource");
-        
-        // This will noop if we're not in the reconnecting state
-        if([strongConnection changeState:reconnecting toState:connected]) {
-            // Raise the reconnect event if the connection comes back up
-            [strongConnection didReconnect];
-        }
     };
     _eventSource.message = ^(SRServerSentEvent * sseEvent) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
@@ -167,6 +165,15 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             NSString *data = [[NSString alloc] initWithData:sseEvent.data encoding:NSUTF8StringEncoding];
             SRLogSSEInfo(@"serverSentEvents did receive: %@", data);
             if([data caseInsensitiveCompare:@"initialized"] == NSOrderedSame) {
+                // SSE can get a 503 error, terminated connection, etc
+                // which should not trigger reconnect, so instead the server sends
+                // down initialized. This is sufficient for knowing we have
+                // reconnected. 
+                // This will noop if we're not in the reconnecting state
+                if([strongConnection changeState:reconnecting toState:connected]) {
+                    // Raise the reconnect event if the connection comes back up
+                    [strongConnection didReconnect];
+                }
                 return;
             }
             
@@ -215,8 +222,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
             [strongSelf completeAbort];
         }
         else if ([strongSelf tryCompleteAbort]) {
-        }
-        else {
+        } else if ([strongConnection verifyLastActive]){//check in if we should abandon
             [strongSelf reconnect:strongConnection data:connectionData];
         }
     };
@@ -228,7 +234,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
         if (strongSelf.stop) {
             [strongSelf completeAbort];
         } else if ([strongSelf tryCompleteAbort]) {
-        } else {
+        } else if ([strongConnection verifyLastActive]){//check in if we should abandon
             [strongSelf reconnect:strongConnection data:connectionData];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -245,9 +251,14 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
                                                      selector:@selector(start)
                                                        object:nil];
             self.connectTimeoutOperation = nil;
-            
+            strongSelf.stop = YES;
+            strongSelf.eventSource.opened = nil;
+            strongSelf.eventSource.message = nil;
+            strongSelf.eventSource.closed = nil;
+            [strongSelf.eventSource close];
             strongSelf.completionHandler(nil, error);
             strongSelf.completionHandler = nil;
+            strongSelf.eventSource = nil;
         } else if (!isReconnecting){//failure should first attempt to reconect
             SRLogSSEWarn(@"will reconnect from errors: %@", error);
         } else {//failure while reconnecting should error
