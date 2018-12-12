@@ -155,14 +155,7 @@ typedef void (^SRCompletionHandler)(id response, NSError *error);
     //operation.securityPolicy = self.securityPolicy;
     _eventSource = [[SREventSourceStreamReader alloc] initWithStream:operation.outputStream];
     _eventSource.opened = ^() {
-        __strong __typeof(&*weakConnection)strongConnection = weakConnection;
         SRLogSSEInfo(@"serverSentEvents did open eventSource");
-        
-        // This will noop if we're not in the reconnecting state
-        if([strongConnection changeState:reconnecting toState:connected]) {
-            // Raise the reconnect event if the connection comes back up
-            [strongConnection didReconnect];
-        }
     };
     _eventSource.message = ^(SRServerSentEvent * sseEvent) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
