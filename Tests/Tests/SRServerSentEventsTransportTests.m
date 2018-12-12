@@ -199,7 +199,7 @@
     [NetworkMock stopMocking];
     SRMockSSENetworkStream* NetworkReconnectMock = [[SRMockSSENetworkStream alloc]init];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
-    [NetworkReconnectMock prepareForOpeningResponse:^{
+    [NetworkReconnectMock prepareForOpeningResponse:@"data: initialized\n\n" then:^{
         reconnectDelay.afterWait();
     }];
 
@@ -259,7 +259,7 @@
     [NetworkMock stopMocking];
     SRMockSSENetworkStream* NetworkReconnectMock = [[SRMockSSENetworkStream alloc]init];
     [reconnectDelay.mock stopMocking];//dont want to accidentally get other blocks
-    [NetworkReconnectMock prepareForOpeningResponse:^{
+    [NetworkReconnectMock prepareForOpeningResponse:@"data: initialized\n\n" then:^{
         reconnectDelay.afterWait();
     }];
     
@@ -855,7 +855,7 @@
     [NetworkMock stopMocking];
     SRMockSSENetworkStream* NetworkReconnectMock = [[SRMockSSENetworkStream alloc]init];
     [reconnectDelay stopMocking];
-    [NetworkReconnectMock prepareForOpeningResponse:^{
+    [NetworkReconnectMock prepareForOpeningResponse:@"data: initialized\n\n" then:^{
         reconnectDelay.afterWait();
     }];
     
